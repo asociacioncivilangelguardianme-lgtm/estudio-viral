@@ -834,7 +834,7 @@ Además "character": descripción física en inglés del personaje principal par
     // Si el guion pide realismo y el estilo quedó en uno de dibujo, paso a Hiperrealismo de Cine (si no, mezcla anime con realista)
     const real=/hiperreal|hyper-?real|ultra-?real|photo-?real|fotorreal|realista|realistic/i.test(base);const cat=styleOf(P.style).c;
     if(real&&cat!=='realismo'&&P.style!=='custom'){P.style='hiperreal';toast('Tu guion pide imágenes realistas: puse el estilo Hiperrealismo de Cine')}P.title=st.title||P.title||P.name;if(P.name.startsWith('Proyecto')&&st.title)P.name=st.title.slice(0,60);
-    P.scenes=this.parseScenes(st.scenes);P.character='';P.cast=extractCast(st.scenes.map(x=>x.prompt));P.scenes.forEach(sc=>{const c=castIn(P,sc);if(c.length===1)sc.seed=hashSeed(c[0].name)});S.sel=0;RT.voices={};RT.video=null;P.status='draft';save(1);
+    P.scenes=this.parseScenes(st.scenes);P.character='';P.cast=st.cast&&st.cast.length?st.cast:extractCast(st.scenes.map(x=>x.prompt));P.scenes.forEach(sc=>{const c=castIn(P,sc);if(c.length===1)sc.seed=hashSeed(c[0].name)});S.sel=0;RT.voices={};RT.video=null;P.status='draft';save(1);
     toast(`Leí tu guion: ${st.scenes.length} escenas con sus prompts de imagen ✅`);render();if(!fromAuto)this.images().catch(e=>toast(e.message,1));return}
    dur=RT.narr?RT.narr.duration:wordsOf(base)/2.5;instr=`Este es el guion. NO cambies las palabras, solo dividilo en orden:\n"""${base.slice(0,12000)}"""${gtxt}`}
   const n=this.nScenes(dur);this.setBusy('La IA está escribiendo el guion y el storyboard…');this.prog(.1);
@@ -853,7 +853,9 @@ Además "character": descripción física en inglés del personaje principal par
  // Lee guiones ya armados por escenas (de ChatGPT, Gemini, etc.): "Escena 1 … Prompt Visual … Narrador: …"
  structured(text){const t=String(text||'').replace(/\r/g,'');
   const heads=[...t.matchAll(/^[ \t#*>\-]*(?:escena|scene|toma|plano)\s*(\d+)\s*[:.\-–—)]?\s*(.*)$/gim)];if(heads.length<2)return null;
-  const head=t.slice(0,heads[0].index),out={title:'',format:'',scenes:[]};
+  const head=t.slice(0,heads[0].index),out={title:'',format:'',scenes:[],cast:[]};
+  // Bloque opcional "PERSONAJES" al principio:  - Oxum: beautiful young Black African woman, ...
+  const pi=head.search(/personajes|characters|reparto/i);if(pi>=0)head.slice(pi).split('\n').slice(1).forEach(l=>{const m=l.replace(/[*_]/g,'').match(/^\s*[-•]?\s*([A-ZÁÉÍÓÚÑ][\p{L}]{1,20}(?: [A-ZÁÉÍÓÚÑ][\p{L}]{1,20})?)\s*[:=–—-]\s*(.{12,})$/u);if(m)out.cast.push({name:m[1].trim(),desc:m[2].trim()})});
   const tl=head.split('\n').map(x=>x.trim()).filter(Boolean)[0]||'';out.title=tl.replace(/^(guion|guión|script)[^:]*:\s*/i,'').replace(/[*#]/g,'').trim().slice(0,80);
   if(/horizontal|16\s*:\s*9/i.test(head))out.format='horizontal';else if(/vertical|9\s*:\s*16/i.test(head))out.format='vertical';else if(/cuadrado|1\s*:\s*1/i.test(head))out.format='cuadrado';
   const LBL=/^(prompt[^:]{0,25}|nota[^:]{0,40}|animaci[oó]n[^:]{0,30}|c[aá]mara[^:]{0,20}|sonido[^:]{0,20}|m[uú]sica[^:]{0,20}|narrador[^:]{0,40}|narraci[oó]n[^:]{0,20}|voz en off[^:]{0,20}|di[aá]logo[^:]{0,20}|texto[^:]{0,20}|[A-ZÁÉÍÓÚÑ][\wÁÉÍÓÚÑáéíóúñâêôãõç'’]{1,20}(?: [A-ZÁÉÍÓÚÑ][\wáéíóúñ]{1,20})?\s*(?:\([^)]{0,80}\))?)\s*:\s*(.*)$/i;
@@ -914,6 +916,22 @@ Además "character": descripción física en inglés del personaje principal par
    const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',.9));const key='local:'+uid();await IDB.set(key,blob);
    this.pushVar(s);s.img=key;s.local=true;s.edited=false;s.hq=false;delete RT.fg[s.id];s.parallax=false;await loadImg(key,9);save(1);toast('Imagen puesta en la escena '+(i+1)+' ✅')}
   finally{this.setBusy('')}renderSel();renderScenesOnly(1);renderTL();seekScene(i)},
+ // La IA "director de arte": reescribe los prompts describiendo a cada personaje como se VE (la IA de imágenes no sabe quién es Oxum, un orixá o un personaje de anime famoso)
+ async improvePrompts(){const P=S.P;if(!P.scenes.length)throw new Error('Primero generá las escenas.');
+  const st=styleOf(P.style),g=genreOf(P.genre);this.setBusy('La IA está estudiando la historia y mejorando las descripciones de las imágenes…');
+  try{const list=P.scenes.map((s,i)=>({n:i+1,narracion:s.text,prompt:s.prompt}));
+   const out=await AI.chat([{role:'system',content:'Sos director de arte y experto en mitología, religiones, cultura popular, anime y cine. Respondés SOLO JSON válido.'},
+    {role:'user',content:`Historia: "${P.title||P.name}". Estilo visual elegido: ${st.n} (${this.styleText()}).${g?' Género: '+g.n+(P.sub?' / '+P.sub:'')+'.':''}${PEOPLE_P[P.people]?' Rasgos: '+PEOPLE_P[P.people]+'.':''}
+La IA de imágenes NO conoce nombres propios (dioses, orixás, santos, personajes de anime o novelas): solo entiende descripciones visuales.
+1) Identificá los personajes y escribí para cada uno una descripción física FIJA en inglés, fiel a su tradición o a su obra (rasgos, edad, piel, pelo, ropa, colores y objetos que lo identifican). Ej. Oxum: beautiful young Black African woman, golden yellow silk dress, many gold bracelets, holds a golden mirror.
+2) Reescribí el prompt en inglés de CADA escena: describí a las personas por su aspecto (copiando la descripción fija, NO solo el nombre), la acción, el lugar, el encuadre y la luz, en el estilo elegido. Máximo 2 personas por escena (si hay un grupo, mostrá al principal y el resto de fondo). Nada de texto ni letras.
+Escenas: ${JSON.stringify(list).slice(0,14000)}
+Formato exacto: {"cast":[{"name":"...","desc":"..."}],"scenes":[{"n":1,"prompt":"..."}]}`}],{temp:.5});
+   const d=AI.json(out);if(!d.scenes||!d.scenes.length)throw new Error('La IA no devolvió escenas, probá de nuevo.');
+   if(Array.isArray(d.cast)&&d.cast.length)P.cast=d.cast.filter(c=>c&&c.name&&c.desc).slice(0,10).map(c=>({name:String(c.name).trim(),desc:String(c.desc).trim()}));
+   let n=0;d.scenes.forEach(x=>{const s=P.scenes[(+x.n||0)-1];if(s&&x.prompt&&!s.local){this.pushVar(s);s.prompt=String(x.prompt).trim();const c=castIn(P,s);s.seed=c.length===1?hashSeed(c[0].name):seed();s.img='';s.edited=false;s.hq=false;n++}});
+   save(1);toast(`Listo: ${n} escena(s) con descripciones mejoradas. Rehaciendo imágenes…`)}
+  finally{this.setBusy('')}render();await this.images()},
  async addClip(i,f){const s=S.P.scenes[i];if(!f)return;if(f.size>200e6)throw new Error('El video es muy pesado (máximo 200 MB).');
   this.setBusy('Cargando tu video…');try{const key='clip:'+s.id;await IDB.set(key,f);s.clip=key;await loadClip(s);save(1);toast('Video puesto en la escena '+(i+1)+' ✅')}finally{this.setBusy('')}renderSel();renderScenesOnly(1);seekScene(i)},
  removeClip(i){const s=S.P.scenes[i];if(!s)return;try{RT.clips[s.id]&&RT.clips[s.id].pause()}catch(e){}delete RT.clips[s.id];s.clip='';save(1);renderSel();renderScenesOnly(1);seekScene(i)},
@@ -1424,7 +1442,7 @@ function castHTML(){const P=S.P,c=P.cast||[];
  <div class="hint">Escribí cómo es cada personaje (en inglés: cara, pelo, ropa). Cada vez que una escena nombre a ese personaje, la imagen usa esta descripción.</div>
  ${c.map((x,k)=>`<div class="row" style="gap:6px;margin-top:6px;align-items:flex-start"><input class="inp" style="max-width:110px" value="${esc(x.name)}" placeholder="Nombre" onchange="S.P.cast[${k}].name=this.value.trim();save()"><textarea class="inp" rows="2" placeholder="beautiful African goddess, golden silk dress, gold jewelry" onchange="S.P.cast[${k}].desc=this.value.trim();save()">${esc(x.desc)}</textarea><button class="btn xs" title="Quitar" onclick="S.P.cast.splice(${k},1);save();render()">${ic('trash')}</button></div>`).join('')}
  <div class="row" style="margin-top:8px;gap:6px"><button class="btn sm" onclick="(S.P.cast=S.P.cast||[]).push({name:'',desc:''});save();render()">${ic('plus')}Personaje</button>
- ${c.length?`<button class="btn sm" data-busy onclick="redoCast()">${ic('refresh')}Rehacer imágenes con estos personajes</button>`:''}</div></div></details>`}
+ <button class="btn sm grad" data-busy onclick="run(()=>Pipe.improvePrompts())">${ic('spark')}IA: mejorar imágenes</button>${c.length?`<button class="btn sm" data-busy onclick="redoCast()">${ic('refresh')}Rehacer imágenes con estos personajes</button>`:''}</div></div></details>`}
 function redoCast(){const P=S.P;let n=0;P.scenes.forEach(s=>{const c=castIn(P,s);if(c.length&&!s.local){Pipe.pushVar(s);if(c.length===1)s.seed=hashSeed(c[0].name);s.img='';s.edited=false;s.hq=false;n++}});
  if(!n){toast('Ninguna escena nombra a estos personajes',1);return}save();render();toast(n+' escena(s) se rehacen con los personajes');run(()=>Pipe.images())}
 function renderSel(){const el=$('#selpanel');if(!el||!S.P)return;const P=S.P,i=clamp(S.sel,0,Math.max(0,P.scenes.length-1)),s=P.scenes[i];
@@ -1501,7 +1519,7 @@ function tContenido(){const P=S.P;let top='';
   <div class="lbl">Tema, sensación o letra (opcional)</div><textarea class="ta" placeholder="Ej: viaje nocturno por una ciudad de neón, nostalgia" oninput="S.P.idea=this.value;save()">${esc(P.idea)}</textarea>
   ${RT.music&&P.music==='upload'?'':`<div class="lbl">Duración</div>${durSel([15,30,45,60,90,120,180])}`}${ipm}${gen('Generar escenas del videoclip')}</div>`;
  return top+`<div class="card box"><div class="between"><h3>${ic('grid')}Storyboard <span class="sub">${P.scenes.length} escenas</span></h3>
-  ${P.scenes.length?`<div class="row"><button class="btn sm" data-busy onclick="run(()=>Pipe.images())">${ic('refresh')}Generar imágenes</button><button class="btn sm" onclick="addScene()">${ic('plus')}Escena</button></div>`:''}</div>
+  ${P.scenes.length?`<div class="row"><button class="btn sm" data-busy onclick="run(()=>Pipe.images())">${ic('refresh')}Generar imágenes</button><button class="btn sm grad" data-busy title="La IA estudia la historia y describe a cada personaje como se ve, para imágenes más fieles y parecidas" onclick="run(()=>Pipe.improvePrompts())">${ic('spark')}IA: mejorar imágenes</button><button class="btn sm" onclick="addScene()">${ic('plus')}Escena</button></div>`:''}</div>
   ${P.character!==undefined&&P.scenes.length&&(P.character||!(P.cast||[]).length)?`<div class="lbl">Personaje fijo (se repite igual en todas las imágenes · en inglés)</div><textarea class="inp" rows="2" onchange="S.P.character=this.value;save();toast('Personaje guardado: se usa en las imágenes nuevas')">${esc(P.character||'')}</textarea>`:''}${P.scenes.length?castHTML():''}<div class="scenes" id="scenes">${scenesHTML()}</div>
   ${P.scenes.length?`<div class="genbtn"><button class="btn grad" data-busy onclick="Pipe.auto()">${ic('bolt')}Generar video</button></div>`:''}</div>`}
 function scenesHTML(){const P=S.P;if(!P.scenes.length)return `<div class="empty" style="padding:26px 10px;grid-column:1/-1"><p>Las escenas aparecen acá: cada tarjeta tiene su imagen, su texto, su cámara y su sonido ambiente.</p></div>`;const c=FORMATS[P.format].c;
