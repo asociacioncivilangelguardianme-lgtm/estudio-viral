@@ -6,6 +6,7 @@
 <title>Estudio Viral IA</title>
 <meta name="description" content="Creá videos virales con IA gratis: desde texto, guion, link de YouTube/TikTok, audio, imágenes o música.">
 <meta name="theme-color" content="#0F0F12">
+<script type="importmap">{"imports":{"onnxruntime-web":"https://cdn.jsdelivr.net/npm/onnxruntime-web@1.18.0/dist/esm/ort.min.js"}}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
 <style>
@@ -573,14 +574,31 @@ const SOON=[
  {n:'Lip-sync de avatares',k:'Labios',d:'Sincronizar labios con un audio. Requiere servicios pagos.',ic:'user'},
 ];
 const FORMATS={vertical:{n:'Vertical 9:16',d:'TikTok · Reels · Shorts',c:'v',r:[9,16]},horizontal:{n:'Horizontal 16:9',d:'YouTube · Cine',c:'h',r:[16,9]},cuadrado:{n:'Cuadrado 1:1',d:'Feed de Instagram/Facebook',c:'c',r:[1,1]}};
-const VOICES=[
- {id:'onyx',n:'Álvaro',d:'Masculina grave · narrador',c:'#7c5cff'},
- {id:'echo',n:'Diego',d:'Masculina clara',c:'#3a86ff'},
- {id:'fable',n:'Tomás',d:'Cálida · cuentacuentos',c:'#f59e0b'},
- {id:'alloy',n:'Alex',d:'Neutra',c:'#22c55e'},
- {id:'nova',n:'Lucía',d:'Femenina enérgica',c:'#ec4899'},
- {id:'shimmer',n:'Sofía',d:'Femenina suave',c:'#06b6d4'},
+// Voces gratis. edge = voces naturales de Microsoft (vía /api/tts en Vercel). piper = voz que se genera en tu computadora.
+const EDGE_VOICES=[
+ ['es-AR-TomasNeural','Tomás','Argentina','M'],['es-AR-ElenaNeural','Elena','Argentina','F'],
+ ['es-UY-MateoNeural','Mateo','Uruguay','M'],['es-UY-ValentinaNeural','Valentina','Uruguay','F'],
+ ['es-MX-JorgeNeural','Jorge','México','M'],['es-MX-DaliaNeural','Dalia','México','F'],
+ ['es-CO-GonzaloNeural','Gonzalo','Colombia','M'],['es-CO-SalomeNeural','Salomé','Colombia','F'],
+ ['es-CL-LorenzoNeural','Lorenzo','Chile','M'],['es-CL-CatalinaNeural','Catalina','Chile','F'],
+ ['es-ES-AlvaroNeural','Álvaro','España','M'],['es-ES-ElviraNeural','Elvira','España','F'],
+ ['es-US-AlonsoNeural','Alonso','Latino (EE.UU.)','M'],['es-US-PalomaNeural','Paloma','Latino (EE.UU.)','F'],
+ ['en-US-AndrewMultilingualNeural','Andrew','EE.UU. · multilingüe','M'],['en-US-AvaMultilingualNeural','Ava','EE.UU. · multilingüe','F'],
+ ['pt-BR-AntonioNeural','Antônio','Brasil','M'],['pt-BR-FranciscaNeural','Francisca','Brasil','F'],
+ ['it-IT-DiegoNeural','Diego','Italia','M'],['it-IT-ElsaNeural','Elsa','Italia','F'],
+ ['fr-FR-HenriNeural','Henri','Francia','M'],['fr-FR-DeniseNeural','Denise','Francia','F'],
 ];
+const PIPER_VOICES=[
+ ['es_MX-ald-medium','Ald','México'],['es_MX-claude-high','Claude','México'],
+ ['es_ES-davefx-medium','Davefx','España'],['es_ES-sharvard-medium','Sharvard','España'],
+ ['en_US-hfc_male-medium','HFC (hombre)','EE.UU.'],['en_US-hfc_female-medium','HFC (mujer)','EE.UU.'],
+ ['pt_BR-faber-medium','Faber','Brasil'],['it_IT-riccardo-x_low','Riccardo','Italia'],['fr_FR-siwis-medium','Siwis','Francia'],
+];
+const POLL_VOICES=[['onyx','Onyx'],['echo','Echo'],['fable','Fable'],['alloy','Alloy'],['nova','Nova'],['shimmer','Shimmer']];
+const OLD_VOICE={onyx:'es-AR-TomasNeural',echo:'es-MX-JorgeNeural',fable:'es-ES-AlvaroNeural',alloy:'es-CO-GonzaloNeural',nova:'es-AR-ElenaNeural',shimmer:'es-MX-DaliaNeural'};
+const DEFAULT_VOICE={es:'edge:es-AR-TomasNeural',en:'edge:en-US-AndrewMultilingualNeural',pt:'edge:pt-BR-AntonioNeural',it:'edge:it-IT-DiegoNeural',fr:'edge:fr-FR-HenriNeural'};
+const VOICE_LANGS={es:'Español',en:'Inglés',pt:'Portugués',it:'Italiano',fr:'Francés'};
+const SAMPLE={es:'Hola, así suena mi voz en tus videos.',en:'Hi, this is how my voice sounds in your videos.',pt:'Olá, é assim que minha voz soa nos seus vídeos.',it:'Ciao, ecco come suona la mia voce nei tuoi video.',fr:'Bonjour, voici comment sonne ma voix dans tes vidéos.'};
 const MUSIC=[
  {id:'none',n:'Sin música',e:'🔇'},
  {id:'epica',n:'Épica',e:'⚔️',bpm:80,chords:[[45,52,57,60,64],[41,48,53,57,60],[48,55,60,64,67],[43,50,55,59,62]],kick:1,wave:'sawtooth',cut:900},
@@ -624,7 +642,14 @@ let toastT;
 function toast(msg,err){const t=$('#toast');t.textContent=msg;t.className='toast show'+(err?' err':'');clearTimeout(toastT);toastT=setTimeout(()=>t.className='toast',err?5500:2800)}
 const styleOf=id=>STYLES.find(s=>s.id===id)||STYLES[2];
 const genreOf=id=>GENRES.find(g=>g.id===id);
-const voiceOf=id=>VOICES.find(v=>v.id===id)||VOICES[0];
+function normVoice(id){if(!id)return DEFAULT_VOICE.es;id=String(id);if(id.includes(':'))return id;if(OLD_VOICE[id])return 'edge:'+OLD_VOICE[id];if(/Neural$/.test(id))return 'edge:'+id;if(/^[a-z]{2}_[A-Z]{2}-/.test(id))return 'piper:'+id;return DEFAULT_VOICE.es}
+let regionNames=null;try{regionNames=new Intl.DisplayNames(['es'],{type:'region'})}catch(e){}
+function voiceOf(id){id=normVoice(id);const i=id.indexOf(':'),eng=id.slice(0,i),v=id.slice(i+1);
+ if(eng==='edge'){const f=EDGE_VOICES.find(x=>x[0]===v)||(RT.allVoices||[]).find(x=>x[0]===v);const parts=v.split('-');
+  const nm=f?f[1]:parts.slice(2).join('-').replace(/(Multilingual)?Neural$/,'');let reg=f?f[2]:'';if(!reg){try{reg=regionNames?regionNames.of(parts[1]):parts[1]}catch(e){reg=parts[1]}}
+  const g=f?f[3]:'';return{id,eng,v,lang:parts[0],n:nm,d:reg+(g?' · '+(g==='F'?'femenina':'masculina'):''),c:g==='F'?'#ec4899':'#7c5cff',tag:'Microsoft'}}
+ if(eng==='piper'){const f=PIPER_VOICES.find(x=>x[0]===v);return{id,eng,v,lang:v.slice(0,2),n:f?f[1]:v,d:(f?f[2]:v)+' · Piper',c:'#22d3ee',tag:'Piper'}}
+ const f=POLL_VOICES.find(x=>x[0]===v);return{id,eng:'poll',v,lang:'es',n:f?f[1]:v,d:'Pollinations (requiere saldo)',c:'#f59e0b',tag:'Pollinations'}}
 const musicOf=id=>MUSIC.find(m=>m.id===id)||MUSIC[0];
 const wordsOf=t=>(t||'').trim().split(/\s+/).filter(Boolean).length;
 const fmtTime=s=>{s=Math.max(0,Math.round(s));return s>=60?Math.floor(s/60)+'m '+(s%60)+'s':s+'s'};
@@ -638,13 +663,13 @@ const IDB={db:null,
 
 // ---------------- estado ----------------
 const S={
- view:'projects',filter:'all',q:'',tab:'contenido',wiz:{step:1},cat:'all',ctab:'estilos',sel:0,noleft:false,
+ view:'projects',vlang:'es',vq:'',vall:false,filter:'all',q:'',tab:'contenido',wiz:{step:1},cat:'all',ctab:'estilos',sel:0,noleft:false,
  settings:Object.assign({key:'',altUrl:'',altKey:'',altModel:'',lang:'es',userName:''},store.get('ev_settings',{})),
  projects:store.get('ev_projects',[]),P:null,busy:'',saved:true,
 };
-const RT={voices:{},narr:null,narrFile:null,narrCuts:[],music:null,beats:null,video:null,imgs:{},local:{},fg:{},clips:{}};
+const RT={allVoices:null,voices:{},narr:null,narrFile:null,narrCuts:[],music:null,beats:null,video:null,imgs:{},local:{},fg:{},clips:{}};
 const DEF={format:'vertical',quality:'hd',style:'neo_anime',customStyle:'',genre:'',sub:'',idea:'',script:'',sourceUrl:'',sourceText:'',paraphrased:'',
- duration:60,ipm:12,voice:'onyx',speed:1,lang:'es',subStyle:'karaoke',subPos:'abajo',subSize:1,music:'epica',musicVol:.18,
+ duration:60,ipm:12,voice:'edge:es-AR-TomasNeural',speed:1,lang:'es',subStyle:'karaoke',subPos:'abajo',subSize:1,music:'epica',musicVol:.18,
  cam:'auto',zoom:.12,lens:'normal',shake:false,transition:'fade',grade:'none',analog:'none',chroma:false,vignette:true,grain:false,
  hook:true,progress:false,pulse:false,beatSync:false,sfx:true,amb:true,sfxVol:.5,character:'',title:'',scenes:[],status:'draft'};
 function newProject(mode){return Object.assign(JSON.parse(JSON.stringify(DEF)),{id:uid(),name:'Proyecto '+(S.projects.length+1),mode:mode||'idea',lang:S.settings.lang||'es',createdAt:Date.now(),updatedAt:Date.now()},
@@ -676,17 +701,17 @@ const AI={
     if(c&&String(c).trim())return String(c).trim();
    }catch(e){last=e.message}
   }
-  throw new Error('No pude conectar con la IA ('+last+'). Revisá internet o poné tu clave gratis en Ajustes.');
+  throw new Error('No pude conectar con la IA ('+last+'). Revisá tu conexión a internet y probá de nuevo.');
  },
  json(txt){let t=String(txt).replace(/```json|```/g,'');const a=t.indexOf('{'),b=t.lastIndexOf('}');if(a<0||b<0)throw new Error('La IA no devolvió datos válidos');t=t.slice(a,b+1);
   try{return JSON.parse(t)}catch(e){return JSON.parse(t.replace(/,\s*([}\]])/g,'$1').replace(/[“”]/g,'"'))}},
  imgURL(prompt,w,h,sd,extra=''){const p=encodeURIComponent(prompt.slice(0,900)),k=S.settings.key;
-  return k?`https://gen.pollinations.ai/image/${p}?model=flux&width=${w}&height=${h}&seed=${sd}&nologo=true${extra}&key=${encodeURIComponent(k)}`
+  return k?`https://gen.pollinations.ai/image/${p}?model=flux&width=${w}&height=${h}&seed=${sd}&nologo=true${extra}`
           :`https://image.pollinations.ai/prompt/${p}?model=flux&width=${w}&height=${h}&seed=${sd}&nologo=true${extra}`},
  altImgURL(url){try{const u=new URL(url);if(u.host==='gen.pollinations.ai'){const p=u.pathname.replace('/image/','');u.searchParams.delete('key');u.searchParams.delete('image');return 'https://image.pollinations.ai/prompt/'+p+'?'+u.searchParams}
   if(u.host==='image.pollinations.ai'){const p=u.pathname.replace('/prompt/','');return 'https://gen.pollinations.ai/image/'+p+'?'+u.searchParams}}catch(e){}return url},
- editURL(instr,src,w,h,sd){const k=S.settings.key;return `https://gen.pollinations.ai/image/${encodeURIComponent(instr)}?model=kontext&image=${encodeURIComponent(src)}&width=${w}&height=${h}&seed=${sd}&nologo=true&key=${encodeURIComponent(k)}`},
- async video(prompt,img){const k=S.settings.key;if(!k)throw new Error('Animar con IA necesita tu clave de Pollinations (Ajustes).');
+ editURL(instr,src,w,h,sd){const k=S.settings.key;return `https://gen.pollinations.ai/image/${encodeURIComponent(instr)}?model=kontext&image=${encodeURIComponent(src)}&width=${w}&height=${h}&seed=${sd}&nologo=true`},
+ async video(prompt,img){const k=S.settings.key;if(!k)throw new Error('Animar con IA no es gratis (requiere saldo en Pollinations). Tu escena igual se mueve con la cámara virtual.');
   const p=encodeURIComponent(prompt.slice(0,500)),q=`model=seedance&image=${encodeURIComponent(img)}&duration=5&nologo=true&key=${encodeURIComponent(k)}`;
   for(const u of[`https://gen.pollinations.ai/video/${p}?${q}`,`https://gen.pollinations.ai/image/${p}?${q}`]){
    try{const r=await fetch(u);if(!r.ok)continue;const b=await r.blob();if(/video/.test(b.type)&&b.size>10000)return b}catch(e){}}
@@ -697,7 +722,7 @@ const AI={
   if(!k)urls.push(`https://gen.pollinations.ai/audio/${t}?voice=${voice}`);
   for(const u of urls){try{const r=await fetch(u);if(!r.ok)continue;const b=await r.blob();if(b.size>1000&&/audio|mpeg|octet/.test(b.type||'audio'))return b}catch(e){}}
   return null},
- async transcribe(file){const k=S.settings.key;if(!k)throw new Error('Para transcribir audio necesitás la clave gratis de Pollinations (Ajustes). O pegá el texto a mano.');
+ async transcribe(file){const k=S.settings.key;if(!k)throw new Error('Transcribir con IA no es gratis. Pegá el texto de tu audio a mano: igual se corta solo en tus silencios.');
   const fd=new FormData();fd.append('file',file);fd.append('model','whisper');
   const r=await fetch('https://gen.pollinations.ai/v1/audio/transcriptions',{method:'POST',headers:{Authorization:'Bearer '+k},body:fd});
   if(!r.ok)throw new Error('No se pudo transcribir (HTTP '+r.status+'). Pegá el texto a mano.');const j=await r.json();return j.text||''}
@@ -707,10 +732,12 @@ const Q={tasks:[],running:0,
  add(fn,pri=0){return new Promise((res,rej)=>{this.tasks.push({fn,pri,res,rej});this.tasks.sort((a,b)=>b.pri-a.pri);this.next()})},
  next(){const max=S.settings.key?3:1;while(this.running<max&&this.tasks.length){const t=this.tasks.shift();this.running++;t.fn().then(t.res,t.rej).finally(()=>{this.running--;this.next()})}}};
 const imgCache={};
+function withKey(u){const k=S.settings.key;return k&&u.includes('gen.pollinations.ai')&&!u.includes('key=')?u+'&key='+encodeURIComponent(k):u}
+const stripKey=u=>u?String(u).replace(/[&?]key=[^&]*/g,''):u;
 async function srcOf(url){if(!url.startsWith('local:'))return url;if(RT.local[url])return RT.local[url];const b=await IDB.get(url);if(!b)throw new Error('imagen local perdida');return RT.local[url]=URL.createObjectURL(b)}
 function loadImg(url,pri=5){
  if(!url)return Promise.reject(new Error('sin url'));if(imgCache[url])return imgCache[url];
- const once=u=>new Promise((res,rej)=>{const im=new Image();im.crossOrigin='anonymous';const to=setTimeout(()=>{im.src='';rej(new Error('tiempo'))},120000);im.onload=()=>{clearTimeout(to);res(im)};im.onerror=()=>{clearTimeout(to);rej(new Error('img'))};im.src=u});
+ const once=u=>new Promise((res,rej)=>{u=withKey(u);const im=new Image();im.crossOrigin='anonymous';const to=setTimeout(()=>{im.src='';rej(new Error('tiempo'))},120000);im.onload=()=>{clearTimeout(to);res(im)};im.onerror=()=>{clearTimeout(to);rej(new Error('img'))};im.src=u});
  const local=url.startsWith('local:');
  const p=(local?srcOf(url).then(once):Q.add(async()=>{try{return await once(url)}catch(e){await sleep(2500);return await once(AI.altImgURL(url))}},pri)).then(im=>{RT.imgs[url]=im;return im});
  imgCache[url]=p;p.catch(()=>delete imgCache[url]);return p;
@@ -803,11 +830,11 @@ Además "character": descripción física en inglés del personaje principal par
   this.setBusy('Generando imagen de la escena '+(i+1)+'…');try{await loadImg(s.img,9);paintScene(s)}catch(e){paintScene(s,true);toast('La imagen falló, probá de nuevo',1)}finally{this.setBusy('')}renderSel();renderTL()},
  async editImage(i,instr){const P=S.P,s=P.scenes[i];if(!instr)return;const {iw,ih}=this.dims();
   this.setBusy('Editando imagen con IA…');
-  try{if(S.settings.key&&!s.local&&RT.imgs[s.img]){const src=s.img.includes('key=')?AI.altImgURL(s.img):s.img;const u=AI.editURL(instr,src,iw,ih,seed());
+  try{if(S.settings.key&&!s.local&&RT.imgs[s.img]){const src=s.img.includes('gen.pollinations.ai')?AI.altImgURL(s.img):s.img;const u=AI.editURL(instr,src,iw,ih,seed());
      try{await loadImg(u,9);this.pushVar(s);s.img=u;s.edited=true;save();paintScene(s);renderSel();toast('Imagen editada ✅');return}catch(e){}}
    if(s.local){toast('Para editar tus fotos con IA hace falta subirlas a internet; probá "Cambiar fondo"',1);return}
    const o=AI.json(await AI.chat([{role:'system',content:'Respondés solo JSON.'},{role:'user',content:`Prompt de imagen actual (inglés): "${s.prompt}". Cambio pedido: "${instr}". Reescribí el prompt aplicando el cambio y manteniendo todo lo demás igual. {"prompt":"..."}`}],{temp:.4}));
-   if(o.prompt){s.prompt=o.prompt;this.setBusy('');await this.regen(i,{keepSeed:true});toast(S.settings.key?'Se regeneró la escena con el cambio':'Se regeneró con el cambio (para edición exacta poné tu clave en Ajustes)')}
+   if(o.prompt){s.prompt=o.prompt;this.setBusy('');await this.regen(i,{keepSeed:true});toast('Se regeneró la escena con el cambio ✅')}
   }finally{this.setBusy('')}},
  async expand(i){const s=S.P.scenes[i];if(s.local){toast('Expandir solo funciona con imágenes generadas',1);return}
   if(!/wide establishing/.test(s.prompt))s.prompt+=', wide establishing shot, zoomed out, more of the environment visible around the subject';await this.regen(i,{keepSeed:true})},
@@ -821,7 +848,7 @@ Además "character": descripción física en inglés del personaje principal par
   this.setBusy('Generando fondo nuevo…');try{await loadImg(s.bg,9);toast('Fondo cambiado ✅')}catch(e){toast('El fondo falló',1);s.bg=''}finally{this.setBusy('')}renderSel();seekScene(i)},
  async animate(i){const s=S.P.scenes[i];if(s.local){toast('La animación IA necesita una imagen generada (con link público)',1);return}
   this.setBusy('Animando la escena con IA (beta, puede tardar 1-2 min)…');
-  try{const src=s.img.includes('key=')?AI.altImgURL(s.img):s.img;const b=await AI.video(s.prompt+', subtle cinematic motion',src);const v=document.createElement('video');v.src=URL.createObjectURL(b);v.muted=true;v.loop=true;v.playsInline=true;await v.play().catch(()=>{});v.pause();RT.clips[s.id]=v;toast('Escena animada ✅ (se mantiene mientras la página esté abierta)')}
+  try{const src=s.img.includes('gen.pollinations.ai')?AI.altImgURL(s.img):s.img;const b=await AI.video(s.prompt+', subtle cinematic motion',src);const v=document.createElement('video');v.src=URL.createObjectURL(b);v.muted=true;v.loop=true;v.playsInline=true;await v.play().catch(()=>{});v.pause();RT.clips[s.id]=v;toast('Escena animada ✅ (se mantiene mientras la página esté abierta)')}
   catch(e){toast(e.message,1)}finally{this.setBusy('')}renderSel();renderScenesOnly(1)},
  async lookAI(){const P=S.P;this.setBusy('La IA está eligiendo el look…');
   try{const g=genreOf(P.genre);const o=AI.json(await AI.chat([{role:'system',content:'Sos director de fotografía y colorista. Respondés solo JSON.'},{role:'user',content:`Video: "${P.title||P.name}". Idea: "${(P.idea||P.script||P.paraphrased||'').slice(0,400)}". Género: ${g?g.n:'libre'} ${P.sub||''}. Estilo visual: ${styleOf(P.style).n}.
@@ -834,21 +861,22 @@ Elegí el mejor look. Valores permitidos: grade=${Object.keys(GRADES).join('|')}
 
  async voices(){const P=S.P;if(P.mode==='musica'){toast('En videoclip no hay narrador 🎵');return}
   if(RT.narr){toast('Se usa tu propia narración 🎙️');return}
-  if(!P.scenes.length)throw new Error('Primero generá las escenas.');this.setBusy('Generando voces…');let ok=0,need=0;
+  if(!P.scenes.length)throw new Error('Primero generá las escenas.');this.setBusy('Generando voces…');let ok=0,need=0,lastErr='';
   try{for(let i=0;i<P.scenes.length;i++){const s=P.scenes[i];if(!s.text.trim())continue;need++;const cur=RT.voices[s.id];
-    if(cur&&cur.text===s.text&&cur.voice===P.voice){ok++;continue}
-    this.setBusy(`Voz ${i+1}/${P.scenes.length}…`);this.prog(i/P.scenes.length);
-    const b=await AI.tts(s.text,P.voice);if(b){try{RT.voices[s.id]={buf:await decode(b),text:s.text,voice:P.voice};ok++}catch(e){}}}}
+    if(cur&&cur.text===s.text&&cur.voice===P.voice&&(!cur.pre||cur.speed===P.speed)){ok++;continue}
+    const lbl=`Voz ${i+1}/${P.scenes.length}…`;this.setBusy(lbl);this.prog(i/P.scenes.length);
+    try{const r=await Voice.make(s.text,P.voice,{speed:P.speed,onProg:f=>this.setBusy(`Descargando la voz (solo la primera vez)… ${Math.round(f*100)}%`)});
+     RT.voices[s.id]={buf:await decode(r.blob),text:s.text,voice:P.voice,speed:P.speed,pre:r.pre};ok++}catch(e){lastErr=e.message||String(e)}}}
   finally{this.setBusy('');this.prog(0)}
-  if(need&&!ok)toast('No se pudo generar la voz gratis ahora. Poné tu clave gratis de Pollinations en Ajustes (el video saldrá con subtítulos y música).',1);
-  else if(need)toast(`Voces listas: ${ok}/${need} ✅`);renderPipe();renderTL();renderCfg()},
+  if(need&&!ok)toast('No se pudo generar la voz: '+lastErr+'. Revisá tu internet y probá de nuevo (o grabá tu voz en el modo Audio).',1);
+  else if(need)toast(`Voces listas: ${ok}/${need} ✅`,ok<need);renderPipe();renderTL();renderCfg()},
  beatsFor(total){const P=S.P;if(P.music==='upload'&&RT.beats)return RT.beats;const m=musicOf(P.music);if(!m.bpm)return[];const st=60/m.bpm,out=[];for(let t=0;t<total;t+=st)out.push(+t.toFixed(3));return out},
  timeline(){const P=S.P,list=[];let total=0;const n=P.scenes.length;if(!n)return{list,total:0,beats:[]};
   if(P.mode==='musica'){const tot=RT.music&&P.music==='upload'?RT.music.duration:P.duration,per=tot/n;P.scenes.forEach((s,i)=>list.push({s,start:i*per,talk:per,cut:i*per,end:(i+1)*per}));total=tot}
   else if(RT.narr){const tot=RT.narr.duration,ch=P.scenes.map(s=>Math.max(8,s.text.length)),sum=ch.reduce((a,b)=>a+b,0);let acc=0;const b=[0];
    for(let i=0;i<n-1;i++){acc+=ch[i];let x=tot*acc/sum;const c=RT.narrCuts.reduce((best,c)=>Math.abs(c-x)<Math.abs(best-x)?c:best,1e9);if(Math.abs(c-x)<1.6&&c>b[b.length-1]+.6)x=c;b.push(x)}
    P.scenes.forEach((s,i)=>{const st=b[i],en=i<n-1?b[i+1]:tot;list.push({s,start:st,talk:en-st,cut:st,end:en})});total=tot+.4}
-  else{let t=0;P.scenes.forEach(s=>{const v0=RT.voices[s.id],v=v0&&v0.text===s.text?v0:null;const talk=v?v.buf.duration/P.speed:s.text.trim()?Math.max(1.8,wordsOf(s.text)/2.6):2.4;const d=Math.max(.8,talk+.35+(s.extra||0));list.push({s,start:t,talk,cut:t,end:t+d,v});t+=d});total=t+.3}
+  else{let t=0;P.scenes.forEach(s=>{const v0=RT.voices[s.id],v=v0&&v0.text===s.text?v0:null;const talk=v?v.buf.duration/(v.pre?1:P.speed):s.text.trim()?Math.max(1.8,wordsOf(s.text)/2.6):2.4;const d=Math.max(.8,talk+.35+(s.extra||0));list.push({s,start:t,talk,cut:t,end:t+d,v});t+=d});total=t+.3}
   const beats=this.beatsFor(total);
   if(P.beatSync&&beats.length)for(let i=1;i<list.length;i++){const c=list[i].cut;let b=c,bd=1e9;for(const x of beats){const d=Math.abs(x-c);if(d<bd){bd=d;b=x}}if(bd<.7&&b>list[i-1].cut+.7)list[i].cut=b}
   list.forEach((x,i)=>{x.end=i<list.length-1?list[i+1].cut:Math.max(total,x.cut+.5)});
@@ -880,6 +908,31 @@ Elegí el mejor look. Valores permitidos: grade=${Object.keys(GRADES).join('|')}
    else if(!P.scenes.length)await this.makeScenes(true);
    await this.images();await this.voices();await Player.run(true)}
   catch(e){toast(e.message,1);this.setBusy('')}}
+};
+
+// ================= VOZ GRATIS =================
+// Piper: genera la voz dentro del navegador (gratis, sin cuenta). La primera vez descarga la voz.
+const Piper={mod:null,
+ load(){if(!this.mod){this.mod=import('https://cdn.jsdelivr.net/npm/@mintplex-labs/piper-tts-web@1.0.4/dist/piper-tts-web.js');this.mod.catch(()=>this.mod=null)}return this.mod},
+ async say(text,voiceId,onProg){const m=await this.load();return await m.predict({text,voiceId},p=>{if(onProg&&p&&p.total)onProg(p.loaded/p.total)})}};
+const Voice={edgeDown:false,fails:0,warned:false,
+ online(){return /^https?:$/.test(location.protocol)},
+ async edge(text,v,speed){const r=await fetch('/api/tts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,voice:v,rate:Math.round((speed-1)*100)})});
+  if(r.status===404||r.status===405){this.edgeDown=true;throw new Error('falta /api/tts')}
+  if(!r.ok)throw new Error('voz Microsoft '+r.status);const b=await r.blob();if(b.size<300)throw new Error('audio vacío');this.fails=0;return b},
+ piperFor(lang){return{es:'es_MX-ald-medium',en:'en_US-hfc_male-medium',pt:'pt_BR-faber-medium',it:'it_IT-riccardo-x_low',fr:'fr_FR-siwis-medium'}[lang]||'es_MX-ald-medium'},
+ // Devuelve {blob, pre} · pre=true si la velocidad ya viene aplicada en el audio
+ async make(text,voiceId,{speed=1,onProg}={}){const vo=voiceOf(voiceId);
+  if(vo.eng==='edge'){
+   if(this.online()&&!this.edgeDown){try{return{blob:await this.edge(text,vo.v,speed),pre:true}}catch(e){if(++this.fails>=2)this.edgeDown=true}}
+   if(!this.warned){this.warned=true;toast(this.online()?'Las voces de Microsoft no respondieron: uso la voz Piper (gratis, en tu computadora).':'Las voces de Microsoft funcionan desde tu link de Vercel. Ahora uso la voz Piper (gratis, en tu computadora).')}
+   return{blob:await Piper.say(text,this.piperFor(vo.lang),onProg),pre:false}}
+  if(vo.eng==='piper')return{blob:await Piper.say(text,vo.v,onProg),pre:false};
+  const b=await AI.tts(text,vo.v);if(!b)throw new Error('Pollinations no respondió (requiere clave con saldo)');return{blob:b,pre:false}},
+ async loadAll(){if(RT.allVoices)return RT.allVoices;if(!this.online())throw new Error('La lista completa está disponible desde tu link de Vercel.');
+  const r=await fetch('/api/voices');const j=await r.json().catch(()=>({}));if(!j.ok)throw new Error(j.error||'No se pudo cargar la lista');
+  return RT.allVoices=j.voices.map(v=>{const parts=v.id.split('-');let reg=parts[1];try{reg=regionNames?regionNames.of(parts[1]):parts[1]}catch(e){}
+   return[v.id,parts.slice(2).join('-').replace(/(Multilingual)?Neural$/,''),reg+(/Multilingual/.test(v.id)?' · multilingüe':''),v.g]})}
 };
 
 // rotoscopia (MediaPipe, gratis, corre en tu navegador)
@@ -1028,7 +1081,7 @@ const Player={raf:0,nodes:[],rec:null,playing:false,
   const TL=Pipe.timeline();const out=ac.createGain();out.connect(ac.destination);let dest=null;if(record){dest=ac.createMediaStreamDestination();out.connect(dest)}
   const t0=ac.currentTime+.35,nodes=[];const hasVoice=!!RT.narr||TL.list.some(x=>x.v);
   if(RT.narr&&P.mode!=='musica'){const s=ac.createBufferSource();s.buffer=RT.narr;s.connect(out);s.start(t0);nodes.push(s)}
-  else TL.list.forEach(x=>{if(x.v){const s=ac.createBufferSource();s.buffer=x.v.buf;s.playbackRate.value=P.speed;s.connect(out);s.start(t0+x.start);nodes.push(s)}});
+  else TL.list.forEach(x=>{if(x.v){const s=ac.createBufferSource();s.buffer=x.v.buf;s.playbackRate.value=x.v.pre?1:P.speed;s.connect(out);s.start(t0+x.start);nodes.push(s)}});
   nodes.push(...scheduleMusic(ac,out,P.music,t0,TL.total,P.musicVol),...scheduleSfx(ac,out,TL,t0));this.nodes=nodes;this.playing=true;
   const spoken=new Set(),useSpeech=!record&&!hasVoice&&P.mode!=='musica'&&'speechSynthesis' in window;
   if(record){const vs=cv.captureStream(30),tracks=[...vs.getVideoTracks(),...dest.stream.getAudioTracks()];
@@ -1074,7 +1127,7 @@ Acciones (se ejecutan en orden):
 - {"do":"improve","instruction":"..."} · {"do":"go","view":"projects|new|catalogo|voices|sonido|settings|help"}
 Estilos: ${STYLES.map(s=>s.id+'='+s.n).join(', ')}
 Géneros: ${GENRES.map(g=>g.id+'='+g.n+(g.subs?' ('+g.subs.join('/')+')':'')).join(', ')}
-Voces: ${VOICES.map(v=>v.id+'='+v.n).join(', ')} · Música: ${MUSIC.map(m=>m.id).join(', ')} · Ambientes por escena: ${Object.keys(AMB).join(', ')}
+Voces (usá el id completo): ${EDGE_VOICES.map(v=>'edge:'+v[0]+'='+v[1]+' ('+v[2]+', '+(v[3]==='F'?'mujer':'hombre')+')').join(', ')}, ${PIPER_VOICES.map(v=>'piper:'+v[0]).join(', ')} · Música: ${MUSIC.map(m=>m.id).join(', ')} · Ambientes por escena: ${Object.keys(AMB).join(', ')}
 Reglas: para un video nuevo completo usá new + genre (si aplica) + set de lo pedido + auto. Si pega un link de YouTube/TikTok: new mode url + set sourceUrl + auto. Si sólo pregunta, actions vacío.
 Estado actual: ${this.ctx()}`},
  async send(txt){const inp=$('#cmsg');const text=(txt||inp.value).trim();if(!text)return;inp.value='';this.add('u',text);this.add('s','pensando…');
@@ -1085,7 +1138,7 @@ Estado actual: ${this.ctx()}`},
  async exec(a){const need=()=>{if(!S.P)openProject(newProject('idea'))};const n=a.n?a.n-1:-1;
   try{switch(a.do){
    case'new':openProject(newProject(a.mode||'idea'));break;
-   case'set':{need();let v=a.value;if(['duration','ipm','speed','subSize','musicVol','zoom'].includes(a.field))v=Number(v);
+   case'set':{need();let v=a.value;if(a.field==='voice')v=normVoice(v);if(['duration','ipm','speed','subSize','musicVol','zoom'].includes(a.field))v=Number(v);
     if(['vignette','grain','hook','progress','chroma','shake','pulse','beatSync','sfx','amb'].includes(a.field))v=v===true||v==='true';
     if(a.field in S.P&&!['scenes','id'].includes(a.field)){S.P[a.field]=v;if(a.field==='style'){applyFx(styleOf(v).fx);resetImgs()}if(['customStyle','format','quality'].includes(a.field))resetImgs();save();render()}break}
    case'genre':need();setGenre(a.id,a.sub);break;
@@ -1109,12 +1162,12 @@ function renderShell(){const v=S.view==='editor'?'projects':S.view,k=!!S.setting
  $('#sb').innerHTML=`<div class="brand"><div class="logo">${ic('film')}</div><div>Estudio Viral<small>Videos con IA · gratis</small></div></div>
  <button class="newbtn" onclick="go('new')">${ic('plus')}Nuevo video</button>
  <div class="nav">${NAV.map(n=>`<button class="${v===n[0]?'on':''}" onclick="go('${n[0]}')">${ic(n[1])}${n[2]}</button>`).join('')}</div>
- <div class="sbfoot"><div class="credit"><span class="dot ${k?'':'off'}"></span>${k?'Clave conectada':'Modo gratis anónimo'}<b>${k?'Voz IA y edición activadas':'Funciona sin cuenta'}</b></div>
+ <div class="sbfoot"><div class="credit"><span class="dot"></span>100% gratis<b>Sin cuenta y sin clave</b></div>
  <div class="sub" style="font-size:11px;padding:0 4px">${S.projects.length} proyecto(s) en este navegador</div></div>`;
  $('#topbar').innerHTML=`<div class="brand"><div class="logo">${ic('film')}</div>Estudio Viral</div><button class="btn pri sm" onclick="go('new')">${ic('plus')}Nuevo</button>`;
  $('#bnav').innerHTML=[['projects','folder','Proyectos'],['catalogo','palette','Estilos'],['new','plus','Nuevo'],['sonido','music','Sonido'],['settings','gear','Ajustes']].map(n=>`<button class="${v===n[0]?'on':''} ${n[0]==='new'?'plus':''}" onclick="go('${n[0]}')">${ic(n[1])}${n[2]}</button>`).join('')}
 function go(v){Player.stop();closeSheet();if(v==='new'){const pre=S.wiz||{};S.wiz={step:1,mode:null,format:'vertical',style:pre.preStyle||'neo_anime',genre:'',sub:'',name:'',customStyle:'',quality:'hd'}}S.view=v||'projects';render();window.scrollTo(0,0)}
-function openProject(P){Player.stop();closeSheet();const full=Object.assign(JSON.parse(JSON.stringify(DEF)),P);S.P=full;RT.voices={};RT.narr=null;RT.narrFile=null;RT.narrCuts=[];RT.video=null;RT.fg={};RT.clips={};
+function openProject(P){Player.stop();closeSheet();const full=Object.assign(JSON.parse(JSON.stringify(DEF)),P);full.voice=normVoice(full.voice);(full.scenes||[]).forEach(s=>{s.img=stripKey(s.img);s.bg=stripKey(s.bg);(s.vars||[]).forEach(v=>v.img=stripKey(v.img))});S.P=full;RT.voices={};RT.narr=null;RT.narrFile=null;RT.narrCuts=[];RT.video=null;RT.fg={};RT.clips={};
  const i=S.projects.findIndex(p=>p.id===full.id);if(i<0)S.projects.unshift(full);else S.projects[i]=full;S.sel=0;save(1);S.view='editor';S.tab='contenido';render();window.scrollTo(0,0)}
 function render(){renderShell();const m=$('#main');
  ({projects:vProjects,new:vWizard,editor:vEditor,catalogo:vCatalog,voices:vVoices,sonido:vSonido,help:vHelp,settings:vSettings}[S.view]||vProjects)(m);
@@ -1202,11 +1255,11 @@ function vEditor(m){const P=S.P;if(!P){go('projects');return}const k=!!S.setting
  m.innerHTML=`<div class="ehead"><button class="btn sm" onclick="go('projects')" title="Volver">${ic('back')}</button><button class="btn sm hidem" onclick="S.noleft=!S.noleft;render()" title="Mostrar/ocultar panel">${ic('menu')}</button>
  <div class="ttl"><div class="row" style="min-width:0"><input class="ttlin" style="flex:1" value="${esc(P.name)}" oninput="S.P.name=this.value;save()"><span class="savest ok" id="savest">${ic('check')}Guardado</span></div>
  <div class="row wrap" style="gap:6px;padding-left:6px"><span class="tag">${FORMATS[P.format].n}</span><span class="tag acc">${styleOf(P.style).n}</span>${g?`<span class="tag">${g.e} ${g.n}${P.sub?' / '+P.sub:''}</span>`:''}<span class="tag">${MODES[P.mode].n}</span></div></div>
- <span class="cred ${k?'':'off'}" title="${k?'Tu clave de Pollinations está conectada':'Funciona gratis sin cuenta; con clave es más rápido y tiene voz IA'}">${k?'⚡ Clave conectada':'∞ IA gratis'}</span>
+ <span class="cred" title="Guion, imágenes y voz gratis, sin cuenta">∞ IA gratis</span>
  <button class="btn neo" data-busy onclick="Player.run(true)">${ic('down')}Exportar</button>
  <button class="btn grad" data-busy onclick="Pipe.auto()">${ic('bolt')}Crear video completo</button>
  <div style="position:relative" class="hidem"><button class="avatar" onclick="event.stopPropagation();$('#um').classList.toggle('open')">${esc((S.settings.userName||'U')[0].toUpperCase())}</button>
- <div class="umenu" id="um"><button onclick="go('settings')">${ic('gear')}Ajustes y clave</button><button onclick="exportData()">${ic('down')}Exportar proyectos</button><button onclick="go('catalogo')">${ic('palette')}Géneros y Estilos</button><button onclick="go('help')">${ic('help')}Ayuda</button></div></div></div>
+ <div class="umenu" id="um"><button onclick="go('settings')">${ic('gear')}Ajustes</button><button onclick="exportData()">${ic('down')}Exportar proyectos</button><button onclick="go('catalogo')">${ic('palette')}Géneros y Estilos</button><button onclick="go('help')">${ic('help')}Ayuda</button></div></div></div>
  <div class="pipe" id="pipe"></div>
  <div class="ed ${S.noleft?'noleft':''}">
   <aside class="left" id="left">${leftPanel()}</aside>
@@ -1276,7 +1329,7 @@ function renderSel(){const el=$('#selpanel');if(!el||!S.P)return;const P=S.P,i=c
   <button class="btn" data-busy onclick="askBg(${i})">${ic('layers')}Cambiar fondo</button>
   <button class="btn ${RT.clips[s.id]?'neo':''}" data-busy onclick="run(()=>Pipe.animate(${i}))">${ic('film')}Animar IA (beta)</button>
   <button class="btn" onclick="sayScene(${i})">${ic('play')}Oír voz</button></div>
- <div class="hint">${s.local?'Imagen tuya: podés darle profundidad 2.5D, cambiarle el fondo y moverla con la cámara.':S.settings.key?'Editar con IA cambia detalles exactos de la imagen (inpainting).':'Con tu clave gratis, "Editar con IA" cambia detalles exactos (inpainting).'}</div>`;
+ <div class="hint">${s.local?'Imagen tuya: podés darle profundidad 2.5D, cambiarle el fondo y moverla con la cámara.':'"Editar con IA" vuelve a crear la imagen aplicando tu pedido.'}</div>`;
  if(S.busy)el.querySelectorAll('[data-busy]').forEach(b=>b.disabled=true)}
 function restoreVar(i,k){const s=S.P.scenes[i],v=s.vars[k];s.vars.splice(k,1);Pipe.pushVar(s);s.img=v.img;s.prompt=v.prompt;s.seed=v.seed;s.local=v.img.startsWith('local:');s.edited=v.img.includes('kontext');s.hq=v.img.includes('enhance=true');save();renderSel();renderScenesOnly(1);renderTL();seekScene(i)}
 function sceneExtra(i,d){const s=S.P.scenes[i];s.extra=clamp((s.extra||0)+d,-3,15);save();renderSel();renderTL();renderPipe()}
@@ -1298,7 +1351,7 @@ function paintScene(s,fail){const el=$('#si_'+s.id);const im=RT.imgs[s.img];
 
 function tContenido(){const P=S.P;let top='';
  const ipm=`<div class="lbl">Frecuencia visual: <b style="color:var(--txt)" id="ipml">${P.ipm} imágenes por minuto</b></div><input type="range" min="4" max="30" value="${P.ipm}" oninput="S.P.ipm=+this.value;$('#ipml').textContent=this.value+' imágenes por minuto';save()"><div class="rlabels"><span>Pocas (más lento)</span><span>Muchas (más dinámico)</span></div>`;
- const langSel=`<select class="sel" onchange="S.P.lang=this.value;save()">${Object.entries(LANGS).map(([k,v])=>`<option value="${k}" ${P.lang===k?'selected':''}>${v[0].toUpperCase()+v.slice(1)}</option>`).join('')}</select>`;
+ const langSel=`<select class="sel" onchange="setLang(this.value)">${Object.entries(LANGS).map(([k,v])=>`<option value="${k}" ${P.lang===k?'selected':''}>${v[0].toUpperCase()+v.slice(1)}</option>`).join('')}</select>`;
  const durSel=(opts)=>`<select class="sel" onchange="S.P.duration=+this.value;save();renderCfg()">${opts.map(d=>`<option value="${d}" ${P.duration===d?'selected':''}>${fmtTime(d)}</option>`).join('')}</select>`;
  const gen=(label)=>`<div class="genbtn"><button class="btn grad" data-busy onclick="run(()=>Pipe.makeScenes())">${ic('spark')}${label}</button></div>`;
  const quick=GENRES.filter(g=>g.grp!=='formatos').slice(0,14);
@@ -1347,18 +1400,39 @@ async function sceneAI(i){const ins=prompt('¿Qué cambio querés en esta escena
   const chg=o.prompt&&o.prompt!==s.prompt&&!s.local;s.text=o.text||s.text;if(CAMS[o.camera])s.cam=o.camera;if(AMB[o.ambient])s.amb=o.ambient;if(chg)s.prompt=o.prompt;delete RT.voices[s.id];save();renderScenesOnly();renderSel();Pipe.setBusy('');if(chg)await Pipe.regen(i,{keepSeed:true})}
  catch(e){toast(e.message,1)}finally{Pipe.setBusy('')}}
 async function sayScene(i){const P=S.P,s=P.scenes[i];if(!s.text){toast('Esta escena no tiene texto');return}const ac=getAC();await ac.resume();let v=RT.voices[s.id];
- if(!v||v.text!==s.text||v.voice!==P.voice){toast('Generando voz…');const b=await AI.tts(s.text,P.voice);if(b){v=RT.voices[s.id]={buf:await decode(b),text:s.text,voice:P.voice}}}
- if(v){const src=ac.createBufferSource();src.buffer=v.buf;src.playbackRate.value=P.speed;src.connect(ac.destination);src.start();renderTL()}else{try{const u=new SpeechSynthesisUtterance(s.text);u.lang='es-ES';speechSynthesis.speak(u);toast('Voz del navegador (para voz IA poné tu clave en Ajustes)')}catch(e){}}}
+ if(!v||v.text!==s.text||v.voice!==P.voice||(v.pre&&v.speed!==P.speed)){toast('Generando voz…');
+  try{const r=await Voice.make(s.text,P.voice,{speed:P.speed,onProg:f=>Pipe.setBusy(`Descargando la voz (solo la primera vez)… ${Math.round(f*100)}%`)});v=RT.voices[s.id]={buf:await decode(r.blob),text:s.text,voice:P.voice,speed:P.speed,pre:r.pre}}
+  catch(e){toast('No se pudo generar la voz: '+(e.message||e),1)}finally{Pipe.setBusy('')}}
+ if(v){const src=ac.createBufferSource();src.buffer=v.buf;src.playbackRate.value=v.pre?1:P.speed;src.connect(ac.destination);src.start();renderTL();renderPipe()}}
+function setLang(l){const P=S.P;P.lang=l;if(voiceOf(P.voice).lang!==l&&DEFAULT_VOICE[l]){P.voice=DEFAULT_VOICE[l];toast('Voz cambiada a '+voiceOf(P.voice).n+' para '+VOICE_LANGS[l])}save();renderCfg()}
 async function run(fn){try{await fn()}catch(e){toast(e.message,1);Pipe.setBusy('')}}
 function tVoz(){const P=S.P;if(P.mode==='musica')return `<div class="card box"><h3>${ic('mic')}Voz</h3><div class="info">${ic('music')}<span>En un videoclip no hay narrador: la protagonista es tu música.</span></div></div>`;
+ const vo=voiceOf(P.voice);
  return `<div class="card box"><h3>${ic('mic')}Voz del narrador</h3>${RT.narr?`<div class="info">${ic('wave')}<span>Se usa tu propia grabación.</span></div>`:''}
- <div class="vlist">${VOICES.map(v=>`<div class="card vcard ${P.voice===v.id?'on':''}" onclick="S.P.voice='${v.id}';save();render()"><div class="av" style="background:${v.c}26;color:${v.c}">${v.n[0]}</div><div><h4>${v.n}</h4><p>${v.d}</p></div><button class="btn sm" onclick="event.stopPropagation();previewVoice('${v.id}')">${ic('play')}</button></div>`).join('')}</div>
+ <div class="info">${ic('check')}<span>Elegida: <b>${esc(vo.n)}</b> · ${esc(vo.d)}. Las voces son gratis y quedan grabadas dentro del video exportado.</span></div>
+ ${voiceBrowser(true)}
  <div class="lbl">Velocidad: <b id="spl" style="color:var(--txt)">${P.speed.toFixed(2)}x</b></div><input type="range" min="0.8" max="1.3" step="0.05" value="${P.speed}" oninput="S.P.speed=+this.value;$('#spl').textContent=(+this.value).toFixed(2)+'x';save()">
- <div class="genbtn"><button class="btn grad" data-busy onclick="run(()=>Pipe.voices())">${ic('mic')}Generar voces de todas las escenas</button></div>
- <div class="info ${S.settings.key?'':'warnbox'}">${ic('help')}<span>${S.settings.key?'Clave conectada: voces IA activadas.':'La voz IA funciona mejor con tu clave gratis de Pollinations (Ajustes). Sin clave, la vista previa usa la voz del navegador.'}</span></div></div>
- <div class="card box"><h3>${ic('user')}Lip-sync de avatares <span class="tag soon">Próximamente</span></h3><div class="hint">Sincronizar los labios de un personaje con la voz requiere servidores con GPU pagos. Queda preparado para cuando haya una opción gratis estable.</div></div>`}
-async function previewVoice(id){const ac=getAC();await ac.resume();toast('Generando muestra…');const b=await AI.tts('Hola, así suena mi voz en tus videos.',id);
- if(b){const src=ac.createBufferSource();src.buffer=await decode(b);src.connect(ac.destination);src.start()}else toast('No se pudo generar la muestra. Poné tu clave gratis en Ajustes.',1)}
+ <div class="genbtn"><button class="btn grad" data-busy onclick="run(()=>Pipe.voices())">${ic('mic')}Generar voces de todas las escenas</button></div></div>
+ <div class="card box"><h3>${ic('user')}Lip-sync de avatares <span class="tag soon">Próximamente</span></h3><div class="hint">Sincronizar los labios de un personaje con la voz requiere servidores con GPU pagos.</div></div>`}
+function voiceCard(id,selectable){const v=voiceOf(id),on=selectable&&S.P&&normVoice(S.P.voice)===v.id;
+ return `<div class="card vcard ${on?'on':''}" ${selectable?`onclick="pickVoice('${v.id}')"`:''}><div class="av" style="background:${v.c}26;color:${v.c}">${esc(v.n[0]||'?')}</div><div style="min-width:0"><h4>${esc(v.n)}</h4><p>${esc(v.d)}</p></div><button class="btn sm" title="Escuchar" onclick="event.stopPropagation();previewVoice('${v.id}')">${ic('play')}</button></div>`}
+function voiceBrowser(selectable){const L=S.vlang,q=S.vq.toLowerCase(),re=v=>(L==='all'||v[0].toLowerCase().startsWith(L))&&(!q||(v[1]+' '+v[2]+' '+v[0]).toLowerCase().includes(q));
+ let edge=EDGE_VOICES.filter(re);if(S.vall&&RT.allVoices){const have=new Set(edge.map(v=>v[0]));edge=edge.concat(RT.allVoices.filter(v=>re(v)&&!have.has(v[0])))}
+ const piper=PIPER_VOICES.filter(v=>L==='all'||v[0].startsWith(L+'_'));const rer=selectable?'render()':'render()';
+ return `<div class="chips" style="margin-top:12px">${Object.entries(VOICE_LANGS).map(([k,n])=>`<button class="chip ${L===k?'on':''}" onclick="S.vlang='${k}';${rer}">${n}</button>`).join('')}<button class="chip ${L==='all'?'on':''}" onclick="S.vlang='all';${rer}">Todos los idiomas</button></div>
+ <div class="catsec" style="margin-top:14px"><h3>🎙️ Voces naturales de Microsoft</h3><span>Gratis · sin clave · ${S.vall&&RT.allVoices?RT.allVoices.length+' voces':'las más usadas'}</span></div>
+ ${Voice.online()?'':`<div class="info warnbox">${ic('help')}<span>Abriste la página como archivo de tu computadora. Estas voces funcionan desde tu link de Vercel; mientras tanto se usa Piper automáticamente.</span></div>`}
+ <div class="row wrap" style="margin-bottom:6px">${S.vall?`<input class="inp" style="max-width:260px" placeholder="Buscar voz o país…" value="${esc(S.vq)}" oninput="S.vq=this.value;clearTimeout(window._vq);window._vq=setTimeout(()=>{${rer};const i=document.querySelector('#vqin');if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length)}},300)" id="vqin">`:`<button class="btn sm" onclick="showAllVoices()">${ic('search')}Ver todas las voces (cientos, en muchos idiomas)</button>`}</div>
+ <div class="vlist">${edge.slice(0,S.vall?160:60).map(v=>voiceCard('edge:'+v[0],selectable)).join('')||'<div class="hint">No hay voces con ese filtro.</div>'}</div>
+ ${piper.length?`<div class="catsec"><h3>💻 Voces Piper (en tu computadora)</h3><span>Gratis · funcionan sin internet · la primera vez descargan la voz (unos 60 MB)</span></div><div class="vlist">${piper.map(v=>voiceCard('piper:'+v[0],selectable)).join('')}</div>`:''}
+ ${S.settings.key?`<div class="catsec"><h3>Pollinations</h3><span>Solo con clave y saldo</span></div><div class="vlist">${POLL_VOICES.map(v=>voiceCard('poll:'+v[0],selectable)).join('')}</div>`:''}`}
+function pickVoice(id){S.P.voice=id;save();render();toast('Voz elegida: '+voiceOf(id).n)}
+async function showAllVoices(){try{toast('Cargando todas las voces…');await Voice.loadAll();S.vall=true;S.vlang='all';render()}catch(e){toast(e.message,1)}}
+let voicePrev=null;
+async function previewVoice(id){const ac=getAC();await ac.resume();const v=voiceOf(id);toast('Generando muestra de '+v.n+'…');
+ try{const r=await Voice.make(SAMPLE[v.lang]||SAMPLE.es,id,{speed:1,onProg:f=>toast(`Descargando la voz (solo la primera vez)… ${Math.round(f*100)}%`)});
+  try{voicePrev&&voicePrev.stop()}catch(e){}const src=ac.createBufferSource();src.buffer=await decode(r.blob);src.connect(ac.destination);src.start();voicePrev=src}
+ catch(e){toast('No se pudo generar la muestra: '+(e.message||e),1)}}
 function tSubs(){const P=S.P,o=(k,v,e,n)=>`<div class="card opt ${P[k]===v?'on':''}" onclick="S.P.${k}='${v}';save();render();Player.seek(1.2)"><span class="e">${e}</span>${n}</div>`;
  return `<div class="card box"><h3>${ic('sub')}Subtítulos y texto</h3><div class="lbl">Estilo</div><div class="opts">${Object.entries(SUBS).map(([k,[e,n]])=>o('subStyle',k,e,n)).join('')}</div>
  <div class="lbl">Posición</div><div class="opts">${o('subPos','arriba','⬆️','Arriba')}${o('subPos','centro','⏺️','Centro')}${o('subPos','abajo','⬇️','Abajo')}</div>
@@ -1378,8 +1452,7 @@ async function previewMusic(id){stopPrev();const ac=getAC();await ac.resume();co
 async function previewAmb(type){stopPrev();const ac=getAC();await ac.resume();prevNodes=ambience(ac,ac.destination,type,ac.currentTime+.05,ac.currentTime+6,.5)}
 
 // ---- otras vistas ----
-function vVoices(m){m.innerHTML=`<div class="h1">Voces</div><div class="sub">Voces IA gratis (Pollinations). Tocá ▶ para escuchar.</div><div class="vlist" style="margin-top:16px">${VOICES.map(v=>`<div class="card vcard"><div class="av" style="background:${v.c}26;color:${v.c}">${v.n[0]}</div><div><h4>${v.n}</h4><p>${v.d}</p></div><button class="btn sm" onclick="previewVoice('${v.id}')">${ic('play')}</button></div>`).join('')}</div>
- <div class="info ${S.settings.key?'':'warnbox'}" style="max-width:640px">${ic('help')}<span>${S.settings.key?'Clave conectada ✅':'Para que las voces IA funcionen bien, creá tu clave gratis en Ajustes.'}</span></div>`}
+function vVoices(m){m.innerHTML=`<div class="h1">Voces</div><div class="sub">Todas gratis y sin clave. Tocá ▶ para escuchar. La voz se elige dentro de cada proyecto, en la pestaña Voz.</div>${voiceBrowser(false)}`}
 function vSonido(m){m.innerHTML=`<div class="h1">Sonido</div><div class="sub">Música y ambientes generados en tu navegador: sin derechos de autor.</div>
  <div class="catsec"><h3>Música</h3></div><div class="opts" style="max-width:760px">${MUSIC.filter(x=>x.chords).map(x=>`<div class="card opt" onclick="previewMusic('${x.id}')"><span class="e">${x.e}</span>${x.n}<div class="hint">${x.bpm} BPM · ▶</div></div>`).join('')}</div>
  <div class="catsec"><h3>Ambientes (Foley)</h3></div><div class="opts" style="max-width:760px">${Object.entries(AMB).filter(([k])=>k!=='none').map(([k,n])=>`<div class="card opt" onclick="previewAmb('${k}')"><span class="e">${n.split(' ')[0]}</span>${n.split(' ').slice(1).join(' ')}</div>`).join('')}</div>
@@ -1389,14 +1462,17 @@ function vHelp(m){m.innerHTML=`<div class="h1">Ayuda</div><div class="sub">Cómo
  <div class="card"><h4>${ic('film')}Paso a paso</h4><ol><li>Nuevo video → tipo, formato, género y estilo.</li><li>Generá el storyboard.</li><li>Ajustá cada escena: cámara, ambiente, edición IA.</li><li>Elegí el look en el panel izquierdo.</li><li>Tocá <b>Exportar</b>.</li></ol></div>
  <div class="card"><h4>${ic('scissors')}Rotoscopia 2.5D</h4><p>Separa a la persona, animal u objeto del fondo dentro de tu navegador y lo mueve más rápido que el fondo: efecto de profundidad. La primera vez descarga el modelo (unos segundos).</p></div>
  <div class="card"><h4>${ic('link')}Links de YouTube/TikTok</h4><p>Funcionan con la app publicada en Vercel (usa /api/transcript.js). Si un video no tiene subtítulos, pegá el texto a mano.</p></div>
- <div class="card"><h4>${ic('gear')}Clave gratis</h4><p>Sin clave funciona, pero más lento. Con tu clave de <a href="https://enter.pollinations.ai" target="_blank" rel="noopener">enter.pollinations.ai</a> tenés voz IA, edición exacta de imágenes y animación (beta).</p></div>
+ <div class="card"><h4>${ic('mic')}Voces gratis</h4><p>Las voces de Microsoft (Tomás, Elena y cientos más) funcionan desde tu link de Vercel. Si no responden, la app usa sola la voz Piper, que se genera en tu computadora (la primera vez descarga la voz). Las dos quedan grabadas en el video.</p></div>
  <div class="card"><h4>${ic('help')}Al exportar</h4><p>El video se graba en tiempo real: 1 minuto de video = 1 minuto. No cambies de pestaña. Mejor en Chrome de PC.</p></div></div>`}
 function vSettings(m){const st=S.settings;m.innerHTML=`<div class="h1">Ajustes</div><div class="sub">Conexiones gratis y tus datos</div>
  <div class="card box" style="max-width:680px;margin-top:16px"><h3>${ic('user')}Tu perfil</h3><div class="lbl">Tu nombre</div><input class="inp" value="${esc(st.userName)}" placeholder="Ej: Sergio" onchange="S.settings.userName=this.value.trim();saveSettings()"></div>
- <div class="card box" style="max-width:680px"><h3>${ic('spark')}Pollinations (IA gratis)</h3>
- <div class="hint">Opcional. Creá tu clave gratis en <a href="https://enter.pollinations.ai" target="_blank" rel="noopener">enter.pollinations.ai</a> (entrá con GitHub) y pegala. Usá la clave “publishable” (empieza con pk_).</div>
- <div class="lbl">Clave</div><input class="inp" type="password" value="${esc(st.key)}" placeholder="pk_…" onchange="S.settings.key=this.value.trim();saveSettings();toast('Guardado ✅')">
- <div class="row" style="margin-top:12px"><button class="btn" onclick="testAI()">${ic('check')}Probar conexión</button></div><div class="pmsg" id="tres"></div></div>
+ <div class="card box" style="max-width:680px"><h3>${ic('spark')}IA gratis: no hace falta configurar nada</h3>
+ <div class="hint">El guion y las imágenes salen de Pollinations sin cuenta, y la voz de Microsoft/Piper, también gratis. <b>No necesitás ninguna clave.</b></div>
+ <div class="row" style="margin-top:12px"><button class="btn" onclick="testAI()">${ic('check')}Probar conexión</button></div><div class="pmsg" id="tres"></div>
+ <details style="margin-top:12px"><summary class="hint" style="cursor:pointer">Avanzado: clave de Pollinations (solo si tenés saldo pago)</summary>
+ <div class="info warnbox">${ic('help')}<span>Solo sirve para edición exacta de imágenes, transcribir audio y animar con IA, y eso consume saldo pago. <b>Nunca pegues una clave secreta (sk_) en una página pública.</b> Si la pegás acá, queda solo en este navegador.</span></div>
+ <div class="lbl">Clave</div><input class="inp" type="password" value="${esc(st.key)}" placeholder="opcional" onchange="S.settings.key=this.value.trim();saveSettings();toast('Guardado ✅')"></details>
+ </div>
  <div class="card box" style="max-width:680px"><h3>${ic('layers')}Proveedor de texto alternativo (avanzado)</h3><div class="hint">Cualquier servicio compatible con OpenAI. Ej. gratis: Groq → URL https://api.groq.com/openai/v1/chat/completions, modelo llama-3.3-70b-versatile.</div>
  <div class="lbl">URL</div><input class="inp" value="${esc(st.altUrl)}" onchange="S.settings.altUrl=this.value.trim();saveSettings()">
  <div class="cols2"><div><div class="lbl">Clave</div><input class="inp" type="password" value="${esc(st.altKey)}" onchange="S.settings.altKey=this.value.trim();saveSettings()"></div><div><div class="lbl">Modelo</div><input class="inp" value="${esc(st.altModel)}" onchange="S.settings.altModel=this.value.trim();saveSettings()"></div></div></div>

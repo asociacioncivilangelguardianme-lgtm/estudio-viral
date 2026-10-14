@@ -1,0 +1,9 @@
+{
+  "name": "estudio-viral",
+  "version": "3.0.0",
+  "private": true,
+  "description": "Estudio Viral IA: videos virales con IA gratis",
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}

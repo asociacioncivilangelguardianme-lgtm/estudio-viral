@@ -8,7 +8,11 @@ La IA escribe el guion, genera las imágenes en el estilo que elijas, pone voz, 
 | Archivo | Para qué sirve |
 |---|---|
 | `index.html` | Toda la app (la página que ves) |
-| `api/transcript.js` | Mini servidor que lee los links de YouTube y TikTok |
+| `api/transcript.js` | Lee los links de YouTube y TikTok |
+| `api/tts.js` | Genera la voz del narrador (voces gratis de Microsoft) |
+| `api/voices.js` | Lista completa de voces |
+| `api/_edge.js` | Datos que usan los dos archivos de voz |
+| `package.json` | Le dice a Vercel qué instalar para la voz |
 | `README.md` | Esta guía |
 
 ---
@@ -32,11 +36,9 @@ La IA escribe el guion, genera las imágenes en el estilo que elijas, pone voz, 
 
 Cada vez que cambies algo en GitHub, Vercel actualiza la página solo.
 
-### 3. (Recomendado) Clave gratis de IA
-Sin clave funciona, pero es más lento y la voz IA puede fallar.
-1. Entrá a **enter.pollinations.ai** y registrate con GitHub.
-2. Creá una clave **publishable** (empieza con `pk_`).
-3. En la app: **Ajustes → Clave** → pegala → **Probar conexión**.
+### 3. No hace falta ninguna clave
+Guion, imágenes y voz funcionan gratis, sin cuenta y sin clave.
+**Nunca pegues claves secretas (`sk_`) en la página ni en GitHub.**
 
 ---
 
@@ -49,6 +51,7 @@ Sin clave funciona, pero es más lento y la voz IA puede fallar.
 - **Look de película**: color grading (Teal & Orange, Matrix, neón…), VHS, 16mm, Super 8, cine mudo, glitch, aberración cromática, grano. La IA puede elegirlo.
 - **Edición IA por escena**: nueva imagen, editar con una orden, mejorar calidad, expandir encuadre, rotoscopia 2.5D, cambiar fondo, animar (beta), variaciones con antes/después.
 - **Sonido**: música sin derechos, whooshes, impactos y ambientes (lluvia, viento, océano, fuego…).
+- **Voces gratis (v3)**: voces naturales de Microsoft (Tomás y Elena de Argentina, y cientos más) a través de tu Vercel. Si no responden, la app usa sola la voz **Piper**, que se genera en tu computadora. Las dos quedan grabadas dentro del video exportado.
 - **Próximamente**: Video a Video y Lip-sync (necesitan servidores pagos).
 
 ## 🧠 Cómo se usa
@@ -60,7 +63,8 @@ Sin clave funciona, pero es más lento y la voz IA puede fallar.
 
 ## 🆓 Servicios gratis que usa
 
-- **Pollinations.ai** → texto (guiones), imágenes y voces.
+- **Pollinations.ai** → texto (guiones) e imágenes, sin clave.
+- **Voces de Microsoft Edge** (vía `api/tts.js`) y **Piper** (en el navegador) → voz del narrador.
 - **Vercel** → hosting y el servidor de links.
 - **Navegador** → arma el video (canvas), música generada sin derechos de autor y dictado por voz.
 
@@ -68,5 +72,7 @@ Sin clave funciona, pero es más lento y la voz IA puede fallar.
 
 - YouTube a veces bloquea la lectura de subtítulos desde servidores. Si pasa, pegá el texto a mano.
 - TikTok solo comparte la descripción del video, no lo que se habla.
+- Las voces de Microsoft no son un servicio oficial para apps: si Microsoft lo cambia, la app pasa sola a Piper.
+- Piper descarga la voz la primera vez (unos 60 MB); después funciona sin internet.
 - Respetá los derechos de autor: usá links como inspiración y dejá que la IA reescriba con otras palabras.
 - Los proyectos se guardan en tu navegador. Usá **Ajustes → Exportar** para tener copia.
