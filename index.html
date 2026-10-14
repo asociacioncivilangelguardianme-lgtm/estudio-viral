@@ -830,7 +830,10 @@ Además "character": descripción física en inglés del personaje principal par
    instr=`Videoclip musical.${gtxt} Tema, letra o sensación de la canción: "${P.idea||'libre, poético y abstracto'}". No hay narrador. En "text" poné una línea corta de la letra si la hay, o "" si no.`}
   else{const base=this.baseScript();if(!base.trim())throw new Error(P.mode==='url'?'Primero obtené o pegá el texto del video.':P.mode==='audio'?'Primero transcribí o pegá el texto del audio.':'Pegá tu guion primero.');
    const st=P.mode!=='audio'?this.structured(base):null;
-   if(st){if(st.format&&st.format!==P.format){P.format=st.format}P.title=st.title||P.title||P.name;if(P.name.startsWith('Proyecto')&&st.title)P.name=st.title.slice(0,60);
+   if(st){if(st.format&&st.format!==P.format){P.format=st.format}
+    // Si el guion pide realismo y el estilo quedó en uno de dibujo, paso a Hiperrealismo de Cine (si no, mezcla anime con realista)
+    const real=/hiperreal|hyper-?real|ultra-?real|photo-?real|fotorreal|realista|realistic/i.test(base);const cat=styleOf(P.style).c;
+    if(real&&cat!=='realismo'&&P.style!=='custom'){P.style='hiperreal';toast('Tu guion pide imágenes realistas: puse el estilo Hiperrealismo de Cine')}P.title=st.title||P.title||P.name;if(P.name.startsWith('Proyecto')&&st.title)P.name=st.title.slice(0,60);
     P.scenes=this.parseScenes(st.scenes);P.character='';P.cast=extractCast(st.scenes.map(x=>x.prompt));P.scenes.forEach(sc=>{const c=castIn(P,sc);if(c.length===1)sc.seed=hashSeed(c[0].name)});S.sel=0;RT.voices={};RT.video=null;P.status='draft';save(1);
     toast(`Leí tu guion: ${st.scenes.length} escenas con sus prompts de imagen ✅`);render();if(!fromAuto)this.images().catch(e=>toast(e.message,1));return}
    dur=RT.narr?RT.narr.duration:wordsOf(base)/2.5;instr=`Este es el guion. NO cambies las palabras, solo dividilo en orden:\n"""${base.slice(0,12000)}"""${gtxt}`}
@@ -1085,7 +1088,7 @@ function drawFrame(ctx,W,H,t,TL){
  const G=GRADES[P.grade]||GRADES.none;
  const target=P.lens==='bokeh'?buf('F',W,H).getContext('2d'):ctx;
  if(target!==ctx){target.globalAlpha=1;target.filter='none';target.fillStyle='#000';target.fillRect(0,0,W,H)}
- target.filter=G.f;
+ const br=P.bright||1;target.filter=br===1?G.f:((G.f&&G.f!=='none'?G.f+' ':'')+`brightness(${br}) contrast(${(1+(br-1)*.25).toFixed(3)})`);
  drawScene(target,W,H,it,i,p,t,1,es,jit);
  if(P.transition==='fade'&&rem<.45&&L[i+1])drawScene(target,W,H,L[i+1],i+1,0,t,1-rem/.45,1,jit);
  target.globalAlpha=1;target.filter='none';
@@ -1399,7 +1402,7 @@ function leftPanel(){const P=S.P,st=styleOf(P.style),g=genreOf(P.genre);
   <div class="lbl">Transición</div><div class="seg">${Object.entries(TRANS).map(([k,[e,n]])=>`<button class="${P.transition===k?'on':''}" title="${n}" onclick="S.P.transition='${k}';save();renderLeft()">${e}</button>`).join('')}</div><div class="hint">${TRANS[P.transition][1]}</div></div></details>
  <details class="pnl" open><summary>${ic('droplet')}Look de película</summary><div class="pbody2">
   <button class="btn sm grad" style="width:100%" data-busy onclick="run(()=>Pipe.lookAI())">${ic('spark')}Elegir look con IA</button>
-  <div class="lbl">Color grading</div>${sel('grade',GRADES)}
+  <div class="lbl">Color grading</div>${sel('grade',GRADES)}<div class="lbl">Brillo de las imágenes: <b id="brv">${Math.round((P.bright||1)*100)}%</b></div><input type="range" min="0.7" max="1.6" step="0.05" value="${P.bright||1}" oninput="S.P.bright=+this.value;$('#brv').textContent=Math.round(this.value*100)+'%';save();Player.seek(1.2)">
   <div class="lbl">Emulación analógica</div>${sel('analog',ANALOG)}
   <div style="margin-top:6px">${sw('chroma','Aberración cromática')}${sw('grain','Grano de película')}${sw('vignette','Viñeta')}${sw('pulse','Pulso al ritmo (audio reactivo)')}${sw('beatSync','Cortes al ritmo del beat')}${sw('progress','Barra de progreso')}</div></div></details>`}
 function renderLeft(){const l=$('#left');if(l){const open=[...l.querySelectorAll('details')].map(d=>d.open);l.innerHTML=leftPanel();l.querySelectorAll('details').forEach((d,i)=>{if(open[i]===false)d.open=false});hydrateThumbs()}renderCfg()}
