@@ -815,6 +815,10 @@ Además "character": descripción física en inglés del personaje principal par
   else if(P.mode==='musica'){dur=RT.music?RT.music.duration:P.duration;
    instr=`Videoclip musical.${gtxt} Tema, letra o sensación de la canción: "${P.idea||'libre, poético y abstracto'}". No hay narrador. En "text" poné una línea corta de la letra si la hay, o "" si no.`}
   else{const base=this.baseScript();if(!base.trim())throw new Error(P.mode==='url'?'Primero obtené o pegá el texto del video.':P.mode==='audio'?'Primero transcribí o pegá el texto del audio.':'Pegá tu guion primero.');
+   const st=P.mode!=='audio'?this.structured(base):null;
+   if(st){if(st.format&&st.format!==P.format){P.format=st.format}P.title=st.title||P.title||P.name;if(P.name.startsWith('Proyecto')&&st.title)P.name=st.title.slice(0,60);
+    P.scenes=this.parseScenes(st.scenes);S.sel=0;RT.voices={};RT.video=null;P.status='draft';save(1);
+    toast(`Leí tu guion: ${st.scenes.length} escenas con sus prompts de imagen ✅`);render();if(!fromAuto)this.images().catch(e=>toast(e.message,1));return}
    dur=RT.narr?RT.narr.duration:wordsOf(base)/2.5;instr=`Este es el guion. NO cambies las palabras, solo dividilo en orden:\n"""${base.slice(0,12000)}"""${gtxt}`}
   const n=this.nScenes(dur);this.setBusy('La IA está escribiendo el guion y el storyboard…');this.prog(.1);
   try{let data;
@@ -829,6 +833,29 @@ Además "character": descripción física en inglés del personaje principal par
    RT.voices={};RT.video=null;P.status='draft';save(1);
   }finally{this.setBusy('');this.prog(0)}
   render();if(!fromAuto)this.images().catch(e=>toast(e.message,1))},
+ // Lee guiones ya armados por escenas (de ChatGPT, Gemini, etc.): "Escena 1 … Prompt Visual … Narrador: …"
+ structured(text){const t=String(text||'').replace(/\r/g,'');
+  const heads=[...t.matchAll(/^[ \t#*>\-]*(?:escena|scene|toma|plano)\s*(\d+)\s*[:.\-–—)]?\s*(.*)$/gim)];if(heads.length<2)return null;
+  const head=t.slice(0,heads[0].index),out={title:'',format:'',scenes:[]};
+  const tl=head.split('\n').map(x=>x.trim()).filter(Boolean)[0]||'';out.title=tl.replace(/^(guion|guión|script)[^:]*:\s*/i,'').replace(/[*#]/g,'').trim().slice(0,80);
+  if(/horizontal|16\s*:\s*9/i.test(head))out.format='horizontal';else if(/vertical|9\s*:\s*16/i.test(head))out.format='vertical';else if(/cuadrado|1\s*:\s*1/i.test(head))out.format='cuadrado';
+  const LBL=/^(prompt[^:]{0,25}|nota[^:]{0,40}|animaci[oó]n[^:]{0,30}|c[aá]mara[^:]{0,20}|sonido[^:]{0,20}|m[uú]sica[^:]{0,20}|narrador[^:]{0,40}|narraci[oó]n[^:]{0,20}|voz en off[^:]{0,20}|di[aá]logo[^:]{0,20}|texto[^:]{0,20}|[A-ZÁÉÍÓÚÑ][\wÁÉÍÓÚÑáéíóúñâêôãõç'’]{1,20}(?: [A-ZÁÉÍÓÚÑ][\wáéíóúñ]{1,20})?\s*(?:\([^)]{0,80}\))?)\s*:\s*(.*)$/i;
+  heads.forEach((h,k)=>{const body=t.slice(h.index+h[0].length,k+1<heads.length?heads[k+1].index:t.length);
+   const parts=[];let cur=null;
+   body.split('\n').forEach(line=>{const L=line.replace(/^[\s*_>\-•]+|[*_]+$/g,'').replace(/\*\*/g,'').trim();if(!L){return}
+    const m=L.match(LBL);if(m&&L.indexOf(':')<70){cur={lab:m[1].trim(),txt:m[2].trim()};parts.push(cur)}else if(cur)cur.txt+=(cur.txt?' ':'')+L;else parts.push(cur={lab:'',txt:L})});
+   let prompt='',note='',lines=[];
+   parts.forEach(p=>{const lab=p.lab.toLowerCase();
+    if(/^prompt/.test(lab))prompt+=(prompt?' ':'')+p.txt;
+    else if(/^(nota|animaci|c[aá]mara|sonido|m[uú]sica)/.test(lab))note+=' '+p.txt;
+    else if(p.lab){const say=p.txt.replace(/\([^)]*\)/g,' ').replace(/^["“”«»']+|["“”«»']+$/g,'').replace(/\s+/g,' ').trim();if(say&&/[a-záéíóúñ]{2}/i.test(say))lines.push(say)}
+    else if(!prompt&&/^[\x00-\x7F]+$/.test(p.txt)&&p.txt.split(' ').length>6)prompt=p.txt;});
+   const n=(note+' '+prompt).toLowerCase();
+   const cam=/paneo|slow pan|\bpan\b/.test(n)?'panr':/close-?up|primer plano|macro/.test(n)?'zoomin':/wide shot|plano general|panor[aá]mic/.test(n)?'zoomout':/camina|walking|slow motion|tracking|sigue|following/.test(n)?'track':/sube|tilt up|desde abajo|majestic|epic/.test(n)?'tiltup':'auto';
+   const amb=/\b(forge|fire|fuego|forja)\b/.test(n)?'fuego':/\b(river|r[ií]o|water|agua|sea|mar|ocean)\b/.test(n)?'oceano':/\b(forest|bosque|monte|jungle|selva)\b/.test(n)?'bosque':/rain|lluvia/.test(n)?'lluvia':/storm|tormenta|thunder|trueno/.test(n)?'tormenta':/city|ciudad|village|pueblo|street/.test(n)?'ciudad':/night|noche/.test(n)?'noche':/space|espacio|stars/.test(n)?'espacio':'none';
+   const name=(h[2]||'').replace(/[*#]/g,'').trim();
+   out.scenes.push({text:lines.join(' '),prompt:(prompt||name||lines.join(' ')).replace(/\b(8k|4k)( resolution)?\b,?/gi,'').trim(),camera:cam,ambient:amb})});
+  return out.scenes.length>=2?out:null},
  naiveSplit(text,n){const sent=text.match(/[^.!?¿¡]+[.!?]*/g)||[text];const per=Math.max(1,Math.ceil(sent.length/n)),sc=[];
   for(let i=0;i<sent.length;i+=per){const t=sent.slice(i,i+per).join(' ').trim();if(t)sc.push({text:t,prompt:t})}return {title:'',character:'',scenes:sc}},
 
