@@ -687,21 +687,29 @@ function applyPreset(pre,P=S.P){if(!pre||!P)return;Object.entries(pre).forEach((
 // =================================================================
 const AI={
  async chat(messages,{temp=0.8}={}){
-  const st=S.settings,att=[];
+  const st=S.settings;let last='',noKey=false;
+  // 1) Gemini de Google a través de tu Vercel (gratis; la clave está escondida en Vercel)
+  if(/^https?:$/.test(location.protocol)&&!RT.geminiOff){
+   try{const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages,temperature:temp})});
+    const j=await r.json().catch(()=>({}));
+    if(j.ok&&j.content)return String(j.content).trim();
+    if(r.status===404||r.status===405)RT.geminiOff=true;
+    if(j.code==='NO_KEY')noKey=true;last=j.error||('Gemini HTTP '+r.status)}catch(e){last=e.message}}
+  // 2) Otros proveedores opcionales (Ajustes) y Pollinations como último intento
+  const att=[];
   if(st.altUrl)att.push({u:st.altUrl,h:st.altKey?{Authorization:'Bearer '+st.altKey}:{},m:st.altModel||'gpt-4o-mini'});
   if(st.key)att.push({u:'https://gen.pollinations.ai/v1/chat/completions',h:{Authorization:'Bearer '+st.key},m:'openai'});
   att.push({u:'https://text.pollinations.ai/openai',h:{},m:'openai'});
-  att.push({u:'https://gen.pollinations.ai/v1/chat/completions',h:{},m:'openai'});
-  let last='';
   for(const a of att){
    try{const r=await fetch(a.u,{method:'POST',headers:Object.assign({'Content-Type':'application/json'},a.h),body:JSON.stringify({model:a.m,messages,temperature:temp})});
-    if(!r.ok){last='HTTP '+r.status;continue}
+    if(!r.ok){if(!last)last='HTTP '+r.status;continue}
     const ct=r.headers.get('content-type')||'';let c;
     if(ct.includes('json')){const j=await r.json();c=j.choices?.[0]?.message?.content}else c=await r.text();
     if(c&&String(c).trim())return String(c).trim();
-   }catch(e){last=e.message}
+   }catch(e){if(!last)last=e.message}
   }
-  throw new Error('No pude conectar con la IA ('+last+'). Revisá tu conexión a internet y probá de nuevo.');
+  if(noKey)throw new Error('Falta conectar Gemini: poné tu clave gratis de Google en Vercel (variable GEMINI_API_KEY). Mirá Ajustes → "Conectar Gemini".');
+  throw new Error('No pude conectar con la IA ('+last+'). Probá de nuevo en un rato.');
  },
  json(txt){let t=String(txt).replace(/```json|```/g,'');const a=t.indexOf('{'),b=t.lastIndexOf('}');if(a<0||b<0)throw new Error('La IA no devolvió datos válidos');t=t.slice(a,b+1);
   try{return JSON.parse(t)}catch(e){return JSON.parse(t.replace(/,\s*([}\]])/g,'$1').replace(/[“”]/g,'"'))}},
@@ -739,7 +747,7 @@ function loadImg(url,pri=5){
  if(!url)return Promise.reject(new Error('sin url'));if(imgCache[url])return imgCache[url];
  const once=u=>new Promise((res,rej)=>{u=withKey(u);const im=new Image();im.crossOrigin='anonymous';const to=setTimeout(()=>{im.src='';rej(new Error('tiempo'))},120000);im.onload=()=>{clearTimeout(to);res(im)};im.onerror=()=>{clearTimeout(to);rej(new Error('img'))};im.src=u});
  const local=url.startsWith('local:');
- const p=(local?srcOf(url).then(once):Q.add(async()=>{try{return await once(url)}catch(e){await sleep(2500);return await once(AI.altImgURL(url))}},pri)).then(im=>{RT.imgs[url]=im;return im});
+ const p=(local?srcOf(url).then(once):Q.add(async()=>{try{return await once(url)}catch(e){await sleep(2500);return await once(AI.altImgURL(url))}},pri)).then(im=>{if(!local&&url.includes('pollinations.ai')&&!S.settings.key)im._crop=.07;RT.imgs[url]=im;return im});
  imgCache[url]=p;p.catch(()=>delete imgCache[url]);return p;
 }
 
@@ -966,7 +974,7 @@ const Roto={seg:null,
   for(let i=0;i<arr.length;i++){if(arr[i]){id.data[i*4+3]=255;fg++}}mx.putImageData(id,0,0);try{m.close()}catch(e){}
   if(fg<w*h*.02)throw new Error('no encontré un sujeto claro (persona, animal u objeto).');
   const W=img.naturalWidth||img.width,H=img.naturalHeight||img.height,out=document.createElement('canvas');out.width=W;out.height=H;const o=out.getContext('2d');
-  o.drawImage(img,0,0,W,H);o.globalCompositeOperation='destination-in';o.filter='blur(3px)';o.drawImage(mc,0,0,W,H);return out}};
+  o.drawImage(img,0,0,W,H);o.globalCompositeOperation='destination-in';o.filter='blur(3px)';o.drawImage(mc,0,0,W,H);out._crop=img._crop||0;return out}};
 
 // =================================================================
 //  MOTOR DE VIDEO
@@ -986,9 +994,10 @@ function camXf(cam,k,p,W,H,z,t){const P=S.P;if(cam==='auto')cam=['zoomin','panr'
   case'dolly':s=1+z*1.7*Math.pow(e,1.4);break;case'track':s=1+z*.8;dx=(.5-e)*z*W*.8;dy=Math.sin(e*Math.PI)*H*.01;break;case'static':s=1.02;break}
  if(P.shake){dx+=Math.sin(t*1.7)*W*.004+Math.sin(t*4.3)*W*.002;dy+=Math.cos(t*1.3)*H*.003;s*=1.02}
  return{s,dx,dy,rot:P.shake?Math.sin(t*1.1)*.004:0}}
-function drawSrc(ctx,src,W,H,xf,alpha){const sw=src.videoWidth||src.naturalWidth||src.width,sh=src.videoHeight||src.naturalHeight||src.height;if(!sw)return;
+function drawSrc(ctx,src,W,H,xf,alpha){const sw=src.videoWidth||src.naturalWidth||src.width,sh0=src.videoHeight||src.naturalHeight||src.height;if(!sw)return;
+ const sh=sh0*(1-(src._crop||0)); // recorta abajo el sello de agua del servicio gratis
  const sc=Math.max(W/sw,H/sh)*xf.s,w=sw*sc,h=sh*sc;ctx.globalAlpha=alpha;
- if(xf.rot){ctx.save();ctx.translate(W/2,H/2);ctx.rotate(xf.rot);ctx.drawImage(src,-w/2+xf.dx,-h/2+xf.dy,w,h);ctx.restore()}else ctx.drawImage(src,(W-w)/2+xf.dx,(H-h)/2+xf.dy,w,h)}
+ if(xf.rot){ctx.save();ctx.translate(W/2,H/2);ctx.rotate(xf.rot);ctx.drawImage(src,0,0,sw,sh,-w/2+xf.dx,-h/2+xf.dy,w,h);ctx.restore()}else ctx.drawImage(src,0,0,sw,sh,(W-w)/2+xf.dx,(H-h)/2+xf.dy,w,h)}
 function drawScene(ctx,W,H,x,k,p,t,alpha,extraS,jit){
  const P=S.P,s=x.s,im=RT.imgs[s.img],clip=RT.clips[s.id];
  if(!im&&!clip){ctx.globalAlpha=alpha;const g=ctx.createLinearGradient(0,0,W,H);const st=styleOf(P.style);g.addColorStop(0,st.g[0]);g.addColorStop(1,st.g[1]);ctx.fillStyle=g;ctx.fillRect(0,0,W,H);return}
@@ -1183,7 +1192,7 @@ function renderShell(){const v=S.view==='editor'?'projects':S.view,k=!!S.setting
  $('#sb').innerHTML=`<div class="brand"><div class="logo">${ic('film')}</div><div>Estudio Viral<small>Videos con IA · gratis</small></div></div>
  <button class="newbtn" onclick="go('new')">${ic('plus')}Nuevo video</button>
  <div class="nav">${NAV.map(n=>`<button class="${v===n[0]?'on':''}" onclick="go('${n[0]}')">${ic(n[1])}${n[2]}</button>`).join('')}</div>
- <div class="sbfoot"><div class="credit"><span class="dot"></span>100% gratis<b>Sin cuenta y sin clave</b></div>
+ <div class="sbfoot"><div class="credit"><span class="dot"></span>100% gratis<b>Sin tarjeta ni pagos</b></div>
  <div class="sub" style="font-size:11px;padding:0 4px">${S.projects.length} proyecto(s) en este navegador</div></div>`;
  $('#topbar').innerHTML=`<div class="brand"><div class="logo">${ic('film')}</div>Estudio Viral</div><button class="btn pri sm" onclick="go('new')">${ic('plus')}Nuevo</button>`;
  $('#bnav').innerHTML=[['projects','folder','Proyectos'],['catalogo','palette','Estilos'],['new','plus','Nuevo'],['sonido','music','Sonido'],['settings','gear','Ajustes']].map(n=>`<button class="${v===n[0]?'on':''} ${n[0]==='new'?'plus':''}" onclick="go('${n[0]}')">${ic(n[1])}${n[2]}</button>`).join('')}
@@ -1194,7 +1203,7 @@ function render(){renderShell();const m=$('#main');
  ({projects:vProjects,new:vWizard,editor:vEditor,catalogo:vCatalog,voices:vVoices,sonido:vSonido,help:vHelp,settings:vSettings}[S.view]||vProjects)(m);
  hydrateThumbs();if(S.busy)document.querySelectorAll('[data-busy]').forEach(b=>b.disabled=true)}
 function resetImgs(){if(!S.P)return;S.P.scenes.forEach(s=>{if(!s.local){Pipe.pushVar(s);s.img='';s.edited=false;s.hq=false;s.parallax=false;delete RT.fg[s.id];delete RT.clips[s.id]}})}
-function setStyle(id){const P=S.P;P.style=id;applyFx(styleOf(id).fx);resetImgs();save();closeSheet();render();toast('Estilo: '+styleOf(id).n+(P.scenes.length?' · tocá "Cargar imágenes"':''))}
+function setStyle(id){const P=S.P;P.style=id;applyFx(styleOf(id).fx);resetImgs();save();closeSheet();render();toast('Estilo: '+styleOf(id).n+(P.scenes.length?' · tocá "Generar imágenes"':''))}
 function setGenre(id,sub){const P=S.P,g=genreOf(id);if(!g){P.genre='';P.sub='';save();render();return}P.genre=id;P.sub=sub||'';const old=P.style;applyPreset(g.pre,P);if(P.style!==old)resetImgs();save();closeSheet();render();toast('Género: '+g.n+(sub?' · '+sub:'')+(g.pre?' (look recomendado aplicado)':''))}
 
 // ---- Proyectos ----
@@ -1403,7 +1412,7 @@ function tContenido(){const P=S.P;let top='';
   <div class="lbl">Tema, sensación o letra (opcional)</div><textarea class="ta" placeholder="Ej: viaje nocturno por una ciudad de neón, nostalgia" oninput="S.P.idea=this.value;save()">${esc(P.idea)}</textarea>
   ${RT.music&&P.music==='upload'?'':`<div class="lbl">Duración</div>${durSel([15,30,45,60,90,120,180])}`}${ipm}${gen('Generar escenas del videoclip')}</div>`;
  return top+`<div class="card box"><div class="between"><h3>${ic('grid')}Storyboard <span class="sub">${P.scenes.length} escenas</span></h3>
-  ${P.scenes.length?`<div class="row"><button class="btn sm" data-busy onclick="run(()=>Pipe.images())">${ic('refresh')}Cargar imágenes</button><button class="btn sm" onclick="addScene()">${ic('plus')}Escena</button></div>`:''}</div>
+  ${P.scenes.length?`<div class="row"><button class="btn sm" data-busy onclick="run(()=>Pipe.images())">${ic('refresh')}Generar imágenes</button><button class="btn sm" onclick="addScene()">${ic('plus')}Escena</button></div>`:''}</div>
   ${P.character?`<div class="hint">Personaje fijo: ${esc(P.character)}</div>`:''}<div class="scenes" id="scenes">${scenesHTML()}</div>
   ${P.scenes.length?`<div class="genbtn"><button class="btn grad" data-busy onclick="Pipe.auto()">${ic('bolt')}Generar video</button></div>`:''}</div>`}
 function scenesHTML(){const P=S.P;if(!P.scenes.length)return `<div class="empty" style="padding:26px 10px;grid-column:1/-1"><p>Las escenas aparecen acá: cada tarjeta tiene su imagen, su texto, su cámara y su sonido ambiente.</p></div>`;const c=FORMATS[P.format].c;
@@ -1485,10 +1494,14 @@ function vHelp(m){m.innerHTML=`<div class="h1">Ayuda</div><div class="sub">Cómo
  <div class="card"><h4>${ic('link')}Links de YouTube/TikTok</h4><p>Funcionan con la app publicada en Vercel (usa /api/transcript.js). Si un video no tiene subtítulos, pegá el texto a mano.</p></div>
  <div class="card"><h4>${ic('mic')}Voces gratis</h4><p>Las voces de Microsoft (Tomás, Elena y cientos más) funcionan abriendo tu página con el navegador Microsoft Edge. Si no responden, la app usa sola la voz Piper, que se genera en tu computadora (la primera vez descarga la voz). Las dos quedan grabadas en el video.</p></div>
  <div class="card"><h4>${ic('help')}Al exportar</h4><p>El video se graba en tiempo real: 1 minuto de video = 1 minuto. No cambies de pestaña. Mejor en Chrome de PC.</p></div></div>`}
-function vSettings(m){const st=S.settings;m.innerHTML=`<div class="h1">Ajustes</div><div class="sub">Conexiones gratis y tus datos</div>
+function vSettings(m){const st=S.settings;setTimeout(gemStatus,50);m.innerHTML=`<div class="h1">Ajustes</div><div class="sub">Conexiones gratis y tus datos</div>
  <div class="card box" style="max-width:680px;margin-top:16px"><h3>${ic('user')}Tu perfil</h3><div class="lbl">Tu nombre</div><input class="inp" value="${esc(st.userName)}" placeholder="Ej: Sergio" onchange="S.settings.userName=this.value.trim();saveSettings()"></div>
- <div class="card box" style="max-width:680px"><h3>${ic('spark')}IA gratis: no hace falta configurar nada</h3>
- <div class="hint">El guion y las imágenes salen de Pollinations sin cuenta, y la voz de Microsoft/Piper, también gratis. <b>No necesitás ninguna clave.</b></div>
+ <div class="card box" style="max-width:680px"><h3>${ic('spark')}Conectar Gemini (texto con IA, gratis)</h3>
+ <div class="hint">Gemini de Google escribe los guiones, el storyboard y responde al asistente. Es gratis y sin tarjeta. La clave se guarda <b>escondida en Vercel</b>, nunca en esta página. Las imágenes (Pollinations) y la voz (Microsoft/Piper) no necesitan clave.</div>
+ <div class="info" id="gemst">${ic('help')}<span>Revisando…</span></div>
+ <ol class="hint" style="padding-left:18px;margin-top:8px"><li>Entrá a <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> con tu cuenta de Google y tocá <b>Crear clave de API</b>. Copiala.</li>
+ <li>En Vercel: tu proyecto → <b>Settings → Environment Variables</b>. Nombre: <b>GEMINI_API_KEY</b>, valor: tu clave. Guardar.</li>
+ <li>En Vercel: <b>Deployments</b> → en el último, los tres puntitos → <b>Redeploy</b>.</li></ol>
  <div class="row" style="margin-top:12px"><button class="btn" onclick="testAI()">${ic('check')}Probar conexión</button></div><div class="pmsg" id="tres"></div>
  <details style="margin-top:12px"><summary class="hint" style="cursor:pointer">Avanzado: clave de Pollinations (solo si tenés saldo pago)</summary>
  <div class="info warnbox">${ic('help')}<span>Solo sirve para edición exacta de imágenes, transcribir audio y animar con IA, y eso consume saldo pago. <b>Nunca pegues una clave secreta (sk_) en una página pública.</b> Si la pegás acá, queda solo en este navegador.</span></div>
@@ -1500,6 +1513,8 @@ function vSettings(m){const st=S.settings;m.innerHTML=`<div class="h1">Ajustes</
  <div class="card box" style="max-width:680px"><h3>${ic('folder')}Tus datos</h3><div class="lbl">Idioma por defecto</div><select class="sel" onchange="S.settings.lang=this.value;saveSettings()">${Object.entries(LANGS).map(([k,v])=>`<option value="${k}" ${st.lang===k?'selected':''}>${v}</option>`).join('')}</select>
  <div class="row wrap" style="margin-top:14px"><button class="btn" onclick="exportData()">${ic('down')}Exportar proyectos</button><button class="btn" onclick="$('#imp').click()">${ic('upload')}Importar</button><input type="file" id="imp" hidden accept=".json" onchange="importData(this.files[0])"><button class="btn danger" onclick="if(confirm('¿Borrar todos los proyectos?')){S.projects=[];store.set('ev_projects',[]);render()}">${ic('trash')}Borrar todo</button></div>
  <div class="hint">Las fotos que subís en "Imagen a Video" quedan guardadas en este navegador, no en el archivo exportado.</div></div>`}
+async function gemStatus(){const el=$('#gemst');if(!el)return;if(!/^https?:$/.test(location.protocol)){el.innerHTML=ic('help')+'<span>Abrí la página desde tu link de Vercel para usar Gemini.</span>';return}
+ try{const j=await (await fetch('/api/chat')).json();el.className='info'+(j.configured?'':' warnbox');el.innerHTML=ic(j.configured?'check':'help')+(j.configured?'<span>✅ Gemini está conectado.</span>':'<span>Gemini todavía no está conectado. Seguí los 3 pasos de abajo.</span>')}catch(e){el.className='info warnbox';el.innerHTML=ic('help')+'<span>No pude revisar Gemini. ¿Subiste el archivo api/chat.js a GitHub?</span>'}}
 async function testAI(){const r=$('#tres');r.textContent='Probando…';try{const t=await AI.chat([{role:'user',content:'Respondé solo: OK funcionando'}]);r.textContent='✅ Texto: '+t.slice(0,60)}catch(e){r.textContent='❌ '+e.message}}
 function exportData(){const b=new Blob([JSON.stringify(S.projects,null,1)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='estudio-viral-proyectos.json';a.click()}
 async function importData(f){if(!f)return;try{const arr=JSON.parse(await f.text());if(!Array.isArray(arr))throw 0;const ids=new Set(S.projects.map(p=>p.id));arr.forEach(p=>{if(!ids.has(p.id))S.projects.push(p)});store.set('ev_projects',S.projects);toast('Importado ✅');render()}catch(e){toast('Archivo inválido',1)}}

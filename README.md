@@ -9,6 +9,7 @@ La IA escribe el guion, genera las imágenes en el estilo que elijas, pone voz, 
 |---|---|
 | `index.html` | Toda la app (la página que ves) |
 | `api/transcript.js` | Lee los links de YouTube y TikTok |
+| `api/chat.js` | Texto con IA (guiones, storyboard, asistente) con Gemini de Google, gratis |
 | `api/tts.js` | Genera la voz del narrador (voces gratis de Microsoft) |
 | `api/voices.js` | Lista completa de voces |
 | `api/_edge.js` | Datos que usan los dos archivos de voz |
@@ -36,9 +37,14 @@ La IA escribe el guion, genera las imágenes en el estilo que elijas, pone voz, 
 
 Cada vez que cambies algo en GitHub, Vercel actualiza la página solo.
 
-### 3. No hace falta ninguna clave
-Guion, imágenes y voz funcionan gratis, sin cuenta y sin clave.
-**Nunca pegues claves secretas (`sk_`) en la página ni en GitHub.**
+### 3. Conectar Gemini (gratis, una sola vez)
+Los guiones los escribe **Gemini de Google** (gratis, sin tarjeta). Su clave va **escondida en Vercel**, nunca en la página:
+1. Entrá a **aistudio.google.com/apikey** con tu cuenta de Google → **Crear clave de API** → copiala.
+2. En Vercel: tu proyecto → **Settings → Environment Variables** → Nombre `GEMINI_API_KEY`, valor: tu clave → **Save**.
+3. En Vercel: **Deployments** → último despliegue → **⋯ → Redeploy**.
+
+Las imágenes (Pollinations) y la voz (Microsoft/Piper) no necesitan clave.
+**Nunca pegues claves secretas en la página ni en GitHub.**
 
 ---
 
@@ -63,7 +69,8 @@ Guion, imágenes y voz funcionan gratis, sin cuenta y sin clave.
 
 ## 🆓 Servicios gratis que usa
 
-- **Pollinations.ai** → texto (guiones) e imágenes, sin clave.
+- **Gemini (Google)** → guiones, storyboard y asistente (gratis, con clave guardada en Vercel).
+- **Pollinations.ai** → imágenes, sin clave.
 - **Voces de Microsoft Edge** (vía `api/tts.js`) y **Piper** (en el navegador) → voz del narrador.
 - **Vercel** → hosting y el servidor de links.
 - **Navegador** → arma el video (canvas), música generada sin derechos de autor y dictado por voz.
