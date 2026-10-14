@@ -785,7 +785,7 @@ const Pipe={
 Además "character": descripción física en inglés del personaje principal para que se vea igual en todas las escenas ("" si no hay).`},
 
  async fetchSource(){const P=S.P;if(!P.sourceUrl)throw new Error('Pegá primero un link de YouTube o TikTok.');
-  this.setBusy('Obteniendo transcripción…');
+  this.setBusy('Obteniendo transcripción… (si YouTube no deja, Gemini mira el video: puede tardar hasta 1 minuto)');
   try{if(location.protocol==='file:')throw new Error('Leer links funciona cuando la página está publicada en Vercel. Por ahora pegá el texto abajo.');
    let r;try{r=await fetch('/api/transcript?url='+encodeURIComponent(P.sourceUrl))}catch(e){throw new Error('No hay servidor. Publicá la app en Vercel o pegá el texto abajo.')}
    if(r.status===404)throw new Error('Falta el servidor (/api). Publicá en Vercel o pegá el texto abajo.');
@@ -1501,7 +1501,7 @@ function vHelp(m){m.innerHTML=`<div class="h1">Ayuda</div><div class="sub">Cómo
  <div class="card"><h4>${ic('bolt')}Lo más rápido</h4><p>Abrí el <b>Asistente IA</b> y pedile: "Western épico de 1 minuto sobre un duelo al atardecer". Hace todo solo, incluso el look.</p></div>
  <div class="card"><h4>${ic('film')}Paso a paso</h4><ol><li>Nuevo video → tipo, formato, género y estilo.</li><li>Generá el storyboard.</li><li>Ajustá cada escena: cámara, ambiente, edición IA.</li><li>Elegí el look en el panel izquierdo.</li><li>Tocá <b>Exportar</b>.</li></ol></div>
  <div class="card"><h4>${ic('scissors')}Rotoscopia 2.5D</h4><p>Separa a la persona, animal u objeto del fondo dentro de tu navegador y lo mueve más rápido que el fondo: efecto de profundidad. La primera vez descarga el modelo (unos segundos).</p></div>
- <div class="card"><h4>${ic('link')}Links de YouTube/TikTok</h4><p>Funcionan con la app publicada en Vercel (usa /api/transcript.js). Si un video no tiene subtítulos, pegá el texto a mano.</p></div>
+ <div class="card"><h4>${ic('link')}Links de YouTube/TikTok</h4><p>Funcionan con la app publicada en Vercel (usa /api/transcript.js). Si YouTube no deja leer los subtítulos, Gemini mira el video y escribe lo que se dice (necesita Gemini conectado). Si nada funciona, pegá el texto a mano.</p></div>
  <div class="card"><h4>${ic('mic')}Voces gratis</h4><p>Las voces de Microsoft (Tomás, Elena y cientos más) funcionan abriendo tu página con el navegador Microsoft Edge. Si no responden, la app usa sola la voz Piper, que se genera en tu computadora (la primera vez descarga la voz). Las dos quedan grabadas en el video.</p></div>
  <div class="card"><h4>${ic('help')}Al exportar</h4><p>El video se graba en tiempo real: 1 minuto de video = 1 minuto. No cambies de pestaña. Mejor en Chrome de PC.</p></div></div>`}
 function vSettings(m){const st=S.settings;setTimeout(gemStatus,50);m.innerHTML=`<div class="h1">Ajustes</div><div class="sub">Conexiones gratis y tus datos</div>

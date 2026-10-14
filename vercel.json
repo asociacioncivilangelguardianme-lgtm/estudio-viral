@@ -1,0 +1,6 @@
+{
+  "functions": {
+    "api/transcript.js": { "maxDuration": 60 },
+    "api/chat.js": { "maxDuration": 60 }
+  }
+}

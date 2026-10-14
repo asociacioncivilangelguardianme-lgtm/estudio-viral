@@ -91,11 +91,73 @@ async function youtube(id) {
       } catch (e) {}
     }
   }
+  // 3) Plan B: Gemini (Google) mira el video de YouTube y escribe lo que se dice. Gratis con tu clave guardada en Vercel.
+  const g = await geminiWatch(id);
+  if (g.text) return { ok: true, source: 'gemini', title: title || g.title, text: g.text, note: 'YouTube no dejó leer los subtítulos: Gemini miró el video y escribió lo que se dice ✅' };
+  if (!title) title = await ytTitle(id);
   if (description && description.length > 40) {
     return { ok: true, source: 'youtube', title, text: (title ? title + '. ' : '') + description, partial: true,
       note: 'Este video no tiene subtítulos accesibles: se usó el título y la descripción. Podés pegar el texto a mano.' };
   }
-  return { ok: false, title, error: 'Este video no tiene subtítulos disponibles. Pegá el texto a mano en "Transcripción original".' };
+  if (title) {
+    return { ok: true, source: 'youtube', title, text: title, partial: true,
+      note: g.noKey ? 'YouTube no dejó leer el video. Solo tengo el título. Conectá Gemini (Ajustes) para que la IA mire el video, o pegá el texto a mano.'
+                    : 'No pude leer lo que se dice en el video (' + (g.err || 'error') + '). Solo tengo el título: pegá el texto a mano o probá de nuevo en un rato.' };
+  }
+  return { ok: false, title, error: g.noKey ? 'YouTube no deja leer este video desde el servidor. Conectá Gemini en Ajustes (así la IA mira el video) o pegá el texto a mano.'
+                                            : 'No se pudo leer este video. Pegá el texto a mano en "Transcripción original".' };
+}
+
+async function ytTitle(id) {
+  try {
+    const r = await fetch('https://www.youtube.com/oembed?format=json&url=' + encodeURIComponent('https://www.youtube.com/watch?v=' + id));
+    if (r.ok) { const j = await r.json(); return j.title || ''; }
+  } catch (e) {}
+  return '';
+}
+
+function geminiKey() {
+  const env = process.env;
+  if (env.GEMINI_API_KEY && env.GEMINI_API_KEY.trim()) return clean(env.GEMINI_API_KEY);
+  for (const k of Object.keys(env)) {
+    const n = k.trim().toUpperCase().replace(/[^A-Z]/g, '');
+    if ((n.includes('GEMINI') || n === 'GOOGLEAPIKEY') && env[k] && env[k].trim()) return clean(env[k]);
+  }
+  return '';
+}
+function clean(v) { return String(v).trim().replace(/^["']|["']$/g, '').trim(); }
+
+async function geminiWatch(id) {
+  const key = geminiKey();
+  if (!key) return { noKey: true };
+  const prompt = 'Escribí en el idioma original del video, palabra por palabra, todo lo que se dice (la narración o los diálogos). '
+    + 'Si es muy largo, escribí lo principal hasta unas 1500 palabras. Si casi no hablan, describí lo que pasa en el video en 5 a 10 frases. '
+    + 'Devolvé SOLO el texto, sin títulos, sin marcas de tiempo y sin comentarios.';
+  let err = '';
+  for (const model of ['gemini-2.5-flash', 'gemini-flash-latest', 'gemini-2.5-flash-lite']) {
+    try {
+      const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+        body: JSON.stringify({
+          contents: [{ parts: [{ file_data: { file_uri: 'https://www.youtube.com/watch?v=' + id } }, { text: prompt }] }],
+          generationConfig: { temperature: 0.2, mediaResolution: 'MEDIA_RESOLUTION_LOW' },
+        }),
+      });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) {
+        err = 'Gemini ' + r.status;
+        if (r.status === 429) err = 'límite gratis de Gemini, probá en unos minutos';
+        if (r.status === 400 && /api key/i.test(JSON.stringify(j))) return { err: 'clave de Gemini inválida' };
+        continue;
+      }
+      const text = ((j.candidates && j.candidates[0] && j.candidates[0].content && j.candidates[0].content.parts) || [])
+        .map((p) => p.text || '').join(' ').replace(/\s+/g, ' ').trim();
+      if (text.length > 20) return { text };
+      err = 'Gemini no devolvió texto';
+    } catch (e) { err = e.message || String(e); }
+  }
+  return { err };
 }
 
 async function tiktok(url) {
