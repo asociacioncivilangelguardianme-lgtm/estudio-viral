@@ -527,6 +527,7 @@ const GENRE_GROUPS=[
   {id:'documental',n:'Documental / Histórico',e:'🏛️',h:'datos reales narrados con épica',subs:['Naturaleza','Biográfico','Reconstrucción de época'],pre:{style:'documental',music:'calma'}},
   {id:'comedia',n:'Comedia y Sátira',e:'😂',h:'humor, timing y remate',subs:['Sitcom','Humor absurdo','Parodia'],pre:{style:'anim3d',music:'alegre',grade:'vivo'}},
   {id:'drama',n:'Drama',e:'🎭',h:'emoción, conflicto humano y reflexión',subs:['Familiar','Social','Melancólico'],pre:{style:'hiperreal',music:'calma',grade:'pastel'}},
+ {id:'romance',n:'Romance / Novela',e:'💘',h:'novela romántica dramática estilo mini-serie viral: traición, millonario, venganza, amor imposible y final en suspenso',subs:['Millonario / CEO','Matrimonio por contrato','Venganza','Traición e infidelidad','Mafia','Amor prohibido','Telenovela clásica'],pre:{style:'hiperreal',music:'calma',grade:'dorado'}},
  ]},
  {id:'viral',n:'Contenido viral',list:[
   {id:'top5',n:'Top 5',e:'🏆',h:'ranking del 5 al 1, cada puesto con un dato sorprendente'},
@@ -558,6 +559,7 @@ const GENRE_GROUPS=[
   {id:'comercial',n:'Comercial / Publicidad',e:'📣',h:'producto: problema, beneficio y llamado a la acción',pre:{style:'producto',music:'alegre',subStyle:'cinetica'}},
   {id:'motiongfx',n:'Motion Graphics',e:'📊',h:'infografía animada con frases cortas y datos',pre:{style:'infografia',subStyle:'cinetica',music:'alegre'}},
   {id:'vertical',n:'Vertical Viral',e:'📱',h:'ritmo muy rápido, frases cortas, gancho en el primer segundo',pre:{ipm:20,transition:'corte',subStyle:'karaoke',progress:true,format:'vertical'}},
+ {id:'minidrama',n:'Mini-novela por capítulos',e:'🎬',h:'capítulo corto de una mini-serie vertical, narrado en primera persona por la protagonista, con gancho fuerte al inicio y final en suspenso para el próximo capítulo; personajes descritos siempre igual',pre:{style:'hiperreal',ipm:14,progress:true,format:'vertical',music:'tension',grade:'dorado'}},
  ]},
 ];
 const GENRES=GENRE_GROUPS.flatMap(g=>g.list.map(x=>Object.assign({grp:g.id},x)));
