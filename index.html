@@ -611,6 +611,20 @@ const MUSIC=[
  {id:'upload',n:'Mi música',e:'📁'},
 ];
 const CAMS={auto:'Automático',zoomin:'Acercamiento (Zoom in)',zoomout:'Alejamiento (Zoom out)',panl:'Paneo ←',panr:'Paneo →',tiltup:'Inclinación ↑ (Tilt)',tiltdown:'Inclinación ↓ (Tilt)',dolly:'Dolly in',track:'Seguimiento (Tracking)',static:'Plano fijo'};
+const nameRe=n=>new RegExp('(^|[^\\p{L}])'+n.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(?=$|[^\\p{L}])','iu');
+const hashSeed=t=>{let h=7;for(const c of String(t).toLowerCase())h=(h*31+c.charCodeAt(0))%999983;return h};
+function castIn(P,s){return (P.cast||[]).filter(c=>c.name&&c.desc&&nameRe(c.name).test(s.prompt||s.text||''))}
+// Arma la lista de personajes leyendo los prompts: "A muscular African warrior god (Ogum) ... He wears ..."  o  "Xangô (god of thunder) standing in red robes"
+function extractCast(prompts){const cast=[],seen=new Set();
+ prompts.forEach(pr=>{const sents=pr.split(/(?<=\.)\s+/);
+  sents.forEach((se,si)=>{let m;const re1=/([A-Za-z][A-Za-z ,'-]{6,90}?)\s*\(([A-ZÁÉÍÓÚÑ][\p{L}]{2,20})\)/gu;
+   while((m=re1.exec(se))){const name=m[2];if(seen.has(name.toLowerCase()))continue;let d=m[1].replace(/^(cinematic[^.]*?\.|a|an|the)\s+/i,'').trim();
+    const more=(se.slice(m.index+m[0].length)+' '+(sents[si+1]||'')).match(/(?:wears?|wearing|adorned in|dressed in|covered in|with)\s[^.,]{4,90}/gi);if(more)d+=', '+more.slice(0,3).join(', ');
+    seen.add(name.toLowerCase());cast.push({name,desc:('a '+d).replace(/\s+/g,' ').trim()})}
+   const re2=/([A-ZÁÉÍÓÚÑ][\p{L}]{2,20})\s*\(([a-z][^)]{3,60})\)([^.,]{0,80})/gu;
+   while((m=re2.exec(se))){const name=m[1];if(seen.has(name.toLowerCase())||/^(Cinematic|Epic)$/i.test(name))continue;const more=m[3].match(/\b(in|wearing|with|holding)\s.*$/i);
+    seen.add(name.toLowerCase());cast.push({name,desc:(m[2]+(more?', '+more[0]:'')).replace(/\s+/g,' ').trim()})}})});
+ return cast.slice(0,8)}
 const PEOPLE={auto:'Automático (lo decide la IA)',latino:'Latinoamericanos',europeo:'Europeos',afro:'Afrodescendientes',asiatico:'Asiáticos',variado:'Variados (mezcla de todos)'};
 const PEOPLE_P={latino:'all people are Latin American (Hispanic, Argentine and Latino features), not East Asian',europeo:'all people are European (Caucasian features), not East Asian',afro:'people are Black / Afro-Latino',asiatico:'people are East Asian',variado:'ethnically diverse cast: Latino, European, Black and Asian people'};
 const LENSES={normal:'50mm normal',gran:'Gran angular 24mm',tele:'Teleobjetivo 85mm',bokeh:'Profundidad de campo (Bokeh)'};
@@ -672,7 +686,7 @@ const S={
  projects:store.get('ev_projects',[]),P:null,busy:'',saved:true,
 };
 const RT={allVoices:null,voices:{},narr:null,narrFile:null,narrCuts:[],music:null,beats:null,video:null,imgs:{},local:{},fg:{},clips:{}};
-const DEF={people:'latino',format:'vertical',quality:'hd',style:'neo_anime',customStyle:'',genre:'',sub:'',idea:'',script:'',sourceUrl:'',sourceText:'',paraphrased:'',
+const DEF={cast:[],people:'latino',format:'vertical',quality:'hd',style:'neo_anime',customStyle:'',genre:'',sub:'',idea:'',script:'',sourceUrl:'',sourceText:'',paraphrased:'',
  duration:60,ipm:12,voice:'edge:es-AR-TomasNeural',speed:1,lang:'es',subStyle:'karaoke',subPos:'abajo',subSize:1,music:'epica',musicVol:.18,
  cam:'auto',zoom:.12,lens:'normal',shake:false,transition:'fade',grade:'none',analog:'none',chroma:false,vignette:true,grain:false,
  hook:true,progress:false,pulse:false,beatSync:false,sfx:true,amb:true,sfxVol:.5,character:'',title:'',scenes:[],status:'draft'};
@@ -778,7 +792,7 @@ const Pipe={
  setBusy(t){S.busy=t;const m=$('#pmsg');if(m)m.textContent=t;document.querySelectorAll('[data-busy]').forEach(b=>b.disabled=!!t);renderPipe()},
  prog(f){const b=$('#pbar');if(b)b.style.width=Math.round(f*100)+'%'},
  sceneURL(s,hq){const {iw,ih}=this.dims();const P=S.P;if(s.local)return s.img;
-  const prompt=[s.prompt,P.character?'main character: '+P.character:'',PEOPLE_P[P.people]||'',this.styleText(),P.format==='vertical'?'vertical composition':P.format==='cuadrado'?'centered square composition':'wide composition','natural realistic anatomy, each person appears only once, no merged or duplicated faces','no text, no watermark'].filter(Boolean).join(', ');
+  const cast=castIn(P,s);const prompt=[s.prompt,P.character?'main character: '+P.character:'',...cast.map(c=>c.name+' looks exactly like this: '+c.desc),PEOPLE_P[P.people]||'',this.styleText(),P.format==='vertical'?'vertical composition':P.format==='cuadrado'?'centered square composition':'wide composition','natural realistic anatomy, each person appears only once, no merged or duplicated faces','no text, no watermark'].filter(Boolean).join(', ');
   const m=hq||s.hq?1.5:1;return AI.imgURL(prompt,Math.min(2048,r16(iw*m)),Math.min(2048,r16(ih*m)),s.seed,hq||s.hq?'&enhance=true':'')},
  pushVar(s){if(!s.img)return;s.vars=s.vars||[];if(!s.vars.find(v=>v.img===s.img))s.vars.unshift({img:s.img,prompt:s.prompt,seed:s.seed});s.vars=s.vars.slice(0,6)},
  parseScenes(arr){return arr.map(x=>({id:uid(),text:String(x.text||'').trim(),prompt:String(x.prompt||x.text||'').trim(),seed:seed(),cam:CAMS[x.camera]?x.camera:'auto',amb:AMB[x.ambient]?x.ambient:'none'}))},
@@ -817,7 +831,7 @@ Además "character": descripción física en inglés del personaje principal par
   else{const base=this.baseScript();if(!base.trim())throw new Error(P.mode==='url'?'Primero obtené o pegá el texto del video.':P.mode==='audio'?'Primero transcribí o pegá el texto del audio.':'Pegá tu guion primero.');
    const st=P.mode!=='audio'?this.structured(base):null;
    if(st){if(st.format&&st.format!==P.format){P.format=st.format}P.title=st.title||P.title||P.name;if(P.name.startsWith('Proyecto')&&st.title)P.name=st.title.slice(0,60);
-    P.scenes=this.parseScenes(st.scenes);S.sel=0;RT.voices={};RT.video=null;P.status='draft';save(1);
+    P.scenes=this.parseScenes(st.scenes);P.character='';P.cast=extractCast(st.scenes.map(x=>x.prompt));P.scenes.forEach(sc=>{const c=castIn(P,sc);if(c.length===1)sc.seed=hashSeed(c[0].name)});S.sel=0;RT.voices={};RT.video=null;P.status='draft';save(1);
     toast(`Leí tu guion: ${st.scenes.length} escenas con sus prompts de imagen ✅`);render();if(!fromAuto)this.images().catch(e=>toast(e.message,1));return}
    dur=RT.narr?RT.narr.duration:wordsOf(base)/2.5;instr=`Este es el guion. NO cambies las palabras, solo dividilo en orden:\n"""${base.slice(0,12000)}"""${gtxt}`}
   const n=this.nScenes(dur);this.setBusy('La IA está escribiendo el guion y el storyboard…');this.prog(.1);
@@ -891,6 +905,12 @@ Además "character": descripción física en inglés del personaje principal par
  async newBackground(i,desc){const s=S.P.scenes[i];if(!desc)return;if(!RT.fg[s.id])await this.parallax(i);if(!RT.fg[s.id])return;
   const {iw,ih}=this.dims();s.bg=AI.imgURL(desc+', background scenery, no people, '+this.styleText(),iw,ih,seed());save();
   this.setBusy('Generando fondo nuevo…');try{await loadImg(s.bg,9);toast('Fondo cambiado ✅')}catch(e){toast('El fondo falló',1);s.bg=''}finally{this.setBusy('')}renderSel();seekScene(i)},
+ async setImage(i,f){const s=S.P.scenes[i];if(!f)return;this.setBusy('Cargando tu imagen…');
+  try{const im=await new Promise((res,rej)=>{const x=new Image();x.onload=()=>res(x);x.onerror=()=>rej(new Error('No pude abrir esa imagen'));x.src=URL.createObjectURL(f)});
+   const k=Math.min(1,1600/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+   const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',.9));const key='local:'+uid();await IDB.set(key,blob);
+   this.pushVar(s);s.img=key;s.local=true;s.edited=false;s.hq=false;delete RT.fg[s.id];s.parallax=false;await loadImg(key,9);save(1);toast('Imagen puesta en la escena '+(i+1)+' ✅')}
+  finally{this.setBusy('')}renderSel();renderScenesOnly(1);renderTL();seekScene(i)},
  async addClip(i,f){const s=S.P.scenes[i];if(!f)return;if(f.size>200e6)throw new Error('El video es muy pesado (máximo 200 MB).');
   this.setBusy('Cargando tu video…');try{const key='clip:'+s.id;await IDB.set(key,f);s.clip=key;await loadClip(s);save(1);toast('Video puesto en la escena '+(i+1)+' ✅')}finally{this.setBusy('')}renderSel();renderScenesOnly(1);seekScene(i)},
  removeClip(i){const s=S.P.scenes[i];if(!s)return;try{RT.clips[s.id]&&RT.clips[s.id].pause()}catch(e){}delete RT.clips[s.id];s.clip='';save(1);renderSel();renderScenesOnly(1);seekScene(i)},
@@ -1396,6 +1416,14 @@ function renderPipe(){const el=$('#pipe');if(!el||!S.P)return;const P=S.P;
  el.innerHTML=st.map(([n,ok,re])=>`<span class="pstep ${S.busy&&re.test(S.busy)?'run':ok?'ok':''}">${S.busy&&re.test(S.busy)?'<span class="spin" style="width:11px;height:11px"></span>':ok?ic('check'):'○'} ${n}</span>`).join('')+`<span class="pstep" style="margin-left:auto">${P.scenes.length} escenas · ${P.scenes.length?fmtTime(Pipe.timeline().total):'—'}</span>`}
 function renderCfg(){const el=$('#cfg');if(!el||!S.P)return;const P=S.P,g=genreOf(P.genre);
  el.innerHTML=`<h3>Configuración activa</h3>${[['Género',g?g.n+(P.sub?' / '+P.sub:''):'—'],['Estilo',styleOf(P.style).n],['Voz',P.mode==='musica'?'—':RT.narr?'Tu audio':voiceOf(P.voice).n],['Música',musicOf(P.music).n],['Color',GRADES[P.grade].n],['Analógico',ANALOG[P.analog]],['Cámara',CAMS[P.cam]],['Lente',LENSES[P.lens]],['Formato',FORMATS[P.format].n+' · '+(P.quality==='fhd'?'1080p':'720p')]].map(([a,b])=>`<div><span>${a}</span><span>${esc(b)}</span></div>`).join('')}`}
+function castHTML(){const P=S.P,c=P.cast||[];
+ return `<details class="pnl" ${c.length?'open':''} style="margin:8px 0"><summary>${ic('user')}Personajes (${c.length}) · para que salgan iguales en todas las escenas</summary><div class="pbody2">
+ <div class="hint">Escribí cómo es cada personaje (en inglés: cara, pelo, ropa). Cada vez que una escena nombre a ese personaje, la imagen usa esta descripción.</div>
+ ${c.map((x,k)=>`<div class="row" style="gap:6px;margin-top:6px;align-items:flex-start"><input class="inp" style="max-width:110px" value="${esc(x.name)}" placeholder="Nombre" onchange="S.P.cast[${k}].name=this.value.trim();save()"><textarea class="inp" rows="2" placeholder="beautiful African goddess, golden silk dress, gold jewelry" onchange="S.P.cast[${k}].desc=this.value.trim();save()">${esc(x.desc)}</textarea><button class="btn xs" title="Quitar" onclick="S.P.cast.splice(${k},1);save();render()">${ic('trash')}</button></div>`).join('')}
+ <div class="row" style="margin-top:8px;gap:6px"><button class="btn sm" onclick="(S.P.cast=S.P.cast||[]).push({name:'',desc:''});save();render()">${ic('plus')}Personaje</button>
+ ${c.length?`<button class="btn sm" data-busy onclick="redoCast()">${ic('refresh')}Rehacer imágenes con estos personajes</button>`:''}</div></div></details>`}
+function redoCast(){const P=S.P;let n=0;P.scenes.forEach(s=>{const c=castIn(P,s);if(c.length&&!s.local){Pipe.pushVar(s);if(c.length===1)s.seed=hashSeed(c[0].name);s.img='';s.edited=false;s.hq=false;n++}});
+ if(!n){toast('Ninguna escena nombra a estos personajes',1);return}save();render();toast(n+' escena(s) se rehacen con los personajes');run(()=>Pipe.images())}
 function renderSel(){const el=$('#selpanel');if(!el||!S.P)return;const P=S.P,i=clamp(S.sel,0,Math.max(0,P.scenes.length-1)),s=P.scenes[i];
  if(!s){el.innerHTML=`<h3><span class="row">${ic('img')}Escena</span></h3><div class="hint">Elegí una escena del storyboard para ver variaciones y herramientas de IA.</div>`;return}
  const prev=(s.vars||[]).find(v=>v.img!==s.img&&RT.imgs[v.img]);
@@ -1413,6 +1441,7 @@ function renderSel(){const el=$('#selpanel');if(!el||!S.P)return;const P=S.P,i=c
   <button class="btn ${s.parallax?'neo':''}" data-busy onclick="run(()=>Pipe.parallax(${i},${!s.parallax}))">${ic('scissors')}${s.parallax?'Quitar 2.5D':'Rotoscopia 2.5D'}</button>
   <button class="btn" data-busy onclick="askBg(${i})">${ic('layers')}Cambiar fondo</button>
   <button class="btn ${RT.clips[s.id]?'neo':''}" data-busy onclick="run(()=>Pipe.animate(${i}))">${ic('film')}Animar IA (beta)</button>
+  <label class="btn ${s.local?'neo':''}" style="cursor:pointer">${ic('img')}Subir mi imagen<input type="file" accept="image/*" hidden onchange="run(()=>Pipe.setImage(${i},this.files[0]))"></label>
   <label class="btn ${s.clip?'neo':''}" style="cursor:pointer">${ic('film')}${s.clip?'Cambiar mi video':'Subir mi video'}<input type="file" accept="video/*" hidden onchange="run(()=>Pipe.addClip(${i},this.files[0]))"></label>
   ${s.clip?`<button class="btn" onclick="Pipe.removeClip(${i})">${ic('trash')}Quitar mi video</button>`:''}
   <button class="btn" onclick="sayScene(${i})">${ic('play')}Oír voz</button></div>
@@ -1470,7 +1499,7 @@ function tContenido(){const P=S.P;let top='';
   ${RT.music&&P.music==='upload'?'':`<div class="lbl">Duración</div>${durSel([15,30,45,60,90,120,180])}`}${ipm}${gen('Generar escenas del videoclip')}</div>`;
  return top+`<div class="card box"><div class="between"><h3>${ic('grid')}Storyboard <span class="sub">${P.scenes.length} escenas</span></h3>
   ${P.scenes.length?`<div class="row"><button class="btn sm" data-busy onclick="run(()=>Pipe.images())">${ic('refresh')}Generar imágenes</button><button class="btn sm" onclick="addScene()">${ic('plus')}Escena</button></div>`:''}</div>
-  ${P.character!==undefined&&P.scenes.length?`<div class="lbl">Personaje fijo (se repite igual en todas las imágenes · en inglés)</div><textarea class="inp" rows="2" onchange="S.P.character=this.value;save();toast('Personaje guardado: se usa en las imágenes nuevas')">${esc(P.character||'')}</textarea>`:''}<div class="scenes" id="scenes">${scenesHTML()}</div>
+  ${P.character!==undefined&&P.scenes.length&&(P.character||!(P.cast||[]).length)?`<div class="lbl">Personaje fijo (se repite igual en todas las imágenes · en inglés)</div><textarea class="inp" rows="2" onchange="S.P.character=this.value;save();toast('Personaje guardado: se usa en las imágenes nuevas')">${esc(P.character||'')}</textarea>`:''}${P.scenes.length?castHTML():''}<div class="scenes" id="scenes">${scenesHTML()}</div>
   ${P.scenes.length?`<div class="genbtn"><button class="btn grad" data-busy onclick="Pipe.auto()">${ic('bolt')}Generar video</button></div>`:''}</div>`}
 function scenesHTML(){const P=S.P;if(!P.scenes.length)return `<div class="empty" style="padding:26px 10px;grid-column:1/-1"><p>Las escenas aparecen acá: cada tarjeta tiene su imagen, su texto, su cámara y su sonido ambiente.</p></div>`;const c=FORMATS[P.format].c;
  return P.scenes.map((s,i)=>`<div class="card scene ${i===S.sel?'sel':''}" onclick="if(!event.target.closest('textarea,button,summary,select'))selectScene(${i})"><div class="simg ${c}" id="si_${s.id}" ondblclick="zoomImg('${s.id}')"><span class="num">${i+1}</span><span class="bdg">${s.cam&&s.cam!=='auto'?`<span>🎥 ${esc(CAMS[s.cam].split(' ')[0])}</span>`:''}${s.amb&&s.amb!=='none'?`<span>${AMB[s.amb].split(' ')[0]}</span>`:''}${s.parallax?'<span>2.5D</span>':''}${RT.clips[s.id]?'<span>▶IA</span>':''}</span>${s.img&&RT.imgs[s.img]?`<img src="${esc(RT.imgs[s.img].src)}" alt="">`:s.img?'<span class="spin"></span>':ic('img')}</div>
