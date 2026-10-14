@@ -915,6 +915,25 @@ Elegí el mejor look. Valores permitidos: grade=${Object.keys(GRADES).join('|')}
 const Piper={mod:null,
  load(){if(!this.mod){this.mod=import('https://cdn.jsdelivr.net/npm/@mintplex-labs/piper-tts-web@1.0.4/dist/piper-tts-web.js');this.mod.catch(()=>this.mod=null)}return this.mod},
  async say(text,voiceId,onProg){const m=await this.load();return await m.predict({text,voiceId},p=>{if(onProg&&p&&p.total)onProg(p.loaded/p.total)})}};
+// Voces de Microsoft pedidas directo desde tu navegador (Edge las acepta; los servidores en la nube suelen estar bloqueados)
+const EdgeDirect={tok:'6A5AA1D4EAFF4E9FB37E23D68491D6F4',ver:'143.0.3650.75',down:false,
+ isEdge(){return /Edg\//.test(navigator.userAgent)},
+ async gec(){let s=Math.floor(Date.now()/1000)+11644473600;s-=s%300;const t=(BigInt(s)*10000000n).toString()+this.tok;
+  const h=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return[...new Uint8Array(h)].map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase()},
+ stamp(){return new Date().toUTCString().replace(/^(\w+), (\d+) (\w+) (\d+) ([\d:]+) GMT$/,'$1 $3 $2 $4 $5')+' GMT+0000 (Coordinated Universal Time)'},
+ async say(text,voice,rate){const id=()=>crypto.randomUUID().replace(/-/g,'');
+  const url=`wss://speech.platform.bing.com/consumer/speech/synthesize/readaloud/edge/v1?TrustedClientToken=${this.tok}&ConnectionId=${id()}&Sec-MS-GEC=${await this.gec()}&Sec-MS-GEC-Version=1-${this.ver}`;
+  const x=t=>t.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,' ').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return await new Promise((res,rej)=>{let ws;try{ws=new WebSocket(url)}catch(e){return rej(e)}ws.binaryType='arraybuffer';const chunks=[];let done=false;
+   const end=(err)=>{if(done)return;done=true;clearTimeout(tm);try{ws.close()}catch(e){}if(chunks.length)res(new Blob(chunks,{type:'audio/mpeg'}));else rej(err||new Error('sin audio'))};
+   const tm=setTimeout(()=>end(new Error('tiempo agotado')),20000);
+   ws.onopen=()=>{const ts=this.stamp();
+    ws.send(`X-Timestamp:${ts}\r\nContent-Type:application/json; charset=utf-8\r\nPath:speech.config\r\n\r\n{"context":{"synthesis":{"audio":{"metadataoptions":{"sentenceBoundaryEnabled":"false","wordBoundaryEnabled":"false"},"outputFormat":"audio-24khz-48kbitrate-mono-mp3"}}}}\r\n`);
+    ws.send(`X-RequestId:${id()}\r\nContent-Type:application/ssml+xml\r\nX-Timestamp:${ts}Z\r\nPath:ssml\r\n\r\n<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='en-US'><voice name='${voice}'><prosody pitch='+0Hz' rate='${rate>=0?'+':''}${rate}%' volume='+0%'>${x(text)}</prosody></voice></speak>`)};
+   ws.onmessage=e=>{if(typeof e.data==='string'){if(e.data.includes('Path:turn.end'))end();return}
+    const dv=new DataView(e.data);if(e.data.byteLength<2)return;const hl=dv.getUint16(0);if(hl+2>e.data.byteLength)return;
+    const head=new TextDecoder().decode(new Uint8Array(e.data,2,hl));if(/Path:audio/.test(head)){const a=e.data.slice(2+hl);if(a.byteLength)chunks.push(a)}};
+   ws.onerror=()=>end(new Error('Microsoft rechazó la conexión'));ws.onclose=()=>end(new Error('Microsoft cerró la conexión'))})}};
 const Voice={edgeDown:false,fails:0,warned:false,
  online(){return /^https?:$/.test(location.protocol)},
  async edge(text,v,speed){const r=await fetch('/api/tts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,voice:v,rate:Math.round((speed-1)*100)})});
@@ -924,8 +943,10 @@ const Voice={edgeDown:false,fails:0,warned:false,
  // Devuelve {blob, pre} · pre=true si la velocidad ya viene aplicada en el audio
  async make(text,voiceId,{speed=1,onProg}={}){const vo=voiceOf(voiceId);
   if(vo.eng==='edge'){
+   const rate=Math.round((speed-1)*100);
+   if(!EdgeDirect.down){try{const b=await EdgeDirect.say(text,vo.v,rate);if(b.size>300)return{blob:b,pre:true}}catch(e){EdgeDirect.down=true}}
    if(this.online()&&!this.edgeDown){try{return{blob:await this.edge(text,vo.v,speed),pre:true}}catch(e){if(++this.fails>=2)this.edgeDown=true}}
-   if(!this.warned){this.warned=true;toast(this.online()?'Las voces de Microsoft no respondieron: uso la voz Piper (gratis, en tu computadora).':'Las voces de Microsoft funcionan desde tu link de Vercel. Ahora uso la voz Piper (gratis, en tu computadora).')}
+   if(!this.warned){this.warned=true;toast(EdgeDirect.isEdge()?'Microsoft no respondió: uso la voz de respaldo Piper (suena más robótica y es de hombre).':'Las voces de Microsoft funcionan en el navegador Microsoft Edge. Ahora uso la voz de respaldo Piper (de hombre).',1)}
    return{blob:await Piper.say(text,this.piperFor(vo.lang),onProg),pre:false}}
   if(vo.eng==='piper')return{blob:await Piper.say(text,vo.v,onProg),pre:false};
   const b=await AI.tts(text,vo.v);if(!b)throw new Error('Pollinations no respondió (requiere clave con saldo)');return{blob:b,pre:false}},
@@ -1421,7 +1442,7 @@ function voiceBrowser(selectable){const L=S.vlang,q=S.vq.toLowerCase(),re=v=>(L=
  const piper=PIPER_VOICES.filter(v=>L==='all'||v[0].startsWith(L+'_'));const rer=selectable?'render()':'render()';
  return `<div class="chips" style="margin-top:12px">${Object.entries(VOICE_LANGS).map(([k,n])=>`<button class="chip ${L===k?'on':''}" onclick="S.vlang='${k}';${rer}">${n}</button>`).join('')}<button class="chip ${L==='all'?'on':''}" onclick="S.vlang='all';${rer}">Todos los idiomas</button></div>
  <div class="catsec" style="margin-top:14px"><h3>🎙️ Voces naturales de Microsoft</h3><span>Gratis · sin clave · ${S.vall&&RT.allVoices?RT.allVoices.length+' voces':'las más usadas'}</span></div>
- ${Voice.online()?'':`<div class="info warnbox">${ic('help')}<span>Abriste la página como archivo de tu computadora. Estas voces funcionan desde tu link de Vercel; mientras tanto se usa Piper automáticamente.</span></div>`}
+ ${EdgeDirect.isEdge()?'':`<div class="info warnbox">${ic('help')}<span>Estas voces funcionan mejor abriendo tu página con el navegador <b>Microsoft Edge</b>. En otros navegadores se usa la voz de respaldo Piper.</span></div>`}
  <div class="row wrap" style="margin-bottom:6px">${S.vall?`<input class="inp" style="max-width:260px" placeholder="Buscar voz o país…" value="${esc(S.vq)}" oninput="S.vq=this.value;clearTimeout(window._vq);window._vq=setTimeout(()=>{${rer};const i=document.querySelector('#vqin');if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length)}},300)" id="vqin">`:`<button class="btn sm" onclick="showAllVoices()">${ic('search')}Ver todas las voces (cientos, en muchos idiomas)</button>`}</div>
  <div class="vlist">${edge.slice(0,S.vall?160:60).map(v=>voiceCard('edge:'+v[0],selectable)).join('')||'<div class="hint">No hay voces con ese filtro.</div>'}</div>
  ${piper.length?`<div class="catsec"><h3>💻 Voces Piper (en tu computadora)</h3><span>Gratis · funcionan sin internet · la primera vez descargan la voz (unos 60 MB)</span></div><div class="vlist">${piper.map(v=>voiceCard('piper:'+v[0],selectable)).join('')}</div>`:''}
@@ -1462,7 +1483,7 @@ function vHelp(m){m.innerHTML=`<div class="h1">Ayuda</div><div class="sub">Cómo
  <div class="card"><h4>${ic('film')}Paso a paso</h4><ol><li>Nuevo video → tipo, formato, género y estilo.</li><li>Generá el storyboard.</li><li>Ajustá cada escena: cámara, ambiente, edición IA.</li><li>Elegí el look en el panel izquierdo.</li><li>Tocá <b>Exportar</b>.</li></ol></div>
  <div class="card"><h4>${ic('scissors')}Rotoscopia 2.5D</h4><p>Separa a la persona, animal u objeto del fondo dentro de tu navegador y lo mueve más rápido que el fondo: efecto de profundidad. La primera vez descarga el modelo (unos segundos).</p></div>
  <div class="card"><h4>${ic('link')}Links de YouTube/TikTok</h4><p>Funcionan con la app publicada en Vercel (usa /api/transcript.js). Si un video no tiene subtítulos, pegá el texto a mano.</p></div>
- <div class="card"><h4>${ic('mic')}Voces gratis</h4><p>Las voces de Microsoft (Tomás, Elena y cientos más) funcionan desde tu link de Vercel. Si no responden, la app usa sola la voz Piper, que se genera en tu computadora (la primera vez descarga la voz). Las dos quedan grabadas en el video.</p></div>
+ <div class="card"><h4>${ic('mic')}Voces gratis</h4><p>Las voces de Microsoft (Tomás, Elena y cientos más) funcionan abriendo tu página con el navegador Microsoft Edge. Si no responden, la app usa sola la voz Piper, que se genera en tu computadora (la primera vez descarga la voz). Las dos quedan grabadas en el video.</p></div>
  <div class="card"><h4>${ic('help')}Al exportar</h4><p>El video se graba en tiempo real: 1 minuto de video = 1 minuto. No cambies de pestaña. Mejor en Chrome de PC.</p></div></div>`}
 function vSettings(m){const st=S.settings;m.innerHTML=`<div class="h1">Ajustes</div><div class="sub">Conexiones gratis y tus datos</div>
  <div class="card box" style="max-width:680px;margin-top:16px"><h3>${ic('user')}Tu perfil</h3><div class="lbl">Tu nombre</div><input class="inp" value="${esc(st.userName)}" placeholder="Ej: Sergio" onchange="S.settings.userName=this.value.trim();saveSettings()"></div>
