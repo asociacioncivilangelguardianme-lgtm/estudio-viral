@@ -10,7 +10,11 @@ module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
   const send = (code, obj) => { res.statusCode = code; res.end(JSON.stringify(obj)); };
 
-  if (req.method === 'GET') return send(200, { ok: true, configured: !!process.env.GEMINI_API_KEY });
+  if (req.method === 'GET') {
+    // Solo muestra NOMBRES de variables parecidas (nunca el valor), para ayudar a encontrar errores de tipeo
+    const similar = Object.keys(process.env).filter((k) => /GEMINI|GOOGLE_API|AISTUDIO/i.test(k));
+    return send(200, { ok: true, configured: !!findKey(), env: process.env.VERCEL_ENV || '', similar });
+  }
   if (req.method !== 'POST') return send(405, { ok: false, error: 'Usá POST' });
 
   // Solo tu propia página puede usar este servidor (así nadie gasta tu cupo gratis desde otro sitio)
@@ -21,7 +25,7 @@ module.exports = async (req, res) => {
     if (host && host !== req.headers.host && !host.startsWith('localhost') && !host.startsWith('127.0.0.1')) return send(403, { ok: false, error: 'Origen no permitido' });
   }
 
-  const key = process.env.GEMINI_API_KEY;
+  const key = findKey();
   if (!key) return send(503, { ok: false, code: 'NO_KEY', error: 'Falta configurar la clave de Gemini en Vercel (GEMINI_API_KEY).' });
 
   let body = req.body;
@@ -56,6 +60,18 @@ module.exports = async (req, res) => {
   const limit = /429/.test(lastErr);
   return send(limit ? 429 : 502, { ok: false, code: limit ? 'LIMIT' : 'FAIL', error: limit ? 'Se alcanzó el límite gratis de Gemini por ahora. Probá en unos minutos.' : lastErr });
 };
+
+// Acepta la clave aunque el nombre tenga espacios, minúsculas o un nombre parecido
+function findKey() {
+  const env = process.env;
+  if (env.GEMINI_API_KEY && env.GEMINI_API_KEY.trim()) return clean(env.GEMINI_API_KEY);
+  for (const k of Object.keys(env)) {
+    const n = k.trim().toUpperCase().replace(/[^A-Z]/g, '');
+    if ((n.includes('GEMINI') || n === 'GOOGLEAPIKEY' || n === 'GOOGLEGENERATIVEAIAPIKEY') && env[k] && env[k].trim()) return clean(env[k]);
+  }
+  return '';
+}
+function clean(v) { return String(v).trim().replace(/^["']|["']$/g, '').trim(); }
 
 function readJson(req) {
   return new Promise((ok, ko) => {

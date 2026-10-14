@@ -589,7 +589,7 @@ const EDGE_VOICES=[
  ['fr-FR-HenriNeural','Henri','Francia','M'],['fr-FR-DeniseNeural','Denise','Francia','F'],
 ];
 const PIPER_VOICES=[
- ['es_MX-ald-medium','Ald','México'],['es_MX-claude-high','Claude','México'],
+ ['es_MX-ald-medium','Ald (hombre)','México'],['es_MX-claude-high','Claude (mujer)','México'],
  ['es_ES-davefx-medium','Davefx','España'],['es_ES-sharvard-medium','Sharvard','España'],
  ['en_US-hfc_male-medium','HFC (hombre)','EE.UU.'],['en_US-hfc_female-medium','HFC (mujer)','EE.UU.'],
  ['pt_BR-faber-medium','Faber','Brasil'],['it_IT-riccardo-x_low','Riccardo','Italia'],['fr_FR-siwis-medium','Siwis','Francia'],
@@ -905,7 +905,7 @@ Elegí el mejor look. Valores permitidos: grade=${Object.keys(GRADES).join('|')}
    try{const parts=[];for(const s of sc.slice(0,12))parts.push({type:'image_url',image_url:{url:await small(s)}});
     const out=await AI.chat([{role:'system',content:'Sos guionista de videos virales. Respondés SOLO JSON válido.'},{role:'user',content:[{type:'text',text:`Estas son ${Math.min(12,sc.length)} imágenes en orden. Tema: "${P.idea||'contá lo que se ve como una historia atrapante'}".${g?' Género: '+g.n+'.':''} Escribí la narración en ${LANGS[P.lang]}: 1 o 2 frases por imagen, conectadas como historia, con gancho al inicio. Para cada una "camera" (${Object.keys(CAMS).join('|')}) y "ambient" (${Object.keys(AMB).join('|')}). {"title":"...","scenes":[{"text":"...","camera":"...","ambient":"..."}]}`},...parts]}],{temp:.7});
     data=AI.json(out)}catch(e){}
-   if(!data||!data.scenes){const out=await AI.chat([{role:'system',content:'Respondés SOLO JSON válido.'},{role:'user',content:`Escribí la narración en ${LANGS[P.lang]} de un video de ${sc.length} escenas sobre: "${P.idea||'una historia emocionante'}". 1-2 frases por escena, gancho al inicio. {"title":"...","scenes":[{"text":"...","camera":"...","ambient":"..."}]}`}],{temp:.8});data=AI.json(out);toast('La IA no pudo ver las imágenes: escribió la narración según el tema',1)}
+   if(!data||!data.scenes){const out=await AI.chat([{role:'system',content:'Respondés SOLO JSON válido.'},{role:'user',content:`Escribí la narración en ${LANGS[P.lang]} de un video de ${sc.length} escenas sobre: "${P.idea||'una historia emocionante'}". 1-2 frases por escena, gancho al inicio. {"title":"...","scenes":[{"text":"...","camera":"...","ambient":"..."}]}`}],{temp:.8});data=AI.json(out);toast('La IA no pudo mirar tus fotos (para eso hay que conectar Gemini en Ajustes). Escribió la narración según el tema.',1)}
    data.scenes.forEach((x,i)=>{if(sc[i]){sc[i].text=String(x.text||'');if(CAMS[x.camera])sc[i].cam=x.camera;if(AMB[x.ambient])sc[i].amb=x.ambient}});
    if(data.title){P.title=data.title;if(P.name.startsWith('Proyecto'))P.name=data.title.slice(0,60)}RT.voices={};save(1)}
   finally{this.setBusy('')}render()},
@@ -947,15 +947,17 @@ const Voice={edgeDown:false,fails:0,warned:false,
  async edge(text,v,speed){const r=await fetch('/api/tts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,voice:v,rate:Math.round((speed-1)*100)})});
   if(r.status===404||r.status===405){this.edgeDown=true;throw new Error('falta /api/tts')}
   if(!r.ok)throw new Error('voz Microsoft '+r.status);const b=await r.blob();if(b.size<300)throw new Error('audio vacío');this.fails=0;return b},
- piperFor(lang){return{es:'es_MX-ald-medium',en:'en_US-hfc_male-medium',pt:'pt_BR-faber-medium',it:'it_IT-riccardo-x_low',fr:'fr_FR-siwis-medium'}[lang]||'es_MX-ald-medium'},
+ piperFor(lang,fem){if(fem)return{es:'es_MX-claude-high',en:'en_US-hfc_female-medium',fr:'fr_FR-siwis-medium'}[lang]||'es_MX-claude-high';
+  return{es:'es_MX-ald-medium',en:'en_US-hfc_male-medium',pt:'pt_BR-faber-medium',it:'it_IT-riccardo-x_low',fr:'fr_FR-siwis-medium'}[lang]||'es_MX-ald-medium'},
+ isFem(v){const e=EDGE_VOICES.find(x=>x[0]===v);if(e)return e[3]==='F';const a=(RT.allVoices||[]).find(x=>x.id===v);return !!(a&&a.g==='F')},
  // Devuelve {blob, pre} · pre=true si la velocidad ya viene aplicada en el audio
  async make(text,voiceId,{speed=1,onProg}={}){const vo=voiceOf(voiceId);
   if(vo.eng==='edge'){
    const rate=Math.round((speed-1)*100);
-   if(!EdgeDirect.down){try{const b=await EdgeDirect.say(text,vo.v,rate);if(b.size>300)return{blob:b,pre:true}}catch(e){EdgeDirect.down=true}}
+   if(!EdgeDirect.down){try{const b=await EdgeDirect.say(text,vo.v,rate);if(b.size>300){EdgeDirect.fails=0;return{blob:b,pre:true}}}catch(e){EdgeDirect.fails=(EdgeDirect.fails||0)+1;if(EdgeDirect.fails>=(EdgeDirect.isEdge()?3:1))EdgeDirect.down=true}}
    if(this.online()&&!this.edgeDown){try{return{blob:await this.edge(text,vo.v,speed),pre:true}}catch(e){if(++this.fails>=2)this.edgeDown=true}}
-   if(!this.warned){this.warned=true;toast(EdgeDirect.isEdge()?'Microsoft no respondió: uso la voz de respaldo Piper (suena más robótica y es de hombre).':'Las voces de Microsoft funcionan en el navegador Microsoft Edge. Ahora uso la voz de respaldo Piper (de hombre).',1)}
-   return{blob:await Piper.say(text,this.piperFor(vo.lang),onProg),pre:false}}
+   if(!this.warned){this.warned=true;const fem=this.isFem(vo.v);toast((EdgeDirect.isEdge()?'Microsoft no respondió.':'Las voces de Microsoft solo andan en el navegador Microsoft Edge.')+' Uso la voz gratis Piper '+(fem?'de mujer (Claude, México)':'de hombre (Ald, México)')+'. La primera vez tarda un poco en descargarla.')}
+   return{blob:await Piper.say(text,this.piperFor(vo.lang,this.isFem(vo.v)),onProg),pre:false}}
   if(vo.eng==='piper')return{blob:await Piper.say(text,vo.v,onProg),pre:false};
   const b=await AI.tts(text,vo.v);if(!b)throw new Error('Pollinations no respondió (requiere clave con saldo)');return{blob:b,pre:false}},
  async loadAll(){if(RT.allVoices)return RT.allVoices;if(!this.online())throw new Error('La lista completa está disponible desde tu link de Vercel.');
@@ -1097,8 +1099,12 @@ function scheduleSfx(ac,out,TL,t0){const P=S.P,nodes=[];const v=P.sfxVol;
  if(P.sfx){if(P.hook)nodes.push(impact(ac,out,t0+.05,v));TL.list.forEach((x,i)=>{if(i>0&&P.transition!=='corte')nodes.push(whoosh(ac,out,t0+x.cut-.25,v))})}
  if(P.amb)TL.list.forEach(x=>{if(x.s.amb&&x.s.amb!=='none')nodes.push(...ambience(ac,out,x.s.amb,t0+x.cut,t0+x.end+.3,.5*v))});return nodes}
 
-const Player={raf:0,nodes:[],rec:null,playing:false,
- stop(){cancelAnimationFrame(this.raf);this.nodes.forEach(n=>{try{n.stop()}catch(e){}});this.nodes=[];try{speechSynthesis.cancel()}catch(e){}
+const Player={raf:0,nodes:[],rec:null,playing:false,tk:null,onTick:null,wl:null,
+ // Reloj en segundo plano: sigue dando "latidos" aunque la ventana esté tapada o minimizada
+ ticker(){if(!this.tk){const src='let i=0;onmessage=e=>{clearInterval(i);if(e.data>0)i=setInterval(()=>postMessage(1),e.data)}';
+  this.tk=new Worker(URL.createObjectURL(new Blob([src],{type:'text/javascript'})));this.tk.onmessage=()=>{if(this.onTick)this.onTick()}}return this.tk},
+ endTicker(){if(this.tk)this.tk.postMessage(0);this.onTick=null;if(this.wl){try{this.wl.release()}catch(e){}this.wl=null}},
+ stop(){cancelAnimationFrame(this.raf);this.endTicker();try{getAC().resume()}catch(e){}this.nodes.forEach(n=>{try{n.stop()}catch(e){}});this.nodes=[];try{speechSynthesis.cancel()}catch(e){}
   Object.values(RT.clips).forEach(v=>{try{v.pause()}catch(e){}});if(this.rec&&this.rec.state!=='inactive')this.rec.stop();this.playing=false;const b=$('#playbtn');if(b)b.innerHTML=ic('play')+'Reproducir';const ph=$('#phd');if(ph)ph.style.display='none'},
  seek(t){const cv=$('#pv');if(!cv||!S.P||!S.P.scenes.length||this.playing)return;const {W,H}=Pipe.dims();if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H}try{const TL=Pipe.timeline();drawFrame(cv.getContext('2d'),W,H,t,TL);movePH(t,TL.total)}catch(e){}},
  async run(record){const P=S.P;if(!P||!P.scenes.length){toast('Primero generá las escenas',1);return}
@@ -1114,19 +1120,23 @@ const Player={raf:0,nodes:[],rec:null,playing:false,
   else TL.list.forEach(x=>{if(x.v){const s=ac.createBufferSource();s.buffer=x.v.buf;s.playbackRate.value=x.v.pre?1:P.speed;s.connect(out);s.start(t0+x.start);nodes.push(s)}});
   nodes.push(...scheduleMusic(ac,out,P.music,t0,TL.total,P.musicVol),...scheduleSfx(ac,out,TL,t0));this.nodes=nodes;this.playing=true;
   const spoken=new Set(),useSpeech=!record&&!hasVoice&&P.mode!=='musica'&&'speechSynthesis' in window;
-  if(record){const vs=cv.captureStream(30),tracks=[...vs.getVideoTracks(),...dest.stream.getAudioTracks()];
+  let vtrack=null,manual=false;
+  if(record){let vs=cv.captureStream(0);vtrack=vs.getVideoTracks()[0];manual=!!(vtrack&&vtrack.requestFrame);if(!manual){vs=cv.captureStream(30);vtrack=vs.getVideoTracks()[0]}
+   try{if(navigator.wakeLock)this.wl=await navigator.wakeLock.request('screen')}catch(e){}
+   const tracks=[...vs.getVideoTracks(),...dest.stream.getAudioTracks()];
    const types=['video/mp4;codecs=avc1.42E01E,mp4a.40.2','video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'];
    const mime=types.find(t=>window.MediaRecorder&&MediaRecorder.isTypeSupported(t))||'';const chunks=[];
    const rec=new MediaRecorder(new MediaStream(tracks),mime?{mimeType:mime,videoBitsPerSecond:P.quality==='fhd'?10e6:6e6}:{});
    rec.ondataavailable=e=>e.data.size&&chunks.push(e.data);
    rec.onstop=()=>{const type=rec.mimeType||'video/webm',blob=new Blob(chunks,{type});RT.video={url:URL.createObjectURL(blob),ext:type.includes('mp4')?'mp4':'webm',size:blob.size};P.status='done';save(1);Pipe.setBusy('');toast('¡Video listo! 🎬 Descargalo en el panel de vista previa');renderStage();renderPipe()};
-   this.rec=rec;rec.start(500);Pipe.setBusy('Grabando video… no cierres ni cambies de pestaña')}
+   this.rec=rec;rec.start(500);Pipe.setBusy('Grabando video… dejá esta página abierta (si salís, se pausa)')}
   const b=$('#playbtn');if(b&&!record)b.innerHTML=ic('stop')+'Detener';let lastIdx=-1;
-  const frame=()=>{const t=Math.max(0,ac.currentTime-t0);drawFrame(ctx,W,H,t,TL);movePH(t,TL.total);
+  const frame=()=>{if(!this.playing)return;const t=Math.max(0,ac.currentTime-t0);drawFrame(ctx,W,H,t,TL);if(manual)try{vtrack.requestFrame()}catch(e){}movePH(t,TL.total);
    const idx=TL.list.findIndex(x=>t>=x.cut&&t<x.end);if(idx!==lastIdx){Object.entries(RT.clips).forEach(([id,v])=>{const on=TL.list[idx]&&TL.list[idx].s.id===id;try{if(on){v.currentTime=0;v.play()}else v.pause()}catch(e){}});lastIdx=idx}
    if(useSpeech){const cur=TL.list[idx];if(cur&&cur.s.text&&!spoken.has(cur.s.id)){spoken.add(cur.s.id);try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(cur.s.text);u.lang=P.lang==='es'?'es-ES':P.lang;u.rate=1.1;speechSynthesis.speak(u)}catch(e){}}}
    Pipe.prog(clamp(t/TL.total,0,1));
-   if(t<TL.total)this.raf=requestAnimationFrame(frame);else{Pipe.prog(0);if(record&&this.rec&&this.rec.state!=='inactive')this.rec.stop();this.playing=false;Object.values(RT.clips).forEach(v=>{try{v.pause()}catch(e){}});const bb=$('#playbtn');if(bb)bb.innerHTML=ic('play')+'Reproducir';const ph=$('#phd');if(ph)ph.style.display='none'}};
+   if(t<TL.total){if(!record)this.raf=requestAnimationFrame(frame)}else{this.endTicker();Pipe.prog(0);if(record&&this.rec&&this.rec.state!=='inactive')this.rec.stop();this.playing=false;Object.values(RT.clips).forEach(v=>{try{v.pause()}catch(e){}});const bb=$('#playbtn');if(bb)bb.innerHTML=ic('play')+'Reproducir';const ph=$('#phd');if(ph)ph.style.display='none'}};
+  if(record){this.onTick=frame;this.ticker().postMessage(33)}
   frame()}};
 function movePH(t,total){const ph=$('#phd');if(!ph||!total)return;ph.style.display='block';ph.style.left=(clamp(t/total,0,1)*100)+'%'}
 
@@ -1519,7 +1529,10 @@ async function testAI(){const r=$('#tres');r.textContent='Probando…';try{const
 function exportData(){const b=new Blob([JSON.stringify(S.projects,null,1)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='estudio-viral-proyectos.json';a.click()}
 async function importData(f){if(!f)return;try{const arr=JSON.parse(await f.text());if(!Array.isArray(arr))throw 0;const ids=new Set(S.projects.map(p=>p.id));arr.forEach(p=>{if(!ids.has(p.id))S.projects.push(p)});store.set('ev_projects',S.projects);toast('Importado ✅');render()}catch(e){toast('Archivo inválido',1)}}
 
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&Player.rec&&Player.rec.state==='recording')toast('⚠️ Volvé a esta pestaña: la grabación se pausa si no la ves',1)});
+// Si salís de la página (o se apaga la pantalla del celular) mientras graba: se PAUSA todo (imagen y sonido juntos) y sigue al volver.
+document.addEventListener('visibilitychange',async()=>{const r=Player.rec;if(!r||!Player.playing)return;const ac=getAC();
+ if(document.hidden){if(r.state==='recording'){try{r.pause()}catch(e){}try{await ac.suspend()}catch(e){}}}
+ else if(r.state==='paused'){try{await ac.resume()}catch(e){}try{r.resume()}catch(e){}toast('Grabación retomada ▶️ Dejá esta página abierta hasta que termine')}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSheet();$('#modal').classList.remove('open')}});
 render();
 </script>
