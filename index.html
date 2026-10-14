@@ -643,7 +643,7 @@ const GRADES={
  sepia:{n:'Sepia',f:'sepia(.8) contrast(1.05)'},
 };
 const ANALOG={none:'Ninguna',vhs:'VHS (tracking y scanlines)',film16:'Película 16mm',super8:'Super 8 casero',mudo:'Cine mudo',glitch:'Glitch digital'};
-const AMB={none:'Sin ambiente',lluvia:'🌧️ Lluvia',tormenta:'⛈️ Tormenta',viento:'🌬️ Viento',oceano:'🌊 Océano',fuego:'🔥 Fuego',ciudad:'🏙️ Ciudad',noche:'🦗 Noche',bosque:'🌲 Bosque',espacio:'🌌 Espacio'};
+const AMB={none:'Sin ambiente',lluvia:'🌧️ Lluvia',tormenta:'⛈️ Tormenta',viento:'🌬️ Viento',oceano:'🌊 Océano',fuego:'🔥 Fuego',ciudad:'🏙️ Ciudad',noche:'🦗 Noche',bosque:'🌲 Bosque',espacio:'🌌 Espacio',rio:'🏞️ Río / arroyo',selva:'🦜 Selva tropical',pajaros:'🐦 Pájaros (mañana)',tambores:'🥁 Tambores',festejo:'🎉 Festejo (gente y aplausos)',multitud:'👥 Multitud / mercado',forja:'⚒️ Forja (martillo y yunque)',latidos:'💓 Latidos (suspenso)',cueva:'🦇 Cueva (gotas)',campanas:'🔔 Campanas',magia:'✨ Magia (destellos)',desierto:'🏜️ Desierto'};
 const SUBS={karaoke:['✨','Karaoke'],clasico:['🅰️','Clásico'],caja:['⬛','Con caja'],cinetica:['💥','Tipografía cinética'],ninguno:['🚫','Sin subtítulos']};
 const TRANS={fade:['🌫️','Fundido'],corte:['✂️','Corte seco'],flash:['⚡','Flash'],zoom:['🔍','Zoom punch']};
 const LANGS={es:'español',en:'inglés',pt:'portugués',it:'italiano',fr:'francés'};
@@ -871,7 +871,7 @@ Además "character": descripción física en inglés del personaje principal par
     else if(!prompt&&/^[\x00-\x7F]+$/.test(p.txt)&&p.txt.split(' ').length>6)prompt=p.txt;});
    const n=(note+' '+prompt).toLowerCase();
    const cam=/paneo|slow pan|\bpan\b/.test(n)?'panr':/close-?up|primer plano|macro/.test(n)?'zoomin':/wide shot|plano general|panor[aá]mic/.test(n)?'zoomout':/camina|walking|slow motion|tracking|sigue|following/.test(n)?'track':/sube|tilt up|desde abajo|majestic|epic/.test(n)?'tiltup':'auto';
-   const amb=/\b(forge|fire|fuego|forja)\b/.test(n)?'fuego':/\b(river|r[ií]o|water|agua|sea|mar|ocean)\b/.test(n)?'oceano':/\b(forest|bosque|monte|jungle|selva)\b/.test(n)?'bosque':/rain|lluvia/.test(n)?'lluvia':/storm|tormenta|thunder|trueno/.test(n)?'tormenta':/city|ciudad|village|pueblo|street/.test(n)?'ciudad':/night|noche/.test(n)?'noche':/space|espacio|stars/.test(n)?'espacio':'none';
+   const amb=/\b(forg\w*|anvil|yunque|forja|hammer\w*|martillo)\b/.test(n)?'forja':/\b(celebrat\w*|cheer\w*|festej\w*|petals|fiesta|party)\b/.test(n)?'festejo':/\b(drums?|tambor\w*)\b/.test(n)?'tambores':/\b(fire|fuego|flames?)\b/.test(n)?'fuego':/\b(river|r[ií]o|stream|arroyo|waterfall|cascada)\b/.test(n)?'rio':/\b(sea|mar|ocean|oc[eé]ano|beach|playa|waves?)\b/.test(n)?'oceano':/\b(jungle|selva|tropical)\b/.test(n)?'selva':/\b(forest|bosque|monte|woods)\b/.test(n)?'bosque':/\b(cave|cueva)\b/.test(n)?'cueva':/\b(desert|desierto)\b/.test(n)?'desierto':/\b(magic\w*|m[aá]gic\w*|aura|celestial|spell|hechizo)\b/.test(n)?'magia':/\b(market|mercado|crowd|multitud)\b/.test(n)?'multitud':/rain|lluvia/.test(n)?'lluvia':/storm|tormenta|thunder|trueno|lightning|rayo/.test(n)?'tormenta':/city|ciudad|village|pueblo|street/.test(n)?'ciudad':/night|noche/.test(n)?'noche':/space|espacio|stars/.test(n)?'espacio':'none';
    const name=(h[2]||'').replace(/[*#]/g,'').trim();
    out.scenes.push({text:lines.join(' '),prompt:(prompt||name||lines.join(' ')).replace(/\b(8k|4k)( resolution)?\b,?/gi,'').trim(),camera:cam,ambient:amb})});
   return out.scenes.length>=2?out:null},
@@ -1169,7 +1169,23 @@ function impact(ac,out,at,vol){const o=ac.createOscillator();o.frequency.setValu
 function ambience(ac,out,type,st,en,vol){const nodes=[],g=ac.createGain();g.gain.setValueAtTime(0,st);g.gain.linearRampToValueAtTime(vol,st+.6);g.gain.setValueAtTime(vol,Math.max(st+.6,en-.6));g.gain.linearRampToValueAtTime(0,en);g.connect(out);
  const nz=(ty,f,q,gain)=>{const s=nsrc(ac),fl=ac.createBiquadFilter();fl.type=ty;fl.frequency.value=f;if(q)fl.Q.value=q;const gg=ac.createGain();gg.gain.value=gain;s.connect(fl).connect(gg).connect(g);s.start(st,Math.random());s.stop(en+.1);nodes.push(s);return{fl,gg}};
  const lfo=(param,freq,depth)=>{const o=ac.createOscillator();o.frequency.value=freq;const d=ac.createGain();d.gain.value=depth;o.connect(d).connect(param);o.start(st);o.stop(en+.1);nodes.push(o)};
+ const tone=(f,t,d,gain,ty='sine',f2)=>{const o=ac.createOscillator(),gg=ac.createGain();o.type=ty;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d*.8);gg.gain.setValueAtTime(gain,t);gg.gain.exponentialRampToValueAtTime(.0005,t+d);o.connect(gg).connect(g);o.start(t);o.stop(t+d+.02);nodes.push(o)};
+ const burst=(t,d,gain,ty='bandpass',f=1500,q=1)=>{const sN=nsrc(ac),fl=ac.createBiquadFilter();fl.type=ty;fl.frequency.value=f;fl.Q.value=q;const gg=ac.createGain();gg.gain.setValueAtTime(gain,t);gg.gain.exponentialRampToValueAtTime(.0005,t+d);sN.connect(fl).connect(gg).connect(g);sN.start(t,Math.random());sN.stop(t+d+.02);nodes.push(sN)};
+ const R=Math.random;
  switch(type){
+  case'rio':{const w=nz('bandpass',1800,.6,.22);lfo(w.gg.gain,3.1,.06);nz('lowpass',400,0,.1);for(let t=st+.2;t<en-.2;t+=.08+R()*.3){const f=500+R()*900;tone(f,t,.06,.05,'sine',f*1.8)}}break;
+  case'selva':{const w=nz('bandpass',600,.7,.12);lfo(w.fl.frequency,.08,250);const bz=ac.createOscillator();bz.type='sawtooth';bz.frequency.value=5200;const bg=ac.createGain();bg.gain.value=0;const m=ac.createOscillator();m.frequency.value=22;const md=ac.createGain();md.gain.value=.012;m.connect(md).connect(bg.gain);bz.connect(bg).connect(g);bz.start(st);m.start(st);bz.stop(en+.1);m.stop(en+.1);nodes.push(bz,m);
+   for(let t=st+.3;t<en-.5;t+=.4+R()*1.3){const f=1500+R()*2500,n=1+Math.floor(R()*4);for(let k=0;k<n;k++)tone(f*(1+k*.04),t+k*.11,.1,.05,'sine',f*1.5)}}break;
+  case'pajaros':{nz('lowpass',500,0,.05);for(let t=st+.3;t<en-.4;t+=.3+R()*.9){const f=2600+R()*2200,n=2+Math.floor(R()*5);for(let k=0;k<n;k++)tone(f*(k%2?1.15:1),t+k*.07,.07,.12,'sine',f*1.3)}}break;
+  case'tambores':{const b=60/96;let k=0;for(let t=st+.2;t<en-.3;t+=b/2,k++){const pos=k%8;if([0,3,6].includes(pos))tone(110,t,.35,.55,'sine',55);if([2,5,7].includes(pos))tone(320,t,.15,.28,'triangle',220);if(pos%2===1)burst(t,.05,.12,'highpass',3000)}}break;
+  case'festejo':{const m=nz('bandpass',700,.5,.28);lfo(m.gg.gain,.5,.08);for(let t=st+.3;t<en-.3;t+=.03+R()*.08)burst(t,.04,.1+R()*.1,'bandpass',1800+R()*1500,1.5)}break;
+  case'multitud':{const a=nz('bandpass',450,.8,.3),b2=nz('bandpass',900,1.2,.12);lfo(a.fl.frequency,.3,120);lfo(b2.gg.gain,.7,.05)}break;
+  case'forja':{nz('bandpass',1100,.6,.06);for(let t=st+.4;t<en-.6;t+=.9+R()*.4){[880,1410,2230,3020].forEach((f,j)=>tone(f,t,1.1-j*.2,.12/(j+1),'sine'));burst(t,.08,.4,'lowpass',300)}}break;
+  case'latidos':{const b=60/68;for(let t=st+.3;t<en-.4;t+=b){tone(70,t,.18,.7,'sine',40);tone(60,t+.22,.2,.5,'sine',35)}}break;
+  case'cueva':{nz('lowpass',180,0,.15);for(let t=st+.5;t<en-.5;t+=.7+R()*1.8){const f=900+R()*700;tone(f,t,.25,.12,'sine',f*1.6);tone(f*1.6,t+.18,.35,.03,'sine')}}break;
+  case'campanas':{for(let t=st+.3;t<en-1;t+=2.8){[262,524,659,786,1046].forEach((f,j)=>tone(f*.75,t,3.5-j*.5,.14/(j+1),'sine'))}}break;
+  case'magia':{nz('highpass',6000,0,.02);const sc=[1047,1175,1319,1568,1760,2093,2349];for(let t=st+.2;t<en-.3;t+=.15+R()*.45){tone(sc[Math.floor(R()*sc.length)],t,1.4,.05,'sine')}}break;
+  case'desierto':{const w=nz('bandpass',350,.6,.35);lfo(w.fl.frequency,.07,160);lfo(w.gg.gain,.11,.15);nz('highpass',4000,0,.04)}break;
   case'lluvia':nz('highpass',900,0,.32);nz('lowpass',500,0,.12);break;
   case'tormenta':{nz('highpass',800,0,.3);const r=nz('lowpass',120,0,0);for(let t=st+1+Math.random()*2;t<en-1;t+=3+Math.random()*4){r.gg.gain.setValueAtTime(0.001,t);r.gg.gain.linearRampToValueAtTime(1.3,t+.15);r.gg.gain.exponentialRampToValueAtTime(.01,t+2.5)}}break;
   case'viento':{const w=nz('bandpass',450,.8,.45);lfo(w.fl.frequency,.13,280)}break;
