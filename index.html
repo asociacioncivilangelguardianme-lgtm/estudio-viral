@@ -263,7 +263,9 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 .vars button{width:52px;height:52px;border-radius:7px;overflow:hidden;flex:none;border:2px solid transparent;background:var(--bg2);position:relative}
 .vars button.on{border-color:var(--neo)}
 .vars img{width:100%;height:100%;object-fit:cover}
-.tools{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
+.tools{display:grid;grid-template-columns:1fr;gap:6px;margin-top:8px}
+.tools .btn{width:100%;white-space:normal;text-align:left;min-width:0}
+.tools-main{display:grid;grid-template-columns:1fr;gap:6px;margin-top:6px}.tools-main .btn{width:100%;justify-content:flex-start;white-space:normal;text-align:left}
 .tools .btn{justify-content:flex-start;font-size:11.5px;padding:7px 8px}
 .cmp{position:relative;border-radius:8px;overflow:hidden;margin-top:8px;background:#000}
 .cmp img{display:block;width:100%}
@@ -950,7 +952,8 @@ Formato exacto: {"cast":[{"name":"...","desc":"..."}],"scenes":[{"n":1,"prompt":
    const mine=(P.cast||[]).filter(c=>(c.user&&c.desc)||c.ref);if(Array.isArray(d.cast)&&d.cast.length)P.cast=d.cast.filter(c=>c&&c.name&&c.desc).slice(0,10).map(c=>withTradition({name:String(c.name).trim(),desc:String(c.desc).trim()}));
    // Lo que escribiste vos a mano en Personajes se respeta (la IA no lo pisa)
    keepMine(P,mine);
-   let n=0;d.scenes.forEach(x=>{const s=P.scenes[(+x.n||0)-1];if(s&&x.prompt&&!s.local){this.pushVar(s);s.prompt=String(x.prompt).trim();const c=castIn(P,s);s.seed=c.length===1?hashSeed(c[0].name):seed();s.img='';s.edited=false;s.hq=false;n++}});
+   let n=0;const ns=d.scenes.map(x=>+x.n),okN=ns.every(v=>v>=1&&v<=P.scenes.length)&&new Set(ns).size===ns.length;
+   d.scenes.forEach((x,j)=>{const s=P.scenes[okN?x.n-1:j];if(s&&x.prompt&&!s.local){this.pushVar(s);s.prompt=String(x.prompt).trim();const c=castIn(P,s);s.seed=c.length===1?hashSeed(c[0].name):seed();s.img='';s.edited=false;s.hq=false;n++}});
    save(1);toast(`Listo: ${n} escena(s) con descripciones mejoradas. Rehaciendo imágenes…`)}
   finally{this.setBusy('')}render();await this.images()},
  async addClip(i,f){const s=S.P.scenes[i];if(!f)return;if(f.size>200e6)throw new Error('El video es muy pesado (máximo 200 MB).');
@@ -1561,6 +1564,11 @@ function renderSel(){const el=$('#selpanel');if(!el||!S.P)return;const P=S.P,i=c
  el.innerHTML=`<h3><span class="row">${ic('img')}Escena ${i+1} de ${P.scenes.length}</span><span class="row"><button class="btn xs" onclick="selectScene(Math.max(0,S.sel-1))">‹</button><button class="btn xs" onclick="selectScene(Math.min(S.P.scenes.length-1,S.sel+1))">›</button></span></h3>
  ${(s.vars&&s.vars.length)?`<div class="lbl">Variaciones (tocá para volver)</div><div class="vars"><button class="on">${RT.imgs[s.img]?`<img src="${esc(RT.imgs[s.img].src)}">`:''}</button>${s.vars.map((v,k)=>`<button onclick="restoreVar(${i},${k})">${RT.imgs[v.img]?`<img src="${esc(RT.imgs[v.img].src)}">`:`<span class="hint">${k+1}</span>`}</button>`).join('')}</div>`:''}
  ${prev&&RT.imgs[s.img]?`<div class="cmp"><img src="${esc(RT.imgs[prev.img].src)}"><div class="top" id="cmptop" style="clip-path:inset(0 50% 0 0)"><img src="${esc(RT.imgs[s.img].src)}" style="width:100%"></div><span class="lab" style="left:6px">Después</span><span class="lab" style="right:6px">Antes</span></div><input type="range" min="0" max="100" value="50" oninput="$('#cmptop').style.clipPath='inset(0 '+(100-this.value)+'% 0 0)'">`:''}
+ <div class="tools-main">
+  <button class="btn grad" onclick="geminiScene(${i})">${ic('spark')}Hacer esta escena con Gemini (misma cara)</button>
+  <label class="btn ${s.local?'neo':''}" style="cursor:pointer">${ic('img')}Subir mi imagen<input type="file" accept="image/*" hidden onchange="run(()=>Pipe.setImage(${i},this.files[0]))"></label>
+  <label class="btn ${s.clip?'neo':''}" style="cursor:pointer">${ic('film')}${s.clip?'Cambiar mi video (Wan)':'Subir mi video (Wan)'}<input type="file" accept="video/*" hidden onchange="run(()=>Pipe.addClip(${i},this.files[0]))"></label>
+ </div>
  <div class="cols2" style="gap:6px"><div><div class="lbl">Cámara</div><select class="sel" onchange="S.P.scenes[${i}].cam=this.value;save();renderScenesOnly(1);seekScene(${i})">${Object.entries(CAMS).map(([k,n])=>`<option value="${k}" ${(s.cam||'auto')===k?'selected':''}>${n}</option>`).join('')}</select></div>
  <div><div class="lbl">Ambiente</div><select class="sel" onchange="S.P.scenes[${i}].amb=this.value;save();renderScenesOnly(1)">${Object.entries(AMB).map(([k,n])=>`<option value="${k}" ${(s.amb||'none')===k?'selected':''}>${n}</option>`).join('')}</select></div></div>
  <div class="lbl">Encuadre (para que no se corten las cabezas)</div><select class="sel" onchange="S.P.scenes[${i}].frame=this.value;save();seekScene(${i})">${Object.entries({auto:'Automático',top:'Mostrar la parte de arriba (caras)',center:'Centro',bottom:'Mostrar la parte de abajo',fit:'Imagen completa (con fondo desenfocado)'}).map(([k,n])=>`<option value="${k}" ${(s.frame||'auto')===k?'selected':''}>${n}</option>`).join('')}</select>
@@ -1573,10 +1581,7 @@ function renderSel(){const el=$('#selpanel');if(!el||!S.P)return;const P=S.P,i=c
   <button class="btn ${s.parallax?'neo':''}" data-busy onclick="run(()=>Pipe.parallax(${i},${!s.parallax}))">${ic('scissors')}${s.parallax?'Quitar 2.5D':'Rotoscopia 2.5D'}</button>
   <button class="btn" data-busy onclick="askBg(${i})">${ic('layers')}Cambiar fondo</button>
   <button class="btn ${RT.clips[s.id]?'neo':''}" data-busy onclick="run(()=>Pipe.animate(${i}))">${ic('film')}Animar IA (beta)</button>
-  <button class="btn grad" onclick="geminiScene(${i})">${ic('spark')}Hacer esta escena con Gemini (misma cara)</button>
   <button class="btn" ${RT.imgs[s.img]?'':'disabled'} onclick="shareImgPicker(${i})">${ic('layers')}Repetir esta misma imagen en otras escenas</button>
-  <label class="btn ${s.local?'neo':''}" style="cursor:pointer">${ic('img')}Subir mi imagen<input type="file" accept="image/*" hidden onchange="run(()=>Pipe.setImage(${i},this.files[0]))"></label>
-  <label class="btn ${s.clip?'neo':''}" style="cursor:pointer">${ic('film')}${s.clip?'Cambiar mi video':'Subir mi video'}<input type="file" accept="video/*" hidden onchange="run(()=>Pipe.addClip(${i},this.files[0]))"></label>
   ${s.clip?`<button class="btn" onclick="Pipe.removeClip(${i})">${ic('trash')}Quitar mi video</button>`:''}
   <button class="btn" onclick="sayScene(${i})">${ic('play')}Oír voz</button></div>
  <div class="hint">"Subir mi video": poné un clip tuyo en esta escena (por ejemplo uno hecho en Wan donde la persona mueve la boca). Se ve en lugar de la imagen y queda dentro del video exportado.</div><div class="hint">${s.local?'Imagen tuya: podés darle profundidad 2.5D, cambiarle el fondo y moverla con la cámara.':'"Editar con IA" vuelve a crear la imagen aplicando tu pedido.'}</div>`;
