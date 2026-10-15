@@ -626,6 +626,9 @@ const ORIXAS={};(()=>{const add=(names,t)=>names.forEach(n=>ORIXAS[n]=t);
  add(['omolu','obaluae','babalu'],'body covered from head to feet with straw raffia clothes (aze), cowrie shells, mysterious');})();
 const normName=n=>String(n).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
 function withTradition(c){const t=ORIXAS[normName(c.name)];if(!t)return c;const first=t.split(',')[0].replace(/ clothes$/,'').toLowerCase();return c.desc.toLowerCase().includes(first)?c:{...c,desc:c.desc+', traditional look: '+t}}
+// Al volver a generar, se conservan las descripciones que escribiste vos y las fotos de referencia
+function keepMine(P,old){(old||[]).filter(c=>c&&c.name&&(c.user||c.ref)).forEach(m=>{const k=(P.cast||[]).findIndex(c=>normName(c.name)===normName(m.name));
+ if(k>=0){if(m.user){P.cast[k].desc=m.desc;P.cast[k].user=true}if(m.ref)P.cast[k].ref=m.ref}else (P.cast=P.cast||[]).push(m)})}
 function castIn(P,s){return (P.cast||[]).filter(c=>c.name&&c.desc&&nameRe(c.name).test(s.prompt||s.text||''))}
 // Arma la lista de personajes leyendo los prompts: "A muscular African warrior god (Ogum) ... He wears ..."  o  "Xangô (god of thunder) standing in red robes"
 function extractCast(prompts){const cast=[],seen=new Set();
@@ -850,7 +853,7 @@ Además "character": descripción física en inglés del personaje principal par
     // Si el guion pide realismo y el estilo quedó en uno de dibujo, paso a Hiperrealismo de Cine (si no, mezcla anime con realista)
     const real=/hiperreal|hyper-?real|ultra-?real|photo-?real|fotorreal|realista|realistic/i.test(base);const cat=styleOf(P.style).c;
     if(real&&cat!=='realismo'&&P.style!=='custom'){P.style='hiperreal';toast('Tu guion pide imágenes realistas: puse el estilo Hiperrealismo de Cine')}P.title=st.title||P.title||P.name;if(P.name.startsWith('Proyecto')&&st.title)P.name=st.title.slice(0,60);
-    P.scenes=this.parseScenes(st.scenes);P.character='';P.cast=(st.cast&&st.cast.length?st.cast:extractCast(st.scenes.map(x=>x.prompt))).map(withTradition);P.scenes.forEach(sc=>{const c=castIn(P,sc);if(c.length===1)sc.seed=hashSeed(c[0].name)});S.sel=0;RT.voices={};RT.video=null;P.status='draft';save(1);
+    P.scenes=this.parseScenes(st.scenes);P.character='';const oldCast=P.cast||[];P.cast=(st.cast&&st.cast.length?st.cast:extractCast(st.scenes.map(x=>x.prompt))).map(withTradition);keepMine(P,oldCast);P.scenes.forEach(sc=>{const c=castIn(P,sc);if(c.length===1)sc.seed=hashSeed(c[0].name)});S.sel=0;RT.voices={};RT.video=null;P.status='draft';save(1);
     toast(`Leí tu guion: ${st.scenes.length} escenas con sus prompts de imagen ✅`);render();if(!fromAuto)this.images().catch(e=>toast(e.message,1));return}
    dur=RT.narr?RT.narr.duration:wordsOf(base)/2.5;instr=`Este es el guion. NO cambies las palabras, solo dividilo en orden:\n"""${base.slice(0,12000)}"""${gtxt}`}
   const n=this.nScenes(dur);this.setBusy('La IA está escribiendo el guion y el storyboard…');this.prog(.1);
@@ -944,9 +947,9 @@ La IA de imágenes NO conoce nombres propios (dioses, orixás, santos, personaje
 Escenas: ${JSON.stringify(list).slice(0,14000)}
 Formato exacto: {"cast":[{"name":"...","desc":"..."}],"scenes":[{"n":1,"prompt":"..."}]}`}],{temp:.5});
    const d=AI.json(out);if(!d.scenes||!d.scenes.length)throw new Error('La IA no devolvió escenas, probá de nuevo.');
-   const mine=(P.cast||[]).filter(c=>c.user&&c.desc);if(Array.isArray(d.cast)&&d.cast.length)P.cast=d.cast.filter(c=>c&&c.name&&c.desc).slice(0,10).map(c=>withTradition({name:String(c.name).trim(),desc:String(c.desc).trim()}));
+   const mine=(P.cast||[]).filter(c=>(c.user&&c.desc)||c.ref);if(Array.isArray(d.cast)&&d.cast.length)P.cast=d.cast.filter(c=>c&&c.name&&c.desc).slice(0,10).map(c=>withTradition({name:String(c.name).trim(),desc:String(c.desc).trim()}));
    // Lo que escribiste vos a mano en Personajes se respeta (la IA no lo pisa)
-   mine.forEach(m=>{const k=(P.cast||[]).findIndex(c=>normName(c.name)===normName(m.name));if(k>=0)P.cast[k]=m;else (P.cast=P.cast||[]).push(m)});
+   keepMine(P,mine);
    let n=0;d.scenes.forEach(x=>{const s=P.scenes[(+x.n||0)-1];if(s&&x.prompt&&!s.local){this.pushVar(s);s.prompt=String(x.prompt).trim();const c=castIn(P,s);s.seed=c.length===1?hashSeed(c[0].name):seed();s.img='';s.edited=false;s.hq=false;n++}});
    save(1);toast(`Listo: ${n} escena(s) con descripciones mejoradas. Rehaciendo imágenes…`)}
   finally{this.setBusy('')}render();await this.images()},
@@ -1097,8 +1100,12 @@ function camXf(cam,k,p,W,H,z,t){const P=S.P;if(cam==='auto')cam=['zoomin','panr'
  return{s,dx,dy,rot:P.shake?Math.sin(t*1.1)*.004:0}}
 function drawSrc(ctx,src,W,H,xf,alpha){const sw=src.videoWidth||src.naturalWidth||src.width,sh0=src.videoHeight||src.naturalHeight||src.height;if(!sw)return;
  const sh=sh0*(1-(src._crop||0)); // recorta abajo el sello de agua del servicio gratis
- const sc=Math.max(W/sw,H/sh)*xf.s,w=sw*sc,h=sh*sc;ctx.globalAlpha=alpha;
- if(xf.rot){ctx.save();ctx.translate(W/2,H/2);ctx.rotate(xf.rot);ctx.drawImage(src,0,0,sw,sh,-w/2+xf.dx,-h/2+xf.dy,w,h);ctx.restore()}else ctx.drawImage(src,0,0,sw,sh,(W-w)/2+xf.dx,(H-h)/2+xf.dy,w,h)}
+ ctx.globalAlpha=alpha;
+ if(xf.fit){ // imagen completa: fondo desenfocado + la imagen entera encima (no corta cabezas)
+  const of=ctx.filter,bs=Math.max(W/sw,H/sh)*1.08,bw=sw*bs,bh=sh*bs;ctx.filter=(of&&of!=='none'?of+' ':'')+'blur(22px) brightness(.55)';ctx.drawImage(src,0,0,sw,sh,(W-bw)/2,(H-bh)/2,bw,bh);ctx.filter=of;
+  const fs=Math.min(W/sw,H/sh)*Math.min(xf.s,1.08),fw=sw*fs,fh=sh*fs;ctx.drawImage(src,0,0,sw,sh,(W-fw)/2+xf.dx*.4,(H-fh)/2+xf.dy*.4,fw,fh);return}
+ const sc=Math.max(W/sw,H/sh)*xf.s,w=sw*sc,h=sh*sc,fy=xf.fy==null?.5:xf.fy;
+ if(xf.rot){ctx.save();ctx.translate(W/2,H/2);ctx.rotate(xf.rot);ctx.drawImage(src,0,0,sw,sh,-w/2+xf.dx,-h/2+xf.dy,w,h);ctx.restore()}else ctx.drawImage(src,0,0,sw,sh,(W-w)/2+xf.dx,(H-h)*fy+xf.dy,w,h)}
 async function loadClip(s){if(!s.clip)return;if(RT.clips[s.id])return RT.clips[s.id];const b=await IDB.get(s.clip);if(!b)return;
  const v=document.createElement('video');v.src=URL.createObjectURL(b);v.muted=true;v.loop=true;v.playsInline=true;v.preload='auto';
  await new Promise(r=>{v.onloadeddata=r;v.onerror=r;setTimeout(r,8000)});RT.clips[s.id]=v;return v}
@@ -1107,6 +1114,8 @@ function drawScene(ctx,W,H,x,k,p,t,alpha,extraS,jit){
  const P=S.P,s=x.s,im=RT.imgs[s.img],clip=RT.clips[s.id];
  if(!im&&!clip){ctx.globalAlpha=alpha;const g=ctx.createLinearGradient(0,0,W,H);const st=styleOf(P.style);g.addColorStop(0,st.g[0]);g.addColorStop(1,st.g[1]);ctx.fillStyle=g;ctx.fillRect(0,0,W,H);return}
  const xf=camXf(s.cam||P.cam,k,p,W,H,P.zoom,t);xf.s*=extraS;xf.dx+=jit[0];xf.dy+=jit[1];
+ {const sr=clip&&clip.readyState>=2?clip:im;const iw=sr&&(sr.videoWidth||sr.naturalWidth||sr.width),ih=sr&&((sr.videoHeight||sr.naturalHeight||sr.height)*(1-(sr._crop||0)));const fr=s.frame||'auto';
+  if(iw&&ih){const diff=Math.abs(Math.log((iw/ih)/(W/H)));if(fr==='fit'||(fr==='auto'&&diff>.22))xf.fit=true;else{xf.fy=fr==='top'?.12:fr==='bottom'?.88:fr==='center'?.5:(iw/ih<W/H?.3:.5);if(xf.fy<.5&&xf.dy>0)xf.dy*=.4}}}
  if(clip&&clip.readyState>=2){drawSrc(ctx,clip,W,H,xf,alpha);return}
  const fg=RT.fg[s.id];
  if(s.parallax&&fg){const bg=s.bg&&RT.imgs[s.bg]?RT.imgs[s.bg]:im;const of=ctx.filter;ctx.filter=(of==='none'?'':of+' ')+(bg===im?'blur(5px)':'blur(1px)');drawSrc(ctx,bg,W,H,{...xf,s:xf.s*1.03},alpha);ctx.filter=of;
@@ -1350,7 +1359,7 @@ function openProject(P){Player.stop();closeSheet();const full=Object.assign(JSON
  const i=S.projects.findIndex(p=>p.id===full.id);if(i<0)S.projects.unshift(full);else S.projects[i]=full;S.sel=0;save(1);S.view='editor';S.tab='contenido';render();window.scrollTo(0,0);loadClips().then(()=>{if(Object.keys(RT.clips).length){renderScenesOnly(1);Player.seek(1.2)}})}
 function render(){renderShell();const m=$('#main');
  ({projects:vProjects,new:vWizard,editor:vEditor,catalogo:vCatalog,voices:vVoices,sonido:vSonido,help:vHelp,settings:vSettings}[S.view]||vProjects)(m);
- hydrateThumbs();if(S.busy)document.querySelectorAll('[data-busy]').forEach(b=>b.disabled=true)}
+ hydrateThumbs();paintRefs();if(S.busy)document.querySelectorAll('[data-busy]').forEach(b=>b.disabled=true)}
 function resetImgs(){if(!S.P)return;S.P.scenes.forEach(s=>{if(!s.local){Pipe.pushVar(s);s.img='';s.edited=false;s.hq=false;s.parallax=false;delete RT.fg[s.id];delete RT.clips[s.id]}})}
 function setStyle(id){const P=S.P;P.style=id;applyFx(styleOf(id).fx);resetImgs();save();closeSheet();render();toast('Estilo: '+styleOf(id).n+(P.scenes.length?' · tocá "Generar imágenes"':''))}
 function setGenre(id,sub){const P=S.P,g=genreOf(id);if(!g){P.genre='';P.sub='';save();render();return}P.genre=id;P.sub=sub||'';const old=P.style;applyPreset(g.pre,P);if(P.style!==old)resetImgs();save();closeSheet();render();toast('Género: '+g.n+(sub?' · '+sub:'')+(g.pre?' (look recomendado aplicado)':''))}
@@ -1494,9 +1503,43 @@ function renderCfg(){const el=$('#cfg');if(!el||!S.P)return;const P=S.P,g=genreO
 function castHTML(){const P=S.P,c=P.cast||[];
  return `<details class="pnl" ${c.length?'open':''} style="margin:8px 0"><summary>${ic('user')}Personajes (${c.length}) · para que salgan iguales en todas las escenas</summary><div class="pbody2">
  <div class="hint">Escribí cómo es cada personaje (en inglés: cara, pelo, ropa). Cada vez que una escena nombre a ese personaje, la imagen usa esta descripción.</div>
- ${c.map((x,k)=>`<div class="row" style="gap:6px;margin-top:6px;align-items:flex-start"><input class="inp" style="max-width:110px" value="${esc(x.name)}" placeholder="Nombre" onchange="S.P.cast[${k}].name=this.value.trim();save()"><textarea class="inp" rows="2" placeholder="beautiful African goddess, golden silk dress, gold jewelry" onchange="S.P.cast[${k}].desc=this.value.trim();S.P.cast[${k}].user=true;save()">${esc(x.desc)}</textarea><button class="btn xs" title="Quitar" onclick="S.P.cast.splice(${k},1);save();render()">${ic('trash')}</button></div>`).join('')}
+ ${c.map((x,k)=>`<div class="row" style="gap:6px;margin-top:6px;align-items:flex-start"><input class="inp" style="max-width:110px" value="${esc(x.name)}" placeholder="Nombre" onchange="S.P.cast[${k}].name=this.value.trim();save()"><textarea class="inp" rows="2" placeholder="beautiful African goddess, golden silk dress, gold jewelry" onchange="S.P.cast[${k}].desc=this.value.trim();S.P.cast[${k}].user=true;save()">${esc(x.desc)}</textarea><button class="btn xs" title="Quitar" onclick="S.P.cast.splice(${k},1);save();render()">${ic('trash')}</button></div>
+ <div class="row" style="gap:6px;margin:4px 0 4px 116px;flex-wrap:wrap;align-items:center">${x.ref?`<img data-ref="${esc(x.ref)}" style="width:44px;height:44px;object-fit:cover;border-radius:8px;border:2px solid var(--acc,#7c5cff)">`:''}<span class="hint" style="margin:0">${x.ref?'Foto de referencia lista ✅':'Sin foto de referencia'}</span>
+ <button class="btn xs" onclick="refFromScene(${k})">${ic('img')}Usar la imagen de la escena elegida</button>
+ <label class="btn xs" style="cursor:pointer">${ic('plus')}Subir foto<input type="file" accept="image/*" hidden onchange="refFromFile(${k},this.files[0])"></label></div>`).join('')}
  <div class="row" style="margin-top:8px;gap:6px"><button class="btn sm" onclick="(S.P.cast=S.P.cast||[]).push({name:'',desc:''});save();render()">${ic('plus')}Personaje</button>
- <button class="btn sm grad" data-busy onclick="run(()=>Pipe.improvePrompts())">${ic('spark')}IA: mejorar imágenes</button>${c.length?`<button class="btn sm" data-busy onclick="redoCast()">${ic('refresh')}Rehacer imágenes con estos personajes</button>`:''}</div></div></details>`}
+ ${c.some(x=>x.ref)?`<button class="btn sm grad" onclick="geminiStart()">${ic('spark')}Empezar en Gemini (los personajes una sola vez)</button>`:''}<button class="btn sm" data-busy onclick="run(()=>Pipe.improvePrompts())">${ic('spark')}IA: mejorar imágenes</button>${c.length?`<button class="btn sm" data-busy onclick="redoCast()">${ic('refresh')}Rehacer imágenes con estos personajes</button>`:''}</div></div></details>`}
+async function saveRef(k,blob){const c=S.P.cast[k];if(!c||!blob)return;const key='ref:'+uid();await IDB.set(key,blob);c.ref=key;save(1);render();toast('Foto de referencia de '+(c.name||'personaje')+' guardada ✅')}
+async function refFromScene(k){const s=S.P.scenes[S.sel];const im=s&&RT.imgs[s.img];if(!im){toast('Primero tocá una escena que tenga imagen',1);return}
+ try{const c=document.createElement('canvas'),sw=im.naturalWidth||im.width,sh=im.naturalHeight||im.height,cr=im._crop||0;c.width=sw;c.height=Math.round(sh*(1-cr));c.getContext('2d').drawImage(im,0,0,sw,c.height,0,0,sw,c.height);
+  await saveRef(k,await new Promise(r=>c.toBlob(r,'image/jpeg',.92)))}catch(e){toast('No pude copiar esa imagen. Descargala y usá "Subir foto".',1)}}
+async function refFromFile(k,f){if(f)await saveRef(k,f)}
+async function refURL(key){if(!key)return'';RT.refs=RT.refs||{};if(RT.refs[key])return RT.refs[key];const b=await IDB.get(key);if(!b)return'';return RT.refs[key]=URL.createObjectURL(b)}
+function paintRefs(){document.querySelectorAll('img[data-ref]').forEach(async el=>{const u=await refURL(el.dataset.ref);if(u)el.src=u})}
+// Guía paso a paso para hacer UNA escena en Gemini con la foto de referencia del personaje
+async function geminiScene(i){const P=S.P,s=P.scenes[i];if(!s)return;const cast=castIn(P,s),withRef=cast.filter(c=>c.ref),noRef=cast.filter(c=>!c.ref);
+ const st=styleOf(P.style),fmt=P.format==='vertical'?'formato vertical 9:16':P.format==='cuadrado'?'formato cuadrado 1:1':'formato horizontal 16:9';
+ const who=cast.length?`Nueva escena de la historia. Aparece${cast.length>1?'n':''} ${cast.map(c=>c.name).join(' y ')}: usa${cast.length>1?'los':'lo'} exactamente como en las fotos de los personajes que te mostré (misma cara, mismo pelo, misma ropa y mismos colores).`:'Nueva escena de la historia (sin personajes principales).';
+ const txt=`${who} Creá esta escena en estilo ${st.n}, ${fmt}, imagen de alta calidad, sin textos ni letras.\n\nEscena: ${s.prompt}\n\nLo que se cuenta en esta escena: ${s.text||''}`.trim();
+ const refs=await Promise.all(withRef.map(async c=>({c,u:await refURL(c.ref)})));
+ $('#sheetin').innerHTML=`<div class="between" style="margin-bottom:10px"><div class="h1" style="font-size:19px">✨ Hacer la escena ${i+1} con Gemini</div><button class="btn sm" onclick="closeSheet()">✕ Cerrar</button></div>
+ <div class="card" style="padding:12px"><b>1) Fotos de los personajes</b><div class="hint" style="margin:4px 0">Si ya empezaste el chat de Gemini con <b>"Empezar en Gemini"</b> (en Personajes), <b>no subas nada</b>: Gemini ya los conoce, pasá al paso 2. Si no, descargá y subí estas fotos.</div>${refs.length?`<div class="row" style="gap:10px;margin-top:8px;flex-wrap:wrap">${refs.map(r=>`<div style="text-align:center"><img src="${r.u}" style="width:110px;height:110px;object-fit:cover;border-radius:10px"><br><a class="btn xs" href="${r.u}" download="${esc(r.c.name||'personaje')}-referencia.jpg">${ic('down')}${esc(r.c.name)}</a></div>`).join('')}</div>`:`<div class="hint">Esta escena no tiene personajes con foto de referencia. Podés hacerla igual (Gemini la crea solo con el texto).</div>`}
+ ${noRef.length?`<div class="hint">Sin foto todavía: ${noRef.map(c=>esc(c.name)).join(', ')}. Ponésela en <b>Personajes → "Usar la imagen de la escena elegida"</b>.</div>`:''}</div>
+ <div class="card" style="padding:12px;margin-top:8px"><b>2) Copiá el pedido</b><textarea class="inp" id="gmtxt" rows="6" style="margin-top:6px">${esc(txt)}</textarea><button class="btn sm" style="margin-top:6px" onclick="copyGem()">${ic('copy')}Copiar pedido</button></div>
+ <div class="card" style="padding:12px;margin-top:8px"><b>3) En Gemini</b> (en el <b>mismo chat</b> de siempre) pegá el pedido con <b>Ctrl + V</b> → Enter. Cuando te dé la imagen, descargala.<br><a class="btn sm grad" style="margin-top:8px" href="https://gemini.google.com/app" target="_blank" rel="noopener">${ic('spark')}Abrir Gemini</a></div>
+ <div class="card" style="padding:12px;margin-top:8px"><b>4) Volvé acá y subí la imagen que hizo Gemini</b><br><label class="btn sm grad" style="margin-top:8px;cursor:pointer">${ic('img')}Subir la imagen de Gemini a la escena ${i+1}<input type="file" accept="image/*" hidden onchange="closeSheet();run(()=>Pipe.setImage(${i},this.files[0]))"></label></div>`;
+ $('#sheet').classList.add('open')}
+// Una sola vez por historia: le presenta a Gemini todos los personajes con su foto. Después cada escena es solo pegar el pedido en el mismo chat.
+async function geminiStart(){const P=S.P,cs=(P.cast||[]).filter(c=>c.ref);if(!cs.length){toast('Primero poné una foto de referencia a algún personaje',1);return}
+ const refs=await Promise.all(cs.map(async c=>({c,u:await refURL(c.ref)})));const st=styleOf(P.style),fmt=P.format==='vertical'?'formato vertical 9:16':P.format==='cuadrado'?'formato cuadrado 1:1':'formato horizontal 16:9';
+ const txt=`Vamos a crear juntos las imágenes de una historia: "${P.title||P.name}". Te subo las fotos de los personajes, en este orden: ${cs.map((c,j)=>'foto '+(j+1)+' = '+c.name).join(', ')}. Memorizalos: cada vez que te pida una escena, usá exactamente a esos personajes, con la misma cara, el mismo pelo, la misma ropa y los mismos colores. Estilo de todas las imágenes: ${st.n}, ${fmt}, sin textos ni letras. Por ahora no hagas ninguna imagen: respondé solo "Listo" y esperá mis escenas.`;
+ $('#sheetin').innerHTML=`<div class="between" style="margin-bottom:10px"><div class="h1" style="font-size:19px">✨ Empezar en Gemini (una sola vez por historia)</div><button class="btn sm" onclick="closeSheet()">✕ Cerrar</button></div>
+ <div class="card" style="padding:12px"><b>1) Descargá las fotos de los personajes</b><div class="row" style="gap:10px;margin-top:8px;flex-wrap:wrap">${refs.map((r,j)=>`<div style="text-align:center"><img src="${r.u}" style="width:110px;height:110px;object-fit:cover;border-radius:10px"><br><a class="btn xs" href="${r.u}" download="${j+1}-${esc(r.c.name||'personaje')}.jpg">${ic('down')}${j+1}. ${esc(r.c.name)}</a></div>`).join('')}</div></div>
+ <div class="card" style="padding:12px;margin-top:8px"><b>2) Copiá la presentación</b><textarea class="inp" id="gmtxt" rows="6" style="margin-top:6px">${esc(txt)}</textarea><button class="btn sm" style="margin-top:6px" onclick="copyGem()">${ic('copy')}Copiar</button></div>
+ <div class="card" style="padding:12px;margin-top:8px"><b>3) Abrí un chat NUEVO en Gemini</b>: tocá el <b>+</b> → subí <b>todas</b> las fotos juntas (en el orden de los números) → pegá con <b>Ctrl + V</b> → Enter. Gemini responde "Listo".<br><a class="btn sm grad" style="margin-top:8px" href="https://gemini.google.com/app" target="_blank" rel="noopener">${ic('spark')}Abrir Gemini</a></div>
+ <div class="card" style="padding:12px;margin-top:8px"><b>4) ¡Listo!</b> Desde ahora, en <b>ese mismo chat</b>, por cada escena tocá en la app <b>"Hacer esta escena con Gemini"</b> → <b>Copiar pedido</b> → pegalo en Gemini. No hace falta volver a subir fotos.</div>`;
+ $('#sheet').classList.add('open')}
+function copyGem(){const t=$('#gmtxt');try{navigator.clipboard.writeText(t.value).then(()=>toast('Pedido copiado ✅ Ahora pegalo en Gemini con Ctrl + V'),()=>{t.select();document.execCommand('copy');toast('Pedido copiado ✅')})}catch(e){t.select();document.execCommand('copy');toast('Pedido copiado ✅')}}
 function redoCast(){const P=S.P;let n=0;P.scenes.forEach(s=>{const c=castIn(P,s);if(c.length&&!s.local){Pipe.pushVar(s);if(c.length===1)s.seed=hashSeed(c[0].name);s.img='';s.edited=false;s.hq=false;n++}});
  if(!n){toast('Ninguna escena nombra a estos personajes',1);return}save();render();toast(n+' escena(s) se rehacen con los personajes');run(()=>Pipe.images())}
 // Misma cara garantizada: copia la imagen elegida a otras escenas y le da a cada una un movimiento de cámara distinto
@@ -1520,6 +1563,7 @@ function renderSel(){const el=$('#selpanel');if(!el||!S.P)return;const P=S.P,i=c
  ${prev&&RT.imgs[s.img]?`<div class="cmp"><img src="${esc(RT.imgs[prev.img].src)}"><div class="top" id="cmptop" style="clip-path:inset(0 50% 0 0)"><img src="${esc(RT.imgs[s.img].src)}" style="width:100%"></div><span class="lab" style="left:6px">Después</span><span class="lab" style="right:6px">Antes</span></div><input type="range" min="0" max="100" value="50" oninput="$('#cmptop').style.clipPath='inset(0 '+(100-this.value)+'% 0 0)'">`:''}
  <div class="cols2" style="gap:6px"><div><div class="lbl">Cámara</div><select class="sel" onchange="S.P.scenes[${i}].cam=this.value;save();renderScenesOnly(1);seekScene(${i})">${Object.entries(CAMS).map(([k,n])=>`<option value="${k}" ${(s.cam||'auto')===k?'selected':''}>${n}</option>`).join('')}</select></div>
  <div><div class="lbl">Ambiente</div><select class="sel" onchange="S.P.scenes[${i}].amb=this.value;save();renderScenesOnly(1)">${Object.entries(AMB).map(([k,n])=>`<option value="${k}" ${(s.amb||'none')===k?'selected':''}>${n}</option>`).join('')}</select></div></div>
+ <div class="lbl">Encuadre (para que no se corten las cabezas)</div><select class="sel" onchange="S.P.scenes[${i}].frame=this.value;save();seekScene(${i})">${Object.entries({auto:'Automático',top:'Mostrar la parte de arriba (caras)',center:'Centro',bottom:'Mostrar la parte de abajo',fit:'Imagen completa (con fondo desenfocado)'}).map(([k,n])=>`<option value="${k}" ${(s.frame||'auto')===k?'selected':''}>${n}</option>`).join('')}</select>
  <div class="row" style="margin-top:8px"><span class="sub" style="font-size:12px">Duración extra</span><button class="btn xs" onclick="sceneExtra(${i},-.5)">−</button><b style="font-size:12px">${(s.extra||0)>=0?'+':''}${(s.extra||0).toFixed(1)}s</b><button class="btn xs" onclick="sceneExtra(${i},.5)">+</button></div>
  <div class="lbl">Herramientas de IA</div><div class="tools">
   <button class="btn" data-busy onclick="Pipe.regen(${i})">${ic('refresh')}Nueva imagen</button>
@@ -1529,7 +1573,8 @@ function renderSel(){const el=$('#selpanel');if(!el||!S.P)return;const P=S.P,i=c
   <button class="btn ${s.parallax?'neo':''}" data-busy onclick="run(()=>Pipe.parallax(${i},${!s.parallax}))">${ic('scissors')}${s.parallax?'Quitar 2.5D':'Rotoscopia 2.5D'}</button>
   <button class="btn" data-busy onclick="askBg(${i})">${ic('layers')}Cambiar fondo</button>
   <button class="btn ${RT.clips[s.id]?'neo':''}" data-busy onclick="run(()=>Pipe.animate(${i}))">${ic('film')}Animar IA (beta)</button>
-  <button class="btn" ${RT.imgs[s.img]?'':'disabled'} onclick="shareImgPicker(${i})">${ic('layers')}Usar esta imagen en otras escenas</button>
+  <button class="btn grad" onclick="geminiScene(${i})">${ic('spark')}Hacer esta escena con Gemini (misma cara)</button>
+  <button class="btn" ${RT.imgs[s.img]?'':'disabled'} onclick="shareImgPicker(${i})">${ic('layers')}Repetir esta misma imagen en otras escenas</button>
   <label class="btn ${s.local?'neo':''}" style="cursor:pointer">${ic('img')}Subir mi imagen<input type="file" accept="image/*" hidden onchange="run(()=>Pipe.setImage(${i},this.files[0]))"></label>
   <label class="btn ${s.clip?'neo':''}" style="cursor:pointer">${ic('film')}${s.clip?'Cambiar mi video':'Subir mi video'}<input type="file" accept="video/*" hidden onchange="run(()=>Pipe.addClip(${i},this.files[0]))"></label>
   ${s.clip?`<button class="btn" onclick="Pipe.removeClip(${i})">${ic('trash')}Quitar mi video</button>`:''}
