@@ -1981,8 +1981,13 @@ renderSel=function(){selOrig.apply(this,arguments);
    ========================================================= */
 function withTimeout(p,ms){return Promise.race([p,new Promise(function(_,rej){setTimeout(function(){rej(new Error('tiempo'))},ms)})])}
 function cardFor(i){var d=Pipe.dims(),c=document.createElement('canvas');c.width=640;c.height=Math.round(640*d.H/d.W);var g=c.getContext('2d');var gr=g.createLinearGradient(0,0,c.width,c.height);gr.addColorStop(0,'#1f1f29');gr.addColorStop(1,'#0F0F12');g.fillStyle=gr;g.fillRect(0,0,c.width,c.height);g.fillStyle='#9b9bb2';g.font='600 22px Inter,sans-serif';g.textAlign='center';g.fillText('Escena '+(i+1)+': la imagen no cargó',c.width/2,c.height/2-8);g.font='16px Inter,sans-serif';g.fillText('Tocá la escena y «Nueva imagen»',c.width/2,c.height/2+22);c._ev32=true;return c}
-async function healAudio(){try{var ac=getAC();if(ac.state!=='running')await withTimeout(ac.resume(),2000).catch(function(){});var a=ac.currentTime;await sleep(180);
-  if(ac.state==='closed'||ac.currentTime===a){try{ac.close()}catch(e){}AC=null;var n=getAC();await n.resume().catch(function(){});console.info('[v3.32] audio reiniciado')}}catch(e){}}
+async function healAudio(){
+  /* Arranca cada reproducción con un audio "nuevo": si Windows cambió la salida de sonido
+     (auriculares, micrófono USB, parlantes) o el navegador lo dejó trabado, vuelve a sonar. */
+  try{var old=AC;AC=null;var n=getAC();await withTimeout(n.resume(),2500).catch(function(){});
+    if(old&&old!==n){setTimeout(function(){try{old.close()}catch(e){}},1500)}
+    var a=n.currentTime;await sleep(150);if(n.currentTime===a)console.warn('[v3.32] el audio no avanza todavía')}catch(e){}}
+try{navigator.mediaDevices&&navigator.mediaDevices.addEventListener&&navigator.mediaDevices.addEventListener('devicechange',function(){if(!Player.playing){try{var o=AC;AC=null;if(o)o.close()}catch(e){}}})}catch(e){}
 var runOrig=Player.run;
 Player.run=async function(record){var self=this,P=S.P;
   if(this.playing||!P||!P.scenes.length)return runOrig.call(this,record);
