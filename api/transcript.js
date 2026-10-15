@@ -3,13 +3,16 @@
 
 const UA_DESK = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36';
 
+const { sameSite, tooMany } = require('./_guard');
+
 module.exports = async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
   const send = (code, obj) => { res.statusCode = code; res.end(JSON.stringify(obj)); };
   let url = '';
   try { url = (req.query && req.query.url) || new URL(req.url, 'http://x').searchParams.get('url') || ''; } catch (e) {}
   if (!url) return send(400, { ok: false, error: 'Falta la URL del video.' });
+  if (!sameSite(req)) return send(403, { ok: false, error: 'Origen no permitido' });
+  if (tooMany(req, 15)) return send(429, { ok: false, error: 'Demasiados pedidos seguidos. Esperá un minuto.' });
   try {
     if (/tiktok\.com/i.test(url)) return send(200, await tiktok(url));
     const id = ytId(url);

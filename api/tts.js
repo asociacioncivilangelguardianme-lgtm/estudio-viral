@@ -10,10 +10,11 @@ const { edgeHeaders, wssUrl, adjustSkew, newId } = require('./_edge');
 
 const MAX_CHARS = 3000;
 
+const { sameSite, tooMany } = require('./_guard');
+
 module.exports = async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  if (!sameSite(req)) { res.statusCode = 403; return res.end('Origen no permitido'); }
+  if (tooMany(req, 120)) { res.statusCode = 429; return res.end('Demasiados pedidos'); }
   if (req.method === 'OPTIONS') { res.statusCode = 204; return res.end(); }
 
   const fail = (code, msg) => { res.statusCode = code; res.setHeader('Content-Type', 'application/json; charset=utf-8'); res.end(JSON.stringify({ ok: false, error: msg })); };

@@ -2,6 +2,7 @@
 // La clave NO va en la página: se guarda en Vercel como variable de entorno llamada GEMINI_API_KEY.
 //   POST /api/chat  { "messages": [...], "temperature": 0.8 }  ->  { "ok": true, "content": "..." }
 
+const { sameSite, tooMany } = require('./_guard');
 const MODELS = ['gemini-flash-latest', 'gemini-2.5-flash', 'gemini-2.5-flash-lite'];
 const URL_GEMINI = 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions';
 
@@ -11,19 +12,13 @@ module.exports = async (req, res) => {
   const send = (code, obj) => { res.statusCode = code; res.end(JSON.stringify(obj)); };
 
   if (req.method === 'GET') {
-    // Solo muestra NOMBRES de variables parecidas (nunca el valor), para ayudar a encontrar errores de tipeo
-    const similar = Object.keys(process.env).filter((k) => /GEMINI|GOOGLE_API|AISTUDIO/i.test(k));
-    return send(200, { ok: true, configured: !!findKey(), env: process.env.VERCEL_ENV || '', similar });
+    return send(200, { ok: true, configured: !!findKey() });
   }
   if (req.method !== 'POST') return send(405, { ok: false, error: 'Usá POST' });
 
   // Solo tu propia página puede usar este servidor (así nadie gasta tu cupo gratis desde otro sitio)
-  const origin = req.headers.origin || '';
-  if (origin) {
-    let host = '';
-    try { host = new URL(origin).host; } catch (e) {}
-    if (host && host !== req.headers.host && !host.startsWith('localhost') && !host.startsWith('127.0.0.1')) return send(403, { ok: false, error: 'Origen no permitido' });
-  }
+  if (!sameSite(req)) return send(403, { ok: false, error: 'Origen no permitido' });
+  if (tooMany(req, 40)) return send(429, { ok: false, code: 'LIMIT', error: 'Demasiados pedidos seguidos. Esperá un minuto.' });
 
   const key = findKey();
   if (!key) return send(503, { ok: false, code: 'NO_KEY', error: 'Falta configurar la clave de Gemini en Vercel (GEMINI_API_KEY).' });
