@@ -613,15 +613,17 @@ const MUSIC=[
 const CAMS={auto:'Automático',zoomin:'Acercamiento (Zoom in)',zoomout:'Alejamiento (Zoom out)',panl:'Paneo ←',panr:'Paneo →',tiltup:'Inclinación ↑ (Tilt)',tiltdown:'Inclinación ↓ (Tilt)',dolly:'Dolly in',track:'Seguimiento (Tracking)',static:'Plano fijo'};
 const nameRe=n=>new RegExp('(^|[^\\p{L}])'+n.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(?=$|[^\\p{L}])','iu');
 const hashSeed=t=>{let h=7;for(const c of String(t).toLowerCase())h=(h*31+c.charCodeAt(0))%999983;return h};
-const ORIXAS={oxum:'golden yellow clothes, gold jewelry, golden mirror',oshun:'golden yellow clothes, gold jewelry, golden mirror',ochun:'golden yellow clothes, gold jewelry, golden mirror',
- iemanja:'light blue and silver clothes, pearls, sea and waves',yemanja:'light blue and silver clothes, pearls, sea and waves',yemaya:'light blue and silver clothes, pearls, sea and waves',
- xango:'red and white clothes, African king with a beaded red and white crown, double-headed axe, lightning',shango:'red and white clothes, African king with a beaded red and white crown, double-headed axe, lightning',chango:'red and white clothes, African king with a beaded red and white crown, double-headed axe, lightning',
- ogum:'green and red clothes, iron armor, machete or iron tools',ogun:'green and red clothes, iron armor, machete or iron tools',
- oxossi:'green and turquoise clothes, hunter with bow and arrow, leather hat',ochosi:'green and turquoise clothes, hunter with bow and arrow',
- iansa:'red, brown and coral clothes, warrior woman with a sword and a horsetail fan, wind and storms',oya:'red, brown and coral clothes, warrior woman with a sword and a horsetail fan, wind and storms',
- oxala:'all white clothes, old wise man with white beard and silver staff',obatala:'all white clothes, old wise man with white beard and silver staff',
- exu:'red and black clothes, mischievous smile, crossroads',elegua:'red and black clothes, mischievous smile, crossroads',
- nana:'purple and lilac clothes, very old wise woman, mud and swamp',omolu:'body covered with straw raffia clothes from head to feet',obaluae:'body covered with straw raffia clothes from head to feet'};
+const ORIXAS={};(()=>{const add=(names,t)=>names.forEach(n=>ORIXAS[n]=t);
+ add(['oxum','oshun','ochun'],'golden yellow silk clothes with lace, many gold bracelets, gold crown with beaded fringe over the face, golden abebe hand-mirror, yellow and amber bead necklaces, river and waterfall');
+ add(['iemanja','yemanja','yemaya','janaina'],'light blue, seafoam and white layered skirt with lace and wave embroidery, silver and mother-of-pearl crown with seashells and starfish, silver abebe mirror with fish, blue and white bead necklaces, pearls and cowrie shells, ocean waves');
+ add(['xango','shango','chango'],'red and white royal clothes, beaded red and white crown of an African king, red and white bead necklaces, holding the oxe double-headed axe, lightning and thunder');
+ add(['ogum','ogun'],'green and red clothes, iron armor and iron tools, machete or sword, green and red bead necklaces, palm-leaf fringe (mariwo)');
+ add(['oxossi','ochosi'],'green and turquoise clothes, leather hat, bow and arrow (ofa), forest hunter, green bead necklaces');
+ add(['iansa','oya'],'red, brown and coral clothes, copper crown, sword and horsetail whisk (eruexim), wind and storms, coral bead necklaces');
+ add(['oxala','obatala'],'all white clothes, white beads, silver staff (opaxoro), elderly wise man with white beard, white light');
+ add(['exu','elegua','eleggua'],'red and black clothes, red and black bead necklaces, mischievous smile, crossroads');
+ add(['nana'],'purple and lilac clothes, very old wise woman, ibiri staff, lilac beads, swamp and mud');
+ add(['omolu','obaluae','babalu'],'body covered from head to feet with straw raffia clothes (aze), cowrie shells, mysterious');})();
 const normName=n=>String(n).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
 function withTradition(c){const t=ORIXAS[normName(c.name)];if(!t)return c;const first=t.split(',')[0].replace(/ clothes$/,'').toLowerCase();return c.desc.toLowerCase().includes(first)?c:{...c,desc:c.desc+', traditional look: '+t}}
 function castIn(P,s){return (P.cast||[]).filter(c=>c.name&&c.desc&&nameRe(c.name).test(s.prompt||s.text||''))}
@@ -742,7 +744,7 @@ const AI={
  },
  json(txt){let t=String(txt).replace(/```json|```/g,'');const a=t.indexOf('{'),b=t.lastIndexOf('}');if(a<0||b<0)throw new Error('La IA no devolvió datos válidos');t=t.slice(a,b+1);
   try{return JSON.parse(t)}catch(e){return JSON.parse(t.replace(/,\s*([}\]])/g,'$1').replace(/[“”]/g,'"'))}},
- imgURL(prompt,w,h,sd,extra=''){const p=encodeURIComponent(prompt.slice(0,1500)),k=S.settings.key;
+ imgURL(prompt,w,h,sd,extra=''){const p=encodeURIComponent(prompt.slice(0,2000)),k=S.settings.key;
   return k?`https://gen.pollinations.ai/image/${p}?model=flux&width=${w}&height=${h}&seed=${sd}&nologo=true${extra}`
           :`https://image.pollinations.ai/prompt/${p}?model=flux&width=${w}&height=${h}&seed=${sd}&nologo=true${extra}`},
  altImgURL(url){try{const u=new URL(url);if(u.host==='gen.pollinations.ai'){const p=u.pathname.replace('/image/','');u.searchParams.delete('key');u.searchParams.delete('image');return 'https://image.pollinations.ai/prompt/'+p+'?'+u.searchParams}
@@ -937,8 +939,8 @@ Además "character": descripción física en inglés del personaje principal par
    const out=await AI.chat([{role:'system',content:'Sos director de arte y experto en mitología, religiones, cultura popular, anime y cine. Respondés SOLO JSON válido.'},
     {role:'user',content:`Historia: "${P.title||P.name}". Estilo visual elegido: ${st.n} (${this.styleText()}).${g?' Género: '+g.n+(P.sub?' / '+P.sub:'')+'.':''}${PEOPLE_P[P.people]?' Rasgos: '+PEOPLE_P[P.people]+'.':''}
 La IA de imágenes NO conoce nombres propios (dioses, orixás, santos, personajes de anime o novelas): solo entiende descripciones visuales.
-1) Identificá los personajes y escribí para cada uno una descripción física FIJA en inglés, fiel a su tradición o a su obra (en orixás respetá sus colores: Oxum amarillo/dorado, Iemanjá celeste/plateado, Xangô rojo y blanco con corona y hacha doble, Ogum verde y rojo, Oxóssi verde, Iansã rojo/coral, Oxalá blanco; cada personaje con ropa y colores DISTINTOS) (rasgos, edad, piel, pelo, ropa, colores y objetos que lo identifican). Ej. Oxum: beautiful young Black African woman, golden yellow silk dress, many gold bracelets, holds a golden mirror.
-2) Reescribí el prompt en inglés de CADA escena: describí a las personas por su aspecto (copiando la descripción fija, NO solo el nombre), la acción, el lugar, el encuadre y la luz, en el estilo elegido. Máximo 2 personas por escena (si hay un grupo, mostrá al principal y el resto de fondo). Nada de texto ni letras.
+1) Identificá los personajes y escribí para cada uno una descripción física FIJA en inglés, rica y detallada (40-70 palabras), fiel a su tradición o a su obra, nombrando sus objetos sagrados y adornos tradicionales (en orixás respetá sus colores: Oxum amarillo/dorado, Iemanjá celeste/plateado, Xangô rojo y blanco con corona y hacha doble, Ogum verde y rojo, Oxóssi verde, Iansã rojo/coral, Oxalá blanco; cada personaje con ropa y colores DISTINTOS) (rasgos, edad, piel, pelo, ropa, colores y objetos que lo identifican). Ej. Oxum: beautiful young Black African woman, golden yellow silk dress, many gold bracelets, holds a golden mirror.
+2) Reescribí el prompt en inglés de CADA escena como un prompt de fotografía de cine MUY detallado (90-160 palabras): describí a las personas por su aspecto (copiando la descripción fija, NO solo el nombre), su expresión, la acción, el lugar con detalles, la hora del día, la luz, la atmósfera y el encuadre, en el estilo elegido. Máximo 2 personas por escena (si hay un grupo, mostrá al principal y el resto de fondo). Nada de texto ni letras.
 Escenas: ${JSON.stringify(list).slice(0,14000)}
 Formato exacto: {"cast":[{"name":"...","desc":"..."}],"scenes":[{"n":1,"prompt":"..."}]}`}],{temp:.5});
    const d=AI.json(out);if(!d.scenes||!d.scenes.length)throw new Error('La IA no devolvió escenas, probá de nuevo.');
