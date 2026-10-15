@@ -2042,6 +2042,36 @@ scheduleSfx=function(ac,out,TL,t0){var P=S.P;
   TL.list.forEach(function(x){if(!x.s.amb||x.s.amb==='none')return;var st=t0+x.cut,en=t0+x.end+.3,type=x.s.amb;var fn=function(){return ambience(ac,out,type,st,en,.5*v)};
     if(x.cut<10)nodes=nodes.concat(fn());else z.jobs.push({at:st,fn:fn})});
   return nodes};
+
+/* =========================================================
+   6) AGUA MÁS REAL: río / arroyo y cascada
+   Antes era "ruido" filtrado (sonaba a arena). Ahora se fabrica agua de verdad:
+   miles de burbujitas (cada una sube de tono, como en un arroyo) + el rumor del caudal.
+   Se arma una sola vez como un audio de 8 s que se repite sin cortes (1 solo sonido = liviano).
+   ========================================================= */
+var WATER={};
+function waterBuf(ac,kind){var key=kind+'_'+ac.sampleRate;if(WATER[key])return WATER[key];
+  var sr=ac.sampleRate,L=8,n=sr*L,X=Math.floor(sr*.6),buf=ac.createBuffer(2,n+X,sr),seed=kind==='cascada'?11:5;
+  function rnd(){seed=(seed*16807)%2147483647;return seed/2147483647}
+  for(var ch=0;ch<2;ch++){var d=buf.getChannelData(ch),N=n+X;
+    // rumor del caudal (ruido "marrón" suavizado, con olas lentas)
+    var b=0,lp0=0,lp=0,cut=kind==='cascada'?.16:.08,amp=kind==='cascada'?.75:.25;
+    for(var i=0;i<N;i++){var w=rnd()*2-1;b=(b+.02*w)*.996;lp0+=cut*(w-lp0);lp+=cut*(lp0-lp);var flow=1+.25*Math.sin(2*Math.PI*i/sr*(.13+ch*.04))+.15*Math.sin(2*Math.PI*i/sr*.57);
+      d[i]=(b*3.2+lp*(kind==='cascada'?.9:.35))*amp*flow}
+    // burbujas: tono que sube y se apaga rápido
+    var rate=kind==='cascada'?110:55,count=Math.floor(rate*(N/sr));
+    for(var k=0;k<count;k++){var st=Math.floor(rnd()*N),f0=(kind==='cascada'?500:380)+Math.pow(rnd(),1.6)*(kind==='cascada'?1800:1500),tau=.006+rnd()*.018,a=(kind==='cascada'?.05:.09)*(.35+rnd()*.65),rise=1+rnd()*2.5,ph=0,len=Math.floor(sr*tau*5);
+      for(var j=0;j<len&&st+j<N;j++){var t=j/sr,f=f0*(1+rise*t/(tau*5));ph+=2*Math.PI*f/sr;d[st+j]+=a*Math.exp(-t/tau)*Math.sin(ph)}}
+    // empalme invisible del final con el principio
+    for(var q=0;q<X;q++){var g=q/X;d[q]=d[q]*g+d[n+q]*(1-g)}}
+  var out=ac.createBuffer(2,n,sr);for(var c=0;c<2;c++)out.getChannelData(c).set(buf.getChannelData(c).subarray(0,n));
+  WATER[key]=out;return out}
+var ambWater=ambience;
+ambience=function(ac,out,type,st,en,vol){
+  if(type!=='rio'&&type!=='cascada')return ambWater.apply(this,arguments);
+  var g=ac.createGain();g.gain.setValueAtTime(0,st);g.gain.linearRampToValueAtTime(vol,st+.8);g.gain.setValueAtTime(vol,Math.max(st+.8,en-.8));g.gain.linearRampToValueAtTime(0,en);g.connect(out);
+  var s=ac.createBufferSource();s.buffer=waterBuf(ac,type);s.loop=true;var hp=ac.createBiquadFilter();hp.type='highpass';hp.frequency.value=60;
+  s.connect(hp).connect(g);s.start(st,Math.random()*7);s.stop(en+.1);return[s]};
 /* Cartel de la pestaña Voz: ahora el lip-sync existe (gratis, beta) */
 try{var vozOrig=tVoz;tVoz=function(){var h=vozOrig.apply(this,arguments);return String(h).replace('<span class="tag soon">Próximamente</span>','<span class="tag acc">Nuevo · beta gratis</span>').replace('Sincronizar los labios de un personaje con la voz requiere servidores con GPU pagos.','¡Ya está! Generá las voces, tocá una escena y, en el panel de la derecha, usá <b>«👄 Hacer hablar con su voz»</b>. Sincroniza hasta 8 segundos por escena (LatentSync, gratis).')};
   SOON.forEach(function(x){if(/Lip-sync/.test(x.n))x.d='Nuevo (beta, gratis): en cada escena, «Hacer hablar con su voz».'})}catch(e){}
