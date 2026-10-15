@@ -2009,6 +2009,39 @@ Player.run=async function(record){var self=this,P=S.P;
   try{return await runOrig.call(self,record)}catch(e){Pipe.setBusy('');toast('No pude reproducir: '+(e.message||e)+'. Probá cerrar y volver a abrir la página.',1);try{self.stop()}catch(_){}}
 };
 
+
+/* =========================================================
+   5) SONIDO EN VIDEOS LARGOS: programar de a poco
+   Antes se creaban ~3000 sonidos juntos al tocar Reproducir (en un video de 2 minutos);
+   en computadoras más modestas eso satura el audio y queda mudo. Ahora se van creando
+   unos segundos antes de que hagan falta.
+   ========================================================= */
+var LZ=null;
+function lzWorker(){if(!lzWorker.w){var src='var i=0;onmessage=function(e){clearInterval(i);if(e.data>0)i=setInterval(function(){postMessage(1)},e.data)}';lzWorker.w=new Worker(URL.createObjectURL(new Blob([src],{type:'text/javascript'})))}return lzWorker.w}
+function lzStart(ac,t0){if(LZ&&LZ.ac===ac&&Math.abs(LZ.t0-t0)<.01)return LZ;
+  if(LZ)LZ.dead=true;var z={ac:ac,t0:t0,jobs:[],dead:false,seen:false};LZ=z;var w=lzWorker();
+  w.onmessage=function(){if(z.dead)return;if(Player.playing)z.seen=true;else if(z.seen||ac.currentTime>t0+3){z.dead=true;w.postMessage(0);return}
+    var now=ac.currentTime;z.jobs.sort(function(a,b){return a.at-b.at});
+    while(z.jobs.length&&z.jobs[0].at<now+8){var j=z.jobs.shift();try{var ns=j.fn()||[];if(Player.nodes)Array.prototype.push.apply(Player.nodes,ns)}catch(e){console.warn('[v3.32] lazy',e)}}
+    if(!z.jobs.length){z.dead=true;w.postMessage(0)}};
+  w.postMessage(400);return z}
+function realtime(ac){return !(window.OfflineAudioContext&&ac instanceof OfflineAudioContext)}
+var musOrig=scheduleMusic;
+scheduleMusic=function(ac,out,id,t0,total,vol){var m=musicOf(id);
+  if(!realtime(ac)||!m||!m.chords||id==='upload'||total<30)return musOrig.apply(this,arguments);
+  var beat=60/m.bpm,cl=beat*(m.bpm>100?8:4),seg=cl*m.chords.length;while(seg<12)seg*=2;
+  var z=lzStart(ac,t0),first=[];
+  for(var s=0;s<total;s+=seg){(function(s){var len=Math.min(seg,total-s);var fn=function(){return musOrig(ac,out,id,t0+s,len,vol)};
+    if(s<10)first=first.concat(fn());else z.jobs.push({at:t0+s,fn:fn})})(s)}
+  return first};
+var sfx2=scheduleSfx;
+scheduleSfx=function(ac,out,TL,t0){var P=S.P;
+  if(!realtime(ac)||!P||!P.amb||TL.total<30)return sfx2.apply(this,arguments);
+  var keep=P.amb;P.amb=false;var nodes;try{nodes=sfx2.apply(this,arguments)||[]}finally{P.amb=keep}
+  var z=lzStart(ac,t0),v=P.sfxVol;
+  TL.list.forEach(function(x){if(!x.s.amb||x.s.amb==='none')return;var st=t0+x.cut,en=t0+x.end+.3,type=x.s.amb;var fn=function(){return ambience(ac,out,type,st,en,.5*v)};
+    if(x.cut<10)nodes=nodes.concat(fn());else z.jobs.push({at:st,fn:fn})});
+  return nodes};
 /* Cartel de la pestaña Voz: ahora el lip-sync existe (gratis, beta) */
 try{var vozOrig=tVoz;tVoz=function(){var h=vozOrig.apply(this,arguments);return String(h).replace('<span class="tag soon">Próximamente</span>','<span class="tag acc">Nuevo · beta gratis</span>').replace('Sincronizar los labios de un personaje con la voz requiere servidores con GPU pagos.','¡Ya está! Generá las voces, tocá una escena y, en el panel de la derecha, usá <b>«👄 Hacer hablar con su voz»</b>. Sincroniza hasta 8 segundos por escena (LatentSync, gratis).')};
   SOON.forEach(function(x){if(/Lip-sync/.test(x.n))x.d='Nuevo (beta, gratis): en cada escena, «Hacer hablar con su voz».'})}catch(e){}
