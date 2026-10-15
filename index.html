@@ -1814,5 +1814,204 @@ document.addEventListener('visibilitychange',async()=>{const r=Player.rec;if(!r|
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSheet();$('#modal').classList.remove('open')}});
 render();
 </script>
+
+<!-- ===== ESTUDIO VIRAL · v3.32 · SONIDOS DE LA NATURALEZA, MI SONIDO, HACER HABLAR Y REPRODUCTOR SEGURO =====
+     Agregado al final: no modifica el código de arriba. Para quitarlo, borrá desde acá hasta "FIN v3.32". -->
+<style>
+.ev32-box{margin-top:12px;padding:12px;border-radius:10px;background:var(--panel2);border:1px solid var(--line2)}
+.ev32-box h4{margin:0 0 6px;font-size:13px;display:flex;align-items:center;gap:6px}
+.ev32-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:6px}
+.ev32-mini{font-size:11.5px;color:var(--dim);line-height:1.45;margin-top:6px}
+.ev32-name{font-size:12px;color:var(--txt);background:var(--bg2);border:1px solid var(--line2);border-radius:7px;padding:4px 8px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+</style>
+<script id="ev32">
+(function(){
+'use strict';
+if(window.__ev32)return;window.__ev32=true;
+var GRADIO='https://cdn.jsdelivr.net/npm/@gradio/client@1.8.0/dist/index.min.js';
+var LIPSYNC_SPACE='fffiloni/LatentSync';
+RT.snd=RT.snd||{};
+
+/* =========================================================
+   1) SONIDOS NUEVOS (se fabrican en el navegador, gratis)
+   ========================================================= */
+Object.assign(AMB,{
+  sabana:'🦁 Sabana africana (calor e insectos)',
+  ranas:'🐸 Ranas y pantano',
+  lechuza:'🦉 Lechuza / búho (noche)',
+  cigarras:'🌞 Cigarras (siesta, calor)',
+  monos:'🐒 Selva con monos',
+  aves_africa:'🦩 Aves africanas (amanecer)'
+});
+var NEW_AMB={sabana:1,ranas:1,lechuza:1,cigarras:1,monos:1,aves_africa:1};
+var ambOrig=ambience;
+ambience=function(ac,out,type,st,en,vol){
+  if(!NEW_AMB[type])return ambOrig.apply(this,arguments);
+  var nodes=[],g=ac.createGain(),R=Math.random;
+  g.gain.setValueAtTime(0,st);g.gain.linearRampToValueAtTime(vol,st+.6);g.gain.setValueAtTime(vol,Math.max(st+.6,en-.6));g.gain.linearRampToValueAtTime(0,en);g.connect(out);
+  function noise(ty,f,q,gain){var s=nsrc(ac),fl=ac.createBiquadFilter();fl.type=ty;fl.frequency.value=f;if(q)fl.Q.value=q;var gg=ac.createGain();gg.gain.value=gain;s.connect(fl).connect(gg).connect(g);s.start(st,R());s.stop(en+.1);nodes.push(s);return{fl:fl,gg:gg}}
+  function lfo(param,freq,depth){var o=ac.createOscillator();o.frequency.value=freq;var d=ac.createGain();d.gain.value=depth;o.connect(d).connect(param);o.start(st);o.stop(en+.1);nodes.push(o)}
+  function tone(f,t,d,gain,ty,f2){if(t>en-.05)return;var o=ac.createOscillator(),gg=ac.createGain();o.type=ty||'sine';o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(Math.max(20,f2),t+d*.85);gg.gain.setValueAtTime(.0001,t);gg.gain.exponentialRampToValueAtTime(gain,t+Math.min(.04,d*.3));gg.gain.exponentialRampToValueAtTime(.0005,t+d);o.connect(gg).connect(g);o.start(t);o.stop(t+d+.02);nodes.push(o)}
+  function buzz(f,amf,gain,swell){var o=ac.createOscillator();o.type='sawtooth';o.frequency.value=f;var bp=ac.createBiquadFilter();bp.type='bandpass';bp.frequency.value=f*1.1;bp.Q.value=3;var gg=ac.createGain();gg.gain.value=0;
+    var m=ac.createOscillator();m.frequency.value=amf;var md=ac.createGain();md.gain.value=gain;m.connect(md).connect(gg.gain);
+    if(swell){var sw=ac.createOscillator();sw.frequency.value=swell;var sd=ac.createGain();sd.gain.value=gain*.8;sw.connect(sd).connect(gg.gain);sw.start(st);sw.stop(en+.1);nodes.push(sw)}
+    o.connect(bp).connect(gg).connect(g);o.start(st);m.start(st);o.stop(en+.1);m.stop(en+.1);nodes.push(o,m)}
+  switch(type){
+    case'sabana':{var w=noise('lowpass',520,0,.16);lfo(w.gg.gain,.07,.07);buzz(4200,33,.010,.11);
+      for(var t=st+1;t<en-1;t+=2.5+R()*4){var f=1800+R()*900;tone(f,t,.18,.06,'sine',f*.7);tone(f*.9,t+.22,.2,.05,'sine',f*.6)}
+      for(var t2=st+3;t2<en-2;t2+=9+R()*10){tone(70,t2,1.6,.05,'sawtooth',48)}}break;
+    case'ranas':{noise('lowpass',350,0,.05);buzz(5000,48,.006,.2);
+      for(var t3=st+.2;t3<en-.3;t3+=.35+R()*1.1){var f3=180+R()*260,n=1+Math.floor(R()*3);for(var k=0;k<n;k++)tone(f3,t3+k*.16,.12,.16,'square',f3*.8)}}break;
+    case'lechuza':{noise('lowpass',300,0,.06);buzz(4400,26,.004,.13);
+      for(var t4=st+.8;t4<en-1.2;t4+=4.5+R()*4){var f4=360+R()*50;tone(f4,t4,.42,.30,'sine',f4*.93);tone(f4*.97,t4+.55,.32,.24,'sine',f4*.9);if(R()<.5){tone(f4,t4+1,.28,.2,'sine',f4*.92);tone(f4,t4+1.35,.45,.26,'sine',f4*.9)}}}break;
+    case'cigarras':{noise('highpass',3000,0,.015);buzz(5200,60,.032,.18);buzz(4600,52,.022,.09)}break;
+    case'monos':{var w5=noise('bandpass',700,.7,.10);lfo(w5.fl.frequency,.09,200);
+      for(var t5=st+.5;t5<en-1;t5+=3+R()*5){var base=380+R()*220,n5=3+Math.floor(R()*4);for(var k5=0;k5<n5;k5++){var tt=t5+k5*.28;tone(base*(1+k5*.12),tt,.24,.09,'sawtooth',base*(1.9+k5*.15))}}
+      for(var t6=st+.3;t6<en-.4;t6+=.6+R()*1.5){var f6=2000+R()*2000;tone(f6,t6,.08,.05,'sine',f6*1.4)}}break;
+    case'aves_africa':{noise('lowpass',450,0,.05);
+      for(var t7=st+.3;t7<en-.4;t7+=.5+R()*1.4){var r=R();if(r<.4){var f7=2400+R()*1500;for(var k7=0;k7<4;k7++)tone(f7*(k7%2?1.12:1),t7+k7*.09,.08,.17,'sine',f7*1.25)}
+        else if(r<.7){var f8=900+R()*500;tone(f8,t7,.35,.15,'sine',f8*1.6)}else{var f9=1500+R()*800;tone(f9,t7,.12,.14,'triangle',f9*.6);tone(f9*1.1,t7+.15,.12,.14,'triangle',f9*.65)}}}break;
+  }
+  return nodes;
+};
+
+/* Elegir el sonido solo, según lo que pasa en la escena */
+var RULES=[
+  ['monos',/\b(monkeys?|monos?|apes?|gorillas?|gorilas?|chimpan\w*)\b/i],
+  ['ranas',/\b(frogs?|ranas?|sapos?|swamp|pantano\w*|marsh\w*|ci[eé]naga|lagoon|laguna)\b/i],
+  ['lechuza',/\b(owls?|lechuzas?|b[uú]hos?|midnight|medianoche)\b/i],
+  ['sabana',/\b(savann?ah?|sabana|lions?|le[oó]n(es)?|elephants?|elefantes?|giraff\w*|jirafas?|zebras?|cebras?|safari|grassland|pastizal\w*)\b/i],
+  ['cigarras',/\b(cicadas?|cigarras?|chicharras?|siesta|scorching|harsh (hot )?sun|sol abrasador|calor (agobiante|intenso)|heat ?wave|ola de calor|dry,? cracked|tierra seca|sedient\w*)\b/i],
+  ['aves_africa',/\b(africa\w*|[aá]frica)\b.*\b(dawn|sunrise|amanecer|birds?|p[aá]jaros|aves)\b|\b(dawn|sunrise|amanecer)\b.*\b(africa\w*|[aá]frica)\b/i]
+];
+var SOFT={none:1,selva:1,bosque:1,desierto:1,viento:1,pajaros:1};
+function guessAmb(txt,cur){txt=String(txt||'');for(var i=0;i<RULES.length;i++){if(RULES[i][1].test(txt)){if(SOFT[cur||'none'])return RULES[i][0];return cur}}return cur}
+var parseOrig=Pipe.parseScenes;
+Pipe.parseScenes=function(arr){var out=parseOrig.call(this,arr);try{out.forEach(function(s){s.amb=guessAmb(s.prompt+' '+s.text,s.amb)})}catch(e){}return out};
+
+/* =========================================================
+   2) MI SONIDO EN CADA ESCENA (leones, elefantes, pájaros reales…)
+   ========================================================= */
+async function loadSnd(s){if(!s.snd)return null;if(RT.snd[s.snd])return RT.snd[s.snd];var b=await IDB.get(s.snd);if(!b)return null;RT.snd[s.snd]=await decode(b);return RT.snd[s.snd]}
+window.ev32Snd={
+  async add(i,f){var s=S.P.scenes[i];if(!f||!s)return;if(f.size>40e6){toast('El sonido es muy pesado (máximo 40 MB)',1);return}
+    Pipe.setBusy('Cargando tu sonido…');
+    try{var key='snd:'+s.id;await IDB.set(key,f);delete RT.snd[key];s.snd=key;s.sndName=f.name||'sonido';if(s.sndVol==null)s.sndVol=.7;await loadSnd(s);save(1);toast('Sonido puesto en la escena '+(i+1)+' ✅')}
+    catch(e){toast('No pude leer ese sonido: '+(e.message||e),1)}finally{Pipe.setBusy('')}renderSel();renderScenesOnly(1)},
+  remove(i){var s=S.P.scenes[i];if(!s)return;s.snd='';s.sndName='';save(1);renderSel();renderScenesOnly(1)},
+  vol(i,v){var s=S.P.scenes[i];if(s){s.sndVol=+v;save()}},
+  async listen(i){var s=S.P.scenes[i];var b=await loadSnd(s).catch(function(){return null});if(!b){toast('No encontré el sonido',1);return}var ac=getAC();await ac.resume();var src=ac.createBufferSource(),g=ac.createGain();g.gain.value=s.sndVol==null?.7:s.sndVol;src.buffer=b;src.connect(g).connect(ac.destination);src.start();src.stop(ac.currentTime+Math.min(8,b.duration))},
+  all(i){var s=S.P.scenes[i];if(!s||!s.snd)return;var n=0;S.P.scenes.forEach(function(o,k){if(k>i&&!o.snd){o.snd=s.snd;o.sndName=s.sndName;o.sndVol=s.sndVol;n++}});save(1);renderScenesOnly(1);toast(n?'Lo puse también en '+n+' escena(s) siguientes ✅':'Las escenas siguientes ya tienen su sonido')}
+};
+var sfxOrig=scheduleSfx;
+scheduleSfx=function(ac,out,TL,t0){var nodes=sfxOrig.apply(this,arguments)||[];
+  try{TL.list.forEach(function(x){var s=x.s,b=s.snd&&RT.snd[s.snd];if(!b)return;var st=t0+x.cut,en=t0+x.end+.3,src=ac.createBufferSource(),g=ac.createGain(),v=s.sndVol==null?.7:s.sndVol;
+    src.buffer=b;src.loop=b.duration<(en-st);g.gain.setValueAtTime(0,st);g.gain.linearRampToValueAtTime(v,st+.5);g.gain.setValueAtTime(v,Math.max(st+.5,en-.6));g.gain.linearRampToValueAtTime(0,en);
+    src.connect(g).connect(out);src.start(st);src.stop(en+.05);nodes.push(src)})}catch(e){console.warn('[v3.32] mi sonido',e)}
+  return nodes};
+
+/* =========================================================
+   3) HACER HABLAR AL PERSONAJE (LatentSync gratis en Hugging Face)
+   ========================================================= */
+function wavFrom(buf,maxSec){var sr=buf.sampleRate,n=Math.min(buf.length,Math.floor((maxSec||1e9)*sr)),ch=buf.numberOfChannels,m=new Float32Array(n);
+  for(var c=0;c<ch;c++){var d=buf.getChannelData(c);for(var i=0;i<n;i++)m[i]+=d[i]/ch}
+  var ab=new ArrayBuffer(44+n*2),v=new DataView(ab),p=0;function w(s){for(var i=0;i<s.length;i++)v.setUint8(p++,s.charCodeAt(i))}
+  w('RIFF');v.setUint32(p,36+n*2,true);p+=4;w('WAVEfmt ');v.setUint32(p,16,true);p+=4;v.setUint16(p,1,true);p+=2;v.setUint16(p,1,true);p+=2;v.setUint32(p,sr,true);p+=4;v.setUint32(p,sr*2,true);p+=4;v.setUint16(p,2,true);p+=2;v.setUint16(p,16,true);p+=2;w('data');v.setUint32(p,n*2,true);p+=4;
+  for(var i=0;i<n;i++){var s=Math.max(-1,Math.min(1,m[i]));v.setInt16(p,s<0?s*32768:s*32767,true);p+=2}return new Blob([ab],{type:'audio/wav'})}
+async function imageToVideo(im,sec,W,H){
+  var cv=document.createElement('canvas');cv.width=W;cv.height=H;var g=cv.getContext('2d');
+  var iw=im.naturalWidth||im.videoWidth||im.width,ih=(im.naturalHeight||im.videoHeight||im.height)*(1-(im._crop||0)),k=Math.max(W/iw,H/ih);
+  var types=['video/webm;codecs=vp8','video/webm','video/mp4'],mt=types.find(function(t){return window.MediaRecorder&&MediaRecorder.isTypeSupported(t)})||'';
+  var stream=cv.captureStream(25),rec=new MediaRecorder(stream,mt?{mimeType:mt,videoBitsPerSecond:4e6}:{}),chunks=[];rec.ondataavailable=function(e){if(e.data.size)chunks.push(e.data)};
+  var t0=performance.now();rec.start(250);
+  await new Promise(function(done){(function f(){var t=(performance.now()-t0)/1000,z=1+.03*(t/sec);g.fillStyle='#000';g.fillRect(0,0,W,H);var w=iw*k*z,h=ih*k*z;g.drawImage(im,0,0,iw,ih,(W-w)/2,(H-h)/2,w,h);if(t<sec)requestAnimationFrame(f);else done()})()});
+  await new Promise(function(r){rec.onstop=r;rec.stop()});return new Blob(chunks,{type:rec.mimeType||'video/webm'})}
+var clientP=null;
+function lsClient(){var tok='';try{tok=localStorage.getItem('ev32_hf')||''}catch(e){}
+  if(!clientP)clientP=import(GRADIO).then(function(m){return m.Client.connect(LIPSYNC_SPACE,tok?{hf_token:tok}:{}).then(function(c){return{c:c,m:m}})}).catch(function(e){clientP=null;throw e});return clientP}
+window.ev32Lip={
+  token(){var cur='';try{cur=localStorage.getItem('ev32_hf')||''}catch(e){}var el=document.getElementById('ev32tok');var v=(el&&el.value||'').trim();try{localStorage.setItem('ev32_hf',v)}catch(e){}clientP=null;toast(v?'Token guardado ✅ (más tiempo gratis por día)':'Token borrado')},
+  open(i){var s=S.P.scenes[i];window.open('https://huggingface.co/spaces/'+LIPSYNC_SPACE,'_blank');
+    var v=RT.voices[s.id];if(v){var a=document.createElement('a');a.href=URL.createObjectURL(wavFrom(v.buf,8));a.download='voz_escena_'+(i+1)+'.wav';a.click()}
+    toast('Te bajé la voz de la escena. En la página: subí un video corto del personaje en "Video Control", la voz en "Audio Input" y tocá Submit. Después subí el resultado con "Subir mi video".')},
+  async make(i){var P=S.P,s=P.scenes[i];if(!s)return;
+    var v=RT.voices[s.id];if(!v||v.text!==s.text){toast('Primero generá la voz de esta escena (botón violeta «Generar voces» o «Oír voz»)',1);return}
+    var im=RT.imgs[s.img];var hasClip=!!s.clip;if(!im&&!hasClip){toast('Esta escena todavía no tiene imagen',1);return}
+    var dur=v.buf.duration/(v.pre?1:P.speed);
+    Pipe.setBusy('Preparando la escena para hacerla hablar…');
+    try{
+      var vid;if(hasClip){vid=await IDB.get(s.clip)}else{var d=Pipe.dims(),sc=Math.min(1,640/Math.max(d.W,d.H)),W=Math.round(d.W*sc/2)*2,H=Math.round(d.H*sc/2)*2;vid=await imageToVideo(im,Math.min(8,dur)+.4,W,H)}
+      var wav=wavFrom(v.buf,8);
+      Pipe.setBusy('Conectando con el servicio gratis (LatentSync)… la primera vez puede tardar');
+      var o=await lsClient();
+      Pipe.setBusy('Moviendo la boca con la voz… (puede tardar 1 a 4 minutos, no cierres la página)');
+      var r=await o.c.predict('/generate_lip_sync_video',[o.m.handle_file(vid),o.m.handle_file(wav)]);
+      var d0=r&&r.data&&r.data[0],url=d0&&((d0.video&&(d0.video.url||d0.video.path))||d0.url||d0.path||d0);
+      if(!url||typeof url!=='string')throw new Error('el servicio no devolvió el video');
+      var blob=await fetch(url).then(function(x){if(!x.ok)throw new Error('HTTP '+x.status);return x.blob()});
+      Pipe.setBusy('');await Pipe.addClip(i,new File([blob],'habla_escena_'+(i+1)+'.mp4',{type:blob.type||'video/mp4'}));
+      toast('¡Listo! El personaje de la escena '+(i+1)+' habla 👄'+(dur>8?' (sincroniza los primeros 8 segundos)':''));
+    }catch(e){var m=String(e&&e.message||e);
+      toast(/quota|GPU|exceed|limit/i.test(m)?'Se terminó el tiempo gratis de hoy del servicio. Probá mañana o pegá un token gratis de Hugging Face abajo.':'El servicio gratis no respondió ('+m.slice(0,90)+'). Probá en un rato o usá «Hacerlo a mano».',1)}
+    finally{Pipe.setBusy('')}}
+};
+
+/* Panel de la escena: agrego "Mi sonido" y "Hacer hablar" */
+var selOrig=renderSel;
+renderSel=function(){selOrig.apply(this,arguments);
+  try{var el=document.getElementById('selpanel');if(!el||!S.P)return;var i=clamp(S.sel,0,Math.max(0,S.P.scenes.length-1)),s=S.P.scenes[i];if(!s)return;
+    var tools=el.querySelector('.tools');if(!tools||el.querySelector('.ev32-box'))return;
+    var tok='';try{tok=localStorage.getItem('ev32_hf')||''}catch(e){}
+    var v=RT.voices[s.id],vd=v&&v.text===s.text?v.buf.duration/(v.pre?1:S.P.speed):0;
+    var box=document.createElement('div');
+    box.innerHTML='<div class="ev32-box"><h4>🎵 Mi sonido en esta escena</h4>'+
+      (s.snd?'<div class="ev32-row"><span class="ev32-name">'+esc(s.sndName||'sonido')+'</span></div><div class="ev32-row"><span class="ev32-mini" style="margin:0">Volumen</span><input type="range" min="0" max="1" step="0.05" value="'+(s.sndVol==null?.7:s.sndVol)+'" oninput="ev32Snd.vol('+i+',this.value)" style="flex:1"></div><div class="ev32-row"><button class="btn xs" onclick="ev32Snd.listen('+i+')">▶ Escuchar</button><button class="btn xs" onclick="ev32Snd.all('+i+')">Usar también en las siguientes</button><button class="btn xs danger" onclick="ev32Snd.remove('+i+')">Quitar</button></div>'
+        :'<div class="ev32-row"><label class="btn sm">📂 Subir sonido (MP3/WAV)<input type="file" accept="audio/*" hidden onchange="this.files[0]&&ev32Snd.add('+i+',this.files[0])"></label></div>')+
+      '<div class="ev32-mini">Se suma al ambiente automático. Sonidos reales gratis de leones, elefantes o pájaros: <a href="https://pixabay.com/sound-effects/" target="_blank" rel="noopener">Pixabay</a> o <a href="https://freesound.org" target="_blank" rel="noopener">Freesound</a>. Si querés solo tu sonido, poné «Ambiente: Sin ambiente».</div></div>'+
+      '<div class="ev32-box"><h4>👄 Hacer hablar al personaje <span class="tag" style="font-size:10px">beta · gratis</span></h4>'+
+      '<div class="ev32-row"><button class="btn sm grad" data-busy onclick="ev32Lip.make('+i+')">👄 Hacer hablar con su voz</button><button class="btn xs" onclick="ev32Lip.open('+i+')">Hacerlo a mano</button></div>'+
+      '<div class="ev32-mini">Mueve la boca de la persona de esta escena al ritmo de su voz (LatentSync, gratis). Funciona mejor con <b>una cara de frente y grande</b>. Sincroniza hasta <b>8 segundos</b>'+(vd>8?' — esta escena dura '+vd.toFixed(0)+' s: conviene dividirla en dos escenas':'')+'. Tarda de 1 a 4 minutos.</div>'+
+      '<details class="ev32-mini"><summary style="cursor:pointer">Más tiempo gratis por día (opcional)</summary>Con una cuenta gratis de huggingface.co sacás un token (Settings → Access Tokens) y lo pegás acá:<div class="ev32-row"><input id="ev32tok" class="inp" style="flex:1;padding:6px 8px" placeholder="hf_..." value="'+esc(tok)+'"><button class="btn xs" onclick="ev32Lip.token()">Guardar</button></div></details></div>';
+    tools.parentNode.insertBefore(box,tools.nextSibling);
+    if(S.busy)box.querySelectorAll('[data-busy]').forEach(function(b){b.disabled=true});
+  }catch(e){console.warn('[v3.32] panel',e)}};
+
+/* =========================================================
+   4) REPRODUCTOR SEGURO: no se traba ni queda mudo
+   ========================================================= */
+function withTimeout(p,ms){return Promise.race([p,new Promise(function(_,rej){setTimeout(function(){rej(new Error('tiempo'))},ms)})])}
+function cardFor(i){var d=Pipe.dims(),c=document.createElement('canvas');c.width=640;c.height=Math.round(640*d.H/d.W);var g=c.getContext('2d');var gr=g.createLinearGradient(0,0,c.width,c.height);gr.addColorStop(0,'#1f1f29');gr.addColorStop(1,'#0F0F12');g.fillStyle=gr;g.fillRect(0,0,c.width,c.height);g.fillStyle='#9b9bb2';g.font='600 22px Inter,sans-serif';g.textAlign='center';g.fillText('Escena '+(i+1)+': la imagen no cargó',c.width/2,c.height/2-8);g.font='16px Inter,sans-serif';g.fillText('Tocá la escena y «Nueva imagen»',c.width/2,c.height/2+22);c._ev32=true;return c}
+async function healAudio(){try{var ac=getAC();if(ac.state!=='running')await withTimeout(ac.resume(),2000).catch(function(){});var a=ac.currentTime;await sleep(180);
+  if(ac.state==='closed'||ac.currentTime===a){try{ac.close()}catch(e){}AC=null;var n=getAC();await n.resume().catch(function(){});console.info('[v3.32] audio reiniciado')}}catch(e){}}
+var runOrig=Player.run;
+Player.run=async function(record){var self=this,P=S.P;
+  if(this.playing||!P||!P.scenes.length)return runOrig.call(this,record);
+  try{
+    await healAudio();
+    // imágenes que faltan: espero un rato y, si no llegan, sigo con un cartel en vez de quedar en negro
+    var miss=P.scenes.map(function(s,i){return{s:s,i:i}}).filter(function(o){return !RT.imgs[o.s.img]&&!o.s.clip});
+    if(miss.length){Pipe.setBusy('Cargando imágenes…');await Promise.all(miss.map(function(o){if(!o.s.img)o.s.img=Pipe.sceneURL(o.s);return withTimeout(loadImg(o.s.img,9),15000).then(function(){paintScene(o.s)}).catch(function(){})}));Pipe.setBusy('');
+      var still=miss.filter(function(o){return !RT.imgs[o.s.img]});still.forEach(function(o){RT.imgs[o.s.img]=cardFor(o.i)});
+      if(still.length)toast('Escena(s) '+still.map(function(o){return o.i+1}).join(', ')+' sin imagen: sigo igual. Tocá la escena y «Nueva imagen».',1)}
+    // 2.5D que tarda demasiado: lo salteo
+    for(var k=0;k<P.scenes.length;k++){var s=P.scenes[k];if(s.parallax&&!RT.fg[s.id]&&RT.imgs[s.img]&&!RT.imgs[s.img]._ev32){try{RT.fg[s.id]=await withTimeout(Roto.cut(RT.imgs[s.img]),20000)}catch(e){s.parallax=false;toast('La escena '+(k+1)+' sigue sin 2.5D (tardó demasiado)')}}}
+    // mis sonidos
+    for(var j=0;j<P.scenes.length;j++){try{await loadSnd(P.scenes[j])}catch(e){}}
+    // aviso de escenas sin voz
+    if(P.mode!=='musica'&&!RT.narr){var mute=P.scenes.map(function(s,i){var v=RT.voices[s.id];return s.text&&s.text.trim()&&!(v&&v.text===s.text)?i+1:0}).filter(Boolean);
+      if(mute.length&&mute.length<P.scenes.length)toast('Ojo: la(s) escena(s) '+mute.join(', ')+' no tienen voz. Tocá «Generar voces de todas las escenas».',1)}
+  }catch(e){console.warn('[v3.32] preparación',e)}
+  try{return await runOrig.call(self,record)}catch(e){Pipe.setBusy('');toast('No pude reproducir: '+(e.message||e)+'. Probá cerrar y volver a abrir la página.',1);try{self.stop()}catch(_){}}
+};
+
+/* Cartel de la pestaña Voz: ahora el lip-sync existe (gratis, beta) */
+try{var vozOrig=tVoz;tVoz=function(){var h=vozOrig.apply(this,arguments);return String(h).replace('<span class="tag soon">Próximamente</span>','<span class="tag acc">Nuevo · beta gratis</span>').replace('Sincronizar los labios de un personaje con la voz requiere servidores con GPU pagos.','¡Ya está! Generá las voces, tocá una escena y, en el panel de la derecha, usá <b>«👄 Hacer hablar con su voz»</b>. Sincroniza hasta 8 segundos por escena (LatentSync, gratis).')};
+  SOON.forEach(function(x){if(/Lip-sync/.test(x.n))x.d='Nuevo (beta, gratis): en cada escena, «Hacer hablar con su voz».'})}catch(e){}
+// Las imágenes "cartel" no se guardan como reales: cuando llega la verdadera, la reemplaza sola (loadImg ya lo hace).
+try{renderSel()}catch(e){}
+console.info('[Estudio Viral] v3.32 cargado: sonidos de naturaleza, mi sonido, hacer hablar y reproductor seguro');
+})();
+</script>
+<!-- ===== FIN v3.32 ===== -->
 </body>
 </html>
