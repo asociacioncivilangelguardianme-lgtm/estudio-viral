@@ -944,7 +944,9 @@ La IA de imágenes NO conoce nombres propios (dioses, orixás, santos, personaje
 Escenas: ${JSON.stringify(list).slice(0,14000)}
 Formato exacto: {"cast":[{"name":"...","desc":"..."}],"scenes":[{"n":1,"prompt":"..."}]}`}],{temp:.5});
    const d=AI.json(out);if(!d.scenes||!d.scenes.length)throw new Error('La IA no devolvió escenas, probá de nuevo.');
-   if(Array.isArray(d.cast)&&d.cast.length)P.cast=d.cast.filter(c=>c&&c.name&&c.desc).slice(0,10).map(c=>withTradition({name:String(c.name).trim(),desc:String(c.desc).trim()}));
+   const mine=(P.cast||[]).filter(c=>c.user&&c.desc);if(Array.isArray(d.cast)&&d.cast.length)P.cast=d.cast.filter(c=>c&&c.name&&c.desc).slice(0,10).map(c=>withTradition({name:String(c.name).trim(),desc:String(c.desc).trim()}));
+   // Lo que escribiste vos a mano en Personajes se respeta (la IA no lo pisa)
+   mine.forEach(m=>{const k=(P.cast||[]).findIndex(c=>normName(c.name)===normName(m.name));if(k>=0)P.cast[k]=m;else (P.cast=P.cast||[]).push(m)});
    let n=0;d.scenes.forEach(x=>{const s=P.scenes[(+x.n||0)-1];if(s&&x.prompt&&!s.local){this.pushVar(s);s.prompt=String(x.prompt).trim();const c=castIn(P,s);s.seed=c.length===1?hashSeed(c[0].name):seed();s.img='';s.edited=false;s.hq=false;n++}});
    save(1);toast(`Listo: ${n} escena(s) con descripciones mejoradas. Rehaciendo imágenes…`)}
   finally{this.setBusy('')}render();await this.images()},
@@ -1492,7 +1494,7 @@ function renderCfg(){const el=$('#cfg');if(!el||!S.P)return;const P=S.P,g=genreO
 function castHTML(){const P=S.P,c=P.cast||[];
  return `<details class="pnl" ${c.length?'open':''} style="margin:8px 0"><summary>${ic('user')}Personajes (${c.length}) · para que salgan iguales en todas las escenas</summary><div class="pbody2">
  <div class="hint">Escribí cómo es cada personaje (en inglés: cara, pelo, ropa). Cada vez que una escena nombre a ese personaje, la imagen usa esta descripción.</div>
- ${c.map((x,k)=>`<div class="row" style="gap:6px;margin-top:6px;align-items:flex-start"><input class="inp" style="max-width:110px" value="${esc(x.name)}" placeholder="Nombre" onchange="S.P.cast[${k}].name=this.value.trim();save()"><textarea class="inp" rows="2" placeholder="beautiful African goddess, golden silk dress, gold jewelry" onchange="S.P.cast[${k}].desc=this.value.trim();save()">${esc(x.desc)}</textarea><button class="btn xs" title="Quitar" onclick="S.P.cast.splice(${k},1);save();render()">${ic('trash')}</button></div>`).join('')}
+ ${c.map((x,k)=>`<div class="row" style="gap:6px;margin-top:6px;align-items:flex-start"><input class="inp" style="max-width:110px" value="${esc(x.name)}" placeholder="Nombre" onchange="S.P.cast[${k}].name=this.value.trim();save()"><textarea class="inp" rows="2" placeholder="beautiful African goddess, golden silk dress, gold jewelry" onchange="S.P.cast[${k}].desc=this.value.trim();S.P.cast[${k}].user=true;save()">${esc(x.desc)}</textarea><button class="btn xs" title="Quitar" onclick="S.P.cast.splice(${k},1);save();render()">${ic('trash')}</button></div>`).join('')}
  <div class="row" style="margin-top:8px;gap:6px"><button class="btn sm" onclick="(S.P.cast=S.P.cast||[]).push({name:'',desc:''});save();render()">${ic('plus')}Personaje</button>
  <button class="btn sm grad" data-busy onclick="run(()=>Pipe.improvePrompts())">${ic('spark')}IA: mejorar imágenes</button>${c.length?`<button class="btn sm" data-busy onclick="redoCast()">${ic('refresh')}Rehacer imágenes con estos personajes</button>`:''}</div></div></details>`}
 function redoCast(){const P=S.P;let n=0;P.scenes.forEach(s=>{const c=castIn(P,s);if(c.length&&!s.local){Pipe.pushVar(s);if(c.length===1)s.seed=hashSeed(c[0].name);s.img='';s.edited=false;s.hq=false;n++}});
