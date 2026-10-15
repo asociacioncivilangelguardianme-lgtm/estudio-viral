@@ -613,6 +613,17 @@ const MUSIC=[
 const CAMS={auto:'Automático',zoomin:'Acercamiento (Zoom in)',zoomout:'Alejamiento (Zoom out)',panl:'Paneo ←',panr:'Paneo →',tiltup:'Inclinación ↑ (Tilt)',tiltdown:'Inclinación ↓ (Tilt)',dolly:'Dolly in',track:'Seguimiento (Tracking)',static:'Plano fijo'};
 const nameRe=n=>new RegExp('(^|[^\\p{L}])'+n.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(?=$|[^\\p{L}])','iu');
 const hashSeed=t=>{let h=7;for(const c of String(t).toLowerCase())h=(h*31+c.charCodeAt(0))%999983;return h};
+const ORIXAS={oxum:'golden yellow clothes, gold jewelry, golden mirror',oshun:'golden yellow clothes, gold jewelry, golden mirror',ochun:'golden yellow clothes, gold jewelry, golden mirror',
+ iemanja:'light blue and silver clothes, pearls, sea and waves',yemanja:'light blue and silver clothes, pearls, sea and waves',yemaya:'light blue and silver clothes, pearls, sea and waves',
+ xango:'red and white clothes, African king with a beaded red and white crown, double-headed axe, lightning',shango:'red and white clothes, African king with a beaded red and white crown, double-headed axe, lightning',chango:'red and white clothes, African king with a beaded red and white crown, double-headed axe, lightning',
+ ogum:'green and red clothes, iron armor, machete or iron tools',ogun:'green and red clothes, iron armor, machete or iron tools',
+ oxossi:'green and turquoise clothes, hunter with bow and arrow, leather hat',ochosi:'green and turquoise clothes, hunter with bow and arrow',
+ iansa:'red, brown and coral clothes, warrior woman with a sword and a horsetail fan, wind and storms',oya:'red, brown and coral clothes, warrior woman with a sword and a horsetail fan, wind and storms',
+ oxala:'all white clothes, old wise man with white beard and silver staff',obatala:'all white clothes, old wise man with white beard and silver staff',
+ exu:'red and black clothes, mischievous smile, crossroads',elegua:'red and black clothes, mischievous smile, crossroads',
+ nana:'purple and lilac clothes, very old wise woman, mud and swamp',omolu:'body covered with straw raffia clothes from head to feet',obaluae:'body covered with straw raffia clothes from head to feet'};
+const normName=n=>String(n).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+function withTradition(c){const t=ORIXAS[normName(c.name)];if(!t)return c;const first=t.split(',')[0].replace(/ clothes$/,'').toLowerCase();return c.desc.toLowerCase().includes(first)?c:{...c,desc:c.desc+', traditional look: '+t}}
 function castIn(P,s){return (P.cast||[]).filter(c=>c.name&&c.desc&&nameRe(c.name).test(s.prompt||s.text||''))}
 // Arma la lista de personajes leyendo los prompts: "A muscular African warrior god (Ogum) ... He wears ..."  o  "Xangô (god of thunder) standing in red robes"
 function extractCast(prompts){const cast=[],seen=new Set();
@@ -731,7 +742,7 @@ const AI={
  },
  json(txt){let t=String(txt).replace(/```json|```/g,'');const a=t.indexOf('{'),b=t.lastIndexOf('}');if(a<0||b<0)throw new Error('La IA no devolvió datos válidos');t=t.slice(a,b+1);
   try{return JSON.parse(t)}catch(e){return JSON.parse(t.replace(/,\s*([}\]])/g,'$1').replace(/[“”]/g,'"'))}},
- imgURL(prompt,w,h,sd,extra=''){const p=encodeURIComponent(prompt.slice(0,900)),k=S.settings.key;
+ imgURL(prompt,w,h,sd,extra=''){const p=encodeURIComponent(prompt.slice(0,1500)),k=S.settings.key;
   return k?`https://gen.pollinations.ai/image/${p}?model=flux&width=${w}&height=${h}&seed=${sd}&nologo=true${extra}`
           :`https://image.pollinations.ai/prompt/${p}?model=flux&width=${w}&height=${h}&seed=${sd}&nologo=true${extra}`},
  altImgURL(url){try{const u=new URL(url);if(u.host==='gen.pollinations.ai'){const p=u.pathname.replace('/image/','');u.searchParams.delete('key');u.searchParams.delete('image');return 'https://image.pollinations.ai/prompt/'+p+'?'+u.searchParams}
@@ -792,7 +803,10 @@ const Pipe={
  setBusy(t){S.busy=t;const m=$('#pmsg');if(m)m.textContent=t;document.querySelectorAll('[data-busy]').forEach(b=>b.disabled=!!t);renderPipe()},
  prog(f){const b=$('#pbar');if(b)b.style.width=Math.round(f*100)+'%'},
  sceneURL(s,hq){const {iw,ih}=this.dims();const P=S.P;if(s.local)return s.img;
-  const cast=castIn(P,s);const prompt=[s.prompt,P.character?'main character: '+P.character:'',...cast.map(c=>c.name+' looks exactly like this: '+c.desc),PEOPLE_P[P.people]||'',this.styleText(),P.format==='vertical'?'vertical composition':P.format==='cuadrado'?'centered square composition':'wide composition','natural realistic anatomy, each person appears only once, no merged or duplicated faces','no text, no watermark'].filter(Boolean).join(', ');
+  const cast=castIn(P,s);const POS=['on the left','on the right','in the background','also'];
+  const castTxt=cast.length===1?[cast[0].name+' looks exactly like this: '+cast[0].desc]:cast.length>1?[cast.length+' clearly different people, each with their own face, clothes and colors: '+cast.map((c,i)=>POS[i]+', '+c.name+' = '+c.desc).join('; ')+'. Do not mix their clothes or colors']:[];
+  const hasEth=/\b(black|african|afro|asian|european|caucasian|latin[oa]?|hispanic|indigenous|arab)\b/i.test(s.prompt+' '+cast.map(c=>c.desc).join(' '));
+  const prompt=[s.prompt,P.character?'main character: '+P.character:'',...castTxt,hasEth?'':(PEOPLE_P[P.people]||''),this.styleText(),P.format==='vertical'?'vertical composition':P.format==='cuadrado'?'centered square composition':'wide composition','natural realistic anatomy, each person appears only once, no merged or duplicated faces','no text, no watermark'].filter(Boolean).join(', ');
   const m=hq||s.hq?1.5:1;return AI.imgURL(prompt,Math.min(2048,r16(iw*m)),Math.min(2048,r16(ih*m)),s.seed,hq||s.hq?'&enhance=true':'')},
  pushVar(s){if(!s.img)return;s.vars=s.vars||[];if(!s.vars.find(v=>v.img===s.img))s.vars.unshift({img:s.img,prompt:s.prompt,seed:s.seed});s.vars=s.vars.slice(0,6)},
  parseScenes(arr){return arr.map(x=>({id:uid(),text:String(x.text||'').trim(),prompt:String(x.prompt||x.text||'').trim(),seed:seed(),cam:CAMS[x.camera]?x.camera:'auto',amb:AMB[x.ambient]?x.ambient:'none'}))},
@@ -834,7 +848,7 @@ Además "character": descripción física en inglés del personaje principal par
     // Si el guion pide realismo y el estilo quedó en uno de dibujo, paso a Hiperrealismo de Cine (si no, mezcla anime con realista)
     const real=/hiperreal|hyper-?real|ultra-?real|photo-?real|fotorreal|realista|realistic/i.test(base);const cat=styleOf(P.style).c;
     if(real&&cat!=='realismo'&&P.style!=='custom'){P.style='hiperreal';toast('Tu guion pide imágenes realistas: puse el estilo Hiperrealismo de Cine')}P.title=st.title||P.title||P.name;if(P.name.startsWith('Proyecto')&&st.title)P.name=st.title.slice(0,60);
-    P.scenes=this.parseScenes(st.scenes);P.character='';P.cast=st.cast&&st.cast.length?st.cast:extractCast(st.scenes.map(x=>x.prompt));P.scenes.forEach(sc=>{const c=castIn(P,sc);if(c.length===1)sc.seed=hashSeed(c[0].name)});S.sel=0;RT.voices={};RT.video=null;P.status='draft';save(1);
+    P.scenes=this.parseScenes(st.scenes);P.character='';P.cast=(st.cast&&st.cast.length?st.cast:extractCast(st.scenes.map(x=>x.prompt))).map(withTradition);P.scenes.forEach(sc=>{const c=castIn(P,sc);if(c.length===1)sc.seed=hashSeed(c[0].name)});S.sel=0;RT.voices={};RT.video=null;P.status='draft';save(1);
     toast(`Leí tu guion: ${st.scenes.length} escenas con sus prompts de imagen ✅`);render();if(!fromAuto)this.images().catch(e=>toast(e.message,1));return}
    dur=RT.narr?RT.narr.duration:wordsOf(base)/2.5;instr=`Este es el guion. NO cambies las palabras, solo dividilo en orden:\n"""${base.slice(0,12000)}"""${gtxt}`}
   const n=this.nScenes(dur);this.setBusy('La IA está escribiendo el guion y el storyboard…');this.prog(.1);
@@ -880,7 +894,7 @@ Además "character": descripción física en inglés del personaje principal par
 
  async images(){const P=S.P;if(!P.scenes.length)throw new Error('Primero generá las escenas.');
   this.setBusy('Generando imágenes…');let done=0;const tot=P.scenes.length;
-  const jobs=P.scenes.map(s=>{if(!s.img||(!RT.imgs[s.img]&&!s.local&&!s.edited&&!s.hq))s.img=this.sceneURL(s);return loadImg(s.img,8).then(()=>{done++;this.prog(done/tot);this.setBusy(`Imágenes ${done}/${tot}…`);paintScene(s)}).catch(()=>{done++;paintScene(s,true)})});
+  const jobs=P.scenes.map(s=>{if(!s.img||(!RT.imgs[s.img]&&!s.local&&!s.edited&&!s.hq&&!s.locked))s.img=this.sceneURL(s);return loadImg(s.img,8).then(()=>{done++;this.prog(done/tot);this.setBusy(`Imágenes ${done}/${tot}…`);paintScene(s)}).catch(()=>{done++;paintScene(s,true)})});
   save();renderScenesOnly();await Promise.all(jobs);
   // Reintento automático: las que fallaron se vuelven a pedir solas (con otra variación) hasta completar todas
   for(let pass=1;pass<=6;pass++){const bad=P.scenes.filter(s=>!s.local&&!RT.imgs[s.img]);if(!bad.length||S.P!==P)break;
@@ -890,7 +904,7 @@ Además "character": descripción física en inglés del personaje principal par
   this.setBusy('');this.prog(0);
   const fails=P.scenes.filter(s=>!RT.imgs[s.img]).length;toast(fails?`${fails} imagen(es) no se pudieron hacer (el servicio gratis está muy ocupado). Tocá "Generar imágenes" de nuevo más tarde: solo rehace las que faltan.`:'Imágenes listas ✅',fails>0)},
  async regen(i,opts={}){const s=S.P.scenes[i];if(!s)return;if(s.local&&!opts.force){toast('Es una imagen tuya: usá "Editar con IA" o "Rotoscopia 2.5D"');return}
-  this.pushVar(s);if(!opts.keepSeed)s.seed=seed();s.edited=false;s.local=false;if(opts.hq)s.hq=true;s.img=this.sceneURL(s,opts.hq);delete RT.fg[s.id];s.parallax=false;delete RT.clips[s.id];save();renderScenesOnly();renderSel();
+  this.pushVar(s);if(!opts.keepSeed)s.seed=seed();s.edited=false;s.locked=false;s.local=false;if(opts.hq)s.hq=true;s.img=this.sceneURL(s,opts.hq);delete RT.fg[s.id];s.parallax=false;delete RT.clips[s.id];save();renderScenesOnly();renderSel();
   this.setBusy('Generando imagen de la escena '+(i+1)+'…');try{await loadImg(s.img,9);paintScene(s)}catch(e){paintScene(s,true);toast('La imagen falló, probá de nuevo',1)}finally{this.setBusy('')}renderSel();renderTL()},
  async editImage(i,instr){const P=S.P,s=P.scenes[i];if(!instr)return;const {iw,ih}=this.dims();
   this.setBusy('Editando imagen con IA…');
@@ -923,12 +937,12 @@ Además "character": descripción física en inglés del personaje principal par
    const out=await AI.chat([{role:'system',content:'Sos director de arte y experto en mitología, religiones, cultura popular, anime y cine. Respondés SOLO JSON válido.'},
     {role:'user',content:`Historia: "${P.title||P.name}". Estilo visual elegido: ${st.n} (${this.styleText()}).${g?' Género: '+g.n+(P.sub?' / '+P.sub:'')+'.':''}${PEOPLE_P[P.people]?' Rasgos: '+PEOPLE_P[P.people]+'.':''}
 La IA de imágenes NO conoce nombres propios (dioses, orixás, santos, personajes de anime o novelas): solo entiende descripciones visuales.
-1) Identificá los personajes y escribí para cada uno una descripción física FIJA en inglés, fiel a su tradición o a su obra (rasgos, edad, piel, pelo, ropa, colores y objetos que lo identifican). Ej. Oxum: beautiful young Black African woman, golden yellow silk dress, many gold bracelets, holds a golden mirror.
+1) Identificá los personajes y escribí para cada uno una descripción física FIJA en inglés, fiel a su tradición o a su obra (en orixás respetá sus colores: Oxum amarillo/dorado, Iemanjá celeste/plateado, Xangô rojo y blanco con corona y hacha doble, Ogum verde y rojo, Oxóssi verde, Iansã rojo/coral, Oxalá blanco; cada personaje con ropa y colores DISTINTOS) (rasgos, edad, piel, pelo, ropa, colores y objetos que lo identifican). Ej. Oxum: beautiful young Black African woman, golden yellow silk dress, many gold bracelets, holds a golden mirror.
 2) Reescribí el prompt en inglés de CADA escena: describí a las personas por su aspecto (copiando la descripción fija, NO solo el nombre), la acción, el lugar, el encuadre y la luz, en el estilo elegido. Máximo 2 personas por escena (si hay un grupo, mostrá al principal y el resto de fondo). Nada de texto ni letras.
 Escenas: ${JSON.stringify(list).slice(0,14000)}
 Formato exacto: {"cast":[{"name":"...","desc":"..."}],"scenes":[{"n":1,"prompt":"..."}]}`}],{temp:.5});
    const d=AI.json(out);if(!d.scenes||!d.scenes.length)throw new Error('La IA no devolvió escenas, probá de nuevo.');
-   if(Array.isArray(d.cast)&&d.cast.length)P.cast=d.cast.filter(c=>c&&c.name&&c.desc).slice(0,10).map(c=>({name:String(c.name).trim(),desc:String(c.desc).trim()}));
+   if(Array.isArray(d.cast)&&d.cast.length)P.cast=d.cast.filter(c=>c&&c.name&&c.desc).slice(0,10).map(c=>withTradition({name:String(c.name).trim(),desc:String(c.desc).trim()}));
    let n=0;d.scenes.forEach(x=>{const s=P.scenes[(+x.n||0)-1];if(s&&x.prompt&&!s.local){this.pushVar(s);s.prompt=String(x.prompt).trim();const c=castIn(P,s);s.seed=c.length===1?hashSeed(c[0].name):seed();s.img='';s.edited=false;s.hq=false;n++}});
    save(1);toast(`Listo: ${n} escena(s) con descripciones mejoradas. Rehaciendo imágenes…`)}
   finally{this.setBusy('')}render();await this.images()},
@@ -1481,6 +1495,19 @@ function castHTML(){const P=S.P,c=P.cast||[];
  <button class="btn sm grad" data-busy onclick="run(()=>Pipe.improvePrompts())">${ic('spark')}IA: mejorar imágenes</button>${c.length?`<button class="btn sm" data-busy onclick="redoCast()">${ic('refresh')}Rehacer imágenes con estos personajes</button>`:''}</div></div></details>`}
 function redoCast(){const P=S.P;let n=0;P.scenes.forEach(s=>{const c=castIn(P,s);if(c.length&&!s.local){Pipe.pushVar(s);if(c.length===1)s.seed=hashSeed(c[0].name);s.img='';s.edited=false;s.hq=false;n++}});
  if(!n){toast('Ninguna escena nombra a estos personajes',1);return}save();render();toast(n+' escena(s) se rehacen con los personajes');run(()=>Pipe.images())}
+// Misma cara garantizada: copia la imagen elegida a otras escenas y le da a cada una un movimiento de cámara distinto
+function shareImgPicker(i){const P=S.P,src=P.scenes[i];if(!src||!RT.imgs[src.img]){toast('Esta escena todavía no tiene imagen',1);return}
+ const who=castIn(P,src).map(c=>c.name);
+ $('#sheetin').innerHTML=`<div class="between" style="margin-bottom:10px"><div class="h1" style="font-size:19px">🖼️ Usar la imagen de la escena ${i+1} en otras escenas</div><button class="btn sm" onclick="closeSheet()">✕ Cerrar</button></div>
+ <div class="hint">Así el personaje tiene <b>exactamente la misma cara</b>. En cada escena la imagen se mueve distinto (acercamiento, paneo, plano abierto…) para que no se vea repetida. Las imágenes anteriores quedan guardadas en "Variaciones".${who.length?' Ya marqué las escenas donde aparece '+who.join(' y ')+'.':''}</div>
+ <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:12px">${P.scenes.map((s,k)=>{if(k===i)return'';const same=who.length&&castIn(P,s).some(c=>who.includes(c.name));const im=RT.imgs[s.img];
+  return `<label class="card" style="padding:8px;cursor:pointer;display:block"><input type="checkbox" class="shk" value="${k}" ${same?'checked':''}> <b>Escena ${k+1}</b>${im?`<img src="${esc(im.src)}" style="width:100%;border-radius:8px;margin-top:6px;aspect-ratio:16/10;object-fit:cover">`:''}<div class="hint" style="margin-top:4px">${esc((s.text||'').slice(0,70))}</div></label>`}).join('')}</div>
+ <div class="row" style="margin-top:14px;gap:8px"><button class="btn grad" onclick="applyShareImg(${i})">${ic('check')}Usar en las escenas marcadas</button><button class="btn" onclick="document.querySelectorAll('.shk').forEach(c=>c.checked=false)">Desmarcar todas</button></div>`;
+ $('#sheet').classList.add('open')}
+function applyShareImg(i){const P=S.P,src=P.scenes[i],ks=[...document.querySelectorAll('.shk:checked')].map(c=>+c.value);if(!ks.length){toast('Marcá al menos una escena',1);return}
+ const moves=['zoomin','panr','tiltup','dolly','panl','zoomout','track','tiltdown'];let n=0;
+ ks.forEach((k,j)=>{const s=P.scenes[k];if(!s)return;Pipe.pushVar(s);s.img=src.img;s.local=!!src.local;s.edited=!!src.edited;s.hq=!!src.hq;s.locked=true;s.cam=moves[(j+1)%moves.length];delete RT.fg[s.id];s.parallax=false;n++});
+ save(1);closeSheet();renderScenesOnly();renderSel();toast(`Listo: la misma imagen en ${n} escena(s), cada una con otro movimiento ✅`)}
 function renderSel(){const el=$('#selpanel');if(!el||!S.P)return;const P=S.P,i=clamp(S.sel,0,Math.max(0,P.scenes.length-1)),s=P.scenes[i];
  if(!s){el.innerHTML=`<h3><span class="row">${ic('img')}Escena</span></h3><div class="hint">Elegí una escena del storyboard para ver variaciones y herramientas de IA.</div>`;return}
  const prev=(s.vars||[]).find(v=>v.img!==s.img&&RT.imgs[v.img]);
@@ -1498,6 +1525,7 @@ function renderSel(){const el=$('#selpanel');if(!el||!S.P)return;const P=S.P,i=c
   <button class="btn ${s.parallax?'neo':''}" data-busy onclick="run(()=>Pipe.parallax(${i},${!s.parallax}))">${ic('scissors')}${s.parallax?'Quitar 2.5D':'Rotoscopia 2.5D'}</button>
   <button class="btn" data-busy onclick="askBg(${i})">${ic('layers')}Cambiar fondo</button>
   <button class="btn ${RT.clips[s.id]?'neo':''}" data-busy onclick="run(()=>Pipe.animate(${i}))">${ic('film')}Animar IA (beta)</button>
+  <button class="btn" ${RT.imgs[s.img]?'':'disabled'} onclick="shareImgPicker(${i})">${ic('layers')}Usar esta imagen en otras escenas</button>
   <label class="btn ${s.local?'neo':''}" style="cursor:pointer">${ic('img')}Subir mi imagen<input type="file" accept="image/*" hidden onchange="run(()=>Pipe.setImage(${i},this.files[0]))"></label>
   <label class="btn ${s.clip?'neo':''}" style="cursor:pointer">${ic('film')}${s.clip?'Cambiar mi video':'Subir mi video'}<input type="file" accept="video/*" hidden onchange="run(()=>Pipe.addClip(${i},this.files[0]))"></label>
   ${s.clip?`<button class="btn" onclick="Pipe.removeClip(${i})">${ic('trash')}Quitar mi video</button>`:''}
