@@ -372,6 +372,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
   .hidem{display:none!important}
 }
 </style>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 <div class="app">
@@ -398,6 +399,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 </div>
 <div class="toast" id="toast"></div>
 <div class="modal" id="modal" onclick="this.classList.remove('open')"><img id="modalimg" alt=""></div>
+<div class="modal" id="ytm"><div class="card box" style="width:100%;max-width:520px;max-height:90vh;overflow:auto" id="ytbox"></div></div>
 <div class="sheet" id="sheet" onclick="if(event.target===this)closeSheet()"><div class="inner" id="sheetin"></div></div>
 
 <script>
@@ -740,6 +742,51 @@ const DEF={cast:[],people:'latino',format:'vertical',quality:'hd',style:'neo_ani
  cam:'auto',zoom:.12,lens:'normal',shake:false,transition:'fade',grade:'none',analog:'none',chroma:false,vignette:true,grain:false,
  hook:true,progress:false,pulse:false,beatSync:false,sfx:true,amb:true,sfxVol:.5,character:'',title:'',scenes:[],status:'draft'};
 function vt(p){const t=(p.title||'').trim(),n=(p.name||'').trim();if(!t||/^Proyecto \d+$/i.test(t))return n||t;if(n&&!/^Proyecto \d+$/i.test(n)&&n!==t&&p._nameSet)return n;return t}
+// ---- Subir a YouTube ----
+const YT={tok:null,exp:0,
+ open(){const P=S.P;if(!RT.video)return toast('Primero exportá el video',1);
+  if(!S.settings.ytClient){$('#ytbox').innerHTML=`<h3>Conectar YouTube</h3><div class="hint">Para subir directo desde acá falta un paso único: pegar tu <b>ID de cliente de Google</b> en <b>Ajustes → Subir a YouTube</b>. Ahí están los pasos.</div><div class="row" style="margin-top:14px"><button class="btn" onclick="YT.close()">Cerrar</button><button class="btn grad" onclick="YT.close();go('settings')">Ir a Ajustes</button></div>`;return this.show()}
+  const vert=P.format==='vertical',t=vt(P).slice(0,95)+(vert&&!/#shorts/i.test(vt(P))?' #Shorts':'');
+  const d=(P.ytDesc!=null?P.ytDesc:((P.idea||'').slice(0,300)+(vert?'\n\n#Shorts':'')));
+  $('#ytbox').innerHTML=`<h3>${ic('upload')}Subir a YouTube</h3>
+  <div class="lbl">Título</div><input class="inp" id="ytt" maxlength="100" value="${esc(t)}">
+  <div class="lbl">Descripción</div><textarea class="inp" id="ytd" rows="4">${esc(d)}</textarea>
+  <div class="lbl">Quién lo puede ver</div><select class="sel" id="ytp"><option value="private">Privado (solo vos, para revisar)</option><option value="unlisted">No listado (solo con el link)</option><option value="public">Público</option></select>
+  <div class="hint" style="margin-top:8px">La primera vez Google te pide elegir tu cuenta/canal y dar permiso. ${vert?'Como es vertical y dura menos de 3 minutos, YouTube lo pone como <b>Short</b>.':''}</div>
+  <div class="pmsg" id="ytmsg"></div><div style="height:8px;background:var(--line);border-radius:6px;margin-top:10px;overflow:hidden"><div id="ytbar" style="height:100%;width:0;background:#ff0033;transition:width .3s"></div></div>
+  <div class="row" style="margin-top:14px"><button class="btn" id="ytc" onclick="YT.close()">Cancelar</button><button class="btn grad" id="ytgo" onclick="YT.go()">${ic('upload')}Subir ahora</button></div>`;
+  $('#ytp').value=P.ytPriv||'private';this.show()},
+ show(){$('#ytm').classList.add('open')},close(){if(this.xhr)this.xhr.abort();$('#ytm').classList.remove('open')},
+ msg(m,err){const e=$('#ytmsg');if(e){e.innerHTML=m;e.style.color=err?'#ff6b6b':''}},
+ token(){return new Promise((res,rej)=>{if(this.tok&&Date.now()<this.exp)return res(this.tok);
+  if(!window.google||!google.accounts||!google.accounts.oauth2)return rej(new Error('No cargó el inicio de sesión de Google. Recargá la página y probá de nuevo.'));
+  const c=google.accounts.oauth2.initTokenClient({client_id:S.settings.ytClient,scope:'https://www.googleapis.com/auth/youtube.upload',
+   callback:r=>{if(r.error)return rej(new Error('Google no dio permiso ('+r.error+')'));this.tok=r.access_token;this.exp=Date.now()+(r.expires_in-60)*1000;res(this.tok)},
+   error_callback:e=>rej(new Error(e&&e.type==='popup_closed'?'Cerraste la ventana de Google sin dar permiso.':'Se bloqueó la ventana de Google. Permití ventanas emergentes para esta página.'))});
+  c.requestAccessToken()})},
+ async go(){const P=S.P,title=$('#ytt').value.trim()||vt(P),desc=$('#ytd').value,priv=$('#ytp').value;P.ytDesc=desc;P.ytPriv=priv;save();
+  const btn=$('#ytgo');btn.disabled=true;
+  try{this.msg('Conectando con tu cuenta de Google…');const tok=await this.token();
+   const blob=await (await fetch(RT.video.url)).blob();const type=blob.type||'video/'+RT.video.ext;
+   this.msg('Preparando la subida…');
+   const r=await fetch('https://www.googleapis.com/upload/youtube/v3/videos?uploadType=resumable&part=snippet,status',{method:'POST',
+    headers:{Authorization:'Bearer '+tok,'Content-Type':'application/json; charset=UTF-8','X-Upload-Content-Type':type,'X-Upload-Content-Length':String(blob.size)},
+    body:JSON.stringify({snippet:{title:title.slice(0,100),description:desc.slice(0,4900),categoryId:'22',defaultLanguage:P.lang||'es'},status:{privacyStatus:priv,selfDeclaredMadeForKids:false}})});
+   if(!r.ok){let m='';try{m=(await r.json()).error.message}catch(e){}if(r.status===401)this.tok=null;throw new Error(YT.why(r.status,m))}
+   const up=r.headers.get('Location');if(!up)throw new Error('YouTube no devolvió el link de subida. Probá de nuevo.');
+   const v=await new Promise((res,rej)=>{const x=new XMLHttpRequest();this.xhr=x;x.open('PUT',up);x.setRequestHeader('Content-Type',type);
+    x.upload.onprogress=e=>{if(e.lengthComputable){const pc=Math.round(e.loaded/e.total*100);$('#ytbar')&&($('#ytbar').style.width=pc+'%');this.msg('Subiendo… '+pc+'%')}};
+    x.onload=()=>{this.xhr=null;if(x.status>=200&&x.status<300){try{res(JSON.parse(x.responseText))}catch(e){res({})}}else{let m='';try{m=JSON.parse(x.responseText).error.message}catch(e){}rej(new Error(YT.why(x.status,m)))}};
+    x.onerror=()=>{this.xhr=null;rej(new Error('Se cortó la conexión mientras subía. Probá de nuevo.'))};x.onabort=()=>rej(new Error('Subida cancelada.'));x.send(blob)});
+   const link='https://youtu.be/'+(v.id||'');P.ytLink=link;save(1);
+   this.msg(`✅ ¡Listo! Tu video está en YouTube${priv==='private'?' (privado: cambialo a público desde YouTube Studio cuando quieras)':''}.<br><a href="${link}" target="_blank" rel="noopener">Ver el video</a> · <a href="https://studio.youtube.com" target="_blank" rel="noopener">Abrir YouTube Studio</a>`);
+   $('#ytc').textContent='Cerrar';btn.style.display='none';toast('Video subido a YouTube ✅')}
+  catch(e){this.msg('❌ '+e.message,1);btn.disabled=false}},
+ why(st,m){if(/quota/i.test(m))return 'Se terminó el cupo diario gratis de YouTube (unos 6 videos por día). Probá mañana.';
+  if(st===401)return 'Se venció el permiso de Google. Tocá "Subir ahora" otra vez.';
+  if(st===403)return 'YouTube no dejó subir: '+(m||'revisá que tu cuenta tenga un canal creado y que la API de YouTube esté activada.');
+  return 'Error de YouTube ('+st+')'+(m?': '+m:'')}};
+function ipmN(v){const P=S.P;if(!P)return'';const d=P.mode==='musica'&&RT.music&&P.music==='upload'?RT.music.duration:P.duration;return d?' (≈ '+clamp(Math.round(d*v/60),2,48)+' escenas)':''}
 function newProject(mode){return Object.assign(JSON.parse(JSON.stringify(DEF)),{id:uid(),name:'Proyecto '+(S.projects.length+1),mode:mode||'idea',lang:S.settings.lang||'es',createdAt:Date.now(),updatedAt:Date.now()},
  mode==='musica'?{subStyle:'ninguno',pulse:true,beatSync:true,transition:'flash',music:'upload',ipm:24,style:'psicodelico'}:{})}
 let saveT;
@@ -755,14 +802,14 @@ function applyPreset(pre,P=S.P){if(!pre||!P)return;Object.entries(pre).forEach((
 // =================================================================
 const AI={
  async chat(messages,{temp=0.8}={}){
-  const st=S.settings;let last='',noKey=false;
+  const st=S.settings;let last='',noKey=false,geminiMsg='';
   // 1) Gemini de Google a través de tu Vercel (gratis; la clave está escondida en Vercel)
   if(/^https?:$/.test(location.protocol)&&!RT.geminiOff){
    try{const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages,temperature:temp})});
     const j=await r.json().catch(()=>({}));
     if(j.ok&&j.content)return String(j.content).trim();
     if(r.status===404||r.status===405)RT.geminiOff=true;
-    if(j.code==='NO_KEY')noKey=true;last=j.error||('Gemini HTTP '+r.status)}catch(e){last=e.message}}
+    if(j.code==='NO_KEY')noKey=true;last=j.error||(r.status===504?'Gemini tardó demasiado en responder (más de 1 minuto)':'Gemini HTTP '+r.status);if(j.code==='LIMIT'||j.code==='BAD_KEY'||r.status===504)geminiMsg=last}catch(e){last=e.message}}
   // 2) Otros proveedores opcionales (Ajustes) y Pollinations como último intento
   const att=[];
   if(st.altUrl)att.push({u:st.altUrl,h:st.altKey?{Authorization:'Bearer '+st.altKey}:{},m:st.altModel||'gpt-4o-mini'});
@@ -777,6 +824,7 @@ const AI={
    }catch(e){if(!last)last=e.message}
   }
   if(noKey)throw new Error('Falta conectar Gemini: poné tu clave gratis de Google en Vercel (variable GEMINI_API_KEY). Mirá Ajustes → "Conectar Gemini".');
+  if(geminiMsg)throw new Error('Gemini está conectado, pero: '+geminiMsg+'. Probá de nuevo en un rato.');
   throw new Error('No pude conectar con la IA ('+last+'). Probá de nuevo en un rato.');
  },
  json(txt){let t=String(txt).replace(/```json|```/g,'');const a=t.indexOf('{'),b=t.lastIndexOf('}');if(a<0||b<0)throw new Error('La IA no devolvió datos válidos');t=t.slice(a,b+1);
@@ -839,7 +887,7 @@ const Pipe={
   const lim=P.quality==='fhd'?1536:1216,k=Math.min(1,lim/Math.max(W,H));return{W,H,iw:r16(W*k),ih:r16(H*k)}},
  styleText(){const P=S.P;return P.style==='custom'?(P.customStyle||'cinematic illustration'):styleOf(P.style).p},
  nScenes(dur){return clamp(Math.round(dur*S.P.ipm/60),2,48)},
- setBusy(t){S.busy=t;const m=$('#pmsg');if(m)m.textContent=t;document.querySelectorAll('[data-busy]').forEach(b=>b.disabled=!!t);renderPipe()},
+ setBusy(t){S.busy=t;if(!t)S.busyImgs=false;const m=$('#pmsg');if(m)m.textContent=t;document.querySelectorAll('[data-busy]').forEach(b=>b.disabled=!!t);renderPipe()},
  prog(f){const b=$('#pbar');if(b)b.style.width=Math.round(f*100)+'%'},
  sceneURL(s,hq){const {iw,ih}=this.dims();const P=S.P;if(s.local)return s.img;
   const cast=castIn(P,s);const POS=['on the left','on the right','in the background','also'];
@@ -875,6 +923,7 @@ Además "character": descripción física en inglés del personaje principal par
  baseScript(){const P=S.P;return P.mode==='url'?(P.paraphrased||P.sourceText):P.script},
 
  async makeScenes(fromAuto){
+  if(S.busy){if(S.busyImgs){RT.imgTok=(RT.imgTok||0)+1;S.busyImgs=false;this.setBusy('');this.prog(0);toast('Frené las imágenes anteriores y armo las escenas de nuevo')}else return toast('Esperá: la IA todavía está trabajando ('+S.busy+')',1)}
   const P=S.P;if(P.mode==='imagenes')return this.narrateImages();
   let instr,dur;const g=genreOf(P.genre);const gtxt=g?` Género: ${g.n}${P.sub?' / '+P.sub:''} (${g.h}).`:'';
   if(P.mode==='idea'){if(!P.idea.trim())throw new Error('Escribí una idea o palabra clave.');dur=P.duration;
@@ -892,9 +941,17 @@ Además "character": descripción física en inglés del personaje principal par
    dur=RT.narr?RT.narr.duration:wordsOf(base)/2.5;instr=`Este es el guion. NO cambies las palabras, solo dividilo en orden:\n"""${base.slice(0,12000)}"""${gtxt}`}
   const n=this.nScenes(dur);this.setBusy('La IA está escribiendo el guion y el storyboard…');this.prog(.1);
   try{let data;
-   try{const out=await AI.chat([{role:'system',content:'Sos guionista y director de arte experto en videos virales. Respondés SOLO con JSON válido.'},
-     {role:'user',content:`${instr}\n\nDividilo en exactamente ${n} escenas${P.mode==='musica'?'':' (1-2 frases del narrador cada una)'}. ${this.promptTail()}\nFormato exacto: {"title":"título corto y atractivo","character":"...","scenes":[{"text":"...","prompt":"...","camera":"...","ambient":"..."}]}`}],{temp:.85});
-    data=AI.json(out)}
+   try{const sys={role:'system',content:'Sos guionista y director de arte experto en videos virales. Respondés SOLO con JSON válido.'},fmt=`${this.promptTail()}\nFormato exacto: {"title":"título corto y atractivo","character":"...","scenes":[{"text":"...","prompt":"...","camera":"...","ambient":"..."}]}`;
+    // Muchas escenas de una sola vez hacen que Gemini tarde más de 1 minuto y Vercel corta. En videoclips y videos largos se piden por tandas.
+    const B=12;if(P.mode==='musica'&&n>B){data={scenes:[]};const parts=Math.ceil(n/B);
+     for(let k=0;k<parts;k++){const a=k*B,b=Math.min(n,a+B),prev=data.scenes.slice(-3).map(x=>x.prompt||x.text).join(' | ');
+      this.setBusy(`La IA está armando las escenas del videoclip… (tanda ${k+1} de ${parts})`);this.prog(.1+.8*k/parts);
+      let d=null,err;for(let r=0;r<2&&!d;r++){try{d=AI.json(await AI.chat([sys,{role:'user',content:`${instr}\n\nEl videoclip completo tiene ${n} escenas en orden. Ahora escribí SOLO las escenas ${a+1} a ${b} (exactamente ${b-a} escenas), ${k===0?'empezando con una apertura impactante':k===parts-1?'cerrando con un final poderoso':'continuando la historia visual'}.${data.character?` Personaje principal (igual en todas): ${data.character}.`:''}${prev?` Las escenas anteriores terminaban así: ${prev.slice(0,600)}`:''} ${fmt}`}],{temp:.85}))}catch(e){err=e}}
+      if(!d||!d.scenes||!d.scenes.length){if(data.scenes.length)break;throw err||new Error('La IA no generó escenas, probá de nuevo.')}
+      if(!data.title&&d.title)data.title=d.title;if(!data.character&&d.character)data.character=d.character;data.scenes.push(...d.scenes.slice(0,b-a))}
+     if(data.scenes.length<n)toast(`Se generaron ${data.scenes.length} de ${n} escenas (Gemini se cansó). Podés seguir igual.`,1)}
+    else{const out=await AI.chat([sys,{role:'user',content:`${instr}\n\nDividilo en exactamente ${n} escenas${P.mode==='musica'?'':' (1-2 frases del narrador cada una)'}. ${fmt}`}],{temp:.85});
+    data=AI.json(out)}}
    catch(e){if(P.mode==='idea'||P.mode==='musica')throw e;data=this.naiveSplit(this.baseScript(),n);toast('La IA no respondió bien: dividí el guion automáticamente.',1)}
    if(!data.scenes||!data.scenes.length)throw new Error('La IA no generó escenas, probá de nuevo.');
    P.title=data.title||P.title||P.name;if(P.name.startsWith('Proyecto')&&data.title)P.name=data.title.slice(0,60);
@@ -932,15 +989,16 @@ Además "character": descripción física en inglés del personaje principal par
   for(let i=0;i<sent.length;i+=per){const t=sent.slice(i,i+per).join(' ').trim();if(t)sc.push({text:t,prompt:t})}return {title:'',character:'',scenes:sc}},
 
  async images(){const P=S.P;if(!P.scenes.length)throw new Error('Primero generá las escenas.');
+  const tok=RT.imgTok=(RT.imgTok||0)+1,live=()=>RT.imgTok===tok&&S.P===P;S.busyImgs=true;
   this.setBusy('Generando imágenes…');let done=0;const tot=P.scenes.length;
-  const jobs=P.scenes.map(s=>{if(!s.img||(!RT.imgs[s.img]&&!s.local&&!s.edited&&!s.hq&&!s.locked))s.img=this.sceneURL(s);return loadImg(s.img,8).then(()=>{done++;this.prog(done/tot);this.setBusy(`Imágenes ${done}/${tot}…`);paintScene(s)}).catch(()=>{done++;paintScene(s,true)})});
-  save();renderScenesOnly();await Promise.all(jobs);
+  const jobs=P.scenes.map(s=>{if(!s.img||(!RT.imgs[s.img]&&!s.local&&!s.edited&&!s.hq&&!s.locked))s.img=this.sceneURL(s);return loadImg(s.img,8).then(()=>{done++;if(!live())return;this.prog(done/tot);this.setBusy(`Imágenes ${done}/${tot}…`);paintScene(s)}).catch(()=>{done++;if(live())paintScene(s,true)})});
+  save();renderScenesOnly();await Promise.all(jobs);if(!live())return;
   // Reintento automático: las que fallaron se vuelven a pedir solas (con otra variación) hasta completar todas
-  for(let pass=1;pass<=6;pass++){const bad=P.scenes.filter(s=>!s.local&&!RT.imgs[s.img]);if(!bad.length||S.P!==P)break;
-   for(const s of bad){if(S.P!==P)break;const n=P.scenes.indexOf(s)+1;this.setBusy(`Reintentando imagen de la escena ${n} (vuelta ${pass} de 6)… podés dejarlo trabajando solo`);
+  for(let pass=1;pass<=6;pass++){const bad=P.scenes.filter(s=>!s.local&&!RT.imgs[s.img]);if(!bad.length||!live())break;
+   for(const s of bad){if(!live())break;const n=P.scenes.indexOf(s)+1;this.setBusy(`Reintentando imagen de la escena ${n} (vuelta ${pass} de 6)… podés dejarlo trabajando solo`);
     await sleep(3000*pass);s.seed=seed();s.img=this.sceneURL(s);save();
-    try{await loadImg(s.img,8);paintScene(s);renderTL()}catch(e){paintScene(s,true)}}}
-  this.setBusy('');this.prog(0);
+    try{await loadImg(s.img,8);if(live()){paintScene(s);renderTL()}}catch(e){if(live())paintScene(s,true)}}}
+  if(!live())return;S.busyImgs=false;this.setBusy('');this.prog(0);
   const fails=P.scenes.filter(s=>!RT.imgs[s.img]).length;toast(fails?`${fails} imagen(es) no se pudieron hacer (el servicio gratis está muy ocupado). Tocá "Generar imágenes" de nuevo más tarde: solo rehace las que faltan.`:'Imágenes listas ✅',fails>0)},
  async regen(i,opts={}){const s=S.P.scenes[i];if(!s)return;if(s.local&&!opts.force){toast('Es una imagen tuya: usá "Editar con IA" o "Rotoscopia 2.5D"');return}
   this.pushVar(s);if(!opts.keepSeed)s.seed=seed();s.edited=false;s.locked=false;s.local=false;if(opts.hq)s.hq=true;s.img=this.sceneURL(s,opts.hq);delete RT.fg[s.id];s.parallax=false;delete RT.clips[s.id];save();renderScenesOnly();renderSel();
@@ -1553,6 +1611,7 @@ function renderLeft(){const l=$('#left');if(l){const open=[...l.querySelectorAll
 function renderStage(){const w=$('#stagewrap');if(!w||!S.P)return;const P=S.P,c=FORMATS[P.format].c;
  if(RT.video){w.innerHTML=`<div class="stage ${c}"><video src="${RT.video.url}" controls playsinline></video></div>`;
   $('#dl').innerHTML=`<a class="btn grad" style="width:100%;margin-top:10px" href="${RT.video.url}" download="${esc(P.name.replace(/[^\w\-áéíóúñ ]/gi,''))}.${RT.video.ext}">${ic('down')}Descargar (${(RT.video.size/1048576).toFixed(1)} MB)</a>
+  <button class="btn" style="width:100%;margin-top:6px;background:#ff0033;color:#fff;border-color:#ff0033" onclick="YT.open()">${ic('upload')}Subir a YouTube</button>
   <button class="btn sm" style="width:100%;margin-top:6px" onclick="RT.video=null;renderStage()">${ic('eye')}Volver a la vista previa</button>${RT.video.ext==='webm'?'<div class="hint">Formato .webm: TikTok y YouTube lo aceptan. Si una app no, convertilo gratis a MP4 con CapCut.</div>':''}`;return}
  const d=$('#dl');if(d)d.innerHTML='';
  w.innerHTML=`<div class="stage ${c}"><canvas id="pv"></canvas><button class="fs" title="Pantalla completa" onclick="const c=$('#pv');(c.requestFullscreen||c.webkitRequestFullscreen||function(){}).call(c)">${ic('full')}</button>${P.scenes.length?'':'<div class="ph">Aún no se generó<br>la vista previa</div>'}</div>`;
@@ -1669,10 +1728,10 @@ function paintScene(s,fail){const el=$('#si_'+s.id);const im=RT.imgs[s.img];
  renderPipe();if(S.P&&S.P.scenes[0]===s&&!Player.playing)renderStage();if(S.P&&S.P.scenes[S.sel]===s)renderSel();clearTimeout(window._tlT);window._tlT=setTimeout(renderTL,300)}
 
 function tContenido(){const P=S.P;let top='';
- const ipm=`<div class="lbl">Frecuencia visual: <b style="color:var(--txt)" id="ipml">${P.ipm} imágenes por minuto</b></div><input type="range" min="4" max="30" value="${P.ipm}" oninput="S.P.ipm=+this.value;$('#ipml').textContent=this.value+' imágenes por minuto';save()"><div class="rlabels"><span>Pocas (más lento)</span><span>Muchas (más dinámico)</span></div>`;
+ const ipm=`<div class="lbl">Frecuencia visual: <b style="color:var(--txt)" id="ipml">${P.ipm} imágenes por minuto${ipmN(P.ipm)}</b></div><input type="range" min="4" max="30" value="${P.ipm}" oninput="S.P.ipm=+this.value;$('#ipml').textContent=this.value+' imágenes por minuto'+ipmN(+this.value);save()"><div class="rlabels"><span>Pocas (más lento)</span><span>Muchas (más dinámico)</span></div>`;
  const langSel=`<select class="sel" onchange="setLang(this.value)">${Object.entries(LANGS).map(([k,v])=>`<option value="${k}" ${P.lang===k?'selected':''}>${v[0].toUpperCase()+v.slice(1)}</option>`).join('')}</select>`;
  const durSel=(opts)=>`<select class="sel" onchange="S.P.duration=+this.value;save();renderCfg()">${opts.map(d=>`<option value="${d}" ${P.duration===d?'selected':''}>${fmtTime(d)}</option>`).join('')}</select>`;
- const gen=(label)=>`<div class="genbtn"><button class="btn grad" data-busy onclick="run(()=>Pipe.makeScenes())">${ic('spark')}${label}</button></div>`;
+ const gen=(label)=>`<div class="genbtn"><button class="btn grad" onclick="run(()=>Pipe.makeScenes())">${ic('spark')}${label}</button></div>`;
  const quick=GENRES.filter(g=>g.grp!=='formatos').slice(0,14);
  if(P.mode==='idea')top=`<div class="card box"><h3>${ic('bulb')}Generador de guion</h3>
   <div class="lbl">Plantillas rápidas</div><div class="chips">${quick.map(g=>`<button class="chip ${P.genre===g.id?'on':''}" onclick="setGenre(S.P.genre==='${g.id}'?'':'${g.id}')">${g.e} ${g.n}</button>`).join('')}<button class="chip" onclick="openSheet('cine')">Ver todos…</button></div>
@@ -1796,6 +1855,16 @@ function vSettings(m){const st=S.settings;setTimeout(gemStatus,50);m.innerHTML=`
  <div class="info warnbox">${ic('help')}<span>Solo sirve para edición exacta de imágenes, transcribir audio y animar con IA, y eso consume saldo pago. <b>Nunca pegues una clave secreta (sk_) en una página pública.</b> Si la pegás acá, queda solo en este navegador.</span></div>
  <div class="lbl">Clave</div><input class="inp" type="password" value="${esc(st.key)}" placeholder="opcional" onchange="S.settings.key=this.value.trim();saveSettings();toast('Guardado ✅')"></details>
  </div>
+ <div class="card box" style="max-width:680px"><h3>${ic('upload')}Subir a YouTube (gratis)</h3>
+ <div class="hint">Con esto aparece el botón rojo <b>Subir a YouTube</b> después de exportar. Se hace una sola vez. Es gratis y lo que pegás acá <b>no es una clave secreta</b>: solo identifica a tu app.</div>
+ <div class="info ${st.ytClient?'':'warnbox'}">${ic(st.ytClient?'check':'help')}<span>${st.ytClient?'✅ YouTube está listo para usar.':'Todavía no está conectado. Seguí los pasos de abajo.'}</span></div>
+ <ol class="hint" style="padding-left:18px;margin-top:8px">
+ <li>Entrá a <a href="https://console.cloud.google.com/projectcreate" target="_blank" rel="noopener">console.cloud.google.com</a> con la misma cuenta de tu canal y creá un proyecto (nombre: Estudio Viral).</li>
+ <li>Activá la API: <a href="https://console.cloud.google.com/apis/library/youtube.googleapis.com" target="_blank" rel="noopener">YouTube Data API v3</a> → <b>Habilitar</b>.</li>
+ <li>Andá a <a href="https://console.cloud.google.com/auth/overview" target="_blank" rel="noopener">Pantalla de consentimiento (Google Auth Platform)</a> → <b>Comenzar</b>. Nombre: Estudio Viral, tu mail, tipo <b>Externo</b>. En <b>Público</b> agregá tu mail como <b>usuario de prueba</b>.</li>
+ <li>Andá a <a href="https://console.cloud.google.com/auth/clients" target="_blank" rel="noopener">Clientes</a> → <b>Crear cliente</b> → tipo <b>Aplicación web</b>. En <b>Orígenes autorizados de JavaScript</b> poné: <b>${esc(location.origin)}</b>. Crear.</li>
+ <li>Copiá el <b>ID de cliente</b> (termina en .apps.googleusercontent.com) y pegalo acá abajo.</li></ol>
+ <div class="lbl">ID de cliente de Google</div><input class="inp" value="${esc(st.ytClient)}" placeholder="123456-abc.apps.googleusercontent.com" onchange="S.settings.ytClient=this.value.trim();saveSettings();YT.tok=null;toast('Guardado ✅');render()"></div>
  <div class="card box" style="max-width:680px"><h3>${ic('layers')}Proveedor de texto alternativo (avanzado)</h3><div class="hint">Cualquier servicio compatible con OpenAI. Ej. gratis: Groq → URL https://api.groq.com/openai/v1/chat/completions, modelo llama-3.3-70b-versatile.</div>
  <div class="lbl">URL</div><input class="inp" value="${esc(st.altUrl)}" onchange="S.settings.altUrl=this.value.trim();saveSettings()">
  <div class="cols2"><div><div class="lbl">Clave</div><input class="inp" type="password" value="${esc(st.altKey)}" onchange="S.settings.altKey=this.value.trim();saveSettings()"></div><div><div class="lbl">Modelo</div><input class="inp" value="${esc(st.altModel)}" onchange="S.settings.altModel=this.value.trim();saveSettings()"></div></div></div>
