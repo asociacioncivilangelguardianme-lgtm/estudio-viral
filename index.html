@@ -2404,8 +2404,8 @@ window.Dlg={
       list.forEach(function(s){if(s===from||s.img===from.img||(s.own&&s!==src&&(s.local||RT.imgs[s.img])&&!(src&&src.grp===g)))return;s.img=from.img;s.local=!!from.local;s.edited=!!from.edited;s.hq=!!from.hq;s.locked=true;s.parallax=false;delete RT.fg[s.id];try{paintScene(s)}catch(e){}})});save()},
   setVoice(k,v){var P=S.P;if(P.dlgVoices[k]){P.dlgVoices[k].voice=v;P.scenes.forEach(function(s){if(s.who&&normName(s.who)===k)delete RT.voices[s.id]});save();renderCfg()}},
   setColor(k,c){var P=S.P;if(P.dlgVoices[k]){P.dlgVoices[k].color=c;save();Player.seek(1.2)}},
-  async listen(k){var P=S.P,sp=P.dlgVoices[k];if(!sp)return;var line=parse(P.script).find(function(l){return normName(l.who)===k});var ac=getAC();await ac.resume();toast('Generando muestra de '+sp.name+'…');
-    try{var r=await Voice.make(line?line.text:'Hola, así suena mi voz.',sp.voice,{speed:P.speed});var src=ac.createBufferSource();src.buffer=await decode(r.blob);src.connect(ac.destination);src.start()}catch(e){toast('No se pudo generar la voz: '+(e.message||e),1)}}
+  async listen(k){var P=S.P,sp=P.dlgVoices[k];if(!sp)return;try{if(window.__ev33src)window.__ev33src.stop()}catch(e){}var line=parse(P.script).find(function(l){return normName(l.who)===k});var ac=getAC();await ac.resume();toast('Generando muestra de '+sp.name+'…');
+    try{var r=await Voice.make(line?line.text:'Hola, así suena mi voz.',sp.voice,{speed:P.speed});var src=ac.createBufferSource();src.buffer=await decode(r.blob);src.connect(ac.destination);try{if(window.__ev33src)window.__ev33src.stop()}catch(e){}window.__ev33src=src;src.start();toast((r.pre?'Voz de Microsoft: ':'Voz de respaldo (Microsoft no respondió): ')+sp.name)}catch(e){toast('No se pudo generar la voz: '+(e.message||e),1)}}
 };
 
 function dlgPanel(){var P=S.P,lines=parse(P.script);ensureSpk(P,lines);var keys=[];lines.forEach(function(l){var k=normName(l.who);if(keys.indexOf(k)<0)keys.push(k)});
@@ -2500,8 +2500,16 @@ function userPron(){var out=[];String(S.settings.pron||'').split('\n').forEach(f
 function applyPron(text,lang){var list=userPron().concat(lang==='es'?PRON:[]);list.sort(function(a,b){return b[0].length-a[0].length});
   list.forEach(function(x){var re=new RegExp('(^|[^\\p{L}])('+x[0].replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')(?=$|[^\\p{L}])','giu');text=text.replace(re,function(m,pre){return pre+x[1]})});return text}
 EV33.pron=applyPron;
+/* Voz de respaldo (Piper): cada voz se carga por separado, así no se queda pegada la primera (todas de mujer) */
+var PIPER_URL='https://cdn.jsdelivr.net/npm/@mintplex-labs/piper-tts-web@1.0.4/dist/piper-tts-web.js',pmods={},lastPiper='';
+Piper.say=async function(text,voiceId,onProg){var m=pmods[voiceId];if(!m){m=pmods[voiceId]=import(PIPER_URL+'?voz='+encodeURIComponent(voiceId));m.catch(function(){delete pmods[voiceId]})}
+  var mod=await m;lastPiper=voiceId;return await mod.predict({text:text,voiceId:voiceId},function(p){if(onProg&&p&&p.total)onProg(p.loaded/p.total)})};
+/* Microsoft: si falla, se vuelve a intentar a los 90 segundos en vez de abandonarla para siempre */
+function retryMs(){var now=Date.now();
+  if(EdgeDirect.down){if(!EdgeDirect._t)EdgeDirect._t=now;else if(now-EdgeDirect._t>90000){EdgeDirect.down=false;EdgeDirect.fails=0;EdgeDirect._t=0}}
+  if(Voice.edgeDown){if(!Voice._t)Voice._t=now;else if(now-Voice._t>90000){Voice.edgeDown=false;Voice.fails=0;Voice._t=0}}}
 var makeO=Voice.make.bind(Voice);
-Voice.make=function(text,voiceId,o){try{text=applyPron(String(text),voiceOf(voiceId).lang)}catch(e){}return makeO(text,voiceId,o)};
+Voice.make=function(text,voiceId,o){try{retryMs()}catch(e){}try{text=applyPron(String(text),voiceOf(voiceId).lang)}catch(e){}return makeO(text,voiceId,o)};
 EV33.testPron=async function(){var t=($('#ev33pt')||{}).value||'Oxum y Xangô bendicen a los Orixás. Axé.';var ac=getAC();await ac.resume();toast('Generando…');
   try{var r=await Voice.make(t,S.P?voiceFor(S.P,{}):DEFAULT_VOICE.es,{speed:1});var src=ac.createBufferSource();src.buffer=await decode(r.blob);src.connect(ac.destination);src.start()}catch(e){toast('No se pudo: '+(e.message||e),1)}};
 
