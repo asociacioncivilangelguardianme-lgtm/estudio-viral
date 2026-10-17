@@ -626,7 +626,8 @@ const MUSIC=[
 const CAMS={auto:'Automático',zoomin:'Acercamiento (Zoom in)',zoomout:'Alejamiento (Zoom out)',panl:'Paneo ←',panr:'Paneo →',tiltup:'Inclinación ↑ (Tilt)',tiltdown:'Inclinación ↓ (Tilt)',dolly:'Dolly in',track:'Seguimiento (Tracking)',static:'Plano fijo'};
 const nameRe=n=>new RegExp('(^|[^\\p{L}])'+n.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(?=$|[^\\p{L}])','iu');
 const hashSeed=t=>{let h=7;for(const c of String(t).toLowerCase())h=(h*31+c.charCodeAt(0))%999983;return h};
-const ORIXAS={};(()=>{const add=(names,t)=>names.forEach(n=>ORIXAS[n]=t);
+const normName=n=>String(n).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+const ORIXAS={};(()=>{const add=(names,t)=>names.forEach(n=>ORIXAS[normName(n)]=t);
  add(['oxum','oshun','ochun'],'golden yellow silk clothes with lace, many gold bracelets, gold crown with beaded fringe over the face, golden abebe hand-mirror, yellow and amber bead necklaces, river and waterfall');
  add(['iemanja','yemanja','yemaya','janaina'],'light blue, seafoam and white layered skirt with lace and wave embroidery, silver and mother-of-pearl crown with seashells and starfish, silver abebe mirror with fish, blue and white bead necklaces, pearls and cowrie shells, ocean waves');
  add(['xango','shango','chango'],'red and white royal clothes, beaded red and white crown of an African king, red and white bead necklaces, holding the oxe double-headed axe, lightning and thunder');
@@ -636,9 +637,41 @@ const ORIXAS={};(()=>{const add=(names,t)=>names.forEach(n=>ORIXAS[n]=t);
  add(['oxala','obatala'],'all white clothes, white beads, silver staff (opaxoro), elderly wise man with white beard, white light');
  add(['exu','elegua','eleggua'],'red and black clothes, red and black bead necklaces, mischievous smile, crossroads');
  add(['nana'],'purple and lilac clothes, very old wise woman, ibiri staff, lilac beads, swamp and mud');
+ add(['bara','bará lode','bara lode','bara lana','bara adague','bara agelu'],'Bará, African orisha guardian of paths and doors, red clothes, red bead necklaces, holding old iron keys, cowrie shells, standing at a crossroads');
+ add(['exu orixa','exu orisha','esu','eshu'],'African orisha messenger, red and black clothes, ogo carved staff, red and black bead necklaces, cowrie shells, crossroads');
+ add(['exu tranca rua','tranca rua','tranca ruas','exu tranca ruas'],'elegant man in a black suit and long black cape lined with red, black top hat, cane, cigar, guarding a closed street gate at night');
+ add(['exu caveira','caveira'],'tall figure with a white skull face, black top hat, long black cape, holding an iron trident, cemetery gate at night with candles');
+ add(['exu tiriri','tiriri'],'young mischievous man in red and black clothes and cape, iron trident, crossroads at night');
+ add(['exu maraba','exu marabo','maraba','marabo'],'elegant dark-skinned man in a fine black and red suit, cape and top hat, regal and serious');
+ add(['exu sete encruzilhadas','sete encruzilhadas','exu 7 encruzilhadas'],'man in a red and black cape standing at a seven-way crossroads at night, many candles, iron trident');
+ add(['exu do lodo','exu da meia noite','exu meia noite','exu veludo','exu capa preta','capa preta'],'mysterious man in a long black velvet cape and top hat, night, candles, crossroads');
+ add(['pombagira','pomba gira','pomba-gira','pombogira'],'elegant beautiful woman in a long red and black ruffled dress, red roses in her hair, gold jewelry, fan in hand, confident laugh, crossroads at night with candles');
+ add(['maria padilha','padilha'],'regal queen in a red and black velvet gown, small gold crown, red roses, gold jewelry, champagne glass, proud elegant pose');
+ add(['maria mulambo','mulambo'],'woman in a long patched skirt of purple and red fabrics, shawl, red roses, gold jewelry, mysterious smile');
+ add(['pombagira cigana','cigana','ciganas','pomba gira cigana'],'gypsy woman in a colorful flowing skirt with gold coins, headscarf, big gold earrings, tambourine, campfire');
+ add(['rainha das sete encruzilhadas','rainha'],'queen in a red and black gown with a gold crown, standing at a crossroads at night with candles');
+ add(['ze pilintra','ze pelintra','seu ze','malandro','malandros'],'Brazilian malandro in a white suit, red tie, white panama hat with a red band, two-tone shoes, charming smile, old Rio de Janeiro street');
+ add(['preto velho','pretos velhos','pai joaquim','pai benedito'],'elderly Black grandfather spirit, white clothes, straw hat, smoking a wooden pipe, sitting on a small wooden stool, rosary, kind wise face');
+ add(['preta velha','vovo maria conga','vovo catarina'],'elderly Black grandmother spirit, white clothes and white headscarf, smoking a wooden pipe, rosary, sitting on a small wooden stool, kind wise face');
+ add(['caboclo','caboclos','caboclo sete flechas','caboclo pena branca','cabocla jurema','jurema'],'Brazilian indigenous warrior spirit, feather headdress, bow and arrows, green leaves, deep forest');
+ add(['ere','eres','ibeji','ibejis','cosme e damiao','cosme y damian'],'joyful twin children in colorful clothes, candies and sweets, playful');
+ add(['baiano','baianos'],'man from Bahia in white clothes and a leather hat, coconut, cheerful');
+ add(['boiadeiro','boiadeiros'],'Brazilian cattle herder in a leather hat and leather clothes, whip and lasso, open fields');
+ add(['marinheiro','marinheiros'],'sailor in a white navy uniform, ocean and ship deck');
+ add(['oxumare','oshumare'],'yellow and green clothes, rainbow serpent, rainbows, cowrie shells');
+ add(['ossain','osanyin','ossaim'],'green clothes covered with sacred leaves and herbs, forest healer, leaf crown');
+ add(['oba'],'warrior woman in red and orange clothes, copper sword and shield, headscarf covering one ear');
+ add(['ewa','yewa'],'young woman in red and pink clothes, mist and rainbow, river');
+ add(['logunede','logun ede','logun'],'young prince hunter in blue and gold clothes, bow and arrow and small gold mirror, river and forest');
+ add(['xapana'],'body covered from head to feet with straw raffia clothes, cowrie shells, mysterious healer');
+ add(['iroko'],'giant ancient sacred tree wrapped in white cloth');
  add(['omolu','obaluae','babalu'],'body covered from head to feet with straw raffia clothes (aze), cowrie shells, mysterious');})();
-const normName=n=>String(n).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
-function withTradition(c){const t=ORIXAS[normName(c.name)];if(!t)return c;const first=t.split(',')[0].replace(/ clothes$/,'').toLowerCase();return c.desc.toLowerCase().includes(first)?c:{...c,desc:c.desc+', traditional look: '+t}}
+// Diccionario religioso: lo que viene incluido + lo que escribís vos en Ajustes ("Nombre = cómo se ve")
+function glossAll(){const out=Object.entries(ORIXAS).map(([k,v])=>[k,v]);String((S.settings&&S.settings.dict)||'').split('\n').forEach(l=>{const i=l.indexOf('=');if(i<1)return;const d=l.slice(i+1).trim();if(!d)return;l.slice(0,i).split(/[\/,]/).map(normName).filter(Boolean).forEach(n=>out.unshift([n,d]))});return out}
+function glossIn(text,max=6){const t=normName(text||'');if(!t)return[];const seen=new Set(),hits=[];
+ for(const [k,v] of glossAll().sort((a,b)=>b[0].length-a[0].length)){if(seen.has(k)||!nameRe(k).test(t))continue;seen.add(k);if(hits.some(h=>h.k.includes(k)||h.v===v))continue;hits.push({k,v})}
+ return hits.slice(0,max).map(h=>({name:h.k.replace(/\b\p{L}/gu,c=>c.toUpperCase()),desc:h.v}))}
+function withTradition(c){const g=glossIn(c.name,1)[0];const t=g&&g.desc;if(!t)return c;const first=t.split(',')[0].replace(/ clothes$/,'').toLowerCase();return c.desc.toLowerCase().includes(first)?c:{...c,desc:c.desc+', traditional look: '+t}}
 // Al volver a generar, se conservan las descripciones que escribiste vos y las fotos de referencia
 function keepMine(P,old){(old||[]).filter(c=>c&&c.name&&(c.user||c.ref)).forEach(m=>{const k=(P.cast||[]).findIndex(c=>normName(c.name)===normName(m.name));
  if(k>=0){if(m.user){P.cast[k].desc=m.desc;P.cast[k].user=true}if(m.ref)P.cast[k].ref=m.ref}else (P.cast=P.cast||[]).push(m)})}
@@ -892,6 +925,7 @@ const Pipe={
  sceneURL(s,hq){const {iw,ih}=this.dims();const P=S.P;if(s.local)return s.img;
   const cast=castIn(P,s);const POS=['on the left','on the right','in the background','also'];
   const castTxt=cast.length===1?[cast[0].name+' looks exactly like this: '+cast[0].desc]:cast.length>1?[cast.length+' clearly different people, each with their own face, clothes and colors: '+cast.map((c,i)=>POS[i]+', '+c.name+' = '+c.desc).join('; ')+'. Do not mix their clothes or colors']:[];
+  const gls=glossIn(s.prompt+' '+(s.text||''),3).filter(g=>!cast.some(c=>normName(c.name)===normName(g.name))&&!normName(s.prompt).includes(normName(g.desc.split(',')[0])));castTxt.push(...gls.map(g=>g.name+' looks like: '+g.desc));
   const hasEth=/\b(black|african|afro|asian|european|caucasian|latin[oa]?|hispanic|indigenous|arab)\b/i.test(s.prompt+' '+cast.map(c=>c.desc).join(' '));
   const prompt=[s.prompt,P.character?'main character: '+P.character:'',...castTxt,hasEth?'':(PEOPLE_P[P.people]||''),this.styleText(),P.format==='vertical'?'vertical composition':P.format==='cuadrado'?'centered square composition':'wide composition','natural realistic anatomy, each person appears only once, no merged or duplicated faces','everyone fully clothed and modestly dressed, family friendly, no nudity','no text, no watermark'].filter(Boolean).join(', ');
   const m=hq||s.hq?1.5:1;return AI.imgURL(prompt,Math.min(2048,r16(iw*m)),Math.min(2048,r16(ih*m)),s.seed,hq||s.hq?'&enhance=true':'')},
@@ -901,7 +935,9 @@ const Pipe={
 - "prompt": descripción visual en INGLÉS para generar la imagen (sujeto, acción, lugar, encuadre, luz), concreta, sin texto ni letras.
 - "camera": uno de ${Object.keys(CAMS).filter(k=>k!=='auto').join('|')} según la emoción (dolly para revelaciones, zoomin para tensión, panl/panr para paisajes, static para momentos quietos).
 - "ambient": sonido ambiente, uno de ${Object.keys(AMB).join('|')}.
-Además "character": descripción física en inglés del personaje principal para que se vea igual en todas las escenas ("" si no hay).`},
+Además "character": descripción física en inglés del personaje principal para que se vea igual en todas las escenas ("" si no hay).${this.glossTxt()}`},
+ glossTxt(){const P=S.P;const g=glossIn([P.name,P.idea,P.script,P.sourceText,P.paraphrased].join(' '),10);if(!g.length)return'';
+  return `\nGLOSARIO RELIGIOSO (religiones afro: Umbanda, Quimbanda, Candomblé, Batuque/Nación). La IA de imágenes NO conoce estos nombres: cada vez que aparezca uno, en el "prompt" escribí su aspecto con estas palabras (no pongas solo el nombre), con respeto por su tradición:\n`+g.map(x=>`- ${x.name}: ${x.desc}`).join('\n')},
 
  async fetchSource(){const P=S.P;if(!P.sourceUrl)throw new Error('Pegá primero un link de YouTube o TikTok.');
   this.setBusy('Obteniendo transcripción… (si YouTube no deja, Gemini mira el video: puede tardar hasta 1 minuto)');
@@ -1855,6 +1891,10 @@ function vSettings(m){const st=S.settings;setTimeout(gemStatus,50);m.innerHTML=`
  <div class="info warnbox">${ic('help')}<span>Solo sirve para edición exacta de imágenes, transcribir audio y animar con IA, y eso consume saldo pago. <b>Nunca pegues una clave secreta (sk_) en una página pública.</b> Si la pegás acá, queda solo en este navegador.</span></div>
  <div class="lbl">Clave</div><input class="inp" type="password" value="${esc(st.key)}" placeholder="opcional" onchange="S.settings.key=this.value.trim();saveSettings();toast('Guardado ✅')"></details>
  </div>
+ <div class="card box" style="max-width:680px"><h3>${ic('spark')}Mi diccionario religioso</h3>
+ <div class="hint">La IA de imágenes no sabe quién es Exu, Bará o una Pombagira: si solo ve el nombre, inventa cualquier cosa. Estudio ya trae incluidos los orixás, Exus y Pombagiras más conocidos, Pretos Velhos, Caboclos, Zé Pilintra y más. Acá podés <b>agregar los tuyos o cambiar cómo se ve alguno</b>: uno por renglón, <b>Nombre = cómo se ve</b>. Mejor en inglés, pero también entiende español. Lo tuyo tiene prioridad sobre lo incluido.</div>
+ <textarea class="inp" rows="5" style="margin-top:8px" placeholder="Bará Lodê = African orisha, red clothes, iron keys, crossroads&#10;Exu Tranca Rua das Almas = elegant man, black cape, top hat, cemetery gate&#10;Mãe Oxum de mi casa = woman in golden dress, gold crown" onchange="S.settings.dict=this.value;saveSettings();toast('Diccionario guardado ✅')">${esc(st.dict||'')}</textarea>
+ <details style="margin-top:8px"><summary class="hint" style="cursor:pointer">Ver los nombres que ya vienen incluidos</summary><div class="hint" style="margin-top:6px">${[...new Set(Object.keys(ORIXAS).map(k=>k.replace(/\b\p{L}/gu,c=>c.toUpperCase())))].join(' · ')}</div></details></div>
  <div class="card box" style="max-width:680px"><h3>${ic('upload')}Subir a YouTube (gratis)</h3>
  <div class="hint">Con esto aparece el botón rojo <b>Subir a YouTube</b> después de exportar. Se hace una sola vez. Es gratis y lo que pegás acá <b>no es una clave secreta</b>: solo identifica a tu app.</div>
  <div class="info ${st.ytClient?'':'warnbox'}">${ic(st.ytClient?'check':'help')}<span>${st.ytClient?'✅ YouTube está listo para usar.':'Todavía no está conectado. Seguí los pasos de abajo.'}</span></div>
