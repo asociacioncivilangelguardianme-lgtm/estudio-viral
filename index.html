@@ -6,6 +6,10 @@
 <title>Estudio Viral IA</title>
 <meta name="description" content="Creá videos virales con IA gratis: desde texto, guion, link de YouTube/TikTok, audio, imágenes o música.">
 <meta name="theme-color" content="#0F0F12">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <script type="importmap">{"imports":{"onnxruntime-web":"https://cdn.jsdelivr.net/npm/onnxruntime-web@1.18.0/dist/esm/ort.min.js"}}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
@@ -2277,5 +2281,327 @@ window.__ev32export=exportMp4;
 })();
 </script>
 <!-- ===== FIN v3.32 ===== -->
+<!-- ===== ESTUDIO VIRAL · v3.33 · MODO DIÁLOGO, TEXTOS PARA PUBLICAR, TIKTOK/REELS, PRONUNCIACIÓN, PORTUGUÉS, FIRMA E INSTALAR APP =====
+     Agregado al final: no modifica el código de arriba. Para quitarlo, borrá desde acá hasta "FIN v3.33". -->
+<style>
+.ev33-spk{display:flex;align-items:center;gap:8px;padding:8px;border-radius:10px;background:var(--bg2);border:1px solid var(--line2);margin-top:6px;flex-wrap:wrap}
+.ev33-dot{width:14px;height:14px;border-radius:50%;flex:none;box-shadow:0 0 0 2px rgba(255,255,255,.15)}
+.ev33-spk b{min-width:80px}
+.ev33-spk .sel{flex:1;min-width:160px}
+.ev33-pack .lbl{margin-top:10px}
+.ev33-ver{font-size:11px;color:var(--mut);padding:0 4px;display:flex;gap:6px;flex-wrap:wrap}
+.ev33-ver button{color:var(--acc2);font-size:11px;text-decoration:underline}
+.ev33-news li{margin:6px 0;font-size:13.5px;color:var(--txt)}
+</style>
+<script id="ev33">
+(function(){
+'use strict';
+if(window.__ev33)return;window.__ev33=true;
+var VERSION='3.33';
+var COLORS=['#7dd3fc','#ff9de2','#a7f3d0','#fdba74','#c4b5fd'];
+var MOVES=['zoomin','panr','tiltup','dolly','panl','zoomout','track','tiltdown'];
+
+/* ---------- utilidades ---------- */
+function copyText(t){try{if(navigator.clipboard&&window.isSecureContext)return navigator.clipboard.writeText(t)}catch(e){}
+  var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(e){}ta.remove();return Promise.resolve()}
+function isMobile(){return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)}
+function voicesForLang(lang){var out=[];EDGE_VOICES.forEach(function(v){if(v[0].toLowerCase().indexOf(lang+'-')===0)out.push(['edge:'+v[0],v[1]+' ('+v[2]+', '+(v[3]==='F'?'mujer':'hombre')+')'])});
+  PIPER_VOICES.forEach(function(v){if(v[0].indexOf(lang+'_')===0)out.push(['piper:'+v[0],v[1]+' ('+v[2]+', Piper)'])});
+  if(!out.length)EDGE_VOICES.forEach(function(v){out.push(['edge:'+v[0],v[1]+' ('+v[2]+')'])});return out}
+
+/* =========================================================
+   1) MODO DIÁLOGO (2 o más personajes, cada uno con su voz)
+   ========================================================= */
+MODES.dialogo={n:'Diálogo para TikTok',k:'2 voces',d:'Dos personajes hablan con su propia voz y subtítulos de colores. Sin música: TikTok no lo silencia.',ic:'user',c:'#ff5ec4'};
+var newProjO=newProject;
+newProject=function(mode){var P=newProjO.apply(this,arguments);
+  if(mode==='dialogo')Object.assign(P,{music:'none',subStyle:'karaoke',format:'vertical',duration:60,hook:true,sfx:false,amb:true,talkPulse:true,maxImgs:6,dlgVoices:{},transition:'fade'});
+  return P};
+
+function clean(t){return String(t||'').replace(/\([^)]*\)/g,' ').replace(/\[[^\]]*\]/g,' ').replace(/^["“”«»']+|["“”«»']+$/g,'').replace(/\s+/g,' ').trim()}
+var SKIP=/^(t[ií]tulo|title|escena\s*\d*|hashtags?|descripci[oó]n|caption|gancho|cierre|nota|personajes)$/i;
+function parse(txt){var out=[];String(txt||'').replace(/\r/g,'').split('\n').forEach(function(l){
+  var L=l.replace(/\*\*/g,'').replace(/__/g,'').trim();if(!L)return;
+  var m=L.match(/^[-–—•*>]?\s*([A-Za-zÁÉÍÓÚÑÜáéíóúñüÂÊÔÃÕÇâêôãõç'’ .]{1,30}?)\s*(\([^)]*\))?\s*:\s*(.+)$/);
+  if(m&&SKIP.test(m[1].trim()))return;
+  if(m){var t=clean(m[3]);if(t)out.push({who:m[1].trim(),text:t})}
+  else{var t2=clean(L.replace(/^[-–—•*]\s*/,''));if(!t2)return;if(out.length)out[out.length-1].text+=' '+t2;else out.push({who:'Narrador',text:t2})}});
+  return out}
+function sig(lines){return lines.map(function(l){return normName(l.who)+'|'+l.text}).join('\n')}
+var FEM=/^(oxum|oshun|iemanja|yemanja|yemaya|iansa|oya|nana|oba|ewa|pombagira|pomba gira|maria|mae|madre|mama|abuela|vovo|preta velha|cabocla|jurema|rainha|reina|cigana|ella|hija|nina|mujer)/;
+var MASC=/^(oxala|obatala|xango|shango|ogum|ogun|oxossi|exu|bara|omolu|obaluae|ossain|logun|oxumare|ze |pai|padre|papa|abuelo|preto velho|caboclo|el |hijo|nino|hombre|iroko|xapana|baiano|boiadeiro|marinheiro)/;
+function spkInfo(P,who){P.dlgVoices=P.dlgVoices||{};var k=normName(who);return P.dlgVoices[k]}
+function ensureSpk(P,lines,genders){P.dlgVoices=P.dlgVoices||{};var used={};Object.keys(P.dlgVoices).forEach(function(k){used[P.dlgVoices[k].voice]=1});
+  var idx=Object.keys(P.dlgVoices).length;
+  lines.forEach(function(l){var k=normName(l.who);if(P.dlgVoices[k])return;
+    var g=(genders&&genders[k])||(MASC.test(k)?'M':(FEM.test(k)||/a$/.test(k)?'F':'M'));
+    var pool=voicesForLang(P.lang||'es').filter(function(v){var e=EDGE_VOICES.find(function(x){return 'edge:'+x[0]===v[0]});return !e||e[3]===g});
+    var pick=(pool.find(function(v){return !used[v[0]]})||pool[0]||[P.voice])[0];used[pick]=1;
+    if(/^narrador$/i.test(k))pick=P.voice;
+    P.dlgVoices[k]={name:l.who,voice:pick,color:COLORS[idx%COLORS.length],g:g};idx++});}
+function voiceFor(P,s){var sp=s&&s.who&&spkInfo(P,s.who);return normVoice(sp&&sp.voice||P.voice)}
+
+window.Dlg={
+  est(){var P=S.P,lines=parse(P.script),w=lines.reduce(function(a,l){return a+wordsOf(l.text)},0),sec=w/2.6+lines.length*.35;
+    var el=$('#dlgest');if(el)el.innerHTML=lines.length+' frases · unos <b>'+fmtTime(sec)+'</b>'+(sec>62?' — <span style="color:var(--warn)">para TikTok conviene menos de 60 s</span>':'');return sec},
+  async write(){var P=S.P;if(!P.idea||!P.idea.trim())throw new Error('Escribí primero el tema o la historia.');
+    var n=P.maxImgs||6,dur=P.duration||60;Pipe.setBusy('La IA está escribiendo el diálogo, el gancho y el cierre…');
+    try{var out=await AI.chat([{role:'system',content:'Sos guionista experto en videos virales de TikTok y en religiones afrobrasileñas. Respondés SOLO JSON válido.'},
+      {role:'user',content:'Escribí un diálogo corto para TikTok en '+LANGS[P.lang||'es']+' sobre: "'+P.idea+'". Personajes: '+(P.dlgWho&&P.dlgWho.trim()?P.dlgWho:'elegí 2 personajes que tengan sentido para la historia')+'. Duración total: unos '+dur+' segundos (unas '+Math.round(dur*2.4)+' palabras en total).\nReglas:\n- La PRIMERA línea es el GANCHO: una frase fuerte (pregunta o revelación) para que nadie deslice.\n- La ÚLTIMA línea es el CIERRE: invita a seguir la cuenta o a comentar (ej: "Seguime para la parte 2").\n- Frases cortas y naturales, que se entiendan leyendo los subtítulos sin sonido. Con respeto por la tradición religiosa.\n- Máximo '+n+' imágenes en total: agrupá las líneas en '+n+' bloques o menos, en orden. Cada imagen muestra a quien habla en ese bloque, con la cara grande, de frente y bien iluminada.'+Pipe.glossTxt()+'\nFormato exacto: {"title":"título corto (máx 6 palabras)","hook":"la primera frase","closing":"la última frase","caption":"descripción para TikTok, 1 o 2 frases","hashtags":["#..."],"characters":[{"name":"...","gender":"F|M","look":"descripción física fija en inglés, 30 a 50 palabras"}],"images":[{"prompt":"descripción visual en inglés, 60 a 100 palabras, nombrando a los personajes por su nombre"}],"lines":[{"who":"nombre","text":"...","img":1}]}'}],{temp:.85});
+      var d=AI.json(out);if(!d.lines||!d.lines.length)throw new Error('La IA no devolvió el diálogo, probá de nuevo.');
+      var lines=d.lines.map(function(l){return{who:String(l.who||'Narrador').trim(),text:clean(l.text),img:+l.img||1}}).filter(function(l){return l.text});
+      P.script=lines.map(function(l){return '- '+l.who+': '+l.text}).join('\n');
+      P.dlgPlan={sig:sig(lines),map:lines.map(function(l){return l.img}),imgs:(d.images||[]).map(function(x){return String(x.prompt||'').trim()})};
+      P.pack={hook:d.hook||lines[0].text,closing:d.closing||lines[lines.length-1].text,title:d.title||'',caption:d.caption||'',hashtags:(d.hashtags||[]).join(' ')};
+      if(d.title){P.title=d.title;if(/^Proyecto \d+$/.test(P.name))P.name=d.title.slice(0,60)}
+      var g={};(d.characters||[]).forEach(function(c){if(c&&c.name)g[normName(c.name)]=/f/i.test(c.gender)?'F':'M'});
+      var old=P.cast||[];if(d.characters&&d.characters.length){P.cast=d.characters.filter(function(c){return c&&c.name&&c.look}).map(function(c){return withTradition({name:String(c.name).trim(),desc:String(c.look).trim()})});keepMine(P,old)}
+      ensureSpk(P,lines,g);save(1);toast('Diálogo listo ✅ Revisalo y tocá «Armar escenas»')}
+    finally{Pipe.setBusy('')}render()},
+  async build(fromAuto){var P=S.P;var lines=parse(P.script);
+    if(!lines.length){if(P.idea&&P.idea.trim()){await this.write();lines=parse(P.script)}else throw new Error('Escribí el diálogo (un renglón por frase: - NOMBRE: lo que dice) o tocá «IA: escribir el diálogo».')}
+    ensureSpk(P,lines);var max=clamp(P.maxImgs||6,1,6);
+    var plan=P.dlgPlan&&P.dlgPlan.sig===sig(lines)?P.dlgPlan:null,groups=[];
+    if(plan){var order=[];plan.map.forEach(function(m){if(order.indexOf(m)<0)order.push(m)});
+      lines.forEach(function(l,i){var gi=Math.floor(order.indexOf(plan.map[i])*max/Math.max(order.length,max));gi=Math.min(gi,max-1);
+        if(!groups[gi])groups[gi]={prompt:plan.imgs[plan.map[i]-1]||'',idx:[]};groups[gi].idx.push(i)});groups=groups.filter(Boolean)}
+    else{var n=Math.min(max,lines.length),per=Math.ceil(lines.length/n);for(var a=0;a<lines.length;a+=per){var ix=[];for(var b=a;b<Math.min(lines.length,a+per);b++)ix.push(b);groups.push({prompt:'',idx:ix})}}
+    var place=(P.dlgPlace||P.idea||'').slice(0,160);
+    var scenes=[];groups.forEach(function(g,gi){var who=[];g.idx.forEach(function(i){var w=lines[i].who;if(!/^narrador$/i.test(w)&&who.indexOf(w)<0)who.push(w)});
+      var pr=g.prompt||((who.length?who.join(' and ')+(who.length>1?' talking to each other face to face':' speaking to the camera'):'atmospheric scene')+', close-up, faces large and clearly visible, front lighting'+(place?', setting: '+place:''));
+      var sd=seed();g.idx.forEach(function(i,j){scenes.push({id:uid(),text:lines[i].text,who:lines[i].who,prompt:pr,seed:sd,cam:MOVES[scenes.length%MOVES.length],amb:'none',grp:'g'+gi,lead:j===0})})});
+    P.scenes=scenes;scenes.forEach(function(s){s.amb=s.amb||'none'});
+    var lead={};scenes.forEach(function(s){if(s.lead){s.img=Pipe.sceneURL(s);lead[s.grp]=s}});
+    scenes.forEach(function(s){if(!s.lead){var L=lead[s.grp];s.img=L.img;s.locked=true}});
+    S.sel=0;RT.voices={};RT.video=null;P.status='draft';save(1);
+    toast(scenes.length+' frases en '+groups.length+' imagen(es) ✅');render();
+    if(!fromAuto)Pipe.images().catch(function(e){toast(e.message,1)})},
+  sync(src){var P=S.P;if(!P||!P.scenes)return;var groups={};P.scenes.forEach(function(s){if(s.grp)(groups[s.grp]=groups[s.grp]||[]).push(s)});
+    Object.keys(groups).forEach(function(g){var list=groups[g];var from=(src&&src.grp===g)?src:(list.find(function(s){return s.lead&&RT.imgs[s.img]})||list.find(function(s){return RT.imgs[s.img]}));if(!from)return;
+      list.forEach(function(s){if(s===from||s.img===from.img)return;s.img=from.img;s.local=!!from.local;s.edited=!!from.edited;s.hq=!!from.hq;s.locked=true;s.parallax=false;delete RT.fg[s.id];try{paintScene(s)}catch(e){}})});save()},
+  setVoice(k,v){var P=S.P;if(P.dlgVoices[k]){P.dlgVoices[k].voice=v;P.scenes.forEach(function(s){if(s.who&&normName(s.who)===k)delete RT.voices[s.id]});save();renderCfg()}},
+  setColor(k,c){var P=S.P;if(P.dlgVoices[k]){P.dlgVoices[k].color=c;save();Player.seek(1.2)}},
+  async listen(k){var P=S.P,sp=P.dlgVoices[k];if(!sp)return;var line=parse(P.script).find(function(l){return normName(l.who)===k});var ac=getAC();await ac.resume();toast('Generando muestra de '+sp.name+'…');
+    try{var r=await Voice.make(line?line.text:'Hola, así suena mi voz.',sp.voice,{speed:P.speed});var src=ac.createBufferSource();src.buffer=await decode(r.blob);src.connect(ac.destination);src.start()}catch(e){toast('No se pudo generar la voz: '+(e.message||e),1)}}
+};
+
+function dlgPanel(){var P=S.P,lines=parse(P.script);ensureSpk(P,lines);var keys=[];lines.forEach(function(l){var k=normName(l.who);if(keys.indexOf(k)<0)keys.push(k)});
+  var vopts=voicesForLang(P.lang||'es');
+  return '<div class="card box"><h3>'+ic('user')+'Diálogo para TikTok</h3>'+
+  '<div class="info">'+ic('music')+'<span>El video sale <b>sin música</b>, con voces y subtítulos: TikTok no lo silencia. La canción la agregás desde la biblioteca de TikTok al publicar.</span></div>'+
+  '<div class="lbl">Tema o historia</div><textarea class="ta" placeholder="Ej: Oxum le cuenta a Oxalá por qué se secó el río" oninput="S.P.idea=this.value;save()">'+esc(P.idea)+'</textarea>'+
+  '<div class="cols2"><div><div class="lbl">Personajes (opcional)</div><input class="inp" placeholder="Ej: Oxalá y Oxum" value="'+esc(P.dlgWho||'')+'" oninput="S.P.dlgWho=this.value;save()"></div>'+
+  '<div><div class="lbl">Lugar (opcional)</div><input class="inp" placeholder="Ej: a orillas de un río en África" value="'+esc(P.dlgPlace||'')+'" oninput="S.P.dlgPlace=this.value;save()"></div></div>'+
+  '<div class="cols2"><div><div class="lbl">Duración</div><select class="sel" onchange="S.P.duration=+this.value;save()">'+[30,45,60,90].map(function(d){return '<option value="'+d+'" '+(P.duration===d?'selected':'')+'>'+fmtTime(d)+'</option>'}).join('')+'</select></div>'+
+  '<div><div class="lbl">Máximo de imágenes</div><select class="sel" onchange="S.P.maxImgs=+this.value;save()">'+[2,3,4,5,6].map(function(n){return '<option value="'+n+'" '+((P.maxImgs||6)===n?'selected':'')+'>'+n+' imágenes</option>'}).join('')+'</select></div></div>'+
+  '<div class="genbtn"><button class="btn grad" data-busy onclick="run(()=>Dlg.write())">'+ic('spark')+'IA: escribir el diálogo (con gancho y cierre)</button></div>'+
+  '<div class="lbl">Diálogo · un renglón por frase, con guiones</div><textarea class="ta" style="min-height:180px" placeholder="- OXALÁ: Hijo mío, ¿por qué llorás?&#10;- OXUM: Porque el río se secó, padre." oninput="S.P.script=this.value;save();Dlg.est()" onchange="render()">'+esc(P.script)+'</textarea>'+
+  '<div class="hint" id="dlgest"></div>'+
+  (keys.length?'<div class="lbl">Voz y color de cada personaje</div>'+keys.map(function(k){var sp=P.dlgVoices[k];return '<div class="ev33-spk"><span class="ev33-dot" style="background:'+sp.color+'"></span><b>'+esc(sp.name)+'</b>'+
+    '<select class="sel" onchange="Dlg.setVoice(\''+k.replace(/'/g,"\\'")+'\',this.value)">'+vopts.map(function(v){return '<option value="'+v[0]+'" '+(normVoice(sp.voice)===v[0]?'selected':'')+'>'+esc(v[1])+'</option>'}).join('')+'</select>'+
+    '<input type="color" value="'+sp.color+'" title="Color del subtítulo" onchange="Dlg.setColor(\''+k.replace(/'/g,"\\'")+'\',this.value)" style="width:34px;height:30px;border:0;background:none;cursor:pointer">'+
+    '<button class="btn xs" onclick="Dlg.listen(\''+k.replace(/'/g,"\\'")+'\')">'+ic('play')+'Oír</button></div>'}).join(''):'')+
+  '<div style="margin-top:8px">'+sw('talkPulse','La imagen “late” al ritmo de la voz (parece viva)','render();Player.seek(1.2)')+'</div>'+
+  '<div class="genbtn"><button class="btn grad" data-busy onclick="run(()=>Pipe.makeScenes())">'+ic('film')+'Armar escenas (máx '+(P.maxImgs||6)+' imágenes)</button></div>'+
+  '<div class="hint">El tiempo de cada imagen se calcula solo con la duración de las voces. Para que mueva la boca: tocá una escena y usá <b>«👄 Hacer hablar con su voz»</b>.</div></div>'}
+
+var mkO=Pipe.makeScenes;
+Pipe.makeScenes=async function(fromAuto){var P=S.P;if(P&&P.mode==='dialogo'){if(S.busy&&!S.busyImgs)return toast('Esperá: la IA todavía está trabajando ('+S.busy+')',1);return Dlg.build(fromAuto)}return mkO.apply(this,arguments)};
+var imgO=Pipe.images;Pipe.images=async function(){var r=await imgO.apply(this,arguments);try{Dlg.sync()}catch(e){}return r};
+var regO=Pipe.regen;Pipe.regen=async function(i){var r=await regO.apply(this,arguments);try{var s=S.P.scenes[i];if(s&&s.grp&&RT.imgs[s.img])Dlg.sync(s);renderScenesOnly(1);renderTL()}catch(e){}return r};
+var setO=Pipe.setImage;Pipe.setImage=async function(i){var r=await setO.apply(this,arguments);try{var s=S.P.scenes[i];if(s&&s.grp)Dlg.sync(s);renderScenesOnly(1);renderTL()}catch(e){}return r};
+
+/* Voces: cada personaje con la suya */
+var voicesO=Pipe.voices;
+Pipe.voices=async function(){var P=S.P;if(!P||!P.dlgVoices||!P.scenes.some(function(s){return s.who}))return voicesO.apply(this,arguments);
+  if(RT.narr){toast('Se usa tu propia narración 🎙️');return}
+  this.setBusy('Generando voces…');var ok=0,need=0,lastErr='';
+  try{for(var i=0;i<P.scenes.length;i++){var s=P.scenes[i];if(!s.text.trim())continue;need++;var vid=voiceFor(P,s),cur=RT.voices[s.id];
+      if(cur&&cur.text===s.text&&cur.voice===vid&&(!cur.pre||cur.speed===P.speed)){ok++;continue}
+      this.setBusy('Voz '+(i+1)+'/'+P.scenes.length+' ('+(s.who||'')+')…');this.prog(i/P.scenes.length);
+      try{var r=await Voice.make(s.text,vid,{speed:P.speed,onProg:function(f){Pipe.setBusy('Descargando la voz (solo la primera vez)… '+Math.round(f*100)+'%')}});
+        RT.voices[s.id]={buf:await decode(r.blob),text:s.text,voice:vid,speed:P.speed,pre:r.pre};ok++}catch(e){lastErr=e.message||String(e)}}}
+  finally{this.setBusy('');this.prog(0)}
+  if(need&&!ok)toast('No se pudo generar la voz: '+lastErr,1);else if(need)toast('Voces listas: '+ok+'/'+need+' ✅',ok<need);renderPipe();renderTL();renderCfg()};
+var sayO=sayScene;
+sayScene=async function(i){var P=S.P,s=P.scenes[i];if(!s||!s.who||!P.dlgVoices)return sayO.apply(this,arguments);var old=P.voice;P.voice=voiceFor(P,s);try{return await sayO.apply(this,arguments)}finally{P.voice=old}};
+
+/* La imagen "late" con la voz */
+function envOf(buf){if(buf._ev33)return buf._ev33;var d=buf.getChannelData(0),sr=buf.sampleRate,st=Math.round(sr/30),n=Math.ceil(d.length/st),e=new Float32Array(n),mx=1e-4;
+  for(var i=0;i<n;i++){var s=0,c=0;for(var j=i*st;j<Math.min(d.length,(i+1)*st);j+=4){s+=d[j]*d[j];c++}e[i]=Math.sqrt(s/Math.max(1,c));if(e[i]>mx)mx=e[i]}
+  for(var k=0;k<n;k++)e[k]=Math.min(1,e[k]/mx);return buf._ev33=e}
+var dsO=drawScene;
+drawScene=function(ctx,W,H,x,k,p,t,alpha,extraS,jit){var P=S.P;
+  if(P&&P.talkPulse&&x&&x.v&&t>=x.start&&t<x.start+x.talk){try{var e=envOf(x.v.buf),i=Math.floor((t-x.start)*(x.v.pre?1:P.speed)*30);var a=e[clamp(i,0,e.length-1)]||0;extraS=extraS*(1+.028*a)}catch(err){}}
+  return dsO.call(this,ctx,W,H,x,k,p,t,alpha,extraS,jit)};
+
+/* =========================================================
+   2) SUBTÍTULOS: color por personaje, nombre arriba y portugués
+   ========================================================= */
+var FS=Object.getOwnPropertyDescriptor(CanvasRenderingContext2D.prototype,'fillStyle');
+var subsO=drawSubs;
+drawSubs=function(ctx,W,H,text,p){var P=S.P,s=P&&P.scenes.find(function(x){return x.text===text});var t2=text;
+  if(s&&P.subLang==='pt'&&s.textPt&&s.textPtSrc===s.text)t2=s.textPt;
+  var sp=s&&s.who&&!/^narrador$/i.test(s.who)&&spkInfo(P,s.who);
+  if(!sp||!FS)return subsO.call(this,ctx,W,H,t2,p);
+  var col=sp.color;
+  try{Object.defineProperty(ctx,'fillStyle',{configurable:true,get:function(){return FS.get.call(ctx)},set:function(v){FS.set.call(ctx,v==='#fff'?col:v)}});subsO.call(this,ctx,W,H,t2,p)}
+  finally{delete ctx.fillStyle}
+  if(P.subStyle==='cinetica')return;
+  // cartelito con el nombre de quien habla
+  try{var mn=Math.min(W,H),fs=Math.round(mn*(P.format==='horizontal'?.075:.07)*P.subSize),yc=P.subPos==='arriba'?H*.25:P.subPos==='centro'?H*.52:H*(P.format==='vertical'?.76:.84);
+    ctx.font='900 '+fs+'px Montserrat,Inter,sans-serif';var nl=Math.max(1,Math.ceil(ctx.measureText(t2.toUpperCase()).width/(W*.86)*1.15)),cs=Math.min(nl,2);
+    var ny=yc-(cs-1)*fs*1.2/2-fs*1.55,nf=Math.round(fs*.5);ctx.save();ctx.font='800 '+nf+'px Inter,sans-serif';var name=sp.name.toUpperCase(),tw=ctx.measureText(name).width;
+    ctx.fillStyle=col;roundRect(ctx,W/2-tw/2-nf*.6,ny-nf*1.05,tw+nf*1.2,nf*1.45,nf*.4);ctx.fill();ctx.fillStyle='#111';ctx.textAlign='center';ctx.textBaseline='alphabetic';ctx.fillText(name,W/2,ny);ctx.restore()}catch(e){}};
+async function translatePt(){var P=S.P,list=P.scenes.filter(function(s){return s.text&&s.text.trim()});if(!list.length)throw new Error('No hay textos para traducir.');
+  Pipe.setBusy('Traduciendo los subtítulos al portugués…');
+  try{var out=AI.json(await AI.chat([{role:'system',content:'Sos traductor al portugués de Brasil, natural y fiel. Respondés solo JSON.'},{role:'user',content:'Traducí al portugués de Brasil cada texto, en el mismo orden. Los nombres de los orixás escribilos como en Brasil (Oxum, Xangô, Iemanjá, Oxalá…). {"t":["..."]}\n'+JSON.stringify(list.map(function(s){return s.text}))}],{temp:.3}));
+    (out.t||[]).forEach(function(t,i){if(list[i]&&t){list[i].textPt=String(t);list[i].textPtSrc=list[i].text}});P.subLang='pt';save(1);toast('Subtítulos en portugués listos 🇧🇷');render();Player.seek(1.2)}
+  finally{Pipe.setBusy('')}}
+window.EV33=window.EV33||{};EV33.translatePt=function(){return run(translatePt)};
+var tSubsO=tSubs;
+tSubs=function(){var P=S.P,has=P.scenes.some(function(s){return s.textPt&&s.textPtSrc===s.text});
+  return tSubsO.apply(this,arguments)+'<div class="card box"><h3>'+ic('text')+'Idioma de los subtítulos</h3><div class="hint">La voz queda en español; solo cambian las letras de abajo. Sirve para llegar al público de Brasil.</div>'+
+  '<div class="opts"><div class="card opt '+(P.subLang!=='pt'?'on':'')+'" onclick="S.P.subLang=\'es\';save();render();Player.seek(1.2)"><span class="e">🇦🇷</span>Original</div><div class="card opt '+(P.subLang==='pt'?'on':'')+'" onclick="'+(has?'S.P.subLang=\'pt\';save();render();Player.seek(1.2)':'EV33.translatePt()')+'"><span class="e">🇧🇷</span>Portugués</div></div>'+
+  '<div class="row" style="margin-top:10px"><button class="btn sm" data-busy onclick="EV33.translatePt()">'+ic('spark')+(has?'Volver a traducir':'Traducir al portugués con IA')+'</button></div>'+
+  (P.dlgVoices&&Object.keys(P.dlgVoices).length?'<div class="hint">En los diálogos cada personaje tiene su color y su nombre arriba del subtítulo. Los colores se cambian en la pestaña Guion.</div>':'')+'</div>'};
+
+/* =========================================================
+   3) PRONUNCIACIÓN (la voz dice bien los nombres)
+   ========================================================= */
+var PRON=[['Oxumaré','Oshumaré'],['Oxumare','Oshumaré'],['Oxum','Oshún'],['Oxóssi','Oshósi'],['Oxossi','Oshósi'],['Oxalá','Oshalá'],['Oxala','Oshalá'],['Oxaguiã','Oshaguián'],['Oxalufã','Oshalufán'],
+  ['Xangô','Shangó'],['Xango','Shangó'],['Xapanã','Shapaná'],['Exu','Eshú'],['Exus','Eshús'],['Iemanjá','Iemanyá'],['Iemanja','Iemanyá'],['Iansã','Iansán'],['Iansa','Iansán'],['Ogum','Ogún'],['Omolu','Omolú'],
+  ['Obaluaê','Obaluayé'],['Obaluae','Obaluayé'],['Nanã','Naná'],['Orixá','Orishá'],['Orixás','Orishás'],['Axé','Ashé'],['Pombagira','Pomba Yira'],['Pomba Gira','Pomba Yira'],['Pombagiras','Pomba Yiras'],
+  ['Ossain','Osaín'],['Ewá','Euá'],['Ibeji','Ibeyi'],['Ibejis','Ibeyis'],['Logunedé','Logunedé'],['Erê','Eré'],['Erês','Erés'],['Zé Pilintra','Sé Pilintra'],['Preto Velho','Preto Vello'],['Pretos Velhos','Pretos Vellos'],['Caboclo','Cabóclo']];
+function userPron(){var out=[];String(S.settings.pron||'').split('\n').forEach(function(l){var i=l.indexOf('=');if(i<1)return;var a=l.slice(0,i).trim(),b=l.slice(i+1).trim();if(a&&b)out.push([a,b])});return out}
+function applyPron(text,lang){var list=userPron().concat(lang==='es'?PRON:[]);list.sort(function(a,b){return b[0].length-a[0].length});
+  list.forEach(function(x){var re=new RegExp('(^|[^\\p{L}])('+x[0].replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')(?=$|[^\\p{L}])','giu');text=text.replace(re,function(m,pre){return pre+x[1]})});return text}
+EV33.pron=applyPron;
+var makeO=Voice.make.bind(Voice);
+Voice.make=function(text,voiceId,o){try{text=applyPron(String(text),voiceOf(voiceId).lang)}catch(e){}return makeO(text,voiceId,o)};
+EV33.testPron=async function(){var t=($('#ev33pt')||{}).value||'Oxum y Xangô bendicen a los Orixás. Axé.';var ac=getAC();await ac.resume();toast('Generando…');
+  try{var r=await Voice.make(t,S.P?voiceFor(S.P,{}):DEFAULT_VOICE.es,{speed:1});var src=ac.createBufferSource();src.buffer=await decode(r.blob);src.connect(ac.destination);src.start()}catch(e){toast('No se pudo: '+(e.message||e),1)}};
+
+/* =========================================================
+   4) TEXTOS PARA PUBLICAR: gancho, cierre, título, descripción y hashtags
+   ========================================================= */
+function contentText(P){return (P.script||P.paraphrased||P.scenes.map(function(s){return s.text}).join(' ')||P.idea||'').slice(0,6000)}
+EV33.pack=async function(only){var P=S.P;var txt=contentText(P);if(!txt.trim()&&!P.idea)return toast('Primero escribí la idea o armá las escenas',1);
+  Pipe.setBusy(only==='hook'?'Buscando otro gancho…':'La IA está escribiendo los textos para publicar…');
+  try{var d=AI.json(await AI.chat([{role:'system',content:'Sos experto en crecimiento de cuentas de TikTok, Reels y YouTube Shorts sobre religión y espiritualidad. Respondés solo JSON.'},
+      {role:'user',content:(only==='hook'?'Escribí un GANCHO nuevo y distinto a "'+((P.pack&&P.pack.hook)||'')+'" para este video. ':'Para este video escribí los textos para publicarlo. ')+'Idioma: '+LANGS[P.lang||'es']+'. Contenido del video:\n"""'+txt+'"""\nGancho = primera frase fuerte (pregunta o revelación) para que no deslicen, máx 12 palabras. Cierre = invita a seguir o comentar. Título corto (máx 6 palabras). Descripción de 1 o 2 frases. 6 a 10 hashtags (mezcla de populares y del tema).\n{"hook":"","closing":"","title":"","caption":"","hashtags":["#..."]}'}],{temp:.9}));
+    P.pack=P.pack||{};if(only==='hook'){if(d.hook)P.pack.hook=d.hook}else{['hook','closing','title','caption'].forEach(function(k){if(d[k])P.pack[k]=d[k]});if(d.hashtags)P.pack.hashtags=[].concat(d.hashtags).join(' ')}
+    save(1);toast(only==='hook'?'Gancho nuevo ✅':'Textos listos ✅')}
+  finally{Pipe.setBusy('')}render()};
+EV33.caption=function(){var P=S.P,k=P.pack||{};var c=(k.caption||vt(P)||'').trim(),h=(k.hashtags||'').trim();if(!h)h='#fyp #parati #orixas #umbanda #candomble #espiritualidad';return (c+'\n\n'+h).trim()};
+EV33.copy=function(id){var el=$('#'+id);if(!el)return;copyText(el.value).then(function(){toast('Copiado ✅')})};
+EV33.useHook=function(){var P=S.P,k=P.pack;if(!k||!k.hook)return;P.title=k.title||P.title;
+  if(P.mode==='dialogo'){var lines=P.script.split('\n'),i=lines.findIndex(function(l){return l.trim()});if(i>=0){var m=lines[i].match(/^([-–—•*>]?\s*[^:]{1,30}:\s*)/);lines[i]=(m?m[1]:'')+k.hook;P.script=lines.join('\n');save(1);render();toast('Gancho puesto como primera frase. Tocá «Armar escenas» para aplicarlo.');return}}
+  if(P.scenes[0]){P.scenes[0].text=k.hook+' '+P.scenes[0].text;delete RT.voices[P.scenes[0].id];save(1);render();toast('Gancho agregado al principio de la escena 1 ✅')}};
+function packPanel(){var P=S.P,k=P.pack;
+  return '<div class="card box ev33-pack"><div class="between"><h3>📣 Textos para publicar <span class="sub">gancho, cierre, título y hashtags</span></h3><button class="btn sm grad" data-busy onclick="run(()=>EV33.pack())">'+ic('spark')+(k?'Volver a generar':'Generar con IA')+'</button></div>'+
+  (k?'<div class="lbl">🪝 Gancho (primeros 3 segundos)</div><div class="row"><input class="inp" id="ev33h" value="'+esc(k.hook||'')+'" oninput="S.P.pack.hook=this.value;save()"><button class="btn sm" data-busy title="Otro gancho" onclick="run(()=>EV33.pack(\'hook\'))">'+ic('refresh')+'</button><button class="btn sm" title="Usar en el video" onclick="EV33.useHook()">Usar</button></div>'+
+    '<div class="lbl">👋 Cierre</div><input class="inp" value="'+esc(k.closing||'')+'" oninput="S.P.pack.closing=this.value;save()">'+
+    '<div class="lbl">🏷️ Título (sale grande al principio del video)</div><div class="row"><input class="inp" value="'+esc(k.title||'')+'" oninput="S.P.pack.title=this.value;save()"><button class="btn sm" onclick="S.P.title=S.P.pack.title;save(1);Player.seek(1.2);toast(\'Título puesto en el video ✅\')">Usar</button></div>'+
+    '<div class="lbl">📝 Descripción y hashtags (para pegar en TikTok, Reels o YouTube)</div><textarea class="ta" id="ev33cap" style="min-height:90px" oninput="var v=this.value.split(/\\n\\s*\\n/);S.P.pack.caption=v[0]||\'\';S.P.pack.hashtags=v.slice(1).join(\' \');save()">'+esc(EV33.caption())+'</textarea>'+
+    '<div class="row" style="margin-top:6px"><button class="btn sm" onclick="EV33.copy(\'ev33cap\')">'+ic('copy')+'Copiar descripción</button></div>'
+   :'<div class="hint">La IA te arma el gancho para que no deslicen, el cierre ("seguime para la parte 2"), el título y los hashtags. Todo lo podés cambiar.</div>')+'</div>'}
+
+var tContO=tContenido;
+tContenido=function(){var P=S.P;var html=tContO.apply(this,arguments);if(P.mode==='dialogo')html=dlgPanel()+html;return html+packPanel()};
+var tVozO=tVoz;
+tVoz=function(){var P=S.P,h=tVozO.apply(this,arguments);if(P.mode==='dialogo')h='<div class="card box"><h3>'+ic('user')+'Voces de los personajes</h3><div class="info">'+ic('check')+'<span>En el modo Diálogo cada personaje tiene su propia voz: se elige en la pestaña <b>Guion y storyboard</b>. La voz de abajo es la del narrador.</span></div></div>'+h;return h};
+var vEdO=vEditor;vEditor=function(m){vEdO.apply(this,arguments);try{if(S.P&&S.P.mode==='dialogo')Dlg.est()}catch(e){}};
+
+/* =========================================================
+   5) FIRMA DEL CANAL (tu @usuario en el video)
+   ========================================================= */
+var frameO=drawFrame;
+drawFrame=function(ctx,W,H,t,TL){frameO.apply(this,arguments);var f=(S.settings.firma||'').trim();if(!f)return;
+  try{ctx.save();var mn=Math.min(W,H),fs=Math.round(mn*.036),pos=S.settings.firmaPos||'arriba-izq';ctx.font='800 '+fs+'px Inter,sans-serif';ctx.textBaseline='middle';
+    var x=pos.indexOf('der')>0?W-W*.045:W*.045,y=pos.indexOf('abajo')===0?H*.955:H*.05;ctx.textAlign=pos.indexOf('der')>0?'right':'left';
+    ctx.globalAlpha=.82;ctx.lineWidth=fs*.22;ctx.lineJoin='round';ctx.strokeStyle='rgba(0,0,0,.75)';ctx.strokeText(f,x,y);ctx.fillStyle='#fff';ctx.fillText(f,x,y);ctx.restore()}catch(e){try{ctx.restore()}catch(_){}}};
+
+/* =========================================================
+   6) BOTONES TIKTOK E INSTAGRAM REELS + VERSIÓN HORIZONTAL
+   ========================================================= */
+EV33.share=function(app){var v=RT.video,P=S.P;if(!v)return toast('Primero exportá el video',1);var txt=EV33.caption();copyText(txt);
+  var name=(vt(P)||'video').replace(/[^\w\-áéíóúñ ]/gi,'').trim()+'.'+v.ext,label=app==='tt'?'TikTok':'Instagram';
+  if(isMobile()&&v.file&&navigator.canShare&&navigator.canShare({files:[v.file]})){navigator.share({files:[v.file],text:txt}).catch(function(){});
+    toast('Elegí '+label+'. La descripción y los hashtags ya están copiados: pegalos y '+(app==='tt'?'agregá la música desde TikTok':'agregá la música desde Instagram')+'.');return}
+  var a=document.createElement('a');a.href=v.url;a.download=name;document.body.appendChild(a);a.click();a.remove();
+  window.open(app==='tt'?'https://www.tiktok.com/tiktokstudio/upload':'https://www.instagram.com/','_blank','noopener');
+  toast('Video descargado y texto copiado ✅ En '+label+': subí el video, pegá el texto (Ctrl + V)'+(app==='tt'?' y agregá la música de TikTok':'')+'.')};
+EV33.horizontal=function(){var P=S.P;if(!confirm('Se arma el mismo video en horizontal (16:9) para YouTube, con las mismas imágenes y fondo desenfocado a los costados.\n\nAntes, descargá el vertical si todavía no lo hiciste. ¿Seguimos?'))return;
+  P.format='horizontal';save(1);RT.video=null;render();setTimeout(function(){Player.run(true)},300)};
+var stageO=renderStage;
+renderStage=function(){stageO.apply(this,arguments);var v=RT.video,d=$('#dl');if(!v||!d||!S.P)return;
+  if(!v.file&&!v._loading){v._loading=1;fetch(v.url).then(function(r){return r.blob()}).then(function(b){v.file=new File([b],((vt(S.P)||'video').replace(/[^\w\-áéíóúñ ]/gi,'').trim()||'video')+'.'+v.ext,{type:b.type||'video/'+v.ext})}).catch(function(){})}
+  var box=document.createElement('div');
+  box.innerHTML='<button class="btn" style="width:100%;margin-top:6px;background:#000;color:#fff;border-color:#25f4ee;box-shadow:2px 2px 0 #fe2c55" onclick="EV33.share(\'tt\')">🎵 Subir a TikTok</button>'+
+   '<button class="btn" style="width:100%;margin-top:6px;background:linear-gradient(135deg,#f58529,#dd2a7b,#8134af);color:#fff;border:0" onclick="EV33.share(\'ig\')">📸 Subir a Instagram Reels</button>'+
+   (S.P.format==='vertical'?'<button class="btn sm" style="width:100%;margin-top:6px" data-busy onclick="EV33.horizontal()">📺 Hacer también la versión horizontal (YouTube)</button>':'')+
+   '<div class="hint">El botón copia la descripción y los hashtags. Pegalos al publicar y agregá la música desde la app.</div>';
+  var yt=[].slice.call(d.querySelectorAll('button')).find(function(b){return /YouTube/.test(b.textContent)});
+  if(yt)yt.parentNode.insertBefore(box,yt.nextSibling);else d.appendChild(box)};
+var ytO=YT.open.bind(YT);YT.open=function(){var P=S.P;if(P&&P.pack&&P.ytDesc==null)P.ytDesc=EV33.caption();return ytO()};
+
+/* =========================================================
+   7) AJUSTES: firma, pronunciación, instalar app y novedades
+   ========================================================= */
+var setO2=vSettings;
+vSettings=function(m){setO2.apply(this,arguments);var st=S.settings;
+  var html='<div class="card box" style="max-width:680px;margin-top:16px"><h3>📲 Instalar Estudio Viral como app</h3>'+
+   '<div class="hint">Queda con su ícono en el celular o la PC, se abre en pantalla completa y <b>se actualiza sola</b> cada vez que subís una versión nueva a GitHub.</div>'+
+   '<div class="row wrap" style="margin-top:10px"><button class="btn grad" onclick="EV33.install()">📲 Instalar app</button><button class="btn" onclick="EV33.news()">✨ Novedades de la versión '+VERSION+'</button></div><div class="hint" id="ev33inst"></div></div>'+
+   '<div class="card box" style="max-width:680px"><h3>✍️ Firma del canal</h3><div class="hint">Tu @usuario aparece chiquito en todos los videos: si alguien lo copia, se sabe que es tuyo.</div>'+
+   '<div class="cols2"><div><div class="lbl">Tu firma</div><input class="inp" placeholder="@micanal" value="'+esc(st.firma||'')+'" onchange="S.settings.firma=this.value.trim();saveSettings();toast(\'Firma guardada ✅\')"></div>'+
+   '<div><div class="lbl">Dónde va</div><select class="sel" onchange="S.settings.firmaPos=this.value;saveSettings()">'+[['arriba-izq','Arriba a la izquierda'],['arriba-der','Arriba a la derecha'],['abajo-izq','Abajo a la izquierda'],['abajo-der','Abajo a la derecha']].map(function(o){return '<option value="'+o[0]+'" '+((st.firmaPos||'arriba-izq')===o[0]?'selected':'')+'>'+o[1]+'</option>'}).join('')+'</select></div></div></div>'+
+   '<div class="card box" style="max-width:680px"><h3>🗣️ Pronunciación de nombres</h3><div class="hint">Para que la voz diga bien los nombres en yoruba y portugués. Ya vienen incluidos los orixás más conocidos (Oxum → Oshún, Xangô → Shangó, Exu → Eshú…). Acá agregás o corregís los tuyos: <b>Como se escribe = Como se dice</b>, uno por renglón. Solo cambia el audio: los subtítulos quedan bien escritos.</div>'+
+   '<textarea class="inp" rows="4" style="margin-top:8px" placeholder="Bará Lodê = Bará Lodé&#10;Oxum = Oshún" onchange="S.settings.pron=this.value;saveSettings();toast(\'Pronunciación guardada ✅\')">'+esc(st.pron||'')+'</textarea>'+
+   '<div class="lbl">Probar</div><div class="row"><input class="inp" id="ev33pt" value="Oxum y Xangô bendicen a los Orixás. Axé."><button class="btn" onclick="EV33.testPron()">'+ic('play')+'Oír</button></div>'+
+   '<details style="margin-top:8px"><summary class="hint" style="cursor:pointer">Ver los que vienen incluidos</summary><div class="hint" style="margin-top:6px">'+PRON.map(function(x){return esc(x[0])+' → '+esc(x[1])}).join(' · ')+'</div></details></div>';
+  var first=m.querySelector('.card.box');if(first&&first.nextSibling)first.insertAdjacentHTML('afterend',html);else m.insertAdjacentHTML('beforeend',html)};
+
+/* Instalar app (PWA) */
+var deferred=null;
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;try{renderShell()}catch(_){}});
+window.addEventListener('appinstalled',function(){deferred=null;toast('¡App instalada! 🎉 Buscala con su ícono');try{renderShell()}catch(_){}});
+function installed(){return window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches||navigator.standalone}
+EV33.install=function(){var el=$('#ev33inst');
+  if(installed())return toast('Ya estás usando la app instalada ✅');
+  if(deferred){deferred.prompt();deferred.userChoice.then(function(){deferred=null});return}
+  var msg=/iPhone|iPad/i.test(navigator.userAgent)?'En iPhone: tocá el botón Compartir (el cuadrado con la flecha) → «Agregar a pantalla de inicio».':
+    /Android/i.test(navigator.userAgent)?'En Android: tocá los tres puntitos de Chrome → «Instalar app» o «Agregar a la pantalla principal».':
+    'En la PC (Chrome o Edge): tocá el ícono de instalar que aparece a la derecha de la barra de direcciones, o los tres puntitos → «Instalar Estudio Viral».';
+  if(location.protocol==='file:')msg='Para instalarla tenés que abrirla desde tu link de Vercel (no desde el archivo).';
+  if(el)el.textContent=msg;toast(msg)};
+if('serviceWorker' in navigator&&/^https:$/.test(location.protocol)){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').then(function(reg){
+  reg.addEventListener('updatefound',function(){var w=reg.installing;if(!w)return;w.addEventListener('statechange',function(){if(w.state==='installed'&&navigator.serviceWorker.controller)toast('Hay una versión nueva de Estudio Viral: cerrá y volvé a abrir la app para verla ✨')})})}).catch(function(e){console.info('[v3.33] sin app instalable (falta sw.js en GitHub):',e&&e.message)})})}
+
+/* Novedades */
+var NEWS=['👥 <b>Modo Diálogo</b>: dos (o más) personajes hablan, cada uno con su voz. Lo elegís en «Nuevo video».',
+  '🎨 <b>Subtítulos de colores</b>: cada personaje con su color y su nombre arriba, así se entiende quién habla aunque esté sin sonido.',
+  '🖼️ <b>Máximo 6 imágenes</b>: el tiempo de cada una se calcula solo con las voces.',
+  '💓 <b>La imagen late con la voz</b>: parece viva mientras el personaje habla.',
+  '🪝 <b>Textos para publicar</b>: la IA te arma gancho, cierre, título, descripción y hashtags.',
+  '🎵 <b>Botones TikTok e Instagram Reels</b>: copian el texto y te llevan a subir el video.',
+  '📺 <b>Versión horizontal</b> para YouTube con un clic.',
+  '🗣️ <b>Pronunciación</b>: la voz dice bien Oxum, Xangô, Exu y los nombres que agregues.',
+  '🇧🇷 <b>Subtítulos en portugués</b> para el público de Brasil.',
+  '✍️ <b>Firma del canal</b>: tu @usuario en todos los videos.',
+  '📲 <b>Instalar como app</b>, que se actualiza sola.'];
+EV33.news=function(){$('#sheetin').innerHTML='<div class="between" style="margin-bottom:10px"><div class="h1" style="font-size:19px">✨ Novedades · versión '+VERSION+'</div><button class="btn sm" onclick="closeSheet()">✕ Cerrar</button></div><ul class="ev33-news" style="padding-left:4px;list-style:none">'+NEWS.map(function(n){return '<li>'+n+'</li>'}).join('')+'</ul><div class="row" style="margin-top:14px"><button class="btn grad" onclick="closeSheet();go(\'new\')">'+ic('plus')+'Probar el Modo Diálogo</button></div>';$('#sheet').classList.add('open')};
+var shellO=renderShell;
+renderShell=function(){shellO.apply(this,arguments);try{var f=document.querySelector('#sb .sbfoot');if(f&&!f.querySelector('.ev33-ver')){var d=document.createElement('div');d.className='ev33-ver';
+  d.innerHTML='<span>Versión '+VERSION+'</span><button onclick="EV33.news()">Novedades</button>'+(installed()?'':'<button onclick="EV33.install()">Instalar app</button>');f.appendChild(d)}}catch(e){}};
+
+try{render()}catch(e){}
+try{if(store.get('ev_ver','')!==VERSION){store.set('ev_ver',VERSION);setTimeout(function(){if(S.view!=='editor')EV33.news()},900)}}catch(e){}
+console.info('[Estudio Viral] v'+VERSION+' cargado: diálogo, textos para publicar, TikTok/Reels, pronunciación, portugués, firma e instalar app');
+})();
+</script>
+<!-- ===== FIN v3.33 ===== -->
+
 </body>
 </html>
