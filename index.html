@@ -2297,7 +2297,7 @@ window.__ev32export=exportMp4;
 (function(){
 'use strict';
 if(window.__ev33)return;window.__ev33=true;
-var VERSION='3.33';
+var VERSION='3.34';
 var COLORS=['#7dd3fc','#ff9de2','#a7f3d0','#fdba74','#c4b5fd'];
 var MOVES=['zoomin','panr','tiltup','dolly','panl','zoomout','track','tiltdown'];
 
@@ -2339,6 +2339,25 @@ function ensureSpk(P,lines,genders){P.dlgVoices=P.dlgVoices||{};var used={};Obje
     var pick=(pool.find(function(v){return !used[v[0]]})||pool[0]||[P.voice])[0];used[pick]=1;
     if(/^narrador$/i.test(k))pick=P.voice;
     P.dlgVoices[k]={name:l.who,voice:pick,color:COLORS[idx%COLORS.length],g:g};idx++});}
+function nt(t){return String(t||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9ñ ]/g,' ').replace(/\s+/g,' ').trim()}
+function fillWho(P){if(!P||P.mode!=='dialogo'||!P.scenes)return 0;var lines=parse(P.script),n=0;if(lines.length)ensureSpk(P,lines);
+  P.scenes.forEach(function(s){if(s.who||!s.text)return;
+    var m=s.text.match(/^\s*[-–—•*]?\s*([A-Za-zÁÉÍÓÚÑÜáéíóúñüÂÊÔÃÕÇâêôãõç'’ .]{1,30}?)\s*:\s*(.+)$/);
+    if(m&&P.dlgVoices&&P.dlgVoices[normName(m[1])]){s.who=m[1].trim();s.text=m[2].trim();n++;return}
+    lines=lines||parse(P.script);var a=nt(s.text);if(!a)return;
+    var l=lines.find(function(x){return nt(x.text)===a})||lines.find(function(x){var b=nt(x.text);return b.length>8&&(a.indexOf(b)>=0||b.indexOf(a)>=0)})||lines.find(function(x){return nt(x.text).slice(0,30)===a.slice(0,30)});
+    if(l){s.who=l.who;n++}});
+  if(n){ensureSpk(P,P.scenes.filter(function(s){return s.who}));save()}return n}
+var AMBK=[['cascada',/\b(waterfalls?|cascadas?|cataratas?)\b/],['monos',/\b(monkeys?|monos?|gorillas?)\b/],['ranas',/\b(frogs?|ranas?|sapos?|swamp|pantano|ciénaga|cienaga|marsh)\b/],['sabana',/\b(savann?ah?|sabana|lions?|leones?|leon|elephants?|elefantes?|giraffes?|jirafas?|safari)\b/],
+ ['rio',/\b(rivers?|r[ií]os?|riverbank|orilla|stream|arroyos?|lagos?|lakes?|aguas? dulces?)\b/],['oceano',/\b(sea|ocean|mar|oc[eé]ano|beach|playa|waves?|olas?)\b/],['tormenta',/\b(storms?|tormentas?|thunder|truenos?|lightning|rel[aá]mpagos?|rayos?)\b/],['lluvia',/\b(rain|lluvia|llueve)\b/],
+ ['tambores',/\b(drums?|tambor(es)?|atabaques?|batuque|terreiro)\b/],['forja',/\b(forge|forja|anvil|yunque|blacksmith|herrer[oa])\b/],['fuego',/\b(fire|fuego|flames?|llamas?|hoguera|bonfire|fogata)\b/],
+ ['festejo',/\b(celebrat\w*|festej\w*|fiesta|party|cheer\w*)\b/],['multitud',/\b(market|mercado|crowd|multitud|village square)\b/],['cueva',/\b(caves?|cuevas?)\b/],['desierto',/\b(desert|desierto|dunes?|dunas?)\b/],
+ ['selva',/\b(jungle|selva|tropical|rainforest)\b/],['bosque',/\b(forest|bosque|woods|monte|trees|[aá]rboles)\b/],['magia',/\b(magic\w*|m[aá]gic\w*|aura|celestial|divine light|luz divina|glow\w*|resplandor)\b/],
+ ['viento',/\b(wind|viento|windy)\b/],['noche',/\b(night|noche|moonlight|luna|moon)\b/],['ciudad',/\b(city|ciudad|street|calle)\b/],['pajaros',/\b(birds?|p[aá]jaros?|aves|dawn|amanecer|sunrise)\b/]];
+function guessAmb33(t){t=String(t||'').toLowerCase();for(var i=0;i<AMBK.length;i++)if(AMBK[i][1].test(t)&&AMB[AMBK[i][0]])return AMBK[i][0];return 'none'}
+function fillAmb(P,force){if(!P||P.mode!=='dialogo'||!P.scenes)return 0;var n=0,base=(P.dlgPlace||'')+' '+(P.idea||'');
+  P.scenes.forEach(function(s){if(!force&&s.amb&&s.amb!=='none')return;var a=guessAmb33(s.text);if(a==='none'||a==='noche'||a==='ciudad')a=guessAmb33(s.prompt)!=='none'?guessAmb33(s.prompt):a;if(a==='none')a=guessAmb33(base);if(a!=='none'){s.amb=a;n++}});
+  if(n)save();return n}
 function voiceFor(P,s){var sp=s&&s.who&&spkInfo(P,s.who);return normVoice(sp&&sp.voice||P.voice)}
 
 window.Dlg={
@@ -2370,15 +2389,19 @@ window.Dlg={
     var scenes=[];groups.forEach(function(g,gi){var who=[];g.idx.forEach(function(i){var w=lines[i].who;if(!/^narrador$/i.test(w)&&who.indexOf(w)<0)who.push(w)});
       var pr=g.prompt||((who.length?who.join(' and ')+(who.length>1?' talking to each other face to face':' speaking to the camera'):'atmospheric scene')+', close-up, faces large and clearly visible, front lighting'+(place?', setting: '+place:''));
       var sd=seed();g.idx.forEach(function(i,j){scenes.push({id:uid(),text:lines[i].text,who:lines[i].who,prompt:pr,seed:sd,cam:MOVES[scenes.length%MOVES.length],amb:'none',grp:'g'+gi,lead:j===0})})});
-    P.scenes=scenes;scenes.forEach(function(s){s.amb=s.amb||'none'});
-    var lead={};scenes.forEach(function(s){if(s.lead){s.img=Pipe.sceneURL(s);lead[s.grp]=s}});
-    scenes.forEach(function(s){if(!s.lead){var L=lead[s.grp];s.img=L.img;s.locked=true}});
+    var old=(P.scenes||[]).filter(function(o){return o.img&&(o.local||RT.imgs[o.img])});
+    scenes.forEach(function(s){var a=nt(s.text);var o=old.find(function(x){return nt(x.text)===a})||old.find(function(x){var b=nt(x.text);return b.length>8&&(a.indexOf(b)>=0||b.indexOf(a)>=0)});
+      if(o){s.img=o.img;s.local=!!o.local;s.edited=!!o.edited;s.hq=!!o.hq;s.own=true;s.locked=true;if(o.cam)s.cam=o.cam;if(o.clip)s.clip=o.clip;if(o.fx)s.fx=o.fx;if(o.snd){s.snd=o.snd;s.sndName=o.sndName;s.sndVol=o.sndVol}}});
+    P.scenes=scenes;scenes.forEach(function(s){s.amb=s.amb||'none'});P.amb=true;fillAmb(P,true);P.ambDone=true;
+    var lead={};scenes.forEach(function(s){if(s.lead){if(!s.own)s.img=Pipe.sceneURL(s);lead[s.grp]=s}});
+    scenes.forEach(function(s){if(!s.lead&&!s.own){var L=lead[s.grp];s.img=L.img;s.local=!!L.local;s.locked=true}});
+    var kept=scenes.filter(function(s){return s.own}).length;if(kept)setTimeout(function(){toast('Conservé '+kept+' imagen(es) que ya tenías ✅')},1200);
     S.sel=0;RT.voices={};RT.video=null;P.status='draft';save(1);
     toast(scenes.length+' frases en '+groups.length+' imagen(es) ✅');render();
     if(!fromAuto)Pipe.images().catch(function(e){toast(e.message,1)})},
   sync(src){var P=S.P;if(!P||!P.scenes)return;var groups={};P.scenes.forEach(function(s){if(s.grp)(groups[s.grp]=groups[s.grp]||[]).push(s)});
     Object.keys(groups).forEach(function(g){var list=groups[g];var from=(src&&src.grp===g)?src:(list.find(function(s){return s.lead&&RT.imgs[s.img]})||list.find(function(s){return RT.imgs[s.img]}));if(!from)return;
-      list.forEach(function(s){if(s===from||s.img===from.img)return;s.img=from.img;s.local=!!from.local;s.edited=!!from.edited;s.hq=!!from.hq;s.locked=true;s.parallax=false;delete RT.fg[s.id];try{paintScene(s)}catch(e){}})});save()},
+      list.forEach(function(s){if(s===from||s.img===from.img||(s.own&&s!==src&&(s.local||RT.imgs[s.img])&&!(src&&src.grp===g)))return;s.img=from.img;s.local=!!from.local;s.edited=!!from.edited;s.hq=!!from.hq;s.locked=true;s.parallax=false;delete RT.fg[s.id];try{paintScene(s)}catch(e){}})});save()},
   setVoice(k,v){var P=S.P;if(P.dlgVoices[k]){P.dlgVoices[k].voice=v;P.scenes.forEach(function(s){if(s.who&&normName(s.who)===k)delete RT.voices[s.id]});save();renderCfg()}},
   setColor(k,c){var P=S.P;if(P.dlgVoices[k]){P.dlgVoices[k].color=c;save();Player.seek(1.2)}},
   async listen(k){var P=S.P,sp=P.dlgVoices[k];if(!sp)return;var line=parse(P.script).find(function(l){return normName(l.who)===k});var ac=getAC();await ac.resume();toast('Generando muestra de '+sp.name+'…');
@@ -2409,11 +2432,11 @@ var mkO=Pipe.makeScenes;
 Pipe.makeScenes=async function(fromAuto){var P=S.P;if(P&&P.mode==='dialogo'){if(S.busy&&!S.busyImgs)return toast('Esperá: la IA todavía está trabajando ('+S.busy+')',1);return Dlg.build(fromAuto)}return mkO.apply(this,arguments)};
 var imgO=Pipe.images;Pipe.images=async function(){var r=await imgO.apply(this,arguments);try{Dlg.sync()}catch(e){}return r};
 var regO=Pipe.regen;Pipe.regen=async function(i){var r=await regO.apply(this,arguments);try{var s=S.P.scenes[i];if(s&&s.grp&&RT.imgs[s.img])Dlg.sync(s);renderScenesOnly(1);renderTL()}catch(e){}return r};
-var setO=Pipe.setImage;Pipe.setImage=async function(i){var r=await setO.apply(this,arguments);try{var s=S.P.scenes[i];if(s&&s.grp)Dlg.sync(s);renderScenesOnly(1);renderTL()}catch(e){}return r};
+var setO=Pipe.setImage;Pipe.setImage=async function(i){var r=await setO.apply(this,arguments);try{var s=S.P.scenes[i];if(s){s.own=true}if(s&&s.grp&&!S.P.scenes.some(function(o){return o!==s&&o.grp===s.grp&&o.own}))Dlg.sync(s);renderScenesOnly(1);renderTL()}catch(e){}return r};
 
 /* Voces: cada personaje con la suya */
 var voicesO=Pipe.voices;
-Pipe.voices=async function(){var P=S.P;if(!P||!P.dlgVoices||!P.scenes.some(function(s){return s.who}))return voicesO.apply(this,arguments);
+Pipe.voices=async function(){var P=S.P;try{fillWho(P)}catch(e){}if(!P||!P.dlgVoices||!P.scenes.some(function(s){return s.who}))return voicesO.apply(this,arguments);
   if(RT.narr){toast('Se usa tu propia narración 🎙️');return}
   this.setBusy('Generando voces…');var ok=0,need=0,lastErr='';
   try{for(var i=0;i<P.scenes.length;i++){var s=P.scenes[i];if(!s.text.trim())continue;need++;var vid=voiceFor(P,s),cur=RT.voices[s.id];
@@ -2511,7 +2534,7 @@ var tContO=tContenido;
 tContenido=function(){var P=S.P;var html=tContO.apply(this,arguments);if(P.mode==='dialogo')html=dlgPanel()+html;return html+packPanel()};
 var tVozO=tVoz;
 tVoz=function(){var P=S.P,h=tVozO.apply(this,arguments);if(P.mode==='dialogo')h='<div class="card box"><h3>'+ic('user')+'Voces de los personajes</h3><div class="info">'+ic('check')+'<span>En el modo Diálogo cada personaje tiene su propia voz: se elige en la pestaña <b>Guion y storyboard</b>. La voz de abajo es la del narrador.</span></div></div>'+h;return h};
-var vEdO=vEditor;vEditor=function(m){vEdO.apply(this,arguments);try{if(S.P&&S.P.mode==='dialogo')Dlg.est()}catch(e){}};
+var vEdO=vEditor;vEditor=function(m){try{fillWho(S.P)}catch(e){}try{var P=S.P;if(P&&P.mode==='dialogo'&&!P.ambDone&&P.scenes.length){P.amb=true;var k=fillAmb(P);P.ambDone=true;save();if(k)setTimeout(function(){toast('Puse sonido de ambiente en '+k+' escena(s) según el lugar 🌿 (se cambia en «Ambiente» de cada escena)')},800)}}catch(e){}vEdO.apply(this,arguments);try{if(S.P&&S.P.mode==='dialogo')Dlg.est()}catch(e){}};
 
 /* =========================================================
    5) FIRMA DEL CANAL (tu @usuario en el video)
@@ -2580,7 +2603,7 @@ if('serviceWorker' in navigator&&/^https:$/.test(location.protocol)){window.addE
   reg.addEventListener('updatefound',function(){var w=reg.installing;if(!w)return;w.addEventListener('statechange',function(){if(w.state==='installed'&&navigator.serviceWorker.controller)toast('Hay una versión nueva de Estudio Viral: cerrá y volvé a abrir la app para verla ✨')})})}).catch(function(e){console.info('[v3.33] sin app instalable (falta sw.js en GitHub):',e&&e.message)})})}
 
 /* Novedades */
-var NEWS=['👥 <b>Modo Diálogo</b>: dos (o más) personajes hablan, cada uno con su voz. Lo elegís en «Nuevo video».',
+var NEWS=['🔧 <b>3.34</b>: en los diálogos, cada escena reconoce sola quién habla y usa su voz, y pone el sonido del lugar (selva, río, cascada, fuego, tambores…). «Armar escenas» ya no borra las imágenes que hiciste.','👥 <b>Modo Diálogo</b>: dos (o más) personajes hablan, cada uno con su voz. Lo elegís en «Nuevo video».',
   '🎨 <b>Subtítulos de colores</b>: cada personaje con su color y su nombre arriba, así se entiende quién habla aunque esté sin sonido.',
   '🖼️ <b>Máximo 6 imágenes</b>: el tiempo de cada una se calcula solo con las voces.',
   '💓 <b>La imagen late con la voz</b>: parece viva mientras el personaje habla.',
