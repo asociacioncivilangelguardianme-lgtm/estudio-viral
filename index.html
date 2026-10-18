@@ -2297,7 +2297,7 @@ window.__ev32export=exportMp4;
 (function(){
 'use strict';
 if(window.__ev33)return;window.__ev33=true;
-var VERSION='3.36';
+var VERSION='3.38';
 var COLORS=['#7dd3fc','#ff9de2','#a7f3d0','#fdba74','#c4b5fd'];
 var MOVES=['zoomin','panr','tiltup','dolly','panl','zoomout','track','tiltdown'];
 
@@ -2305,7 +2305,8 @@ var MOVES=['zoomin','panr','tiltup','dolly','panl','zoomout','track','tiltdown']
 function copyText(t){try{if(navigator.clipboard&&window.isSecureContext)return navigator.clipboard.writeText(t)}catch(e){}
   var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(e){}ta.remove();return Promise.resolve()}
 function isMobile(){return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)}
-function voicesForLang(lang){var out=[];EDGE_VOICES.forEach(function(v){if(v[0].toLowerCase().indexOf(lang+'-')===0)out.push(['edge:'+v[0],v[1]+' ('+v[2]+', '+(v[3]==='F'?'mujer':'hombre')+')'])});
+var EXPR=[['edge:en-US-AndrewMultilingualNeural','⭐ Andrew multilingüe (hombre, muy natural)'],['edge:en-US-BrianMultilingualNeural','⭐ Brian multilingüe (hombre, cálido)'],['edge:en-US-AvaMultilingualNeural','⭐ Ava multilingüe (mujer, muy natural)'],['edge:en-US-EmmaMultilingualNeural','⭐ Emma multilingüe (mujer, cálida)'],['edge:fr-FR-RemyMultilingualNeural','⭐ Rémy multilingüe (hombre, grave)'],['edge:fr-FR-VivienneMultilingualNeural','⭐ Vivienne multilingüe (mujer, suave)']];
+function voicesForLang(lang){var out=EXPR.slice();EDGE_VOICES.forEach(function(v){if(v[0].toLowerCase().indexOf(lang+'-')===0)out.push(['edge:'+v[0],v[1]+' ('+v[2]+', '+(v[3]==='F'?'mujer':'hombre')+')'])});
   PIPER_VOICES.forEach(function(v){if(v[0].indexOf(lang+'_')===0)out.push(['piper:'+v[0],v[1]+' ('+v[2]+', Piper)'])});
   if(!out.length)EDGE_VOICES.forEach(function(v){out.push(['edge:'+v[0],v[1]+' ('+v[2]+')'])});return out}
 
@@ -2335,7 +2336,7 @@ function ensureSpk(P,lines,genders){P.dlgVoices=P.dlgVoices||{};var used={};Obje
   var idx=Object.keys(P.dlgVoices).length;
   lines.forEach(function(l){var k=normName(l.who);if(P.dlgVoices[k])return;
     var g=(genders&&genders[k])||(MASC.test(k)?'M':(FEM.test(k)||/a$/.test(k)?'F':'M'));
-    var pool=voicesForLang(P.lang||'es').filter(function(v){var e=EDGE_VOICES.find(function(x){return 'edge:'+x[0]===v[0]});return !e||e[3]===g});
+    var pool=voicesForLang(P.lang||'es').filter(function(v){if(v[0].indexOf('Multilingual')>0)return false;var e=EDGE_VOICES.find(function(x){return 'edge:'+x[0]===v[0]});return !e||e[3]===g});
     var pick=(pool.find(function(v){return !used[v[0]]})||pool[0]||[P.voice])[0];used[pick]=1;
     if(/^narrador$/i.test(k))pick=P.voice;
     P.dlgVoices[k]={name:l.who,voice:pick,color:COLORS[idx%COLORS.length],g:g};idx++});}
@@ -2366,7 +2367,7 @@ window.Dlg={
   async write(){var P=S.P;if(!P.idea||!P.idea.trim())throw new Error('Escribí primero el tema o la historia.');
     var n=P.maxImgs||6,dur=P.duration||60;Pipe.setBusy('La IA está escribiendo el diálogo, el gancho y el cierre…');
     try{var out=await AI.chat([{role:'system',content:'Sos guionista experto en videos virales de TikTok y en religiones afrobrasileñas. Respondés SOLO JSON válido.'},
-      {role:'user',content:'Escribí un diálogo corto para TikTok en '+LANGS[P.lang||'es']+' sobre: "'+P.idea+'". Personajes: '+(P.dlgWho&&P.dlgWho.trim()?P.dlgWho:'elegí 2 personajes que tengan sentido para la historia')+'. Duración total: unos '+dur+' segundos (unas '+Math.round(dur*2.4)+' palabras en total).\nReglas:\n- La PRIMERA línea es el GANCHO: una frase fuerte (pregunta o revelación) para que nadie deslice.\n- La ÚLTIMA línea es el CIERRE: invita a seguir la cuenta o a comentar (ej: "Seguime para la parte 2").\n- Frases cortas y naturales, que se entiendan leyendo los subtítulos sin sonido. Con respeto por la tradición religiosa.\n- Máximo '+n+' imágenes en total: agrupá las líneas en '+n+' bloques o menos, en orden. Cada imagen muestra a quien habla en ese bloque, con la cara grande, de frente y bien iluminada.'+Pipe.glossTxt()+'\nFormato exacto: {"title":"título corto (máx 6 palabras)","hook":"la primera frase","closing":"la última frase","caption":"descripción para TikTok, 1 o 2 frases","hashtags":["#..."],"characters":[{"name":"...","gender":"F|M","look":"descripción física fija en inglés, 30 a 50 palabras"}],"images":[{"prompt":"descripción visual en inglés, 60 a 100 palabras, nombrando a los personajes por su nombre"}],"lines":[{"who":"nombre","text":"...","img":1}]}'}],{temp:.85});
+      {role:'user',content:'Escribí un diálogo corto para TikTok en '+LANGS[P.lang||'es']+' sobre: "'+P.idea+'". Personajes: '+(P.dlgWho&&P.dlgWho.trim()?P.dlgWho:'elegí 2 personajes que tengan sentido para la historia')+'. Duración total: unos '+dur+' segundos (unas '+Math.round(dur*2.4)+' palabras en total).\nReglas:\n- La PRIMERA línea es el GANCHO: una frase fuerte (pregunta o revelación) para que nadie deslice.\n- La ÚLTIMA línea es el CIERRE: invita a seguir la cuenta o a comentar (ej: "Seguime para la parte 2").\n- Frases cortas y naturales, que se entiendan leyendo los subtítulos sin sonido. Con respeto por la tradición religiosa.\n- Escribí como HABLA una persona real, porque lo va a leer una voz: puntuación que marque las pausas y la emoción (comas donde se respira, \"…\" para pausas dramáticas, ¡ ! y ¿ ? cuando corresponde), palabras simples, nada de frases largas ni de lista. Cada personaje con su manera de hablar (ej: un orixá anciano, pausado y sabio; una entidad joven, más viva).\n- Máximo '+n+' imágenes en total: agrupá las líneas en '+n+' bloques o menos, en orden. Cada imagen muestra a quien habla en ese bloque, con la cara grande, de frente y bien iluminada.'+Pipe.glossTxt()+'\nFormato exacto: {"title":"título corto (máx 6 palabras)","hook":"la primera frase","closing":"la última frase","caption":"descripción para TikTok, 1 o 2 frases","hashtags":["#..."],"characters":[{"name":"...","gender":"F|M","look":"descripción física fija en inglés, 30 a 50 palabras"}],"images":[{"prompt":"descripción visual en inglés, 60 a 100 palabras, nombrando a los personajes por su nombre"}],"lines":[{"who":"nombre","text":"...","img":1}]}'}],{temp:.85});
       var d=AI.json(out);if(!d.lines||!d.lines.length)throw new Error('La IA no devolvió el diálogo, probá de nuevo.');
       var lines=d.lines.map(function(l){return{who:String(l.who||'Narrador').trim(),text:clean(l.text),img:+l.img||1}}).filter(function(l){return l.text});
       P.script=lines.map(function(l){return '- '+l.who+': '+l.text}).join('\n');
@@ -2509,7 +2510,7 @@ function retryMs(){var now=Date.now();
   if(EdgeDirect.down){if(!EdgeDirect._t)EdgeDirect._t=now;else if(now-EdgeDirect._t>90000){EdgeDirect.down=false;EdgeDirect.fails=0;EdgeDirect._t=0}}
   if(Voice.edgeDown){if(!Voice._t)Voice._t=now;else if(now-Voice._t>90000){Voice.edgeDown=false;Voice.fails=0;Voice._t=0}}}
 var makeO=Voice.make.bind(Voice);
-Voice.make=function(text,voiceId,o){try{retryMs()}catch(e){}try{text=applyPron(String(text),voiceOf(voiceId).lang)}catch(e){}return makeO(text,voiceId,o)};
+Voice.make=function(text,voiceId,o){try{retryMs()}catch(e){}try{var lg=voiceOf(voiceId).lang;if(/Multilingual/.test(String(voiceId)))lg=(S.P&&S.P.lang)||'es';text=applyPron(String(text),lg)}catch(e){}return makeO(text,voiceId,o)};
 EV33.testPron=async function(){var t=($('#ev33pt')||{}).value||'Oxum y Xangô bendicen a los Orixás. Axé.';var ac=getAC();await ac.resume();toast('Generando…');
   try{var r=await Voice.make(t,S.P?voiceFor(S.P,{}):DEFAULT_VOICE.es,{speed:1});var src=ac.createBufferSource();src.buffer=await decode(r.blob);src.connect(ac.destination);src.start()}catch(e){toast('No se pudo: '+(e.message||e),1)}};
 
@@ -2611,7 +2612,7 @@ if('serviceWorker' in navigator&&/^https:$/.test(location.protocol)){window.addE
   reg.addEventListener('updatefound',function(){var w=reg.installing;if(!w)return;w.addEventListener('statechange',function(){if(w.state==='installed'&&navigator.serviceWorker.controller)toast('Hay una versión nueva de Estudio Viral: cerrá y volvé a abrir la app para verla ✨')})})}).catch(function(e){console.info('[v3.33] sin app instalable (falta sw.js en GitHub):',e&&e.message)})})}
 
 /* Novedades */
-var NEWS=['🥁 <b>3.36 · Sonidos sagrados</b>: atabaque con repique, adjá/sineta, agogô, chocalho, Terreiro, Encruzilhada, Mar de Iemanjá y Mata sagrada. Opción de transiciones con golpe de tambor y campanita.','🕯️ <b>3.35 · Religión afro</b>: sección nueva en Géneros y Estilos con Itán, Mensaje de la entidad, Conocé a la entidad, Oración del día, Ofrenda explicada, Mitos y verdades, Fechas especiales, Pontos cantados, Cuentos para chicos, Exus y Pombagiras, Umbanda y Orixás. Y 9 estilos sagrados: Arte afrobrasileño, Terreiro, Mata sagrada, Encruzilhada nocturna, Pintura sacra, Ícono dorado, Vitral, Escultura africana y Afrofuturismo.','🔧 <b>3.34</b>: en los diálogos, cada escena reconoce sola quién habla y usa su voz, y pone el sonido del lugar (selva, río, cascada, fuego, tambores…). «Armar escenas» ya no borra las imágenes que hiciste.','👥 <b>Modo Diálogo</b>: dos (o más) personajes hablan, cada uno con su voz. Lo elegís en «Nuevo video».',
+var NEWS=['🎙️ <b>3.38 · Voces más naturales</b>: voces ⭐ multilingües (Andrew, Brian, Ava, Emma…) mucho más expresivas, botón «Subir mi voz» en cada escena para usar Voicebox o tu grabación, y la IA escribe los diálogos con pausas y emoción para que suenen a persona real.','💾 <b>3.37</b>: las voces quedan guardadas en la compu. Si recargás la página no se pierden, y si falta alguna se hace sola antes de reproducir.','🥁 <b>3.36 · Sonidos sagrados</b>: atabaque con repique, adjá/sineta, agogô, chocalho, Terreiro, Encruzilhada, Mar de Iemanjá y Mata sagrada. Opción de transiciones con golpe de tambor y campanita.','🕯️ <b>3.35 · Religión afro</b>: sección nueva en Géneros y Estilos con Itán, Mensaje de la entidad, Conocé a la entidad, Oración del día, Ofrenda explicada, Mitos y verdades, Fechas especiales, Pontos cantados, Cuentos para chicos, Exus y Pombagiras, Umbanda y Orixás. Y 9 estilos sagrados: Arte afrobrasileño, Terreiro, Mata sagrada, Encruzilhada nocturna, Pintura sacra, Ícono dorado, Vitral, Escultura africana y Afrofuturismo.','🔧 <b>3.34</b>: en los diálogos, cada escena reconoce sola quién habla y usa su voz, y pone el sonido del lugar (selva, río, cascada, fuego, tambores…). «Armar escenas» ya no borra las imágenes que hiciste.','👥 <b>Modo Diálogo</b>: dos (o más) personajes hablan, cada uno con su voz. Lo elegís en «Nuevo video».',
   '🎨 <b>Subtítulos de colores</b>: cada personaje con su color y su nombre arriba, así se entiende quién habla aunque esté sin sonido.',
   '🖼️ <b>Máximo 6 imágenes</b>: el tiempo de cada una se calcula solo con las voces.',
   '💓 <b>La imagen late con la voz</b>: parece viva mientras el personaje habla.',
@@ -2704,7 +2705,13 @@ function kit(ac,g,st,en,nodes){var R=Math.random;
   function slap(t,gain){if(t>en-.05||t<st)return;var s=nsrc(ac),bp=ac.createBiquadFilter();bp.type='bandpass';bp.frequency.value=2600;bp.Q.value=.9;var ng=ac.createGain();ng.gain.setValueAtTime(gain,t);ng.gain.exponentialRampToValueAtTime(.0005,t+.07);s.connect(bp).connect(ng).connect(g);s.start(t,R());s.stop(t+.09);nodes.push(s);drum(t,330,290,.09,gain*.5)}
   function bell(t,f,d,gain){if(t>en-.05||t<st)return;[[1,1],[2.76,.45],[5.4,.22],[8.93,.1]].forEach(function(p){var o=ac.createOscillator(),gg=ac.createGain();o.type='sine';o.frequency.value=f*p[0];gg.gain.setValueAtTime(.0001,t);gg.gain.exponentialRampToValueAtTime(gain*p[1],t+.003);gg.gain.exponentialRampToValueAtTime(.0003,t+d/(1+p[0]*.25));o.connect(gg).connect(g);o.start(t);o.stop(t+d+.05);nodes.push(o)})}
   function shake(t,gain,d){if(t>en-.03||t<st)return;var s=nsrc(ac),hp=ac.createBiquadFilter();hp.type='highpass';hp.frequency.value=5200;var ng=ac.createGain();ng.gain.setValueAtTime(.0001,t);ng.gain.linearRampToValueAtTime(gain,t+.015);ng.gain.exponentialRampToValueAtTime(.0005,t+(d||.07));s.connect(hp).connect(ng).connect(g);s.start(t,R());s.stop(t+(d||.07)+.02);nodes.push(s)}
-  return{drum:drum,slap:slap,bell:bell,shake:shake,
+  function metal(t,f,d,gain,ratio,index){if(t>en-.05||t<st)return;ratio=ratio||1.41;index=index||1.2;
+    [[1,1],[1.0045,.6]].forEach(function(q){var c=ac.createOscillator(),m=ac.createOscillator(),mg=ac.createGain(),a=ac.createGain();c.type='sine';m.type='sine';
+      c.frequency.value=f*q[0];m.frequency.value=f*q[0]*ratio;mg.gain.setValueAtTime(f*index,t);mg.gain.exponentialRampToValueAtTime(f*index*.08+1,t+d);
+      a.gain.setValueAtTime(.0001,t);a.gain.exponentialRampToValueAtTime(gain*q[1],t+.002);a.gain.exponentialRampToValueAtTime(.0003,t+d);
+      m.connect(mg).connect(c.frequency);c.connect(a).connect(g);m.start(t);c.start(t);m.stop(t+d+.03);c.stop(t+d+.03);nodes.push(c,m)});
+    var s=nsrc(ac),hp=ac.createBiquadFilter();hp.type='highpass';hp.frequency.value=7000;var ng=ac.createGain();ng.gain.setValueAtTime(gain*.5,t);ng.gain.exponentialRampToValueAtTime(.0003,t+.018);s.connect(hp).connect(ng).connect(g);s.start(t,R());s.stop(t+.03);nodes.push(s)}
+  return{drum:drum,slap:slap,bell:bell,shake:shake,metal:metal,
    atabaque:function(lv,bpm){bpm=bpm||104;var b=60/bpm,s16=b/4,i=0;
      for(var t=st+.15;t<en-.1;t+=s16,i++){var p=i%16;
        if([0,3,6,10,12].indexOf(p)>=0)drum(t,255,215,.18,.32*lv);           // lé
@@ -2715,8 +2722,9 @@ function kit(ac,g,st,en,nodes){var R=Math.random;
        if(p===12&&R()<.3){for(var k=0;k<4;k++)drum(t+k*s16/2,240,205,.12,.22*lv)} // repique
      }},
    agogo:function(lv,bpm){bpm=bpm||104;var b=60/bpm,s8=b/2,pat=[1,0,2,0,1,2,0,2],i=0;for(var t=st+.15;t<en-.1;t+=s8,i++){var x=pat[i%8];if(x===1)bell(t,880,.35,.22*lv);else if(x===2)bell(t,660,.35,.22*lv)}},
-   adja:function(lv,every){for(var t=st+.4+R()*.6;t<en-.8;t+=(every||3.5)+R()*2.5){var n=6+Math.floor(R()*8);for(var k=0;k<n;k++)bell(t+k*(.06+R()*.04),2100+R()*900,1.1,.13*lv*(1-k/n*.5))}},
-   sineta:function(lv,every){for(var t=st+.5+R();t<en-1;t+=(every||4)+R()*3)bell(t,1850,1.8,.18*lv)},
+   adja:function(lv,every){var P3=[3150,3720,4380];for(var t=st+.4+R()*.6;t<en-1;t+=(every||3.5)+R()*2.5){var dur=.7+R()*.7,n=14+Math.floor(R()*10);
+       for(var k=0;k<n;k++){var tt=t+dur*k/n+(R()-.5)*.03,sw=Math.abs(Math.sin(k/n*Math.PI*3));metal(tt,P3[Math.floor(R()*3)]*(1+(R()-.5)*.02),.22+R()*.25,.12*lv*(.35+.65*sw)*(1-k/n*.4),1.41,1.1)}}},
+   sineta:function(lv,every){for(var t=st+.5+R();t<en-1.2;t+=(every||4)+R()*3){var n=3+Math.floor(R()*4),f=2350*(1+(R()-.5)*.04);for(var k=0;k<n;k++)metal(t+k*(.075+R()*.03),f,.7,.11*lv*(k?.75:1),2.76,1.6)}},
    chocalho:function(lv,bpm){bpm=bpm||104;var b=60/bpm,s16=b/4,i=0;for(var t=st+.1;t<en-.1;t+=s16,i++)shake(t,(i%4===0?.12:i%2===0?.07:.045)*lv,i%4===2?.12:.06)}}}
 ambience=function(ac,out,type,st,en,vol){
   if(!NEWA[type])return prev.apply(this,arguments);
@@ -2729,17 +2737,17 @@ ambience=function(ac,out,type,st,en,vol){
    case'agogo':K.agogo(1,bpm);K.chocalho(.4,bpm);break;
    case'chocalho':K.chocalho(1,bpm);break;
    case'terreiro':K.atabaque(.55,92);K.sineta(.9,5);layer('fuego',.35);break;
-   case'encruzilhada':layer('noche',.9);K.adja(.6,6);for(var t=st+.5;t<en-.5;t+=1.25)K.drum(t,92,66,.6,.45);break;
+   case'encruzilhada':layer('noche',.9);layer('viento',.35);for(var t=st+.5;t<en-.5;t+=1.25){K.drum(t,92,66,.6,.45);if(Math.random()<.35)K.drum(t+.31,150,120,.25,.2)}K.adja(.45,8);break;
    case'iemanja':layer('oceano',1);K.sineta(.9,4.5);break;
    case'mata_sagrada':layer('bosque',1);K.atabaque(.35,88);break}
   return nodes};
 /* transición con golpe de tambor y campanita */
 var whO=whoosh,imO=impact;
 whoosh=function(ac,out,at,vol){var P=S.P;if(!P||!P.sfxTambor)return whO.apply(this,arguments);at=Math.max(at,ac.currentTime);
-  var g=ac.createGain();g.gain.value=vol;g.connect(out);var nodes=[],K=kit(ac,g,at-.01,at+2.5,nodes);K.drum(at+.15,105,72,.6,.55);K.slap(at+.02,.25);K.bell(at+.18,1850,1.4,.07);
+  var g=ac.createGain();g.gain.value=vol;g.connect(out);var nodes=[],K=kit(ac,g,at-.01,at+2.5,nodes);K.drum(at+.15,105,72,.6,.55);K.slap(at+.02,.25);K.metal(at+.18,2350,.7,.08,2.76,1.6);
   return nodes[0]||whO.apply(this,arguments)};
 impact=function(ac,out,at,vol){var P=S.P;if(!P||!P.sfxTambor)return imO.apply(this,arguments);
-  var g=ac.createGain();g.gain.value=vol;g.connect(out);var nodes=[],K=kit(ac,g,at-.01,at+3,nodes);[0,.12,.24].forEach(function(d,i){K.drum(at+d,240-i*10,205,.14,.35)});K.drum(at+.36,98,66,.9,.8);K.adja(.9,9);
+  var g=ac.createGain();g.gain.value=vol;g.connect(out);var nodes=[],K=kit(ac,g,at-.01,at+3,nodes);[0,.12,.24].forEach(function(d,i){K.drum(at+d,240-i*10,205,.14,.35)});K.drum(at+.36,98,66,.9,.8);
   return nodes[0]||imO.apply(this,arguments)};
 /* religión afro: activar sonidos sagrados y ambiente por defecto */
 var DEF_AMB={af_quimbanda:'encruzilhada',af_umbanda:'terreiro',af_ofrenda:'terreiro',af_oracion:'adja',af_mensaje:'adja',af_fecha:'terreiro',af_cancion:'atabaque',af_ninos:'agogo'};
@@ -2764,6 +2772,68 @@ console.info('[Estudio Viral] v3.36: sonidos sagrados');
 })();
 </script>
 <!-- ===== FIN v3.36 ===== -->
+
+<!-- ===== ESTUDIO VIRAL · v3.37 · LAS VOCES QUEDAN GUARDADAS ===== -->
+<script id="ev337">
+(function(){'use strict';if(window.__ev337)return;window.__ev337=true;
+function fnv(s){var h=2166136261;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)>>>0}return h.toString(36)}
+function key(text,voiceId,speed){return 'tts:'+normVoice(voiceId)+'|'+(+speed||1).toFixed(2)+'|'+fnv(String(text))+'|'+String(text).length}
+/* 1) cada voz generada se guarda en la compu; la próxima vez sale al instante */
+var mk=Voice.make.bind(Voice);
+Voice.make=async function(text,voiceId,o){o=o||{};var k=key(text,voiceId,o.speed);
+  try{var c=await IDB.get(k);if(c&&c.blob&&c.blob.size>300)return{blob:c.blob,pre:!!c.pre}}catch(e){}
+  var r=await mk(text,voiceId,o);
+  try{if(r&&r.blob&&r.blob.size>300&&(r.pre||!/^edge:/.test(normVoice(voiceId))))await IDB.set(k,{blob:r.blob,pre:!!r.pre})}catch(e){}
+  return r};
+/* 2) antes de reproducir o exportar, si faltan voces se hacen solas (ya no lee la voz de Windows) */
+function missing(P){if(!P||P.mode==='musica'||RT.narr)return 0;return P.scenes.filter(function(s){var v=RT.voices[s.id];return s.text&&s.text.trim()&&!(v&&v.text===s.text)}).length}
+var runO=Player.run;
+Player.run=async function(record){var P=S.P;
+  if(!this.playing&&P&&P.scenes&&P.scenes.length&&missing(P)){toast('Cargando las voces de las escenas…');try{await Pipe.voices()}catch(e){}
+    var m=missing(P);if(m)toast(m+' escena(s) quedaron sin voz: revisá tu internet y tocá «Generar voces de todas las escenas».',1)}
+  return runO.apply(this,arguments)};
+/* 3) al abrir un proyecto, las voces guardadas se cargan solas en segundo plano */
+var opO=openProject;
+openProject=function(P){var r=opO.apply(this,arguments);setTimeout(async function(){var Q=S.P;if(!Q||Q.mode==='musica'||!missing(Q))return;
+  var all=true;for(var i=0;i<Q.scenes.length;i++){var s=Q.scenes[i];if(!s.text||!s.text.trim())continue;try{var vid=(Q.dlgVoices&&s.who&&Q.dlgVoices[normName(s.who)]&&Q.dlgVoices[normName(s.who)].voice)||Q.voice;var c=await IDB.get(key(s.text,vid,Q.speed));if(!c){all=false;break}}catch(e){all=false;break}}
+  if(all&&S.P===Q){try{await Pipe.voices()}catch(e){}}},600);return r};
+console.info('[Estudio Viral] v3.37: voces guardadas');
+})();
+</script>
+<!-- ===== FIN v3.37 ===== -->
+
+<!-- ===== ESTUDIO VIRAL · v3.38 · VOCES MÁS NATURALES Y MI PROPIA VOZ ===== -->
+<script id="ev338">
+(function(){'use strict';if(window.__ev338)return;window.__ev338=true;
+[['en-US-BrianMultilingualNeural','Brian','EE.UU. · multilingüe','M'],['en-US-EmmaMultilingualNeural','Emma','EE.UU. · multilingüe','F'],['fr-FR-RemyMultilingualNeural','Rémy','Francia · multilingüe','M'],['fr-FR-VivienneMultilingualNeural','Vivienne','Francia · multilingüe','F']].forEach(function(v){if(!EDGE_VOICES.some(function(x){return x[0]===v[0]}))EDGE_VOICES.push(v)});
+/* ---------- mi propia voz en una escena (Voicebox, grabación del celu, etc.) ---------- */
+async function loadMine(s){if(!s||!s.myVoice)return false;try{var b=await IDB.get(s.myVoice);if(!b)return false;var buf=await decode(b);RT.voices[s.id]={buf:buf,text:s.text,voice:'mine:'+s.myVoice,speed:1,pre:true,mine:true};return true}catch(e){return false}}
+window.EV338={
+  async up(i,f){var s=S.P.scenes[i];if(!s||!f)return;if(f.size>40e6)return toast('El audio es muy pesado (máximo 40 MB)',1);Pipe.setBusy('Cargando tu voz…');
+    try{var k='myvoz:'+s.id;await IDB.set(k,f);s.myVoice=k;s.myVoiceName=f.name||'mi voz';if(!(await loadMine(s)))throw new Error('No pude leer ese audio. Probá con MP3 o WAV.');save(1);toast('Tu voz quedó puesta en la escena '+(i+1)+' 🎙️ La duración de la escena se ajusta sola.')}
+    catch(e){toast(e.message||String(e),1)}finally{Pipe.setBusy('')}renderSel();renderTL();renderPipe();seekScene(i)},
+  rm(i){var s=S.P.scenes[i];if(!s)return;s.myVoice='';s.myVoiceName='';delete RT.voices[s.id];save(1);toast('Volvió a la voz automática. Tocá «Generar voces».');renderSel();renderTL()},
+  async listen(i){var s=S.P.scenes[i];var v=RT.voices[s.id];if(!v||!v.mine){await loadMine(s);v=RT.voices[s.id]}if(!v)return;var ac=getAC();await ac.resume();var src=ac.createBufferSource();src.buffer=v.buf;src.connect(ac.destination);src.start()}};
+/* Generar voces: las escenas con voz propia se respetan */
+var vO=Pipe.voices;
+Pipe.voices=async function(){var P=S.P;if(!P)return vO.apply(this,arguments);var mine=P.scenes.filter(function(s){return s.myVoice});
+  for(var i=0;i<mine.length;i++){var v=RT.voices[mine[i].id];if(!(v&&v.mine&&v.text===mine[i].text))await loadMine(mine[i])}
+  var keep=mine.map(function(s){var t=s.text;s.text='';return t});
+  try{return await vO.apply(this,arguments)}finally{mine.forEach(function(s,j){s.text=keep[j];var v=RT.voices[s.id];if(v&&v.mine)v.text=s.text})}};
+/* al abrir un proyecto, cargar las voces propias */
+var oO=openProject;openProject=function(){var r=oO.apply(this,arguments);setTimeout(function(){var P=S.P;if(!P)return;Promise.all(P.scenes.filter(function(s){return s.myVoice}).map(loadMine)).then(function(){try{renderTL();renderPipe()}catch(e){}})},300);return r};
+/* botón en el panel de la escena */
+var rsO=renderSel;
+renderSel=function(){rsO.apply(this,arguments);try{var el=$('#selpanel');if(!el||!S.P||el.querySelector('.ev338'))return;var i=clamp(S.sel,0,Math.max(0,S.P.scenes.length-1)),s=S.P.scenes[i];if(!s)return;
+  var anchor=el.querySelector('.tools-main');if(!anchor)return;var d=document.createElement('div');d.className='ev32-box ev338';
+  d.innerHTML='<h4>🎙️ Voz de esta escena</h4>'+(s.myVoice?'<div class="ev32-row"><span class="ev32-name">'+esc(s.myVoiceName||'mi voz')+'</span></div><div class="ev32-row"><button class="btn xs" onclick="EV338.listen('+i+')">▶ Escuchar</button><label class="btn xs">Cambiar<input type="file" accept="audio/*" hidden onchange="this.files[0]&&EV338.up('+i+',this.files[0])"></label><button class="btn xs danger" onclick="EV338.rm('+i+')">Usar voz automática</button></div>'
+    :'<div class="ev32-row"><label class="btn sm">📂 Subir mi voz (Voicebox o grabación)<input type="file" accept="audio/*" hidden onchange="this.files[0]&&EV338.up('+i+',this.files[0])"></label></div>')+
+    '<div class="ev32-mini">Lo más natural: generá la frase en <b>Voicebox</b> o grabala con el celular, y subila acá. Reemplaza a la voz automática solo en esta escena; los subtítulos siguen igual.</div>';
+  anchor.parentNode.insertBefore(d,anchor.nextSibling)}catch(e){console.warn('[v3.38]',e)}};
+console.info('[Estudio Viral] v3.38: voces más naturales y mi propia voz');
+})();
+</script>
+<!-- ===== FIN v3.38 ===== -->
 
 </body>
 </html>
