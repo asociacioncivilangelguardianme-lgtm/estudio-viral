@@ -2297,7 +2297,7 @@ window.__ev32export=exportMp4;
 (function(){
 'use strict';
 if(window.__ev33)return;window.__ev33=true;
-var VERSION='3.42';
+var VERSION='3.43';
 var COLORS=['#7dd3fc','#ff9de2','#a7f3d0','#fdba74','#c4b5fd'];
 var MOVES=['zoomin','panr','tiltup','dolly','panl','zoomout','track','tiltdown'];
 
@@ -2618,7 +2618,7 @@ if('serviceWorker' in navigator&&/^https:$/.test(location.protocol)){window.addE
   reg.addEventListener('updatefound',function(){var w=reg.installing;if(!w)return;w.addEventListener('statechange',function(){if(w.state==='installed'&&navigator.serviceWorker.controller)toast('Hay una versión nueva de Estudio Viral: cerrá y volvé a abrir la app para verla ✨')})})}).catch(function(e){console.info('[v3.33] sin app instalable (falta sw.js en GitHub):',e&&e.message)})})}
 
 /* Novedades */
-var NEWS=['📱 <b>3.42</b>: en el celular el editor ahora va por partes (Vista, Guion, Escena, Estilo y Línea) con botones abajo, sin tener que bajar tanto. Botones más grandes y nada se sale de la pantalla.','🍲 <b>3.41</b>: nueva <b>Receta de Orixás</b> (dos personajes echan ingredientes en la olla y el final se ilumina). Efectos nuevos: frasco que se vuelca, humo, estallido de luz y aura. Cartel con texto en cada escena. Ayuda para darle movimiento real (Wan, Kling, Hailuo) y grabar tu gesto con la cámara. Bajar y subir todas las voces juntas para Applio.','📲 <b>3.40</b>: pasá tus proyectos de la PC al celu con un código QR (sin WhatsApp). Modo Cine (todo el video o solo algunas escenas), color de acento, música que baja sola cuando habla la voz y la nueva sección <b>Video largo a clips</b>.','💾 <b>3.39</b>: el video exportado queda guardado en el proyecto. Al volver a abrirlo aparecen directo Descargar, YouTube, TikTok e Instagram, sin exportar de nuevo.','🎙️ <b>3.38 · Voces más naturales</b>: velocidad por personaje (por ejemplo Oxalá lento y pausado), botón «Subir mi voz» en cada escena (opcional) y la IA escribe los diálogos con pausas y emoción, sin narrador.','💾 <b>3.37</b>: las voces quedan guardadas en la compu. Si recargás la página no se pierden, y si falta alguna se hace sola antes de reproducir.','🥁 <b>3.36 · Sonidos sagrados</b>: atabaque con repique, adjá/sineta, agogô, chocalho, Terreiro, Encruzilhada, Mar de Iemanjá y Mata sagrada. Opción de transiciones con golpe de tambor y campanita.','🕯️ <b>3.35 · Religión afro</b>: sección nueva en Géneros y Estilos con Itán, Mensaje de la entidad, Conocé a la entidad, Oración del día, Ofrenda explicada, Mitos y verdades, Fechas especiales, Pontos cantados, Cuentos para chicos, Exus y Pombagiras, Umbanda y Orixás. Y 9 estilos sagrados: Arte afrobrasileño, Terreiro, Mata sagrada, Encruzilhada nocturna, Pintura sacra, Ícono dorado, Vitral, Escultura africana y Afrofuturismo.','🔧 <b>3.34</b>: en los diálogos, cada escena reconoce sola quién habla y usa su voz, y pone el sonido del lugar (selva, río, cascada, fuego, tambores…). «Armar escenas» ya no borra las imágenes que hiciste.','👥 <b>Modo Diálogo</b>: dos (o más) personajes hablan, cada uno con su voz. Lo elegís en «Nuevo video».',
+var NEWS=['🌍 <b>3.43</b>: en videos de Orixás las personas salen afrobrasileñas y africanas (nada asiático). La app respeta el límite gratis de 1 imagen cada 45 segundos y ya no deja el cartel amarillo «Free limit reached». En el celular, «Vista» trae los primeros pasos: personajes, fotos de referencia y generar imágenes.','📱 <b>3.42</b>: en el celular el editor ahora va por partes (Vista, Guion, Escena, Estilo y Línea) con botones abajo, sin tener que bajar tanto. Botones más grandes y nada se sale de la pantalla.','🍲 <b>3.41</b>: nueva <b>Receta de Orixás</b> (dos personajes echan ingredientes en la olla y el final se ilumina). Efectos nuevos: frasco que se vuelca, humo, estallido de luz y aura. Cartel con texto en cada escena. Ayuda para darle movimiento real (Wan, Kling, Hailuo) y grabar tu gesto con la cámara. Bajar y subir todas las voces juntas para Applio.','📲 <b>3.40</b>: pasá tus proyectos de la PC al celu con un código QR (sin WhatsApp). Modo Cine (todo el video o solo algunas escenas), color de acento, música que baja sola cuando habla la voz y la nueva sección <b>Video largo a clips</b>.','💾 <b>3.39</b>: el video exportado queda guardado en el proyecto. Al volver a abrirlo aparecen directo Descargar, YouTube, TikTok e Instagram, sin exportar de nuevo.','🎙️ <b>3.38 · Voces más naturales</b>: velocidad por personaje (por ejemplo Oxalá lento y pausado), botón «Subir mi voz» en cada escena (opcional) y la IA escribe los diálogos con pausas y emoción, sin narrador.','💾 <b>3.37</b>: las voces quedan guardadas en la compu. Si recargás la página no se pierden, y si falta alguna se hace sola antes de reproducir.','🥁 <b>3.36 · Sonidos sagrados</b>: atabaque con repique, adjá/sineta, agogô, chocalho, Terreiro, Encruzilhada, Mar de Iemanjá y Mata sagrada. Opción de transiciones con golpe de tambor y campanita.','🕯️ <b>3.35 · Religión afro</b>: sección nueva en Géneros y Estilos con Itán, Mensaje de la entidad, Conocé a la entidad, Oración del día, Ofrenda explicada, Mitos y verdades, Fechas especiales, Pontos cantados, Cuentos para chicos, Exus y Pombagiras, Umbanda y Orixás. Y 9 estilos sagrados: Arte afrobrasileño, Terreiro, Mata sagrada, Encruzilhada nocturna, Pintura sacra, Ícono dorado, Vitral, Escultura africana y Afrofuturismo.','🔧 <b>3.34</b>: en los diálogos, cada escena reconoce sola quién habla y usa su voz, y pone el sonido del lugar (selva, río, cascada, fuego, tambores…). «Armar escenas» ya no borra las imágenes que hiciste.','👥 <b>Modo Diálogo</b>: dos (o más) personajes hablan, cada uno con su voz. Lo elegís en «Nuevo video».',
   '🎨 <b>Subtítulos de colores</b>: cada personaje con su color y su nombre arriba, así se entiende quién habla aunque esté sin sonido.',
   '🖼️ <b>Máximo 6 imágenes</b>: el tiempo de cada una se calcula solo con las voces.',
   '💓 <b>La imagen late con la voz</b>: parece viva mientras el personaje habla.',
@@ -4381,7 +4381,7 @@ async function unzip(file){var u=new Uint8Array(await file.arrayBuffer()),dv=new
    4) RECETA DE ORIXÁS
    ====================================================================== */
 var ORX=['Oxum','Xangô','Iemanjá','Ogum','Oxóssi','Iansã','Oxalá','Exu','Nanã','Omolu','Oxumaré','Ossain','Obá','Ewá','Logunedé','Bará','Pombagira','Zé Pilintra','Preto Velho','Caboclo','Erês'];
-var RC={a:'Oxum',b:'Xangô',aOther:'',bOther:'',n:4,tone:'humor',place:'templo',placeOther:'',style:'hiperreal',busy:false};
+var RC={mine:'',a:'Oxum',b:'Xangô',aOther:'',bOther:'',n:4,tone:'humor',place:'templo',placeOther:'',style:'hiperreal',busy:false};
 var PLACES={templo:'Templo africano dorado al atardecer',terreiro:'Terreiro con velas y flores',rio:'Orilla de un río con cascada',selva:'Selva tropical con luz entre los árboles',otro:'Otro (escribilo)'};
 function rcName(k){var v=RC[k],o=String(RC[k+'Other']||'').trim();return v==='otro'?o:v}
 function sel(k,list){return '<select class="sel" onchange="EV341.rset(\''+k+'\',this.value)">'+list.map(function(x){var v=Array.isArray(x)?x[0]:x,n=Array.isArray(x)?x[1]:x;return '<option value="'+esc(v)+'" '+(RC[k]===v?'selected':'')+'>'+esc(n)+'</option>'}).join('')+'</select>'}
@@ -4391,16 +4391,17 @@ function recetaUI(){var hasStyle=typeof STYLES!=='undefined';
   '<div class="cols2" style="gap:8px;margin-top:8px"><div><div class="lbl">Personaje 1 (a la izquierda)</div>'+sel('a',ORX.concat([['otro','Otro…']]))+(RC.a==='otro'?'<input class="inp" style="margin-top:6px" placeholder="Nombre" value="'+esc(RC.aOther)+'" oninput="EV341.RC.aOther=this.value">':'')+'</div>'+
   '<div><div class="lbl">Personaje 2 (a la derecha)</div>'+sel('b',ORX.concat([['otro','Otro…']]))+(RC.b==='otro'?'<input class="inp" style="margin-top:6px" placeholder="Nombre" value="'+esc(RC.bOther)+'" oninput="EV341.RC.bOther=this.value">':'')+'</div></div>'+
   '<div class="lbl">Cantidad de ingredientes</div><div class="seg">'+[3,4,5,6].map(function(n){return '<button class="'+(RC.n===n?'on':'')+'" onclick="EV341.rset(\'n\','+n+')">'+n+'</button>'}).join('')+'</div>'+
+  '<div class="lbl">🍲 Lo que va en la olla (opcional, tu guion chico)</div><textarea class="inp" rows="5" placeholder="Un ingrediente por renglón. Ej:\n'+esc(rcName('a')||'Oxum')+': Belleza\n'+esc(rcName('b')||'Xangô')+': Justicia\n'+esc(rcName('a')||'Oxum')+': Dulzura - un poquito nomás\n'+esc(rcName('b')||'Xangô')+': Orgullo - se le cae el frasco entero" oninput="EV341.RC.mine=this.value">'+esc(RC.mine)+'</textarea><div class="ev40-mini">Si lo escribís, la IA usa <b>tus</b> ingredientes en ese orden y solo completa lo que falta (la frase del narrador y las imágenes). Después de quién (y dos puntos) va el ingrediente; si querés, agregá un guion y lo que pasa o lo que se dice. Si lo dejás vacío, la IA inventa todo.</div>'+
   '<div class="lbl">Tono</div><div class="seg"><button class="'+(RC.tone==='humor'?'on':'')+'" onclick="EV341.rset(\'tone\',\'humor\')">😂 Con humor</button><button class="'+(RC.tone==='emotivo'?'on':'')+'" onclick="EV341.rset(\'tone\',\'emotivo\')">🙏 Emotivo y respetuoso</button></div>'+
   '<div class="lbl">Lugar (el mismo en todas las escenas)</div>'+sel('place',Object.entries(PLACES))+(RC.place==='otro'?'<input class="inp" style="margin-top:6px" placeholder="Ej: cocina del comedor con ollas a leña" value="'+esc(RC.placeOther)+'" oninput="EV341.RC.placeOther=this.value">':'')+
   (hasStyle?'<div class="lbl">Estilo de las imágenes</div><select class="sel" onchange="EV341.RC.style=this.value">'+STYLES.filter(function(x){return x.id!=='custom'}).map(function(x){return '<option value="'+x.id+'" '+(RC.style===x.id?'selected':'')+'>'+esc(x.n)+'</option>'}).join('')+'</select>':'')+
   '<button class="btn grad" id="rcgo" style="width:100%;margin-top:14px" onclick="EV341.receta()">'+ic('spark')+'Crear la receta con IA</button><div class="pmsg" id="rcmsg"></div></div>')}
-function recetaPrompt(A,B,n,tone,place){var g=glossIn(A+' '+B,4);
+function recetaPrompt(A,B,n,tone,place,mine){var g=glossIn(A+' '+B,4);
   return 'Escribí una "receta" para un video viral de TikTok (en español rioplatense): '+A+' y '+B+' echan ingredientes en una olla de barro gigante para "crear" a un hijo o hija que tiene un poco de cada uno.\n'+
   'Tono: '+(tone==='humor'?'con humor y picardía (como los videos virales de "la receta"), pero siempre con respeto por la tradición':'emotivo, poético y respetuoso')+'. Religiones afrobrasileñas (Umbanda, Candomblé, Batuque): respetá las características tradicionales de cada uno.\n'+
   'Lugar fijo de todas las escenas: '+place+'. '+A+' está siempre a la IZQUIERDA de la olla y '+B+' a la DERECHA.\n'+
   (g.length?'Aspecto tradicional (usalo en "look"): '+g.map(function(x){return x.name+': '+x.desc}).join(' | ')+'\n':'')+
-  'Exactamente '+n+' ingredientes, alternando: el primero lo echa '+A+', el segundo '+B+', y así.\n'+
+  (mine&&mine.length?'Los ingredientes los eligió el usuario: usá EXACTAMENTE estos '+mine.length+', en este orden, con ese ingrediente como "label" (podés acortarlo a 1 o 2 palabras en mayúsculas) y respetando quién lo echa y lo que pasa o se dice; vos solo completá lo que falte:\n'+mine.map(function(l,k){return (k+1)+') '+l}).join('\n')+'\n':'Exactamente '+n+' ingredientes, alternando: el primero lo echa '+A+', el segundo '+B+', y así.\n')+
   'Respondé SOLO con JSON válido:\n{"title":"título corto (máx 6 palabras)","setting":"en INGLÉS: el lugar y la olla, igual en todas las escenas","cast":[{"name":"'+A+'","look":"en INGLÉS: cara, cuerpo, ropa y accesorios tradicionales"},{"name":"'+B+'","look":"..."}],'+
   '"intro":{"text":"frase gancho del narrador (que nadie deslice)","prompt":"en INGLÉS: los dos frente a la olla, con sus nombres '+A+' y '+B+'","motion":"en INGLÉS: movimiento para una IA de video, 5 segundos"},'+
   '"ingredients":[{"who":"'+A+' o '+B+'","label":"INGREDIENTE en MAYÚSCULAS, 1 o 2 palabras en español","color":"#rrggbb del polvo que cae","text":"lo que dice el narrador, 1 frase corta","prompt":"en INGLÉS: quién vuelca un frasco de cerámica en la olla, gesto y expresión, con su nombre; el frasco sin letras","motion":"en INGLÉS: el gesto de volcar el frasco, 5 segundos"}],'+
@@ -4409,17 +4410,17 @@ function recetaPrompt(A,B,n,tone,place){var g=glossIn(A+' '+B,4);
 function nameIn(p,who){try{return nameRe(who).test(p)}catch(e){return p.toLowerCase().indexOf(String(who).toLowerCase())>=0}}
 async function makeReceta(){var A=rcName('a'),B=rcName('b'),m=$('#rcmsg'),btn=$('#rcgo');
   if(!A||!B){m.textContent='Elegí o escribí los dos personajes.';m.style.color='#ff6b6b';return}
-  var place=RC.place==='otro'?(String(RC.placeOther).trim()||PLACES.templo):PLACES[RC.place];
+  var mine=String(RC.mine||'').split(/\n+/).map(function(l){return l.trim()}).filter(Boolean).slice(0,8);var place=RC.place==='otro'?(String(RC.placeOther).trim()||PLACES.templo):PLACES[RC.place];
   btn.disabled=true;m.style.color='';m.innerHTML='<span class="spin" style="width:12px;height:12px;vertical-align:-2px"></span> La IA está escribiendo la receta…';
-  try{var d=null,err;for(var r=0;r<2&&!d;r++){try{d=AI.json(await AI.chat([{role:'system',content:'Sos guionista de videos virales y conocés las religiones afrobrasileñas. Respondés SOLO JSON válido.'},{role:'user',content:recetaPrompt(A,B,RC.n,RC.tone,place)}],{temp:.85}));if(!d||!d.ingredients||!d.ingredients.length){d=null;throw new Error('La IA no devolvió los ingredientes.')}}catch(e){err=e}}
+  try{var d=null,err;for(var r=0;r<2&&!d;r++){try{d=AI.json(await AI.chat([{role:'system',content:'Sos guionista de videos virales y conocés las religiones afrobrasileñas. Respondés SOLO JSON válido.'},{role:'user',content:recetaPrompt(A,B,mine.length||RC.n,RC.tone,place,mine)}],{temp:.85}));if(!d||!d.ingredients||!d.ingredients.length){d=null;throw new Error('La IA no devolvió los ingredientes.')}}catch(e){err=e}}
     if(!d)throw err||new Error('La IA no respondió. Probá de nuevo.');
     var set=String(d.setting||'').trim(),tail=function(p){return set?p.replace(/\.\s*$/,'')+'. Setting: '+set:p};
-    var P=newProject('idea');P.name=String(d.title||('Receta de '+A+' y '+B)).slice(0,60);P.title=P.name;P._nameSet=1;P.idea='Receta de '+A+' y '+B;P.format='vertical';if(RC.style)P.style=RC.style;P.duration=Math.max(20,(RC.n+2)*5);
+    var P=newProject('idea');P.name=String(d.title||('Receta de '+A+' y '+B)).slice(0,60);P.title=P.name;P._nameSet=1;P.idea='Receta de '+A+' y '+B;P.format='vertical';if(RC.style)P.style=RC.style;P.duration=Math.max(20,((mine.length||RC.n)+2)*5);
     P.cast=(d.cast||[]).filter(function(c){return c&&c.name}).map(function(c){return withTradition({name:String(c.name).trim(),desc:String(c.look||'').trim()||String(c.name)})});
     if(!P.cast.length)P.cast=[A,B].map(function(n){return withTradition({name:n,desc:n})});
     var sc=[],I=d.intro||{};
     sc.push({id:uid(),text:String(I.text||'¿Qué pasa si mezclamos a '+A+' y '+B+'?').trim(),prompt:tail(String(I.prompt||(A+' and '+B+' standing on both sides of a huge clay pot'))),motion:String(I.motion||''),seed:seed(),cam:'dolly',amb:'tambores',fx:'aura',fxColor:'#ffb347'});
-    d.ingredients.slice(0,8).forEach(function(x,k){var who=String(x.who||(k%2?B:A)).trim(),p=String(x.prompt||'').trim()||(who+' pours a ceramic jar into the huge clay pot');if(!nameIn(p,who))p=who+': '+p;
+    d.ingredients.slice(0,8).forEach(function(x,k){var ml=mine[k]||'',mw=ml.indexOf(':')>0?ml.slice(0,ml.indexOf(':')).trim():'';if(mw&&!x.who)x.who=mw;if(ml&&!x.label){var rest=ml.indexOf(':')>0?ml.slice(ml.indexOf(':')+1):ml;x.label=rest.split(/\s[-–]\s/)[0].trim()}var who=String(x.who||(k%2?B:A)).trim(),p=String(x.prompt||'').trim()||(who+' pours a ceramic jar into the huge clay pot');if(!nameIn(p,who))p=who+': '+p;
       var col=/^#[0-9a-f]{6}$/i.test(String(x.color||''))?x.color:COLS[k%COLS.length][0];
       sc.push({id:uid(),text:String(x.text||'').trim(),prompt:tail(p),motion:String(x.motion||''),seed:seed(),cam:k%2?'zoomout':'zoomin',amb:'magia',fx:'pour',fxColor:col,pourSide:nameIn(who,B)&&!nameIn(who,A)?'der':'izq',label:String(x.label||'').toUpperCase().slice(0,24)})});
     var F=d.final||{};sc.push({id:uid(),text:String(F.text||'¿Y vos qué le agregarías? Comentá.').trim(),prompt:tail(String(F.prompt||'the huge clay pot explodes in golden light, '+A+' and '+B+' react surprised')),motion:String(F.motion||''),seed:seed(),cam:'dolly',amb:'campanas',fx:'burst',fxColor:'#ffd27a',label:String(F.label||'¿Y EL RESULTADO?').toUpperCase().slice(0,30),labelStyle:'cartel',labelPos:'centro'});
@@ -4554,6 +4555,86 @@ console.info('[Estudio Viral] v3.42: vista del celular por secciones');
 })();
 </script>
 <!-- ===== FIN v3.42 ===== -->
+
+<!-- ===== ESTUDIO VIRAL · v3.43 · ORIXÁS CON RASGOS AFRICANOS, RESPETA EL LÍMITE GRATIS DE IMÁGENES Y PRIMEROS PASOS EN «VISTA» =====
+     Agregado al final: no modifica el código de arriba. Para quitarlo, borrá desde acá hasta "FIN v3.43". -->
+<style>
+.ev43-quick{display:none}
+@media (max-width:760px){
+  .ed[data-sec="vista"] .ev43-quick{display:block}
+}
+.ev43-quick h3{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.ev43-quick .ev43-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.ev43-quick .ev43-row .btn{flex:1 1 46%;justify-content:center}
+.ev43-afro{display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.35);margin-top:8px;font-size:13px}
+.ev43-afro b{color:#f3d27a}
+</style>
+<script id="ev343">
+(function(){'use strict';if(window.__ev343)return;window.__ev343=true;
+
+/* ======================================================================
+   1) ORIXÁS: que las personas salgan africanas / afrobrasileñas, no asiáticas
+   ====================================================================== */
+var AFRO_EN=' Afro-Brazilian and West African Yoruba people with dark brown skin and African facial features, Candomblé and Umbanda sacred tradition, African textiles, cowrie shells and beads, African or Brazilian setting. NOT East Asian, no Chinese or Japanese faces, temples, pagodas, kimonos or architecture.';
+var AFRO_ES=' Importante: son Orixás de las religiones afrobrasileñas (Candomblé, Umbanda, Batuque). Las personas son negras, africanas o afrobrasileñas, con rasgos africanos. Nada asiático: ni caras asiáticas, ni templos chinos o japoneses, ni kimonos.';
+function projText(P){try{return [P.name,P.title,P.idea,P.script,P.paraphrased,P.sourceText].concat((P.scenes||[]).slice(0,30).map(function(s){return (s.text||'')+' '+(s.prompt||'')})).concat((P.cast||[]).map(function(c){return c.name})).join(' ')}catch(e){return ''}}
+var afroCache={id:null,sig:'',v:false};
+function isAfro(P){P=P||S.P;if(!P)return false;if(P.afro===false)return false;if(P.afro===true)return true;
+  var t=projText(P),sig=P.id+':'+t.length;if(afroCache.sig===sig)return afroCache.v;var v=false;try{v=glossIn(t,1).length>0}catch(e){}
+  if(!v){var g=P.genre||'';v=/orix|umband|candombl|batuque|quimband|religi|exu|itan|afro/i.test(g+' '+(P.sub||''))}
+  afroCache={sig:sig,v:v};return v}
+if(Pipe&&Pipe.sceneURL){var suO=Pipe.sceneURL;Pipe.sceneURL=function(s){var P=S.P;if(!s||s.local||!isAfro(P))return suO.apply(this,arguments);
+  var op=s.prompt,pe=P.people;s.prompt=(op||'')+'.'+AFRO_EN;if(!pe||pe==='latino'||pe==='auto'||pe==='variado')P.people='afro';
+  try{return suO.apply(this,arguments)}finally{s.prompt=op;P.people=pe}}}
+function addEs(id){var ta=$(id);if(ta&&isAfro()&&ta.value.indexOf('religiones afrobrasileñas (Candomblé')<0)ta.value=ta.value.trim()+'\n\n'+AFRO_ES.trim()}
+var gsO=geminiScene;geminiScene=async function(){var r=await gsO.apply(this,arguments);try{addEs('#gmtxt')}catch(e){}return r};
+var gstO=geminiStart;geminiStart=async function(){var r=await gstO.apply(this,arguments);try{addEs('#gmtxt')}catch(e){}return r};
+/* el pedido de movimiento (Kling, Hailuo) también */
+if(window.EV341&&EV341.copyMotion){var cmO=EV341.copyMotion;EV341.copyMotion=function(i){var s=S.P&&S.P.scenes[i];if(!s||!isAfro())return cmO.apply(this,arguments);var m=s.motion;s.motion=(m||('Natural, subtle cinematic movement of this scene: '+String(s.prompt||'').slice(0,300)))+'. The people are Afro-Brazilian / West African with dark skin, keep them exactly as in the image';try{return cmO.apply(this,arguments)}finally{s.motion=m}}}
+function afroBox(){var P=S.P,on=isAfro(P);return '<div class="ev43-afro"><span style="font-size:22px">🌍</span><span style="flex:1"><b>Orixás:</b> '+(on?'las personas salen <b>afrobrasileñas y africanas</b>, nada asiático.':'apagado: la IA decide los rasgos.')+'</span><button class="sw '+(on?'on':'')+'" onclick="EV343.afro()"></button></div>'}
+
+/* ======================================================================
+   2) LÍMITE GRATIS DE IMÁGENES: 1 cada 45 segundos sin clave
+   ====================================================================== */
+var GAP=47000,last=0,gate=Promise.resolve(),OK={};
+try{(JSON.parse(localStorage.getItem('ev43_ok')||'[]')||[]).forEach(function(u){OK[u]=1})}catch(e){}
+function hk(u){var h=2166136261;for(var i=0;i<u.length;i++){h^=u.charCodeAt(i);h=Math.imul(h,16777619)>>>0}return h.toString(36)+u.length}
+function remember(u){OK[hk(u)]=1;try{var k=Object.keys(OK);if(k.length>600)k=k.slice(-500);localStorage.setItem('ev43_ok',JSON.stringify(k))}catch(e){}}
+function needsGate(u){return !S.settings.key&&/pollinations\.ai/.test(u)&&!/^local:/.test(u)&&!OK[hk(u)]}
+function msg(t){var m=$('#pmsg');if(m)m.textContent=t}
+function waitTurn(){var p=gate.then(async function(){var w=last+GAP-Date.now();if(w>0){var end=Date.now()+w;while(Date.now()<end){msg('⏳ El servicio gratis da 1 imagen cada 45 segundos: la próxima en '+Math.ceil((end-Date.now())/1000)+' s… (podés dejarlo trabajando solo)');await sleep(1000)}}last=Date.now()});gate=p.catch(function(){});return p}
+/* detecta el cartel amarillo «Free limit reached» */
+function looksLimit(im){try{var c=document.createElement('canvas');c.width=24;c.height=24;var x=c.getContext('2d',{willReadFrequently:true});x.drawImage(im,0,0,24,24);var d=x.getImageData(0,0,24,24).data,beige=0,dark=0,n=d.length/4;
+  for(var i=0;i<d.length;i+=4){var r=d[i],g=d[i+1],b=d[i+2];if(r>180&&g>160&&b<200&&r-b>25&&Math.abs(r-g)<45)beige++;else if(r+g+b<240)dark++}
+  return beige/n>.6&&dark/n<.25}catch(e){return false}}
+var liO=loadImg;loadImg=function(url,pri){if(!url||!needsGate(url)||imgCache[url])return liO.apply(this,arguments);
+  var p=waitTurn().then(function(){delete imgCache[url];return liO(url,pri)}).then(function(im){
+    if(looksLimit(im)){delete imgCache[url];delete RT.imgs[url];last=Date.now();throw new Error('límite gratis')}remember(url);return im});
+  imgCache[url]=p;p.catch(function(){if(imgCache[url]===p)delete imgCache[url]});return p};
+
+/* ======================================================================
+   3) PRIMEROS PASOS EN «VISTA» (celular): personajes, referencias e imágenes
+   ====================================================================== */
+function quickHTML(){var P=S.P,n=P.scenes.length,imgs=P.scenes.filter(function(s){return RT.imgs[s.img]}).length,c=P.cast||[],refs=c.filter(function(x){return x.ref}).length;
+  return '<div class="card box ev43-quick"><h3>🚀 Primeros pasos</h3>'+
+    '<div class="hint">1) Poné los personajes y su foto de referencia. 2) Generá las imágenes, o hacelas con Gemini escena por escena.</div>'+
+    afroBox()+castHTML().replace('<details class="pnl" ','<details class="pnl" open ')+
+    '<div class="ev43-row"><button class="btn grad" data-busy onclick="run(()=>Pipe.images())">'+ic('img')+(imgs&&imgs<n?'Completar imágenes ('+imgs+'/'+n+')':imgs?'Imágenes listas ('+n+')':'Generar imágenes')+'</button>'+
+    '<button class="btn" onclick="S.sel=0;EV342.sec(\'escena\')">'+ic('spark')+'Hacer con Gemini</button></div>'+
+    (refs?'<div class="ev43-row"><button class="btn sm" onclick="geminiStart()">'+ic('spark')+'Presentar personajes a Gemini (1 vez)</button></div>':'')+
+    (!S.settings.key?'<div class="hint" style="margin-top:8px">⏳ Gratis: 1 imagen cada 45 segundos. Un video de 10 escenas tarda unos 8 minutos: podés dejarlo trabajando solo.</div>':'')+'</div>'}
+var veO=vEditor;vEditor=function(m){var r=veO.apply(this,arguments);try{var pv=m.querySelector('.right .pvbox');if(pv&&!m.querySelector('.ev43-quick')){var d=document.createElement('div');d.innerHTML=quickHTML();pv.parentNode.insertBefore(d.firstChild,pv.nextSibling);try{paintRefs()}catch(e){}}}catch(e){console.warn('[v3.43]',e)}return r};
+/* el interruptor de Orixás también en «Estilo» */
+var lpO=leftPanel;leftPanel=function(){var h=lpO.apply(this,arguments);try{var mark='<div class="lbl">Rasgos de las personas</div>',i=h.indexOf(mark);if(i>=0)h=h.slice(0,i)+afroBox()+h.slice(i)}catch(e){}return h};
+
+window.EV343={afro:function(){var P=S.P;if(!P)return;var now=isAfro(P);P.afro=!now;afroCache.sig='';save(1);
+  if(P.afro&&P.scenes.length&&confirm('¿Rehacer las imágenes que no subiste vos, para que salgan con rasgos africanos? (Si ponés Cancelar, se usa solo en las imágenes nuevas)')){resetImgs();render();run(function(){return Pipe.images()})}else render();
+  toast(P.afro?'🌍 Orixás: personas afrobrasileñas y africanas':'Rasgos: los decide la IA')}};
+try{if(S.view==='editor')render()}catch(e){}
+console.info('[Estudio Viral] v3.43: Orixás con rasgos africanos, límite gratis de imágenes y primeros pasos');
+})();
+</script>
+<!-- ===== FIN v3.43 ===== -->
 
 </body>
 </html>
