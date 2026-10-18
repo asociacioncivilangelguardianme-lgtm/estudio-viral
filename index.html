@@ -2297,7 +2297,7 @@ window.__ev32export=exportMp4;
 (function(){
 'use strict';
 if(window.__ev33)return;window.__ev33=true;
-var VERSION='3.38';
+var VERSION='3.39';
 var COLORS=['#7dd3fc','#ff9de2','#a7f3d0','#fdba74','#c4b5fd'];
 var MOVES=['zoomin','panr','tiltup','dolly','panl','zoomout','track','tiltdown'];
 
@@ -2618,7 +2618,7 @@ if('serviceWorker' in navigator&&/^https:$/.test(location.protocol)){window.addE
   reg.addEventListener('updatefound',function(){var w=reg.installing;if(!w)return;w.addEventListener('statechange',function(){if(w.state==='installed'&&navigator.serviceWorker.controller)toast('Hay una versión nueva de Estudio Viral: cerrá y volvé a abrir la app para verla ✨')})})}).catch(function(e){console.info('[v3.33] sin app instalable (falta sw.js en GitHub):',e&&e.message)})})}
 
 /* Novedades */
-var NEWS=['🎙️ <b>3.38 · Voces más naturales</b>: velocidad por personaje (por ejemplo Oxalá lento y pausado), botón «Subir mi voz» en cada escena (opcional) y la IA escribe los diálogos con pausas y emoción, sin narrador.','💾 <b>3.37</b>: las voces quedan guardadas en la compu. Si recargás la página no se pierden, y si falta alguna se hace sola antes de reproducir.','🥁 <b>3.36 · Sonidos sagrados</b>: atabaque con repique, adjá/sineta, agogô, chocalho, Terreiro, Encruzilhada, Mar de Iemanjá y Mata sagrada. Opción de transiciones con golpe de tambor y campanita.','🕯️ <b>3.35 · Religión afro</b>: sección nueva en Géneros y Estilos con Itán, Mensaje de la entidad, Conocé a la entidad, Oración del día, Ofrenda explicada, Mitos y verdades, Fechas especiales, Pontos cantados, Cuentos para chicos, Exus y Pombagiras, Umbanda y Orixás. Y 9 estilos sagrados: Arte afrobrasileño, Terreiro, Mata sagrada, Encruzilhada nocturna, Pintura sacra, Ícono dorado, Vitral, Escultura africana y Afrofuturismo.','🔧 <b>3.34</b>: en los diálogos, cada escena reconoce sola quién habla y usa su voz, y pone el sonido del lugar (selva, río, cascada, fuego, tambores…). «Armar escenas» ya no borra las imágenes que hiciste.','👥 <b>Modo Diálogo</b>: dos (o más) personajes hablan, cada uno con su voz. Lo elegís en «Nuevo video».',
+var NEWS=['💾 <b>3.39</b>: el video exportado queda guardado en el proyecto. Al volver a abrirlo aparecen directo Descargar, YouTube, TikTok e Instagram, sin exportar de nuevo.','🎙️ <b>3.38 · Voces más naturales</b>: velocidad por personaje (por ejemplo Oxalá lento y pausado), botón «Subir mi voz» en cada escena (opcional) y la IA escribe los diálogos con pausas y emoción, sin narrador.','💾 <b>3.37</b>: las voces quedan guardadas en la compu. Si recargás la página no se pierden, y si falta alguna se hace sola antes de reproducir.','🥁 <b>3.36 · Sonidos sagrados</b>: atabaque con repique, adjá/sineta, agogô, chocalho, Terreiro, Encruzilhada, Mar de Iemanjá y Mata sagrada. Opción de transiciones con golpe de tambor y campanita.','🕯️ <b>3.35 · Religión afro</b>: sección nueva en Géneros y Estilos con Itán, Mensaje de la entidad, Conocé a la entidad, Oración del día, Ofrenda explicada, Mitos y verdades, Fechas especiales, Pontos cantados, Cuentos para chicos, Exus y Pombagiras, Umbanda y Orixás. Y 9 estilos sagrados: Arte afrobrasileño, Terreiro, Mata sagrada, Encruzilhada nocturna, Pintura sacra, Ícono dorado, Vitral, Escultura africana y Afrofuturismo.','🔧 <b>3.34</b>: en los diálogos, cada escena reconoce sola quién habla y usa su voz, y pone el sonido del lugar (selva, río, cascada, fuego, tambores…). «Armar escenas» ya no borra las imágenes que hiciste.','👥 <b>Modo Diálogo</b>: dos (o más) personajes hablan, cada uno con su voz. Lo elegís en «Nuevo video».',
   '🎨 <b>Subtítulos de colores</b>: cada personaje con su color y su nombre arriba, así se entiende quién habla aunque esté sin sonido.',
   '🖼️ <b>Máximo 6 imágenes</b>: el tiempo de cada una se calcula solo con las voces.',
   '💓 <b>La imagen late con la voz</b>: parece viva mientras el personaje habla.',
@@ -2841,6 +2841,38 @@ console.info('[Estudio Viral] v3.38: voces más naturales y mi propia voz');
 })();
 </script>
 <!-- ===== FIN v3.38 ===== -->
+
+<!-- ===== ESTUDIO VIRAL · v3.39 · EL VIDEO EXPORTADO QUEDA GUARDADO ===== -->
+<script id="ev339">
+(function(){'use strict';if(window.__ev339)return;window.__ev339=true;
+function vk(id){return 'video:'+id}
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+async function saveVideo(P){var v=RT.video;if(!P||!v||v.saved||v._saving)return;v._saving=1;
+  try{var b=v.file||await (await fetch(v.url)).blob();await IDB.set(vk(P.id),{blob:b,ext:v.ext,size:b.size,at:Date.now()});v.saved=true;P.videoAt=Date.now();P.status='done';save(1);
+    toast('Video guardado en el proyecto 💾 La próxima vez que lo abras, ya está listo para descargar o subir.')}
+  catch(e){console.warn('[v3.39] no se pudo guardar el video',e);toast('No pude guardar el video en la compu (falta espacio). Descargalo ahora para no perderlo.',1)}finally{v._saving=0}}
+async function loadVideo(P,show){if(!P)return false;try{var d=await IDB.get(vk(P.id));if(!d||!d.blob)return false;if(S.P!==P)return false;
+  RT.video={url:URL.createObjectURL(d.blob),ext:d.ext||'mp4',size:d.size||d.blob.size,saved:true,at:d.at};if(show){renderStage();renderPipe()}return true}catch(e){return false}}
+window.EV339={
+  async show(){var P=S.P;if(await loadVideo(P,true))toast('Este es tu video exportado ✅');else toast('No encontré el video guardado. Exportalo de nuevo.',1)},
+  async del(){var P=S.P;if(!P||!confirm('¿Borrar el video guardado de este proyecto? El proyecto no se borra, solo el video exportado.'))return;try{await IDB.set(vk(P.id),null)}catch(e){}P.videoAt=0;RT.video=null;save(1);renderStage();toast('Video borrado. Podés volver a exportarlo cuando quieras.')}};
+/* al terminar de exportar: guardar; en la vista previa: botones para ver o borrar */
+var stO=renderStage;
+renderStage=function(){stO.apply(this,arguments);var P=S.P,d=$('#dl');if(!P||!d)return;
+  if(RT.video){if(!RT.video.saved)saveVideo(P);
+    if(RT.video.at||P.videoAt){var x=document.createElement('div');x.className='hint';x.style.marginTop='8px';
+      x.innerHTML='💾 Video guardado el '+new Date(RT.video.at||P.videoAt).toLocaleString('es-AR',{day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'})+'. Si cambiaste algo del proyecto, tocá <b>Exportar</b> de nuevo. <a href="#" onclick="EV339.del();return false" style="color:var(--bad)">Borrar video guardado</a>';d.appendChild(x)}}
+  else if(P.videoAt){var b=document.createElement('div');b.innerHTML='<button class="btn grad" style="width:100%;margin-top:10px" onclick="EV339.show()">🎬 Ver mi video exportado (descargar / subir)</button>';d.appendChild(b)}};
+/* al abrir un proyecto: traer su video */
+var opO=openProject;openProject=function(P){var r=opO.apply(this,arguments);var Q=S.P;if(Q&&Q.videoAt)setTimeout(function(){loadVideo(Q,true).then(function(ok){if(ok)toast('🎬 Tu video de este proyecto ya está listo: descargalo o subilo sin volver a exportar.')})},400);return r};
+/* al borrar un proyecto: borrar su video */
+var dpO=delProject;delProject=function(id){var had=S.projects.some(function(p){return p.id===id});dpO.apply(this,arguments);if(had&&!S.projects.some(function(p){return p.id===id})){try{IDB.set(vk(id),null)}catch(e){}}};
+/* en la lista de proyectos: marca de "video listo" */
+var pcO=pcard;pcard=function(p){var h=pcO.apply(this,arguments);if(p.videoAt)h=h.replace('<div class="st">','<div class="st"><span class="badge" style="margin-right:4px;background:rgba(34,211,238,.92);color:#032">🎬 Video listo</span>');return h};
+console.info('[Estudio Viral] v3.39: video exportado guardado');
+})();
+</script>
+<!-- ===== FIN v3.39 ===== -->
 
 </body>
 </html>
