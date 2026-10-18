@@ -2297,7 +2297,7 @@ window.__ev32export=exportMp4;
 (function(){
 'use strict';
 if(window.__ev33)return;window.__ev33=true;
-var VERSION='3.43';
+var VERSION='3.44';
 var COLORS=['#7dd3fc','#ff9de2','#a7f3d0','#fdba74','#c4b5fd'];
 var MOVES=['zoomin','panr','tiltup','dolly','panl','zoomout','track','tiltdown'];
 
@@ -2618,7 +2618,7 @@ if('serviceWorker' in navigator&&/^https:$/.test(location.protocol)){window.addE
   reg.addEventListener('updatefound',function(){var w=reg.installing;if(!w)return;w.addEventListener('statechange',function(){if(w.state==='installed'&&navigator.serviceWorker.controller)toast('Hay una versión nueva de Estudio Viral: cerrá y volvé a abrir la app para verla ✨')})})}).catch(function(e){console.info('[v3.33] sin app instalable (falta sw.js en GitHub):',e&&e.message)})})}
 
 /* Novedades */
-var NEWS=['🌍 <b>3.43</b>: en videos de Orixás las personas salen afrobrasileñas y africanas (nada asiático). La app respeta el límite gratis de 1 imagen cada 45 segundos y ya no deja el cartel amarillo «Free limit reached». En el celular, «Vista» trae los primeros pasos: personajes, fotos de referencia y generar imágenes.','📱 <b>3.42</b>: en el celular el editor ahora va por partes (Vista, Guion, Escena, Estilo y Línea) con botones abajo, sin tener que bajar tanto. Botones más grandes y nada se sale de la pantalla.','🍲 <b>3.41</b>: nueva <b>Receta de Orixás</b> (dos personajes echan ingredientes en la olla y el final se ilumina). Efectos nuevos: frasco que se vuelca, humo, estallido de luz y aura. Cartel con texto en cada escena. Ayuda para darle movimiento real (Wan, Kling, Hailuo) y grabar tu gesto con la cámara. Bajar y subir todas las voces juntas para Applio.','📲 <b>3.40</b>: pasá tus proyectos de la PC al celu con un código QR (sin WhatsApp). Modo Cine (todo el video o solo algunas escenas), color de acento, música que baja sola cuando habla la voz y la nueva sección <b>Video largo a clips</b>.','💾 <b>3.39</b>: el video exportado queda guardado en el proyecto. Al volver a abrirlo aparecen directo Descargar, YouTube, TikTok e Instagram, sin exportar de nuevo.','🎙️ <b>3.38 · Voces más naturales</b>: velocidad por personaje (por ejemplo Oxalá lento y pausado), botón «Subir mi voz» en cada escena (opcional) y la IA escribe los diálogos con pausas y emoción, sin narrador.','💾 <b>3.37</b>: las voces quedan guardadas en la compu. Si recargás la página no se pierden, y si falta alguna se hace sola antes de reproducir.','🥁 <b>3.36 · Sonidos sagrados</b>: atabaque con repique, adjá/sineta, agogô, chocalho, Terreiro, Encruzilhada, Mar de Iemanjá y Mata sagrada. Opción de transiciones con golpe de tambor y campanita.','🕯️ <b>3.35 · Religión afro</b>: sección nueva en Géneros y Estilos con Itán, Mensaje de la entidad, Conocé a la entidad, Oración del día, Ofrenda explicada, Mitos y verdades, Fechas especiales, Pontos cantados, Cuentos para chicos, Exus y Pombagiras, Umbanda y Orixás. Y 9 estilos sagrados: Arte afrobrasileño, Terreiro, Mata sagrada, Encruzilhada nocturna, Pintura sacra, Ícono dorado, Vitral, Escultura africana y Afrofuturismo.','🔧 <b>3.34</b>: en los diálogos, cada escena reconoce sola quién habla y usa su voz, y pone el sonido del lugar (selva, río, cascada, fuego, tambores…). «Armar escenas» ya no borra las imágenes que hiciste.','👥 <b>Modo Diálogo</b>: dos (o más) personajes hablan, cada uno con su voz. Lo elegís en «Nuevo video».',
+var NEWS=['🍲 <b>3.44</b>: en la Receta de Orixás cada imagen muestra la misma olla grande con los dos personajes (ya no jarros sueltos). En «Vista» ves las imágenes mientras se crean y tenés «Rehacer todas las imágenes».','🌍 <b>3.43</b>: en videos de Orixás las personas salen afrobrasileñas y africanas (nada asiático). La app respeta el límite gratis de 1 imagen cada 45 segundos y ya no deja el cartel amarillo «Free limit reached». En el celular, «Vista» trae los primeros pasos: personajes, fotos de referencia y generar imágenes.','📱 <b>3.42</b>: en el celular el editor ahora va por partes (Vista, Guion, Escena, Estilo y Línea) con botones abajo, sin tener que bajar tanto. Botones más grandes y nada se sale de la pantalla.','🍲 <b>3.41</b>: nueva <b>Receta de Orixás</b> (dos personajes echan ingredientes en la olla y el final se ilumina). Efectos nuevos: frasco que se vuelca, humo, estallido de luz y aura. Cartel con texto en cada escena. Ayuda para darle movimiento real (Wan, Kling, Hailuo) y grabar tu gesto con la cámara. Bajar y subir todas las voces juntas para Applio.','📲 <b>3.40</b>: pasá tus proyectos de la PC al celu con un código QR (sin WhatsApp). Modo Cine (todo el video o solo algunas escenas), color de acento, música que baja sola cuando habla la voz y la nueva sección <b>Video largo a clips</b>.','💾 <b>3.39</b>: el video exportado queda guardado en el proyecto. Al volver a abrirlo aparecen directo Descargar, YouTube, TikTok e Instagram, sin exportar de nuevo.','🎙️ <b>3.38 · Voces más naturales</b>: velocidad por personaje (por ejemplo Oxalá lento y pausado), botón «Subir mi voz» en cada escena (opcional) y la IA escribe los diálogos con pausas y emoción, sin narrador.','💾 <b>3.37</b>: las voces quedan guardadas en la compu. Si recargás la página no se pierden, y si falta alguna se hace sola antes de reproducir.','🥁 <b>3.36 · Sonidos sagrados</b>: atabaque con repique, adjá/sineta, agogô, chocalho, Terreiro, Encruzilhada, Mar de Iemanjá y Mata sagrada. Opción de transiciones con golpe de tambor y campanita.','🕯️ <b>3.35 · Religión afro</b>: sección nueva en Géneros y Estilos con Itán, Mensaje de la entidad, Conocé a la entidad, Oración del día, Ofrenda explicada, Mitos y verdades, Fechas especiales, Pontos cantados, Cuentos para chicos, Exus y Pombagiras, Umbanda y Orixás. Y 9 estilos sagrados: Arte afrobrasileño, Terreiro, Mata sagrada, Encruzilhada nocturna, Pintura sacra, Ícono dorado, Vitral, Escultura africana y Afrofuturismo.','🔧 <b>3.34</b>: en los diálogos, cada escena reconoce sola quién habla y usa su voz, y pone el sonido del lugar (selva, río, cascada, fuego, tambores…). «Armar escenas» ya no borra las imágenes que hiciste.','👥 <b>Modo Diálogo</b>: dos (o más) personajes hablan, cada uno con su voz. Lo elegís en «Nuevo video».',
   '🎨 <b>Subtítulos de colores</b>: cada personaje con su color y su nombre arriba, así se entiende quién habla aunque esté sin sonido.',
   '🖼️ <b>Máximo 6 imágenes</b>: el tiempo de cada una se calcula solo con las voces.',
   '💓 <b>La imagen late con la voz</b>: parece viva mientras el personaje habla.',
@@ -4635,6 +4635,63 @@ console.info('[Estudio Viral] v3.43: Orixás con rasgos africanos, límite grati
 })();
 </script>
 <!-- ===== FIN v3.43 ===== -->
+
+<!-- ===== ESTUDIO VIRAL · v3.44 · RECETA: LA OLLA Y LOS PERSONAJES EN TODAS LAS ESCENAS + VER LAS IMÁGENES MIENTRAS SE CREAN =====
+     Agregado al final: no modifica el código de arriba. Para quitarlo, borrá desde acá hasta "FIN v3.44". -->
+<style>
+.ev44-strip{display:flex;gap:6px;overflow-x:auto;padding:4px 0 8px;margin-top:6px;scrollbar-width:thin}
+.ev44-th{flex:none;width:58px;height:96px;border-radius:8px;background:var(--panel2) center/cover no-repeat;border:2px solid var(--line2);position:relative;display:grid;place-items:center;font-size:18px;color:var(--mut)}
+.ev44-th b{position:absolute;left:3px;top:2px;font-size:10px;background:rgba(0,0,0,.6);color:#fff;border-radius:5px;padding:0 4px}
+.ev44-th.ok{border-color:var(--ok,#22c55e)}.ev44-th.run{border-color:var(--neo,#22d3ee);animation:ev44p 1s infinite alternate}
+@keyframes ev44p{to{opacity:.55}}
+.ev43-quick .pbody2 .row{flex-wrap:wrap}.ev43-quick .pbody2 .row[style*="116px"]{margin-left:0!important}.ev43-quick .pbody2 .row .inp[style*="110px"]{max-width:none!important;flex:1 1 100%}
+.ev44-h{display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:13px;margin-top:10px}
+</style>
+<script id="ev344">
+(function(){'use strict';if(window.__ev344)return;window.__ev344=true;
+
+/* ======================================================================
+   1) RECETA: cada imagen muestra la MISMA olla grande y a los personajes
+   ====================================================================== */
+var POT='a huge round dark clay cooking pot (a big African cauldron) with carved patterns, sitting on the floor in the center, the same pot in every scene';
+var CNAME={'#ffd24a':'golden','#ff5ec4':'pink','#ff4d4d':'red','#39ff88':'green','#4dc3ff':'light blue','#b388ff':'purple','#ffffff':'white','#ff9a3c':'orange','#ffd27a':'golden','#ffb347':'golden'};
+function colName(h){h=String(h||'').toLowerCase();if(CNAME[h])return CNAME[h];var m=h.match(/^#?([0-9a-f]{6})$/);if(!m)return 'golden';var r=parseInt(m[1].substr(0,2),16),g=parseInt(m[1].substr(2,2),16),b=parseInt(m[1].substr(4,2),16);
+  if(r>200&&g>200&&b>200)return 'white';if(r>g&&r>b)return g>150?'golden':g>90?'orange':b>120?'pink':'red';if(g>=r&&g>=b)return 'green';return r>120?'purple':'blue'}
+function isReceta(P){P=P||S.P;return !!(P&&P.scenes&&P.scenes.some(function(s){return s.fx==='pour'})&&P.scenes.some(function(s){return s.fx==='burst'}))}
+function names(P){var c=(P.cast||[]).filter(function(x){return x&&x.name}).map(function(x){return x.name});if(c.length>=2)return [c[0],c[1]];
+  var m=String(P.idea||P.name||'').match(/de\s+(.+?)\s+y\s+(.+)$/i);return m?[m[1].trim(),m[2].trim()]:['the goddess','the god']}
+function setting(P){if(P.recetaSet)return P.recetaSet;var s=null;(P.scenes||[]).some(function(x){var m=String(x.prompt||'').match(/Setting:\s*(.+)$/i);if(m){s=m[1].trim();return true}});return P.recetaSet=(s||'inside a golden African temple at dusk, warm candle light')}
+function recetaPrompt(P,s){var nm=names(P),A=nm[0],B=nm[1],set=setting(P),k=P.scenes.indexOf(s);
+  if(s.fx==='burst')return 'Wide cinematic shot: '+POT+' bursting with golden light and sparkles, '+A+' standing on the left and '+B+' standing on the right stepping back surprised, faces lit by the glow, both full body. Setting: '+set;
+  if(s.fx==='pour'){var who=s.pourSide==='der'?B:A,oth=who===A?B:A,side=s.pourSide==='der'?'right':'left';
+    return 'Medium wide shot: '+who+' standing on the '+side+' side of '+POT+', holding a small ceramic jar with both hands and pouring glowing '+colName(s.fxColor)+' powder into the big pot, '+oth+' watching from the other side, both people clearly visible. Setting: '+set}
+  if(k===0)return 'Wide cinematic shot, two people: '+A+' standing on the left and '+B+' standing on the right, on both sides of '+POT+', both looking at the pot, full body visible. Setting: '+set;
+  return null}
+function withReceta(s,fn){var P=S.P;if(!s||s.local||!isReceta(P)||s.freePrompt)return fn();var np=recetaPrompt(P,s);if(!np)return fn();var op=s.prompt;s.prompt=np;try{return fn()}finally{s.prompt=op}}
+var suO=Pipe.sceneURL;Pipe.sceneURL=function(s){var self=this,a=arguments;return withReceta(s,function(){return suO.apply(self,a)})};
+var gsO=geminiScene;geminiScene=async function(i){var P=S.P,s=P&&P.scenes[i];if(!s||!isReceta(P)||s.freePrompt)return gsO.apply(this,arguments);var np=recetaPrompt(P,s);if(!np)return gsO.apply(this,arguments);
+  var op=s.prompt;s.prompt=np;try{return await gsO.apply(this,arguments)}finally{s.prompt=op}};
+
+/* ======================================================================
+   2) VER LAS IMÁGENES MIENTRAS SE CREAN (en «Vista»)
+   ====================================================================== */
+function th(s,i){var im=RT.imgs[s.img],run=S.busy&&!im&&!s.local,cls=im?'ok':run?'run':'';return '<button class="ev44-th '+cls+'" data-sid="'+s.id+'" style="'+(im?'background-image:url('+esc(im.src)+')':'')+'" onclick="S.sel='+i+';EV342.sec(\'escena\')"><b>'+(i+1)+'</b>'+(im?'':run?'⏳':'🖼️')+'</button>'}
+function strip(){var P=S.P;if(!P||!P.scenes.length)return '';var ok=P.scenes.filter(function(s){return RT.imgs[s.img]}).length;
+  return '<div class="ev44-h"><span>🖼️ Imágenes: '+ok+' de '+P.scenes.length+'</span><span class="sub" style="font-weight:500;font-size:11px">tocá una para editarla</span></div><div class="ev44-strip" id="ev44strip">'+P.scenes.map(th).join('')+'</div>'+
+    '<div class="ev43-row"><button class="btn sm" data-busy onclick="EV344.redoAll()">🔄 Rehacer todas las imágenes</button></div>'}
+function refreshStrip(){var el=$('#ev44strip');if(!el||!S.P)return;el.innerHTML=S.P.scenes.map(th).join('');var h=el.previousElementSibling;if(h){var ok=S.P.scenes.filter(function(s){return RT.imgs[s.img]}).length;h.firstChild.textContent='🖼️ Imágenes: '+ok+' de '+S.P.scenes.length}}
+var veO=vEditor;vEditor=function(m){var r=veO.apply(this,arguments);try{var q=m.querySelector('.ev43-quick');if(q&&!q.querySelector('.ev44-strip')){var d=document.createElement('div');d.innerHTML=strip();var hint=q.querySelector('.hint');(hint||q.firstChild).after(d)}}catch(e){console.warn('[v3.44]',e)}return r};
+var psO=paintScene;paintScene=function(){var r=psO.apply(this,arguments);try{refreshStrip()}catch(e){}return r};
+var sbO=Pipe.setBusy;Pipe.setBusy=function(){var r=sbO.apply(this,arguments);try{refreshStrip()}catch(e){}return r};
+
+window.EV344={redoAll:function(){var P=S.P;if(!P||!P.scenes.length)return;var own=P.scenes.filter(function(s){return s.local}).length;
+  if(!confirm('¿Rehacer todas las imágenes'+(isReceta(P)?' con la olla y los personajes':'')+'?'+(own?' Las '+own+' que subiste vos no se tocan.':'')+(S.settings.key?'':' Tarda 45 segundos por imagen: podés dejarlo trabajando.')))return;
+  resetImgs();save(1);render();run(function(){return Pipe.images()})}};
+try{if(S.view==='editor')render()}catch(e){}
+console.info('[Estudio Viral] v3.44: receta con la olla y los personajes, imágenes a la vista');
+})();
+</script>
+<!-- ===== FIN v3.44 ===== -->
 
 </body>
 </html>
