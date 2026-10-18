@@ -1166,13 +1166,13 @@ const EdgeDirect={tok:'6A5AA1D4EAFF4E9FB37E23D68491D6F4',ver:'143.0.3650.75',dow
  stamp(){return new Date().toUTCString().replace(/^(\w+), (\d+) (\w+) (\d+) ([\d:]+) GMT$/,'$1 $3 $2 $4 $5')+' GMT+0000 (Coordinated Universal Time)'},
  async say(text,voice,rate){const id=()=>crypto.randomUUID().replace(/-/g,'');
   const url=`wss://speech.platform.bing.com/consumer/speech/synthesize/readaloud/edge/v1?TrustedClientToken=${this.tok}&ConnectionId=${id()}&Sec-MS-GEC=${await this.gec()}&Sec-MS-GEC-Version=1-${this.ver}`;
-  const x=t=>t.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,' ').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const ml=/Multilingual/.test(voice),lg=({es:'es-MX',pt:'pt-BR',en:'en-US',it:'it-IT',fr:'fr-FR'})[(S.P&&S.P.lang)||'es']||'es-MX';const x=t=>t.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,' ').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   return await new Promise((res,rej)=>{let ws;try{ws=new WebSocket(url)}catch(e){return rej(e)}ws.binaryType='arraybuffer';const chunks=[];let done=false;
    const end=(err)=>{if(done)return;done=true;clearTimeout(tm);try{ws.close()}catch(e){}if(chunks.length)res(new Blob(chunks,{type:'audio/mpeg'}));else rej(err||new Error('sin audio'))};
    const tm=setTimeout(()=>end(new Error('tiempo agotado')),20000);
    ws.onopen=()=>{const ts=this.stamp();
     ws.send(`X-Timestamp:${ts}\r\nContent-Type:application/json; charset=utf-8\r\nPath:speech.config\r\n\r\n{"context":{"synthesis":{"audio":{"metadataoptions":{"sentenceBoundaryEnabled":"false","wordBoundaryEnabled":"false"},"outputFormat":"audio-24khz-48kbitrate-mono-mp3"}}}}\r\n`);
-    ws.send(`X-RequestId:${id()}\r\nContent-Type:application/ssml+xml\r\nX-Timestamp:${ts}Z\r\nPath:ssml\r\n\r\n<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='en-US'><voice name='${voice}'><prosody pitch='+0Hz' rate='${rate>=0?'+':''}${rate}%' volume='+0%'>${x(text)}</prosody></voice></speak>`)};
+    ws.send(`X-RequestId:${id()}\r\nContent-Type:application/ssml+xml\r\nX-Timestamp:${ts}Z\r\nPath:ssml\r\n\r\n<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='${ml?lg:'en-US'}'><voice name='${voice}'>${ml&&!this.noLangTag?`<lang xml:lang='${lg}'>`:''}<prosody pitch='+0Hz' rate='${rate>=0?'+':''}${rate}%' volume='+0%'>${x(text)}</prosody>${ml&&!this.noLangTag?'</lang>':''}</voice></speak>`)};
    ws.onmessage=e=>{if(typeof e.data==='string'){if(e.data.includes('Path:turn.end'))end();return}
     const dv=new DataView(e.data);if(e.data.byteLength<2)return;const hl=dv.getUint16(0);if(hl+2>e.data.byteLength)return;
     const head=new TextDecoder().decode(new Uint8Array(e.data,2,hl));if(/Path:audio/.test(head)){const a=e.data.slice(2+hl);if(a.byteLength)chunks.push(a)}};
@@ -1848,7 +1848,7 @@ function pickVoice(id){S.P.voice=id;save();render();toast('Voz elegida: '+voiceO
 async function showAllVoices(){try{toast('Cargando todas las voces…');await Voice.loadAll();S.vall=true;S.vlang='all';render()}catch(e){toast(e.message,1)}}
 let voicePrev=null;
 async function previewVoice(id){const ac=getAC();await ac.resume();const v=voiceOf(id);toast('Generando muestra de '+v.n+'…');
- try{const r=await Voice.make(SAMPLE[v.lang]||SAMPLE.es,id,{speed:1,onProg:f=>toast(`Descargando la voz (solo la primera vez)… ${Math.round(f*100)}%`)});
+ try{const r=await Voice.make(SAMPLE[/Multilingual/.test(id)?((S.P&&S.P.lang)||'es'):v.lang]||SAMPLE.es,id,{speed:1,onProg:f=>toast(`Descargando la voz (solo la primera vez)… ${Math.round(f*100)}%`)});
   try{voicePrev&&voicePrev.stop()}catch(e){}const src=ac.createBufferSource();src.buffer=await decode(r.blob);src.connect(ac.destination);src.start();voicePrev=src}
  catch(e){toast('No se pudo generar la muestra: '+(e.message||e),1)}}
 function tSubs(){const P=S.P,o=(k,v,e,n)=>`<div class="card opt ${P[k]===v?'on':''}" onclick="S.P.${k}='${v}';save();render();Player.seek(1.2)"><span class="e">${e}</span>${n}</div>`;
@@ -2781,7 +2781,7 @@ console.info('[Estudio Viral] v3.36: sonidos sagrados');
 <script id="ev337">
 (function(){'use strict';if(window.__ev337)return;window.__ev337=true;
 function fnv(s){var h=2166136261;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)>>>0}return h.toString(36)}
-function key(text,voiceId,speed){return 'tts:'+normVoice(voiceId)+'|'+(+speed||1).toFixed(2)+'|'+fnv(String(text))+'|'+String(text).length}
+function key(text,voiceId,speed){return 'tts:'+normVoice(voiceId)+(/Multilingual/.test(String(voiceId))?'|es2':'')+'|'+(+speed||1).toFixed(2)+'|'+fnv(String(text))+'|'+String(text).length}
 /* 1) cada voz generada se guarda en la compu; la próxima vez sale al instante */
 var mk=Voice.make.bind(Voice);
 Voice.make=async function(text,voiceId,o){o=o||{};var k=key(text,voiceId,o.speed);
@@ -2809,6 +2809,7 @@ console.info('[Estudio Viral] v3.37: voces guardadas');
 <!-- ===== ESTUDIO VIRAL · v3.38 · VOCES MÁS NATURALES Y MI PROPIA VOZ ===== -->
 <script id="ev338">
 (function(){'use strict';if(window.__ev338)return;window.__ev338=true;
+var edO=EdgeDirect.say.bind(EdgeDirect);EdgeDirect.say=async function(text,voice,rate){try{return await edO(text,voice,rate)}catch(e){if(/Multilingual/.test(voice)&&!EdgeDirect.noLangTag){EdgeDirect.noLangTag=true;return await edO(text,voice,rate)}throw e}};
 [['en-US-BrianMultilingualNeural','Brian','EE.UU. · multilingüe','M'],['en-US-EmmaMultilingualNeural','Emma','EE.UU. · multilingüe','F'],['fr-FR-RemyMultilingualNeural','Rémy','Francia · multilingüe','M'],['fr-FR-VivienneMultilingualNeural','Vivienne','Francia · multilingüe','F']].forEach(function(v){if(!EDGE_VOICES.some(function(x){return x[0]===v[0]}))EDGE_VOICES.push(v)});
 /* ---------- mi propia voz en una escena (Voicebox, grabación del celu, etc.) ---------- */
 async function loadMine(s){if(!s||!s.myVoice)return false;try{var b=await IDB.get(s.myVoice);if(!b)return false;var buf=await decode(b);RT.voices[s.id]={buf:buf,text:s.text,voice:'mine:'+s.myVoice,speed:1,pre:true,mine:true};return true}catch(e){return false}}
