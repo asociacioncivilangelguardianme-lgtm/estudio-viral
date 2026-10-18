@@ -1159,7 +1159,7 @@ const Piper={mod:null,
  load(){if(!this.mod){this.mod=import('https://cdn.jsdelivr.net/npm/@mintplex-labs/piper-tts-web@1.0.4/dist/piper-tts-web.js');this.mod.catch(()=>this.mod=null)}return this.mod},
  async say(text,voiceId,onProg){const m=await this.load();return await m.predict({text,voiceId},p=>{if(onProg&&p&&p.total)onProg(p.loaded/p.total)})}};
 // Voces de Microsoft pedidas directo desde tu navegador (Edge las acepta; los servidores en la nube suelen estar bloqueados)
-const EdgeDirect={tok:'6A5AA1D4EAFF4E9FB37E23D68491D6F4',ver:'143.0.3650.75',down:false,
+const EdgeDirect={tok:'6A5AA1D4EAFF4E9FB37E23D68491D6F4',ver:((navigator.userAgent.match(/Edg\/(\d+\.\d+\.\d+\.\d+)/)||navigator.userAgent.match(/Chrome\/(\d+\.\d+\.\d+\.\d+)/)||[])[1])||'143.0.3650.75',down:false,
  isEdge(){return /Edg\//.test(navigator.userAgent)},
  async gec(){let s=Math.floor(Date.now()/1000)+11644473600;s-=s%300;const t=(BigInt(s)*10000000n).toString()+this.tok;
   const h=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return[...new Uint8Array(h)].map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase()},
@@ -2306,7 +2306,7 @@ function copyText(t){try{if(navigator.clipboard&&window.isSecureContext)return n
   var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(e){}ta.remove();return Promise.resolve()}
 function isMobile(){return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)}
 var EXPR=[['edge:en-US-AndrewMultilingualNeural','⭐ Andrew multilingüe (hombre, muy natural)'],['edge:en-US-BrianMultilingualNeural','⭐ Brian multilingüe (hombre, cálido)'],['edge:en-US-AvaMultilingualNeural','⭐ Ava multilingüe (mujer, muy natural)'],['edge:en-US-EmmaMultilingualNeural','⭐ Emma multilingüe (mujer, cálida)'],['edge:fr-FR-RemyMultilingualNeural','⭐ Rémy multilingüe (hombre, grave)'],['edge:fr-FR-VivienneMultilingualNeural','⭐ Vivienne multilingüe (mujer, suave)']];
-function voicesForLang(lang){var out=EXPR.slice();EDGE_VOICES.forEach(function(v){if(v[0].toLowerCase().indexOf(lang+'-')===0)out.push(['edge:'+v[0],v[1]+' ('+v[2]+', '+(v[3]==='F'?'mujer':'hombre')+')'])});
+function voicesForLang(lang){var out=[];EDGE_VOICES.forEach(function(v){if(v[0].toLowerCase().indexOf(lang+'-')===0)out.push(['edge:'+v[0],v[1]+' ('+v[2]+', '+(v[3]==='F'?'mujer':'hombre')+')'])});
   PIPER_VOICES.forEach(function(v){if(v[0].indexOf(lang+'_')===0)out.push(['piper:'+v[0],v[1]+' ('+v[2]+', Piper)'])});
   if(!out.length)EDGE_VOICES.forEach(function(v){out.push(['edge:'+v[0],v[1]+' ('+v[2]+')'])});return out}
 
@@ -2336,7 +2336,7 @@ function sig(lines){return lines.map(function(l){return normName(l.who)+'|'+l.te
 var FEM=/^(oxum|oshun|iemanja|yemanja|yemaya|iansa|oya|nana|oba|ewa|pombagira|pomba gira|maria|mae|madre|mama|abuela|vovo|preta velha|cabocla|jurema|rainha|reina|cigana|ella|hija|nina|mujer)/;
 var MASC=/^(oxala|obatala|xango|shango|ogum|ogun|oxossi|exu|bara|omolu|obaluae|ossain|logun|oxumare|ze |pai|padre|papa|abuelo|preto velho|caboclo|el |hijo|nino|hombre|iroko|xapana|baiano|boiadeiro|marinheiro)/;
 function spkInfo(P,who){P.dlgVoices=P.dlgVoices||{};var k=normName(who);return P.dlgVoices[k]}
-function ensureSpk(P,lines,genders){P.dlgVoices=P.dlgVoices||{};var used={};Object.keys(P.dlgVoices).forEach(function(k){used[P.dlgVoices[k].voice]=1});
+function ensureSpk(P,lines,genders){P.dlgVoices=P.dlgVoices||{};Object.keys(P.dlgVoices).forEach(function(k){var d=P.dlgVoices[k];if(d&&/Multilingual/.test(d.voice||''))d.voice=d.g==='F'?'edge:es-AR-ElenaNeural':'edge:es-AR-TomasNeural'});var used={};Object.keys(P.dlgVoices).forEach(function(k){used[P.dlgVoices[k].voice]=1});
   var idx=Object.keys(P.dlgVoices).length;
   lines.forEach(function(l){var k=normName(l.who);if(P.dlgVoices[k])return;
     var g=(genders&&genders[k])||(MASC.test(k)?'M':(FEM.test(k)||/a$/.test(k)?'F':'M'));
@@ -2408,9 +2408,10 @@ window.Dlg={
     Object.keys(groups).forEach(function(g){var list=groups[g];var from=(src&&src.grp===g)?src:(list.find(function(s){return s.lead&&RT.imgs[s.img]})||list.find(function(s){return RT.imgs[s.img]}));if(!from)return;
       list.forEach(function(s){if(s===from||s.img===from.img||(s.own&&s!==src&&(s.local||RT.imgs[s.img])&&!(src&&src.grp===g)))return;s.img=from.img;s.local=!!from.local;s.edited=!!from.edited;s.hq=!!from.hq;s.locked=true;s.parallax=false;delete RT.fg[s.id];try{paintScene(s)}catch(e){}})});save()},
   setVoice(k,v){var P=S.P;if(P.dlgVoices[k]){P.dlgVoices[k].voice=v;P.scenes.forEach(function(s){if(s.who&&normName(s.who)===k)delete RT.voices[s.id]});save();renderCfg()}},
+  setSpeed(k,v){var P=S.P;if(P.dlgVoices[k]){P.dlgVoices[k].speed=+v;P.scenes.forEach(function(s){if(s.who&&normName(s.who)===k)delete RT.voices[s.id]});save();toast('Velocidad cambiada: tocá «Generar voces de todas las escenas»')}},
   setColor(k,c){var P=S.P;if(P.dlgVoices[k]){P.dlgVoices[k].color=c;save();Player.seek(1.2)}},
   async listen(k){var P=S.P,sp=P.dlgVoices[k];if(!sp)return;try{if(window.__ev33src)window.__ev33src.stop()}catch(e){}var line=parse(P.script).find(function(l){return normName(l.who)===k});var ac=getAC();await ac.resume();toast('Generando muestra de '+sp.name+'…');
-    try{var r=await Voice.make(line?line.text:'Hola, así suena mi voz.',sp.voice,{speed:P.speed});var src=ac.createBufferSource();src.buffer=await decode(r.blob);src.connect(ac.destination);try{if(window.__ev33src)window.__ev33src.stop()}catch(e){}window.__ev33src=src;src.start();toast((r.pre?'Voz de Microsoft: ':'Voz de respaldo (Microsoft no respondió): ')+sp.name)}catch(e){toast('No se pudo generar la voz: '+(e.message||e),1)}}
+    try{var r=await Voice.make(line?line.text:'Hola, así suena mi voz.',sp.voice,{speed:sp.speed||P.speed});var src=ac.createBufferSource();src.buffer=await decode(r.blob);src.connect(ac.destination);try{if(window.__ev33src)window.__ev33src.stop()}catch(e){}window.__ev33src=src;src.start();toast((r.pre?'Voz de Microsoft: ':'Voz de respaldo (Microsoft no respondió): ')+sp.name)}catch(e){toast('No se pudo generar la voz: '+(e.message||e),1)}}
 };
 
 function dlgPanel(){var P=S.P,lines=parse(P.script);ensureSpk(P,lines);var keys=[];lines.forEach(function(l){var k=normName(l.who);if(keys.indexOf(k)<0)keys.push(k)});
@@ -2427,6 +2428,7 @@ function dlgPanel(){var P=S.P,lines=parse(P.script);ensureSpk(P,lines);var keys=
   '<div class="hint" id="dlgest"></div>'+
   (keys.length?'<div class="lbl">Voz y color de cada personaje</div>'+keys.map(function(k){var sp=P.dlgVoices[k];return '<div class="ev33-spk"><span class="ev33-dot" style="background:'+sp.color+'"></span><b>'+esc(sp.name)+'</b>'+
     '<select class="sel" onchange="Dlg.setVoice(\''+k.replace(/'/g,"\\'")+'\',this.value)">'+vopts.map(function(v){return '<option value="'+v[0]+'" '+(normVoice(sp.voice)===v[0]?'selected':'')+'>'+esc(v[1])+'</option>'}).join('')+'</select>'+
+    '<select class="sel" style="flex:0 0 120px;min-width:110px" title="Velocidad" onchange="Dlg.setSpeed(\''+k.replace(/'/g,"\\'")+'\',this.value)">'+[[.85,'🐢 Lenta'],[.93,'Pausada'],[1,'Normal'],[1.08,'Rápida']].map(function(o){return '<option value="'+o[0]+'" '+(((sp.speed||P.speed||1)==o[0])?'selected':'')+'>'+o[1]+'</option>'}).join('')+'</select>'+
     '<input type="color" value="'+sp.color+'" title="Color del subtítulo" onchange="Dlg.setColor(\''+k.replace(/'/g,"\\'")+'\',this.value)" style="width:34px;height:30px;border:0;background:none;cursor:pointer">'+
     '<button class="btn xs" onclick="Dlg.listen(\''+k.replace(/'/g,"\\'")+'\')">'+ic('play')+'Oír</button></div>'}).join(''):'')+
   '<div style="margin-top:8px">'+sw('withNarr','Usar narrador (si está apagado, las frases sin nombre las dice el primer personaje)','render()')+sw('talkPulse','La imagen “late” al ritmo de la voz (parece viva)','render();Player.seek(1.2)')+'</div>'+
@@ -2445,12 +2447,12 @@ Pipe.voices=async function(){var P=S.P;try{fillWho(P)}catch(e){}if(!P||!P.dlgVoi
   if(RT.narr){toast('Se usa tu propia narración 🎙️');return}
   this.setBusy('Generando voces…');var ok=0,need=0,lastErr='';
   try{for(var i=0;i<P.scenes.length;i++){var s=P.scenes[i];if(!s.text.trim())continue;need++;var vid=voiceFor(P,s),cur=RT.voices[s.id];
-      if(cur&&cur.text===s.text&&cur.voice===vid&&(!cur.pre||cur.speed===P.speed)){ok++;continue}
+      var spd=(spkInfo(P,s.who||'')||{}).speed||P.speed;if(cur&&cur.text===s.text&&cur.voice===vid&&(cur.pre||!/^edge:/.test(vid))&&(!cur.pre||cur.speed===spd)){ok++;continue}
       this.setBusy('Voz '+(i+1)+'/'+P.scenes.length+' ('+(s.who||'')+')…');this.prog(i/P.scenes.length);
-      try{var r=await Voice.make(s.text,vid,{speed:P.speed,onProg:function(f){Pipe.setBusy('Descargando la voz (solo la primera vez)… '+Math.round(f*100)+'%')}});
-        RT.voices[s.id]={buf:await decode(r.blob),text:s.text,voice:vid,speed:P.speed,pre:r.pre};ok++}catch(e){lastErr=e.message||String(e)}}}
+      try{var r=await Voice.make(s.text,vid,{speed:spd,onProg:function(f){Pipe.setBusy('Descargando la voz (solo la primera vez)… '+Math.round(f*100)+'%')}});
+        RT.voices[s.id]={buf:await decode(r.blob),text:s.text,voice:vid,speed:spd,pre:r.pre};ok++}catch(e){lastErr=e.message||String(e)}}}
   finally{this.setBusy('');this.prog(0)}
-  if(need&&!ok)toast('No se pudo generar la voz: '+lastErr,1);else if(need)toast('Voces listas: '+ok+'/'+need+' ✅',ok<need);renderPipe();renderTL();renderCfg()};
+  var bk=P.scenes.filter(function(s){var v=RT.voices[s.id];return v&&!v.pre&&!v.mine}).length;if(need&&!ok)toast('No se pudo generar la voz: '+lastErr,1);else if(bk)toast('Voces listas, pero '+bk+' salieron con la voz de respaldo (más robótica) porque Microsoft no respondió. Esperá un par de minutos y tocá «Generar voces» otra vez.',1);else if(need)toast('Voces listas: '+ok+'/'+need+' ✅ (voces de Microsoft)',ok<need);renderPipe();renderTL();renderCfg()};
 var sayO=sayScene;
 sayScene=async function(i){var P=S.P,s=P.scenes[i];if(!s||!s.who||!P.dlgVoices)return sayO.apply(this,arguments);var old=P.voice;P.voice=voiceFor(P,s);try{return await sayO.apply(this,arguments)}finally{P.voice=old}};
 
@@ -2616,7 +2618,7 @@ if('serviceWorker' in navigator&&/^https:$/.test(location.protocol)){window.addE
   reg.addEventListener('updatefound',function(){var w=reg.installing;if(!w)return;w.addEventListener('statechange',function(){if(w.state==='installed'&&navigator.serviceWorker.controller)toast('Hay una versión nueva de Estudio Viral: cerrá y volvé a abrir la app para verla ✨')})})}).catch(function(e){console.info('[v3.33] sin app instalable (falta sw.js en GitHub):',e&&e.message)})})}
 
 /* Novedades */
-var NEWS=['🎙️ <b>3.38 · Voces más naturales</b>: voces ⭐ multilingües (Andrew, Brian, Ava, Emma…) mucho más expresivas, botón «Subir mi voz» en cada escena para usar Voicebox o tu grabación, y la IA escribe los diálogos con pausas y emoción para que suenen a persona real.','💾 <b>3.37</b>: las voces quedan guardadas en la compu. Si recargás la página no se pierden, y si falta alguna se hace sola antes de reproducir.','🥁 <b>3.36 · Sonidos sagrados</b>: atabaque con repique, adjá/sineta, agogô, chocalho, Terreiro, Encruzilhada, Mar de Iemanjá y Mata sagrada. Opción de transiciones con golpe de tambor y campanita.','🕯️ <b>3.35 · Religión afro</b>: sección nueva en Géneros y Estilos con Itán, Mensaje de la entidad, Conocé a la entidad, Oración del día, Ofrenda explicada, Mitos y verdades, Fechas especiales, Pontos cantados, Cuentos para chicos, Exus y Pombagiras, Umbanda y Orixás. Y 9 estilos sagrados: Arte afrobrasileño, Terreiro, Mata sagrada, Encruzilhada nocturna, Pintura sacra, Ícono dorado, Vitral, Escultura africana y Afrofuturismo.','🔧 <b>3.34</b>: en los diálogos, cada escena reconoce sola quién habla y usa su voz, y pone el sonido del lugar (selva, río, cascada, fuego, tambores…). «Armar escenas» ya no borra las imágenes que hiciste.','👥 <b>Modo Diálogo</b>: dos (o más) personajes hablan, cada uno con su voz. Lo elegís en «Nuevo video».',
+var NEWS=['🎙️ <b>3.38 · Voces más naturales</b>: velocidad por personaje (por ejemplo Oxalá lento y pausado), botón «Subir mi voz» en cada escena (opcional) y la IA escribe los diálogos con pausas y emoción, sin narrador.','💾 <b>3.37</b>: las voces quedan guardadas en la compu. Si recargás la página no se pierden, y si falta alguna se hace sola antes de reproducir.','🥁 <b>3.36 · Sonidos sagrados</b>: atabaque con repique, adjá/sineta, agogô, chocalho, Terreiro, Encruzilhada, Mar de Iemanjá y Mata sagrada. Opción de transiciones con golpe de tambor y campanita.','🕯️ <b>3.35 · Religión afro</b>: sección nueva en Géneros y Estilos con Itán, Mensaje de la entidad, Conocé a la entidad, Oración del día, Ofrenda explicada, Mitos y verdades, Fechas especiales, Pontos cantados, Cuentos para chicos, Exus y Pombagiras, Umbanda y Orixás. Y 9 estilos sagrados: Arte afrobrasileño, Terreiro, Mata sagrada, Encruzilhada nocturna, Pintura sacra, Ícono dorado, Vitral, Escultura africana y Afrofuturismo.','🔧 <b>3.34</b>: en los diálogos, cada escena reconoce sola quién habla y usa su voz, y pone el sonido del lugar (selva, río, cascada, fuego, tambores…). «Armar escenas» ya no borra las imágenes que hiciste.','👥 <b>Modo Diálogo</b>: dos (o más) personajes hablan, cada uno con su voz. Lo elegís en «Nuevo video».',
   '🎨 <b>Subtítulos de colores</b>: cada personaje con su color y su nombre arriba, así se entiende quién habla aunque esté sin sonido.',
   '🖼️ <b>Máximo 6 imágenes</b>: el tiempo de cada una se calcula solo con las voces.',
   '💓 <b>La imagen late con la voz</b>: parece viva mientras el personaje habla.',
