@@ -2297,7 +2297,7 @@ window.__ev32export=exportMp4;
 (function(){
 'use strict';
 if(window.__ev33)return;window.__ev33=true;
-var VERSION='3.34';
+var VERSION='3.36';
 var COLORS=['#7dd3fc','#ff9de2','#a7f3d0','#fdba74','#c4b5fd'];
 var MOVES=['zoomin','panr','tiltup','dolly','panl','zoomout','track','tiltdown'];
 
@@ -2354,7 +2354,7 @@ var AMBK=[['cascada',/\b(waterfalls?|cascadas?|cataratas?)\b/],['monos',/\b(monk
  ['festejo',/\b(celebrat\w*|festej\w*|fiesta|party|cheer\w*)\b/],['multitud',/\b(market|mercado|crowd|multitud|village square)\b/],['cueva',/\b(caves?|cuevas?)\b/],['desierto',/\b(desert|desierto|dunes?|dunas?)\b/],
  ['selva',/\b(jungle|selva|tropical|rainforest)\b/],['bosque',/\b(forest|bosque|woods|monte|trees|[aá]rboles)\b/],['magia',/\b(magic\w*|m[aá]gic\w*|aura|celestial|divine light|luz divina|glow\w*|resplandor)\b/],
  ['viento',/\b(wind|viento|windy)\b/],['noche',/\b(night|noche|moonlight|luna|moon)\b/],['ciudad',/\b(city|ciudad|street|calle)\b/],['pajaros',/\b(birds?|p[aá]jaros?|aves|dawn|amanecer|sunrise)\b/]];
-function guessAmb33(t){t=String(t||'').toLowerCase();for(var i=0;i<AMBK.length;i++)if(AMBK[i][1].test(t)&&AMB[AMBK[i][0]])return AMBK[i][0];return 'none'}
+function guessAmb33(t){if(window.__ev336guess){var r=window.__ev336guess(t);if(r&&AMB[r])return r}t=String(t||'').toLowerCase();for(var i=0;i<AMBK.length;i++)if(AMBK[i][1].test(t)&&AMB[AMBK[i][0]])return AMBK[i][0];return 'none'}
 function fillAmb(P,force){if(!P||P.mode!=='dialogo'||!P.scenes)return 0;var n=0,base=(P.dlgPlace||'')+' '+(P.idea||'');
   P.scenes.forEach(function(s){if(!force&&s.amb&&s.amb!=='none')return;var a=guessAmb33(s.text);if(a==='none'||a==='noche'||a==='ciudad')a=guessAmb33(s.prompt)!=='none'?guessAmb33(s.prompt):a;if(a==='none')a=guessAmb33(base);if(a!=='none'){s.amb=a;n++}});
   if(n)save();return n}
@@ -2611,7 +2611,7 @@ if('serviceWorker' in navigator&&/^https:$/.test(location.protocol)){window.addE
   reg.addEventListener('updatefound',function(){var w=reg.installing;if(!w)return;w.addEventListener('statechange',function(){if(w.state==='installed'&&navigator.serviceWorker.controller)toast('Hay una versión nueva de Estudio Viral: cerrá y volvé a abrir la app para verla ✨')})})}).catch(function(e){console.info('[v3.33] sin app instalable (falta sw.js en GitHub):',e&&e.message)})})}
 
 /* Novedades */
-var NEWS=['🔧 <b>3.34</b>: en los diálogos, cada escena reconoce sola quién habla y usa su voz, y pone el sonido del lugar (selva, río, cascada, fuego, tambores…). «Armar escenas» ya no borra las imágenes que hiciste.','👥 <b>Modo Diálogo</b>: dos (o más) personajes hablan, cada uno con su voz. Lo elegís en «Nuevo video».',
+var NEWS=['🥁 <b>3.36 · Sonidos sagrados</b>: atabaque con repique, adjá/sineta, agogô, chocalho, Terreiro, Encruzilhada, Mar de Iemanjá y Mata sagrada. Opción de transiciones con golpe de tambor y campanita.','🕯️ <b>3.35 · Religión afro</b>: sección nueva en Géneros y Estilos con Itán, Mensaje de la entidad, Conocé a la entidad, Oración del día, Ofrenda explicada, Mitos y verdades, Fechas especiales, Pontos cantados, Cuentos para chicos, Exus y Pombagiras, Umbanda y Orixás. Y 9 estilos sagrados: Arte afrobrasileño, Terreiro, Mata sagrada, Encruzilhada nocturna, Pintura sacra, Ícono dorado, Vitral, Escultura africana y Afrofuturismo.','🔧 <b>3.34</b>: en los diálogos, cada escena reconoce sola quién habla y usa su voz, y pone el sonido del lugar (selva, río, cascada, fuego, tambores…). «Armar escenas» ya no borra las imágenes que hiciste.','👥 <b>Modo Diálogo</b>: dos (o más) personajes hablan, cada uno con su voz. Lo elegís en «Nuevo video».',
   '🎨 <b>Subtítulos de colores</b>: cada personaje con su color y su nombre arriba, así se entiende quién habla aunque esté sin sonido.',
   '🖼️ <b>Máximo 6 imágenes</b>: el tiempo de cada una se calcula solo con las voces.',
   '💓 <b>La imagen late con la voz</b>: parece viva mientras el personaje habla.',
@@ -2633,6 +2633,137 @@ console.info('[Estudio Viral] v'+VERSION+' cargado: diálogo, textos para public
 })();
 </script>
 <!-- ===== FIN v3.33 ===== -->
+
+<!-- ===== ESTUDIO VIRAL · v3.35 · RELIGIÓN AFRO: GÉNEROS Y ESTILOS SAGRADOS ===== -->
+<script id="ev335">
+(function(){'use strict';if(window.__ev335)return;window.__ev335=true;
+var LINEAS=['Orixás','Caboclos','Pretos Velhos','Exus','Pombagiras','Erês','Baianos y Marinheiros','Malandros (Zé Pilintra)'];
+var RESP=' Con respeto por la tradición (Nación/Batuque, Candomblé, Umbanda y Quimbanda); sin burlas, sin miedo y sin presentar a Exu ni a Pombagira como demonios.';
+/* ---------- estilos visuales nuevos ---------- */
+var pi=STYLE_CATS.findIndex(function(c){return c.id==='propio'});
+STYLE_CATS.splice(pi<0?STYLE_CATS.length:pi,0,{id:'sagrado',n:'Sagrado y religión afro',d:'Arte afrobrasileño, terreiro, mata, encruzilhada, vitral e ícono dorado'});
+var NEWST=[
+ {id:'arte_afro',c:'sagrado',n:'Arte Afrobrasileño',d:'Colores fuertes, como los cuadros de terreiro',p:'Afro-Brazilian sacred folk art painting, bold saturated colors, terreiro wall painting style, cowrie shells, beads and sacred symbols, rich patterns, respectful spiritual atmosphere',g:['#f59e0b','#b91c1c']},
+ {id:'terreiro',c:'sagrado',n:'Terreiro de Umbanda',d:'Ropa blanca, velas, flores y congá',p:'inside a Brazilian Umbanda terreiro, people in white clothes, candles, flowers and an altar (congá) with sacred images, warm soft light, respectful documentary realism',g:['#fef3c7','#a16207'],fx:{grade:'dorado'}},
+ {id:'mata',c:'sagrado',n:'Mata Sagrada',d:'Selva profunda con rayos de luz (Caboclos, Oxóssi)',p:'deep sacred Brazilian forest, giant trees, green light rays through the canopy, mist, spiritual indigenous atmosphere, cinematic',g:['#14532d','#84cc16'],fx:{lens:'bokeh'}},
+ {id:'encruzilhada',c:'sagrado',n:'Encruzilhada Nocturna',d:'Velas, rojo y negro, luna (Exus y Pombagiras)',p:'mysterious crossroads at night lit by many candles, deep red and black palette, moonlight, smoke, elegant and powerful, respectful, cinematic lighting',g:['#000000','#b91c1c'],fx:{grade:'neon',vignette:true}},
+ {id:'sacra',c:'sagrado',n:'Pintura Sacra Celestial',d:'Luz divina, nubes y rayos',p:'baroque sacred painting, heavenly light rays breaking through clouds, divine glow, chiaroscuro, oil on canvas masterpiece',g:['#fde68a','#92400e'],fx:{grade:'dorado'}},
+ {id:'icono',c:'sagrado',n:'Ícono Dorado',d:'Fondo de oro, aureola y marco tallado',p:'golden sacred icon painting, gold leaf background, radiant halo, ornate carved frame, rich jewel tones, frontal majestic pose',g:['#facc15','#78350f']},
+ {id:'vitral',c:'sagrado',n:'Vitral Sagrado',d:'Vidrios de colores con luz detrás',p:'sacred stained glass window art, luminous colored glass pieces, dark lead lines, backlit glow, cathedral style',g:['#1d4ed8','#db2777']},
+ {id:'bronce',c:'sagrado',n:'Escultura Africana',d:'Bronce y madera tallada, estilo museo',p:'African bronze and carved wood sculpture, Benin bronze style, detailed textures, dramatic museum spotlight, dark background',g:['#78350f','#d97706']},
+ {id:'afrofuturo',c:'sagrado',n:'Afrofuturismo',d:'Realeza africana del futuro, oro y neón',p:'afrofuturism, futuristic African royalty, glowing sacred patterns, high-tech gold ornaments, cosmic background, vivid neon accents, cinematic',g:['#7c3aed','#f59e0b']}];
+var ci=STYLES.findIndex(function(s){return s.id==='custom'});STYLES.splice(ci<0?STYLES.length:ci,0,...NEWST);
+/* ---------- géneros nuevos ---------- */
+var G={id:'afro',n:'Religión afro (Orixás, Umbanda y Quimbanda)',list:[
+ {id:'af_itan',n:'Itán / historia sagrada',e:'🌊',h:'historia sagrada de una entidad contada como leyenda: gancho fuerte, conflicto y enseñanza final.'+RESP,subs:LINEAS,pre:{style:'arte_afro',music:'africana',grade:'dorado'}},
+ {id:'af_mensaje',n:'Mensaje de la entidad',e:'💬',h:'la entidad le habla directo a quien mira, en primera persona, con un consejo o protección para hoy; cálido y poderoso.'+RESP,subs:LINEAS,pre:{style:'sacra',music:'espiritual',grade:'dorado'}},
+ {id:'af_conoce',n:'Conocé a la entidad',e:'🪶',h:'quién es, qué representa, sus colores, elementos, día de la semana y saludo, en 5 datos claros y rápidos.'+RESP,subs:LINEAS,pre:{style:'icono',music:'africana'}},
+ {id:'af_oracion',n:'Oración / reza del día',e:'🙏',h:'oración corta y calma pidiendo protección, salud o camino abierto; para publicar todos los días.'+RESP,subs:LINEAS,pre:{style:'sacra',music:'espiritual',grade:'dorado'}},
+ {id:'af_ofrenda',n:'Ofrenda o ritual explicado',e:'🕯️',h:'explica qué es la ofrenda o ritual, qué significa y por qué se hace, sin pasos peligrosos y recordando consultar a su casa o pai/mãe de santo.'+RESP,subs:['Orixás','Umbanda','Quimbanda'],pre:{style:'terreiro',music:'espiritual'}},
+ {id:'af_mitos',n:'Mitos y verdades',e:'❓',h:'aclara prejuicios comunes con respeto y datos (ej: "Exu no es el diablo"), gancho polémico al inicio y explicación clara.'+RESP,subs:LINEAS,pre:{style:'encruzilhada',music:'misterio'}},
+ {id:'af_fecha',n:'Día de la entidad / fecha especial',e:'📅',h:'saludo y homenaje para la fecha especial de la entidad, con su historia breve y un pedido de bendición.'+RESP,subs:['Iemanjá (2 de febrero)','Ogum (23 de abril)','Cosme y Damián / Erês (27 de septiembre)','Xangô (30 de septiembre)','Iansã (4 de diciembre)','Oxum (8 de diciembre)','Otra fecha'],pre:{style:'sacra',music:'espiritual',grade:'dorado'}},
+ {id:'af_cancion',n:'Canción / ponto cantado',e:'🎶',h:'canción o ponto con la letra en pantalla, frases cortas que se puedan cantar, ritmo de atabaque.'+RESP,subs:LINEAS,pre:{style:'arte_afro',music:'africana',subStyle:'karaoke'}},
+ {id:'af_ninos',n:'Cuento para chicos',e:'🧒',h:'itán contado para chicos: palabras simples, tierno, con enseñanza clara al final.'+RESP,subs:LINEAS,pre:{style:'anim3d',music:'alegre'}},
+ {id:'af_quimbanda',n:'Exus y Pombagiras',e:'🌹',h:'historia, mensaje o enseñanza de Exus y Pombagiras de Quimbanda: elegancia, poder, caminos y protección; misterio nocturno.'+RESP,subs:['Exu Tranca Rua','Exu Caveira','Exu Tiriri','Exu Marabô','Exu Sete Encruzilhadas','Maria Padilha','Maria Mulambo','Pombagira Cigana','Rainha das Sete Encruzilhadas'],pre:{style:'encruzilhada',music:'misterio',grade:'neon'}},
+ {id:'af_umbanda',n:'Umbanda: guías y falanges',e:'🌿',h:'historia o mensaje de los guías de Umbanda (Caboclos, Pretos Velhos, Erês, Baianos, Marinheiros, Boiadeiros, Malandros): sabiduría, humildad y caridad.'+RESP,subs:['Caboclos','Pretos Velhos','Erês','Baianos','Marinheiros','Boiadeiros','Malandros (Zé Pilintra)','Ciganos'],pre:{style:'mata',music:'africana'}},
+ {id:'af_orixas',n:'Orixás (Nación / Candomblé)',e:'👑',h:'historia o mensaje de los Orixás: Bará/Exu, Ogum, Iansã, Xangô, Odé/Oxóssi, Obá, Ossain, Xapanã/Omolu, Oxum, Iemanjá, Oxalá; majestuoso y épico.'+RESP,subs:['Bará','Ogum','Iansã','Xangô','Oxóssi / Odé','Obá','Ossain','Xapanã / Omolu','Oxum','Iemanjá','Oxalá','Nanã','Oxumaré','Ibejis'],pre:{style:'arte_afro',music:'africana',grade:'dorado'}}
+]};
+GENRE_GROUPS.unshift(G);G.list.forEach(function(x){GENRES.push(Object.assign({grp:'afro'},x))});
+/* pestaña nueva en el catálogo */
+var catO=catalogBody;
+catalogBody=function(ctx){var h=catO.apply(this,arguments).split(esc(RESP)).join('');
+  return h.replace(/(<button class="[^"]*" onclick="S\.ctab='estilos';([^"]*)">Estilos visuales<\/button>)/,function(m,b,rer){return '<button class="'+(S.ctab==='afro'?'on':'')+'" onclick="S.ctab=\'afro\';'+rer+'">🕯️ Religión afro</button>'+b})};
+/* en el editor, "Elegir género" abre la sección afro */
+var lpO=leftPanel;leftPanel=function(){return lpO.apply(this,arguments).replace("openSheet('cine')","openSheet('afro')")};
+/* plantillas rápidas del modo Texto a Video: primero las de religión afro */
+var tcO=tContenido;tContenido=function(){var P=S.P,h=tcO.apply(this,arguments);if(P&&P.mode==='idea'){var chips=G.list.slice(0,8).map(function(g){return '<button class="chip '+(P.genre===g.id?'on':'')+'" onclick="setGenre(S.P.genre===\''+g.id+'\'?\'\':\''+g.id+'\')">'+g.e+' '+g.n+'</button>'}).join('');h=h.replace('<div class="lbl">Plantillas rápidas</div><div class="chips">','<div class="lbl">Plantillas rápidas</div><div class="chips">'+chips)}return h};
+try{render()}catch(e){}
+console.info('[Estudio Viral] v3.35: religión afro (géneros y estilos sagrados)');
+})();
+</script>
+<!-- ===== FIN v3.35 ===== -->
+
+<!-- ===== ESTUDIO VIRAL · v3.36 · SONIDOS SAGRADOS (atabaque, adjá, agogô, chocalho…) ===== -->
+<script id="ev336">
+(function(){'use strict';if(window.__ev336)return;window.__ev336=true;
+Object.assign(AMB,{
+ atabaque:'🥁 Atabaque (repique de tambor)',
+ adja:'🔔 Adjá / sineta (campanita)',
+ agogo:'🔔 Agogô (campana doble)',
+ chocalho:'🪇 Chocalho / xequerê',
+ terreiro:'🕯️ Terreiro (tambor suave y campanita)',
+ encruzilhada:'🌹 Encruzilhada (noche, velas y tambor)',
+ iemanja:'🌊 Mar de Iemanjá (olas y campanita)',
+ mata_sagrada:'🌿 Mata sagrada (selva y tambor suave)'});
+var NEWA={atabaque:1,adja:1,agogo:1,chocalho:1,terreiro:1,encruzilhada:1,iemanja:1,mata_sagrada:1};
+var prev=ambience;
+function kit(ac,g,st,en,nodes){var R=Math.random;
+  function drum(t,f0,f1,d,gain){if(t>en-.05||t<st)return;var o=ac.createOscillator(),gg=ac.createGain();o.type='sine';o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(f1,t+d*.6);
+    gg.gain.setValueAtTime(.0001,t);gg.gain.exponentialRampToValueAtTime(gain,t+.005);gg.gain.exponentialRampToValueAtTime(.0005,t+d);o.connect(gg).connect(g);o.start(t);o.stop(t+d+.02);nodes.push(o);
+    var s=nsrc(ac),bp=ac.createBiquadFilter();bp.type='bandpass';bp.frequency.value=f0*6;bp.Q.value=1.2;var ng=ac.createGain();ng.gain.setValueAtTime(gain*.35,t);ng.gain.exponentialRampToValueAtTime(.0005,t+.04);s.connect(bp).connect(ng).connect(g);s.start(t,R());s.stop(t+.06);nodes.push(s)}
+  function slap(t,gain){if(t>en-.05||t<st)return;var s=nsrc(ac),bp=ac.createBiquadFilter();bp.type='bandpass';bp.frequency.value=2600;bp.Q.value=.9;var ng=ac.createGain();ng.gain.setValueAtTime(gain,t);ng.gain.exponentialRampToValueAtTime(.0005,t+.07);s.connect(bp).connect(ng).connect(g);s.start(t,R());s.stop(t+.09);nodes.push(s);drum(t,330,290,.09,gain*.5)}
+  function bell(t,f,d,gain){if(t>en-.05||t<st)return;[[1,1],[2.76,.45],[5.4,.22],[8.93,.1]].forEach(function(p){var o=ac.createOscillator(),gg=ac.createGain();o.type='sine';o.frequency.value=f*p[0];gg.gain.setValueAtTime(.0001,t);gg.gain.exponentialRampToValueAtTime(gain*p[1],t+.003);gg.gain.exponentialRampToValueAtTime(.0003,t+d/(1+p[0]*.25));o.connect(gg).connect(g);o.start(t);o.stop(t+d+.05);nodes.push(o)})}
+  function shake(t,gain,d){if(t>en-.03||t<st)return;var s=nsrc(ac),hp=ac.createBiquadFilter();hp.type='highpass';hp.frequency.value=5200;var ng=ac.createGain();ng.gain.setValueAtTime(.0001,t);ng.gain.linearRampToValueAtTime(gain,t+.015);ng.gain.exponentialRampToValueAtTime(.0005,t+(d||.07));s.connect(hp).connect(ng).connect(g);s.start(t,R());s.stop(t+(d||.07)+.02);nodes.push(s)}
+  return{drum:drum,slap:slap,bell:bell,shake:shake,
+   atabaque:function(lv,bpm){bpm=bpm||104;var b=60/bpm,s16=b/4,i=0;
+     for(var t=st+.15;t<en-.1;t+=s16,i++){var p=i%16;
+       if([0,3,6,10,12].indexOf(p)>=0)drum(t,255,215,.18,.32*lv);           // lé
+       if([2,8,11,14].indexOf(p)>=0)drum(t,165,135,.28,.42*lv);             // rumpi
+       if(p===7||p===15)slap(t,.28*lv);
+       if(p===0&&(i/16)%2===0)drum(t,98,70,.55,.6*lv);                       // rum
+       if(p%4===0&&R()<.45)drum(t+s16*(R()<.5?1:2),110,78,.45,.45*lv);       // rum improvisa
+       if(p===12&&R()<.3){for(var k=0;k<4;k++)drum(t+k*s16/2,240,205,.12,.22*lv)} // repique
+     }},
+   agogo:function(lv,bpm){bpm=bpm||104;var b=60/bpm,s8=b/2,pat=[1,0,2,0,1,2,0,2],i=0;for(var t=st+.15;t<en-.1;t+=s8,i++){var x=pat[i%8];if(x===1)bell(t,880,.35,.22*lv);else if(x===2)bell(t,660,.35,.22*lv)}},
+   adja:function(lv,every){for(var t=st+.4+R()*.6;t<en-.8;t+=(every||3.5)+R()*2.5){var n=6+Math.floor(R()*8);for(var k=0;k<n;k++)bell(t+k*(.06+R()*.04),2100+R()*900,1.1,.13*lv*(1-k/n*.5))}},
+   sineta:function(lv,every){for(var t=st+.5+R();t<en-1;t+=(every||4)+R()*3)bell(t,1850,1.8,.18*lv)},
+   chocalho:function(lv,bpm){bpm=bpm||104;var b=60/bpm,s16=b/4,i=0;for(var t=st+.1;t<en-.1;t+=s16,i++)shake(t,(i%4===0?.12:i%2===0?.07:.045)*lv,i%4===2?.12:.06)}}}
+ambience=function(ac,out,type,st,en,vol){
+  if(!NEWA[type])return prev.apply(this,arguments);
+  var nodes=[],g=ac.createGain();g.gain.setValueAtTime(0,st);g.gain.linearRampToValueAtTime(vol,st+.4);g.gain.setValueAtTime(vol,Math.max(st+.4,en-.6));g.gain.linearRampToValueAtTime(0,en);g.connect(out);
+  var K=kit(ac,g,st,en,nodes),bpm=96+Math.floor(Math.random()*16);
+  function layer(t,v){try{nodes.push.apply(nodes,prev(ac,out,t,st,en,vol*v)||[])}catch(e){}}
+  switch(type){
+   case'atabaque':K.atabaque(1,bpm);K.chocalho(.5,bpm);break;
+   case'adja':K.adja(1,2.5);break;
+   case'agogo':K.agogo(1,bpm);K.chocalho(.4,bpm);break;
+   case'chocalho':K.chocalho(1,bpm);break;
+   case'terreiro':K.atabaque(.55,92);K.sineta(.9,5);layer('fuego',.35);break;
+   case'encruzilhada':layer('noche',.9);K.adja(.6,6);for(var t=st+.5;t<en-.5;t+=1.25)K.drum(t,92,66,.6,.45);break;
+   case'iemanja':layer('oceano',1);K.sineta(.9,4.5);break;
+   case'mata_sagrada':layer('bosque',1);K.atabaque(.35,88);break}
+  return nodes};
+/* transición con golpe de tambor y campanita */
+var whO=whoosh,imO=impact;
+whoosh=function(ac,out,at,vol){var P=S.P;if(!P||!P.sfxTambor)return whO.apply(this,arguments);at=Math.max(at,ac.currentTime);
+  var g=ac.createGain();g.gain.value=vol;g.connect(out);var nodes=[],K=kit(ac,g,at-.01,at+2.5,nodes);K.drum(at+.15,105,72,.6,.55);K.slap(at+.02,.25);K.bell(at+.18,1850,1.4,.07);
+  return nodes[0]||whO.apply(this,arguments)};
+impact=function(ac,out,at,vol){var P=S.P;if(!P||!P.sfxTambor)return imO.apply(this,arguments);
+  var g=ac.createGain();g.gain.value=vol;g.connect(out);var nodes=[],K=kit(ac,g,at-.01,at+3,nodes);[0,.12,.24].forEach(function(d,i){K.drum(at+d,240-i*10,205,.14,.35)});K.drum(at+.36,98,66,.9,.8);K.adja(.9,9);
+  return nodes[0]||imO.apply(this,arguments)};
+/* religión afro: activar sonidos sagrados y ambiente por defecto */
+var DEF_AMB={af_quimbanda:'encruzilhada',af_umbanda:'terreiro',af_ofrenda:'terreiro',af_oracion:'adja',af_mensaje:'adja',af_fecha:'terreiro',af_cancion:'atabaque',af_ninos:'agogo'};
+function afroDefault(P){if(!P)return '';var g=P.genre||'';if(g.indexOf('af_')!==0)return '';var sub=(P.sub||'').toLowerCase();
+  if(/iemanj/.test(sub))return 'iemanja';if(/caboclo|ox[oó]ssi|od[eé]|ossain/.test(sub))return 'mata_sagrada';if(/exu|pombagira|padilha|mulambo|cigana|rainha|tranca|caveira|tiriri|marab/.test(sub))return 'encruzilhada';
+  return DEF_AMB[g]||'atabaque'}
+var sgO=setGenre;setGenre=function(id,sub){sgO.apply(this,arguments);var P=S.P;if(P&&id&&String(id).indexOf('af_')===0&&!P.sfxTambor){P.sfxTambor=true;P.sfx=true;P.amb=true;save();toast('🥁 Activé los sonidos sagrados (tambor y campanita en las transiciones)')}};
+var psO=Pipe.parseScenes;Pipe.parseScenes=function(arr){var out=psO.apply(this,arguments),d=afroDefault(S.P);if(d)out.forEach(function(s){if(!s.amb||s.amb==='none'||s.amb==='tambores')s.amb=s.amb==='tambores'?'atabaque':d});return out};
+/* palabras religiosas para elegir el sonido solo (también en el modo Diálogo) */
+var RX=[['iemanja',/\b(iemanj[aá]|yemanj[aá]|yemay[aá]|janaína)\b/i],['encruzilhada',/\b(encruzilhada|crossroads?|encrucijada|cruce de caminos|pombagira|pomba gira|exus?|quimbanda)\b/i],
+  ['adja',/\b(adj[aá]|sineta|campanitas?|campana|bells?|bendici[oó]n|oraci[oó]n|rezo|reza|prayer)\b/i],['agogo',/\b(agog[oô])\b/i],['chocalho',/\b(chocalho|xequer[eê]|shekere|maraca)\b/i],
+  ['terreiro',/\b(terreiro|congá|conga|ofrendas?|offerings?|ritual|ceremon\w*|velas?|candles?|umbanda|pai de santo|m[aã]e de santo)\b/i],['atabaque',/\b(atabaques?|tambor(es)?|drums?|batuque|toque)\b/i],
+  ['mata_sagrada',/\b(caboclos?|ox[oó]ssi|od[eé]|mata|sacred forest)\b/i]];
+window.__ev336guess=function(t){t=String(t||'');for(var i=0;i<RX.length;i++)if(RX[i][1].test(t))return RX[i][0];return ''};
+/* pestaña Sonido: opción y botones para probar */
+var tsO=tSonido;tSonido=function(){var P=S.P;return tsO.apply(this,arguments)+'<div class="card box"><h3>🥁 Sonidos sagrados</h3><div class="sub" style="font-size:12px">Atabaque, adjá, agogô y chocalho, fabricados por la app: sin derechos, TikTok no los silencia. Se eligen por escena en «Ambiente».</div>'+
+  '<div style="margin-top:6px">'+sw('sfxTambor','Transiciones con golpe de tambor y campanita (en vez del “whoosh”)','render()')+'</div>'+
+  '<div class="lbl">Probar</div><div class="chips">'+Object.keys(NEWA).map(function(k){return '<button class="chip sm" onclick="previewAmb(\''+k+'\')">'+AMB[k]+'</button>'}).join('')+'<button class="chip sm" onclick="stopPrev()">⏹ Detener</button></div>'+
+  '<div class="row" style="margin-top:10px"><button class="btn sm" onclick="EV336.applyAll()">Poner sonido sagrado en todas las escenas sin ambiente</button></div></div>'};
+window.EV336={applyAll:function(){var P=S.P;if(!P)return;var d=afroDefault(P)||'atabaque',n=0;P.scenes.forEach(function(s){if(!s.amb||s.amb==='none'){var g=window.__ev336guess((s.prompt||'')+' '+(s.text||''));s.amb=g||d;n++}});P.amb=true;save(1);render();toast(n?'Sonido sagrado puesto en '+n+' escena(s) ✅':'Todas las escenas ya tienen ambiente')}};
+console.info('[Estudio Viral] v3.36: sonidos sagrados');
+})();
+</script>
+<!-- ===== FIN v3.36 ===== -->
 
 </body>
 </html>
