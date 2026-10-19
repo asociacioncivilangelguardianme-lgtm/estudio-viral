@@ -2297,7 +2297,7 @@ window.__ev32export=exportMp4;
 (function(){
 'use strict';
 if(window.__ev33)return;window.__ev33=true;
-var VERSION='3.45';
+var VERSION='3.47';
 var COLORS=['#7dd3fc','#ff9de2','#a7f3d0','#fdba74','#c4b5fd'];
 var MOVES=['zoomin','panr','tiltup','dolly','panl','zoomout','track','tiltdown'];
 
@@ -2618,7 +2618,7 @@ if('serviceWorker' in navigator&&/^https:$/.test(location.protocol)){window.addE
   reg.addEventListener('updatefound',function(){var w=reg.installing;if(!w)return;w.addEventListener('statechange',function(){if(w.state==='installed'&&navigator.serviceWorker.controller)toast('Hay una versión nueva de Estudio Viral: cerrá y volvé a abrir la app para verla ✨')})})}).catch(function(e){console.info('[v3.33] sin app instalable (falta sw.js en GitHub):',e&&e.message)})})}
 
 /* Novedades */
-var NEWS=['🌍 <b>3.45</b>: arreglado lo de las imágenes orientales: el servicio gratis ignoraba los pedidos largos y devolvía cualquier imagen. Ahora cada pedido es corto y empieza por lo importante. En los videos de Orixás las personas salen afrobrasileñas. La Receta usa primeros planos de los personajes con la olla. Las miniaturas de «Vista» ahora se ven.','🍲 <b>3.44</b>: en la Receta de Orixás cada imagen muestra la misma olla grande con los dos personajes (ya no jarros sueltos). En «Vista» ves las imágenes mientras se crean y tenés «Rehacer todas las imágenes».','🌍 <b>3.43</b>: en videos de Orixás las personas salen afrobrasileñas y africanas (nada asiático). La app respeta el límite gratis de 1 imagen cada 45 segundos y ya no deja el cartel amarillo «Free limit reached». En el celular, «Vista» trae los primeros pasos: personajes, fotos de referencia y generar imágenes.','📱 <b>3.42</b>: en el celular el editor ahora va por partes (Vista, Guion, Escena, Estilo y Línea) con botones abajo, sin tener que bajar tanto. Botones más grandes y nada se sale de la pantalla.','🍲 <b>3.41</b>: nueva <b>Receta de Orixás</b> (dos personajes echan ingredientes en la olla y el final se ilumina). Efectos nuevos: frasco que se vuelca, humo, estallido de luz y aura. Cartel con texto en cada escena. Ayuda para darle movimiento real (Wan, Kling, Hailuo) y grabar tu gesto con la cámara. Bajar y subir todas las voces juntas para Applio.','📲 <b>3.40</b>: pasá tus proyectos de la PC al celu con un código QR (sin WhatsApp). Modo Cine (todo el video o solo algunas escenas), color de acento, música que baja sola cuando habla la voz y la nueva sección <b>Video largo a clips</b>.','💾 <b>3.39</b>: el video exportado queda guardado en el proyecto. Al volver a abrirlo aparecen directo Descargar, YouTube, TikTok e Instagram, sin exportar de nuevo.','🎙️ <b>3.38 · Voces más naturales</b>: velocidad por personaje (por ejemplo Oxalá lento y pausado), botón «Subir mi voz» en cada escena (opcional) y la IA escribe los diálogos con pausas y emoción, sin narrador.','💾 <b>3.37</b>: las voces quedan guardadas en la compu. Si recargás la página no se pierden, y si falta alguna se hace sola antes de reproducir.','🥁 <b>3.36 · Sonidos sagrados</b>: atabaque con repique, adjá/sineta, agogô, chocalho, Terreiro, Encruzilhada, Mar de Iemanjá y Mata sagrada. Opción de transiciones con golpe de tambor y campanita.','🕯️ <b>3.35 · Religión afro</b>: sección nueva en Géneros y Estilos con Itán, Mensaje de la entidad, Conocé a la entidad, Oración del día, Ofrenda explicada, Mitos y verdades, Fechas especiales, Pontos cantados, Cuentos para chicos, Exus y Pombagiras, Umbanda y Orixás. Y 9 estilos sagrados: Arte afrobrasileño, Terreiro, Mata sagrada, Encruzilhada nocturna, Pintura sacra, Ícono dorado, Vitral, Escultura africana y Afrofuturismo.','🔧 <b>3.34</b>: en los diálogos, cada escena reconoce sola quién habla y usa su voz, y pone el sonido del lugar (selva, río, cascada, fuego, tambores…). «Armar escenas» ya no borra las imágenes que hiciste.','👥 <b>Modo Diálogo</b>: dos (o más) personajes hablan, cada uno con su voz. Lo elegís en «Nuevo video».',
+var NEWS=['↩️ <b>3.47</b>: el botón «atrás» del celular ya no cierra la app: primero cierra lo que esté abierto, después vuelve a Vista y a Mis Proyectos. Para salir, tocás «atrás» dos veces.','🗣️ <b>3.46</b>: la voz ya no lee los emojis ni los hashtags del guion (antes decía «corazón», «estatua», «almohadilla»). Nuevo interruptor para hacer el video <b>sin voz</b> (solo subtítulos y música), en la pestaña Voz y en Vista.','🌍 <b>3.45</b>: arreglado lo de las imágenes orientales: el servicio gratis ignoraba los pedidos largos y devolvía cualquier imagen. Ahora cada pedido es corto y empieza por lo importante. En los videos de Orixás las personas salen afrobrasileñas. La Receta usa primeros planos de los personajes con la olla. Las miniaturas de «Vista» ahora se ven.','🍲 <b>3.44</b>: en la Receta de Orixás cada imagen muestra la misma olla grande con los dos personajes (ya no jarros sueltos). En «Vista» ves las imágenes mientras se crean y tenés «Rehacer todas las imágenes».','🌍 <b>3.43</b>: en videos de Orixás las personas salen afrobrasileñas y africanas (nada asiático). La app respeta el límite gratis de 1 imagen cada 45 segundos y ya no deja el cartel amarillo «Free limit reached». En el celular, «Vista» trae los primeros pasos: personajes, fotos de referencia y generar imágenes.','📱 <b>3.42</b>: en el celular el editor ahora va por partes (Vista, Guion, Escena, Estilo y Línea) con botones abajo, sin tener que bajar tanto. Botones más grandes y nada se sale de la pantalla.','🍲 <b>3.41</b>: nueva <b>Receta de Orixás</b> (dos personajes echan ingredientes en la olla y el final se ilumina). Efectos nuevos: frasco que se vuelca, humo, estallido de luz y aura. Cartel con texto en cada escena. Ayuda para darle movimiento real (Wan, Kling, Hailuo) y grabar tu gesto con la cámara. Bajar y subir todas las voces juntas para Applio.','📲 <b>3.40</b>: pasá tus proyectos de la PC al celu con un código QR (sin WhatsApp). Modo Cine (todo el video o solo algunas escenas), color de acento, música que baja sola cuando habla la voz y la nueva sección <b>Video largo a clips</b>.','💾 <b>3.39</b>: el video exportado queda guardado en el proyecto. Al volver a abrirlo aparecen directo Descargar, YouTube, TikTok e Instagram, sin exportar de nuevo.','🎙️ <b>3.38 · Voces más naturales</b>: velocidad por personaje (por ejemplo Oxalá lento y pausado), botón «Subir mi voz» en cada escena (opcional) y la IA escribe los diálogos con pausas y emoción, sin narrador.','💾 <b>3.37</b>: las voces quedan guardadas en la compu. Si recargás la página no se pierden, y si falta alguna se hace sola antes de reproducir.','🥁 <b>3.36 · Sonidos sagrados</b>: atabaque con repique, adjá/sineta, agogô, chocalho, Terreiro, Encruzilhada, Mar de Iemanjá y Mata sagrada. Opción de transiciones con golpe de tambor y campanita.','🕯️ <b>3.35 · Religión afro</b>: sección nueva en Géneros y Estilos con Itán, Mensaje de la entidad, Conocé a la entidad, Oración del día, Ofrenda explicada, Mitos y verdades, Fechas especiales, Pontos cantados, Cuentos para chicos, Exus y Pombagiras, Umbanda y Orixás. Y 9 estilos sagrados: Arte afrobrasileño, Terreiro, Mata sagrada, Encruzilhada nocturna, Pintura sacra, Ícono dorado, Vitral, Escultura africana y Afrofuturismo.','🔧 <b>3.34</b>: en los diálogos, cada escena reconoce sola quién habla y usa su voz, y pone el sonido del lugar (selva, río, cascada, fuego, tambores…). «Armar escenas» ya no borra las imágenes que hiciste.','👥 <b>Modo Diálogo</b>: dos (o más) personajes hablan, cada uno con su voz. Lo elegís en «Nuevo video».',
   '🎨 <b>Subtítulos de colores</b>: cada personaje con su color y su nombre arriba, así se entiende quién habla aunque esté sin sonido.',
   '🖼️ <b>Máximo 6 imágenes</b>: el tiempo de cada una se calcula solo con las voces.',
   '💓 <b>La imagen late con la voz</b>: parece viva mientras el personaje habla.',
@@ -4721,6 +4721,70 @@ console.info('[Estudio Viral] v3.45: pedidos de imagen cortos (el servicio grati
 })();
 </script>
 <!-- ===== FIN v3.45 ===== -->
+
+<!-- ===== ESTUDIO VIRAL · v3.46 · LA VOZ YA NO LEE EMOJIS NI HASHTAGS =====
+     Antes, si el guion traía ❤️ 🗿 o #hashtags, la voz decía «corazón», «estatua», «almohadilla».
+     Agregado al final. Para quitarlo, borrá desde acá hasta "FIN v3.46". -->
+<script id="ev346">
+(function(){'use strict';if(window.__ev346)return;window.__ev346=true;
+var EMO=/[\p{Extended_Pictographic}\u{1F1E6}-\u{1F1FF}\u{FE0F}\u{FE0E}\u{200D}\u{20E3}\u{1F3FB}-\u{1F3FF}]/gu;
+function base(t){return String(t||'').replace(/https?:\/\/\S+/g,' ').replace(/(^|[\s(])#[\p{L}\p{N}_]+/gu,'$1').replace(/(^|[\s(])@[\w.]+/g,'$1')}
+function tidy(t){return t.replace(/\s+([,.;:!?…])/g,'$1').replace(/([¿¡])\s+/g,'$1').replace(/\s{2,}/g,' ').replace(/^[\s,.;:]+/,'').trim()}
+/* para la voz: sin emojis, sin hashtags, sin @, sin links ni signos sueltos (* _ ~ # | > etc.) */
+function speech(t){return tidy(base(t).replace(EMO,' ').replace(/[#*_~|<>^`=\[\]{}\\•►▶➡→✓✔]/g,' ').replace(/(\.\s*){3,}/g,'… '))}
+/* para los subtítulos: sin hashtags ni signos sueltos (los emojis se pueden dejar) */
+function subs(t){return tidy(base(t).replace(/[#*_~|<>^`\[\]{}\\]/g,' '))}
+var DIRTY=/[\p{Extended_Pictographic}#*_~|<>@]|https?:/u;
+var mkO=Voice.make.bind(Voice);
+Voice.make=function(text){var a=[].slice.call(arguments);var c=speech(text);a[0]=c||String(text||'');return mkO.apply(null,a)};
+var dsO=drawSubs;drawSubs=function(ctx,W,H,text){var a=[].slice.call(arguments);a[3]=subs(text)||text;return dsO.apply(this,a)};
+/* las voces que ya se habían hecho leyendo emojis se rehacen solas una vez */
+var vO=Pipe.voices;Pipe.voices=async function(){var P=S.P;try{if(P)P.scenes.forEach(function(s){var v=RT.voices[s.id];if(v&&!v.mine&&!v._clean&&DIRTY.test(s.text||''))delete RT.voices[s.id]})}catch(e){}
+  var r=await vO.apply(this,arguments);try{if(P)P.scenes.forEach(function(s){var v=RT.voices[s.id];if(v)v._clean=true})}catch(e){}return r};
+/* ===== VIDEO SIN VOZ: solo subtítulos y música (se prende y se apaga) ===== */
+function mute(){return !!(S.P&&S.P.noVoice&&S.P.mode!=='musica')}
+function hide(fn,self,args){var v=RT.voices,n=RT.narr;RT.voices={};RT.narr=null;try{return fn.apply(self,args)}finally{RT.voices=v;RT.narr=n}}
+var tlO=Pipe.timeline;Pipe.timeline=function(){return mute()?hide(tlO,this,arguments):tlO.apply(this,arguments)};
+var pvO=Pipe.voices;Pipe.voices=async function(){if(mute()){toast('🔇 Este video está sin voz. Para ponerle voz, prendela en la pestaña Voz.');return}return pvO.apply(this,arguments)};
+var prO=Player.run;Player.run=async function(){if(!mute())return prO.apply(this,arguments);var n=RT.narr;RT.narr=null;try{return await prO.apply(this,arguments)}finally{RT.narr=n}};
+try{if(window.speechSynthesis){var spk=speechSynthesis.speak.bind(speechSynthesis);speechSynthesis.speak=function(u){if(mute())return;return spk(u)}}}catch(e){}
+function muteBox(){var on=mute();return '<div class="ev43-afro" style="background:rgba(124,92,255,.1);border-color:rgba(124,92,255,.4)"><span style="font-size:22px">'+(on?'🔇':'🗣️')+'</span><span style="flex:1"><b style="color:var(--acc2)">Voz del video:</b> '+(on?'<b>apagada</b> · solo subtítulos y música.':'prendida.')+'</span><button class="sw '+(on?'':'on')+'" onclick="EV346.toggle()"></button></div>'}
+var tvO=tVoz;tVoz=function(){var h=tvO.apply(this,arguments);return '<div class="card box">'+muteBox()+'<div class="hint" style="margin-top:6px">Apagala si querés el video solo con texto y música, o si la voz no dice bien lo que querés. Los subtítulos siguen igual.</div></div>'+h};
+var veO2=vEditor;vEditor=function(m){var r=veO2.apply(this,arguments);try{var q=m.querySelector('.ev43-quick');if(q&&!q.querySelector('.ev46-m')){var d=document.createElement('div');d.className='ev46-m';d.innerHTML=muteBox();var afro=q.querySelector('.ev43-afro');if(afro)afro.after(d);else q.appendChild(d)}}catch(e){}return r};
+window.EV346={speech:speech,subs:subs,toggle:function(){var P=S.P;if(!P)return;P.noVoice=!P.noVoice;RT.video=null;save(1);render();try{Player.seek(1.2)}catch(e){}toast(P.noVoice?'🔇 Video sin voz: solo subtítulos y música':'🗣️ Voz prendida. Si faltan voces, se generan solas al reproducir.')}};
+console.info('[Estudio Viral] v3.46: la voz no lee emojis ni hashtags');
+})();
+</script>
+<!-- ===== FIN v3.46 ===== -->
+
+<!-- ===== ESTUDIO VIRAL · v3.47 · EL BOTÓN «ATRÁS» DEL CELULAR YA NO CIERRA LA APP =====
+     Agregado al final. Para quitarlo, borrá desde acá hasta "FIN v3.47". -->
+<script id="ev347">
+(function(){'use strict';if(window.__ev347)return;window.__ev347=true;
+var exitAt=0,leaving=false;
+function guard(){try{history.pushState({ev347:1},'',location.href)}catch(e){}}
+function isOpen(sel){var e=$(sel);return !!(e&&e.classList.contains('open'))}
+/* qué hace «atrás», en orden: cierra lo que esté abierto encima, después vuelve de pantalla */
+function back(){
+  if(isOpen('#sheet')){try{(window.EV340&&EV340.close)?EV340.close():closeSheet()}catch(e){closeSheet()}return true}
+  if(isOpen('#ytm')){try{YT.close()}catch(e){$('#ytm').classList.remove('open')}return true}
+  if(isOpen('#modal')){$('#modal').classList.remove('open');return true}
+  if(isOpen('#chat')){try{Chat.toggle(false)}catch(e){$('#chat').classList.remove('open')}return true}
+  var pill=document.querySelector('.ev42-pill');if(pill){pill.remove()}
+  if(S.view==='editor'){if(window.EV342&&window.matchMedia('(max-width:760px)').matches&&S.msec&&S.msec!=='vista'){EV342.sec('vista');return true}go('projects');return true}
+  if(S.view==='new'&&S.wiz&&S.wiz.step>1){S.wiz.step--;render();return true}
+  if(S.view&&S.view!=='projects'){go('projects');return true}
+  return false}
+window.addEventListener('popstate',function(){if(leaving)return;
+  if(back()){guard();return}
+  var now=Date.now();if(now-exitAt<2500){leaving=true;history.back();return}
+  exitAt=now;guard();toast('Tocá «atrás» otra vez para salir de Estudio Viral')});
+guard();
+window.EV347={back:back};
+console.info('[Estudio Viral] v3.47: el botón atrás del celular funciona dentro de la app');
+})();
+</script>
+<!-- ===== FIN v3.47 ===== -->
 
 </body>
 </html>
