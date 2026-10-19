@@ -692,7 +692,7 @@ function extractCast(prompts){const cast=[],seen=new Set();
     seen.add(name.toLowerCase());cast.push({name,desc:(m[2]+(more?', '+more[0]:'')).replace(/\s+/g,' ').trim()})}})});
  return cast.slice(0,8)}
 const PEOPLE={auto:'Automático (lo decide la IA)',latino:'Latinoamericanos',europeo:'Europeos',afro:'Afrodescendientes',asiatico:'Asiáticos',variado:'Variados (mezcla de todos)'};
-const PEOPLE_P={latino:'all people are Latin American (Hispanic, Argentine and Latino features), not East Asian',europeo:'all people are European (Caucasian features), not East Asian',afro:'people are Black / Afro-Latino',asiatico:'people are East Asian',variado:'ethnically diverse cast: Latino, European, Black and Asian people'};
+const PEOPLE_P={latino:'all people are Latin American (Hispanic, Argentine and Latino features)',europeo:'all people are European (Caucasian features)',afro:'people are Black / Afro-Latino',asiatico:'people are East Asian',variado:'ethnically diverse cast: Latino, European, Black and Asian people'};
 const LENSES={normal:'50mm normal',gran:'Gran angular 24mm',tele:'Teleobjetivo 85mm',bokeh:'Profundidad de campo (Bokeh)'};
 const GRADES={
  none:{n:'Original',f:'none'},
@@ -2297,7 +2297,7 @@ window.__ev32export=exportMp4;
 (function(){
 'use strict';
 if(window.__ev33)return;window.__ev33=true;
-var VERSION='3.44';
+var VERSION='3.45';
 var COLORS=['#7dd3fc','#ff9de2','#a7f3d0','#fdba74','#c4b5fd'];
 var MOVES=['zoomin','panr','tiltup','dolly','panl','zoomout','track','tiltdown'];
 
@@ -2618,7 +2618,7 @@ if('serviceWorker' in navigator&&/^https:$/.test(location.protocol)){window.addE
   reg.addEventListener('updatefound',function(){var w=reg.installing;if(!w)return;w.addEventListener('statechange',function(){if(w.state==='installed'&&navigator.serviceWorker.controller)toast('Hay una versión nueva de Estudio Viral: cerrá y volvé a abrir la app para verla ✨')})})}).catch(function(e){console.info('[v3.33] sin app instalable (falta sw.js en GitHub):',e&&e.message)})})}
 
 /* Novedades */
-var NEWS=['🍲 <b>3.44</b>: en la Receta de Orixás cada imagen muestra la misma olla grande con los dos personajes (ya no jarros sueltos). En «Vista» ves las imágenes mientras se crean y tenés «Rehacer todas las imágenes».','🌍 <b>3.43</b>: en videos de Orixás las personas salen afrobrasileñas y africanas (nada asiático). La app respeta el límite gratis de 1 imagen cada 45 segundos y ya no deja el cartel amarillo «Free limit reached». En el celular, «Vista» trae los primeros pasos: personajes, fotos de referencia y generar imágenes.','📱 <b>3.42</b>: en el celular el editor ahora va por partes (Vista, Guion, Escena, Estilo y Línea) con botones abajo, sin tener que bajar tanto. Botones más grandes y nada se sale de la pantalla.','🍲 <b>3.41</b>: nueva <b>Receta de Orixás</b> (dos personajes echan ingredientes en la olla y el final se ilumina). Efectos nuevos: frasco que se vuelca, humo, estallido de luz y aura. Cartel con texto en cada escena. Ayuda para darle movimiento real (Wan, Kling, Hailuo) y grabar tu gesto con la cámara. Bajar y subir todas las voces juntas para Applio.','📲 <b>3.40</b>: pasá tus proyectos de la PC al celu con un código QR (sin WhatsApp). Modo Cine (todo el video o solo algunas escenas), color de acento, música que baja sola cuando habla la voz y la nueva sección <b>Video largo a clips</b>.','💾 <b>3.39</b>: el video exportado queda guardado en el proyecto. Al volver a abrirlo aparecen directo Descargar, YouTube, TikTok e Instagram, sin exportar de nuevo.','🎙️ <b>3.38 · Voces más naturales</b>: velocidad por personaje (por ejemplo Oxalá lento y pausado), botón «Subir mi voz» en cada escena (opcional) y la IA escribe los diálogos con pausas y emoción, sin narrador.','💾 <b>3.37</b>: las voces quedan guardadas en la compu. Si recargás la página no se pierden, y si falta alguna se hace sola antes de reproducir.','🥁 <b>3.36 · Sonidos sagrados</b>: atabaque con repique, adjá/sineta, agogô, chocalho, Terreiro, Encruzilhada, Mar de Iemanjá y Mata sagrada. Opción de transiciones con golpe de tambor y campanita.','🕯️ <b>3.35 · Religión afro</b>: sección nueva en Géneros y Estilos con Itán, Mensaje de la entidad, Conocé a la entidad, Oración del día, Ofrenda explicada, Mitos y verdades, Fechas especiales, Pontos cantados, Cuentos para chicos, Exus y Pombagiras, Umbanda y Orixás. Y 9 estilos sagrados: Arte afrobrasileño, Terreiro, Mata sagrada, Encruzilhada nocturna, Pintura sacra, Ícono dorado, Vitral, Escultura africana y Afrofuturismo.','🔧 <b>3.34</b>: en los diálogos, cada escena reconoce sola quién habla y usa su voz, y pone el sonido del lugar (selva, río, cascada, fuego, tambores…). «Armar escenas» ya no borra las imágenes que hiciste.','👥 <b>Modo Diálogo</b>: dos (o más) personajes hablan, cada uno con su voz. Lo elegís en «Nuevo video».',
+var NEWS=['🌍 <b>3.45</b>: arreglado lo de las imágenes orientales: el servicio gratis ignoraba los pedidos largos y devolvía cualquier imagen. Ahora cada pedido es corto y empieza por lo importante. En los videos de Orixás las personas salen afrobrasileñas. La Receta usa primeros planos de los personajes con la olla. Las miniaturas de «Vista» ahora se ven.','🍲 <b>3.44</b>: en la Receta de Orixás cada imagen muestra la misma olla grande con los dos personajes (ya no jarros sueltos). En «Vista» ves las imágenes mientras se crean y tenés «Rehacer todas las imágenes».','🌍 <b>3.43</b>: en videos de Orixás las personas salen afrobrasileñas y africanas (nada asiático). La app respeta el límite gratis de 1 imagen cada 45 segundos y ya no deja el cartel amarillo «Free limit reached». En el celular, «Vista» trae los primeros pasos: personajes, fotos de referencia y generar imágenes.','📱 <b>3.42</b>: en el celular el editor ahora va por partes (Vista, Guion, Escena, Estilo y Línea) con botones abajo, sin tener que bajar tanto. Botones más grandes y nada se sale de la pantalla.','🍲 <b>3.41</b>: nueva <b>Receta de Orixás</b> (dos personajes echan ingredientes en la olla y el final se ilumina). Efectos nuevos: frasco que se vuelca, humo, estallido de luz y aura. Cartel con texto en cada escena. Ayuda para darle movimiento real (Wan, Kling, Hailuo) y grabar tu gesto con la cámara. Bajar y subir todas las voces juntas para Applio.','📲 <b>3.40</b>: pasá tus proyectos de la PC al celu con un código QR (sin WhatsApp). Modo Cine (todo el video o solo algunas escenas), color de acento, música que baja sola cuando habla la voz y la nueva sección <b>Video largo a clips</b>.','💾 <b>3.39</b>: el video exportado queda guardado en el proyecto. Al volver a abrirlo aparecen directo Descargar, YouTube, TikTok e Instagram, sin exportar de nuevo.','🎙️ <b>3.38 · Voces más naturales</b>: velocidad por personaje (por ejemplo Oxalá lento y pausado), botón «Subir mi voz» en cada escena (opcional) y la IA escribe los diálogos con pausas y emoción, sin narrador.','💾 <b>3.37</b>: las voces quedan guardadas en la compu. Si recargás la página no se pierden, y si falta alguna se hace sola antes de reproducir.','🥁 <b>3.36 · Sonidos sagrados</b>: atabaque con repique, adjá/sineta, agogô, chocalho, Terreiro, Encruzilhada, Mar de Iemanjá y Mata sagrada. Opción de transiciones con golpe de tambor y campanita.','🕯️ <b>3.35 · Religión afro</b>: sección nueva en Géneros y Estilos con Itán, Mensaje de la entidad, Conocé a la entidad, Oración del día, Ofrenda explicada, Mitos y verdades, Fechas especiales, Pontos cantados, Cuentos para chicos, Exus y Pombagiras, Umbanda y Orixás. Y 9 estilos sagrados: Arte afrobrasileño, Terreiro, Mata sagrada, Encruzilhada nocturna, Pintura sacra, Ícono dorado, Vitral, Escultura africana y Afrofuturismo.','🔧 <b>3.34</b>: en los diálogos, cada escena reconoce sola quién habla y usa su voz, y pone el sonido del lugar (selva, río, cascada, fuego, tambores…). «Armar escenas» ya no borra las imágenes que hiciste.','👥 <b>Modo Diálogo</b>: dos (o más) personajes hablan, cada uno con su voz. Lo elegís en «Nuevo video».',
   '🎨 <b>Subtítulos de colores</b>: cada personaje con su color y su nombre arriba, así se entiende quién habla aunque esté sin sonido.',
   '🖼️ <b>Máximo 6 imágenes</b>: el tiempo de cada una se calcula solo con las voces.',
   '💓 <b>La imagen late con la voz</b>: parece viva mientras el personaje habla.',
@@ -4575,7 +4575,7 @@ console.info('[Estudio Viral] v3.42: vista del celular por secciones');
 /* ======================================================================
    1) ORIXÁS: que las personas salgan africanas / afrobrasileñas, no asiáticas
    ====================================================================== */
-var AFRO_EN=' Afro-Brazilian and West African Yoruba people with dark brown skin and African facial features, Candomblé and Umbanda sacred tradition, African textiles, cowrie shells and beads, African or Brazilian setting. NOT East Asian, no Chinese or Japanese faces, temples, pagodas, kimonos or architecture.';
+var AFRO_EN=' Afro-Brazilian and West African Yoruba people with dark brown skin and African facial features, Candomblé and Umbanda sacred tradition, African textiles, cowrie shells and colorful beads, Yoruba shrine in Bahia Brazil.';
 var AFRO_ES=' Importante: son Orixás de las religiones afrobrasileñas (Candomblé, Umbanda, Batuque). Las personas son negras, africanas o afrobrasileñas, con rasgos africanos. Nada asiático: ni caras asiáticas, ni templos chinos o japoneses, ni kimonos.';
 function projText(P){try{return [P.name,P.title,P.idea,P.script,P.paraphrased,P.sourceText].concat((P.scenes||[]).slice(0,30).map(function(s){return (s.text||'')+' '+(s.prompt||'')})).concat((P.cast||[]).map(function(c){return c.name})).join(' ')}catch(e){return ''}}
 var afroCache={id:null,sig:'',v:false};
@@ -4604,9 +4604,12 @@ function needsGate(u){return !S.settings.key&&/pollinations\.ai/.test(u)&&!/^loc
 function msg(t){var m=$('#pmsg');if(m)m.textContent=t}
 function waitTurn(){var p=gate.then(async function(){var w=last+GAP-Date.now();if(w>0){var end=Date.now()+w;while(Date.now()<end){msg('⏳ El servicio gratis da 1 imagen cada 45 segundos: la próxima en '+Math.ceil((end-Date.now())/1000)+' s… (podés dejarlo trabajando solo)');await sleep(1000)}}last=Date.now()});gate=p.catch(function(){});return p}
 /* detecta el cartel amarillo «Free limit reached» */
-function looksLimit(im){try{var c=document.createElement('canvas');c.width=24;c.height=24;var x=c.getContext('2d',{willReadFrequently:true});x.drawImage(im,0,0,24,24);var d=x.getImageData(0,0,24,24).data,beige=0,dark=0,n=d.length/4;
-  for(var i=0;i<d.length;i+=4){var r=d[i],g=d[i+1],b=d[i+2];if(r>180&&g>160&&b<200&&r-b>25&&Math.abs(r-g)<45)beige++;else if(r+g+b<240)dark++}
-  return beige/n>.6&&dark/n<.25}catch(e){return false}}
+function looksLimit(im){try{var c=document.createElement('canvas');c.width=24;c.height=24;var x=c.getContext('2d',{willReadFrequently:true});x.drawImage(im,0,0,24,24);var d=x.getImageData(0,0,24,24).data,n=d.length/4,R=[],G=[],B=[];
+  for(var i=0;i<d.length;i+=4){R.push(d[i]);G.push(d[i+1]);B.push(d[i+2])}
+  function med(a){var b=a.slice().sort(function(p,q){return p-q});return b[b.length>>1]}var mr=med(R),mg=med(G),mb=med(B),near=0,beige=0;
+  for(var k=0;k<n;k++){if(Math.abs(R[k]-mr)+Math.abs(G[k]-mg)+Math.abs(B[k]-mb)<45)near++;var r=R[k],g=G[k],b=B[k];if(r>180&&g>160&&b<200&&r-b>25&&Math.abs(r-g)<45)beige++}
+  /* carteles de pollinations: fondo liso y claro (amarillo «límite», rosa «rechazada», durazno «servicio lleno») */
+  return (near/n>.72&&mr+mg+mb>540)||beige/n>.6}catch(e){return false}}
 var liO=loadImg;loadImg=function(url,pri){if(!url||!needsGate(url)||imgCache[url])return liO.apply(this,arguments);
   var p=waitTurn().then(function(){delete imgCache[url];return liO(url,pri)}).then(function(im){
     if(looksLimit(im)){delete imgCache[url];delete RT.imgs[url];last=Date.now();throw new Error('límite gratis')}remember(url);return im});
@@ -4627,7 +4630,7 @@ var veO=vEditor;vEditor=function(m){var r=veO.apply(this,arguments);try{var pv=m
 /* el interruptor de Orixás también en «Estilo» */
 var lpO=leftPanel;leftPanel=function(){var h=lpO.apply(this,arguments);try{var mark='<div class="lbl">Rasgos de las personas</div>',i=h.indexOf(mark);if(i>=0)h=h.slice(0,i)+afroBox()+h.slice(i)}catch(e){}return h};
 
-window.EV343={afro:function(){var P=S.P;if(!P)return;var now=isAfro(P);P.afro=!now;afroCache.sig='';save(1);
+window.EV343={isAfro:isAfro,afro:function(){var P=S.P;if(!P)return;var now=isAfro(P);P.afro=!now;afroCache.sig='';save(1);
   if(P.afro&&P.scenes.length&&confirm('¿Rehacer las imágenes que no subiste vos, para que salgan con rasgos africanos? (Si ponés Cancelar, se usa solo en las imágenes nuevas)')){resetImgs();render();run(function(){return Pipe.images()})}else render();
   toast(P.afro?'🌍 Orixás: personas afrobrasileñas y africanas':'Rasgos: los decide la IA')}};
 try{if(S.view==='editor')render()}catch(e){}
@@ -4653,19 +4656,19 @@ console.info('[Estudio Viral] v3.43: Orixás con rasgos africanos, límite grati
 /* ======================================================================
    1) RECETA: cada imagen muestra la MISMA olla grande y a los personajes
    ====================================================================== */
-var POT='a huge round dark clay cooking pot (a big African cauldron) with carved patterns, sitting on the floor in the center, the same pot in every scene';
+var POT='a huge glowing clay cauldron';
 var CNAME={'#ffd24a':'golden','#ff5ec4':'pink','#ff4d4d':'red','#39ff88':'green','#4dc3ff':'light blue','#b388ff':'purple','#ffffff':'white','#ff9a3c':'orange','#ffd27a':'golden','#ffb347':'golden'};
 function colName(h){h=String(h||'').toLowerCase();if(CNAME[h])return CNAME[h];var m=h.match(/^#?([0-9a-f]{6})$/);if(!m)return 'golden';var r=parseInt(m[1].substr(0,2),16),g=parseInt(m[1].substr(2,2),16),b=parseInt(m[1].substr(4,2),16);
   if(r>200&&g>200&&b>200)return 'white';if(r>g&&r>b)return g>150?'golden':g>90?'orange':b>120?'pink':'red';if(g>=r&&g>=b)return 'green';return r>120?'purple':'blue'}
 function isReceta(P){P=P||S.P;return !!(P&&P.scenes&&P.scenes.some(function(s){return s.fx==='pour'})&&P.scenes.some(function(s){return s.fx==='burst'}))}
 function names(P){var c=(P.cast||[]).filter(function(x){return x&&x.name}).map(function(x){return x.name});if(c.length>=2)return [c[0],c[1]];
   var m=String(P.idea||P.name||'').match(/de\s+(.+?)\s+y\s+(.+)$/i);return m?[m[1].trim(),m[2].trim()]:['the goddess','the god']}
-function setting(P){if(P.recetaSet)return P.recetaSet;var s=null;(P.scenes||[]).some(function(x){var m=String(x.prompt||'').match(/Setting:\s*(.+)$/i);if(m){s=m[1].trim();return true}});return P.recetaSet=(s||'inside a golden African temple at dusk, warm candle light')}
+function setting(P){if(P.recetaSet)return P.recetaSet;var s=null;(P.scenes||[]).some(function(x){var m=String(x.prompt||'').match(/Setting:\s*(.+)$/i);if(m){s=m[1].trim();return true}});return P.recetaSet=String(s||'sacred Yoruba shrine at night').replace(/\btemples?\b/gi,'Yoruba shrine').split(/[,.]/)[0].slice(0,70)}
 function recetaPrompt(P,s){var nm=names(P),A=nm[0],B=nm[1],set=setting(P),k=P.scenes.indexOf(s);
-  if(s.fx==='burst')return 'Wide cinematic shot: '+POT+' bursting with golden light and sparkles, '+A+' standing on the left and '+B+' standing on the right stepping back surprised, faces lit by the glow, both full body. Setting: '+set;
+  if(s.fx==='burst')return 'Cinematic close-up: '+POT+' bursting with golden light and sparkles, '+A+' and '+B+' leaning back amazed, faces lit by the glow, '+set;
   if(s.fx==='pour'){var who=s.pourSide==='der'?B:A,oth=who===A?B:A,side=s.pourSide==='der'?'right':'left';
-    return 'Medium wide shot: '+who+' standing on the '+side+' side of '+POT+', holding a small ceramic jar with both hands and pouring glowing '+colName(s.fxColor)+' powder into the big pot, '+oth+' watching from the other side, both people clearly visible. Setting: '+set}
-  if(k===0)return 'Wide cinematic shot, two people: '+A+' standing on the left and '+B+' standing on the right, on both sides of '+POT+', both looking at the pot, full body visible. Setting: '+set;
+    return 'Cinematic close-up: '+who+' holds a small clay jar over '+POT+', '+colName(s.fxColor)+' sparkles falling in, '+oth+' smiling beside, warm fire light, '+set}
+  if(k===0)return 'Cinematic close-up: '+A+' and '+B+' side by side leaning over '+POT+', warm fire light, '+set;
   return null}
 function withReceta(s,fn){var P=S.P;if(!s||s.local||!isReceta(P)||s.freePrompt)return fn();var np=recetaPrompt(P,s);if(!np)return fn();var op=s.prompt;s.prompt=np;try{return fn()}finally{s.prompt=op}}
 var suO=Pipe.sceneURL;Pipe.sceneURL=function(s){var self=this,a=arguments;return withReceta(s,function(){return suO.apply(self,a)})};
@@ -4675,7 +4678,7 @@ var gsO=geminiScene;geminiScene=async function(i){var P=S.P,s=P&&P.scenes[i];if(
 /* ======================================================================
    2) VER LAS IMÁGENES MIENTRAS SE CREAN (en «Vista»)
    ====================================================================== */
-function th(s,i){var im=RT.imgs[s.img],run=S.busy&&!im&&!s.local,cls=im?'ok':run?'run':'';return '<button class="ev44-th '+cls+'" data-sid="'+s.id+'" style="'+(im?'background-image:url('+esc(im.src)+')':'')+'" onclick="S.sel='+i+';EV342.sec(\'escena\')"><b>'+(i+1)+'</b>'+(im?'':run?'⏳':'🖼️')+'</button>'}
+function th(s,i){var im=RT.imgs[s.img],run=S.busy&&!im&&!s.local,cls=im?'ok':run?'run':'';return '<button class="ev44-th '+cls+'" data-sid="'+s.id+'" style="'+(im?'background-image:url(&quot;'+esc(im.src).replace(/\(/g,'%28').replace(/\)/g,'%29')+'&quot;)':'')+'" onclick="S.sel='+i+';EV342.sec(\'escena\')"><b>'+(i+1)+'</b>'+(im?'':run?'⏳':'🖼️')+'</button>'}
 function strip(){var P=S.P;if(!P||!P.scenes.length)return '';var ok=P.scenes.filter(function(s){return RT.imgs[s.img]}).length;
   return '<div class="ev44-h"><span>🖼️ Imágenes: '+ok+' de '+P.scenes.length+'</span><span class="sub" style="font-weight:500;font-size:11px">tocá una para editarla</span></div><div class="ev44-strip" id="ev44strip">'+P.scenes.map(th).join('')+'</div>'+
     '<div class="ev43-row"><button class="btn sm" data-busy onclick="EV344.redoAll()">🔄 Rehacer todas las imágenes</button></div>'}
@@ -4684,7 +4687,7 @@ var veO=vEditor;vEditor=function(m){var r=veO.apply(this,arguments);try{var q=m.
 var psO=paintScene;paintScene=function(){var r=psO.apply(this,arguments);try{refreshStrip()}catch(e){}return r};
 var sbO=Pipe.setBusy;Pipe.setBusy=function(){var r=sbO.apply(this,arguments);try{refreshStrip()}catch(e){}return r};
 
-window.EV344={redoAll:function(){var P=S.P;if(!P||!P.scenes.length)return;var own=P.scenes.filter(function(s){return s.local}).length;
+window.EV344={rp:function(P,s){return isReceta(P)&&s&&!s.freePrompt?recetaPrompt(P,s):null},redoAll:function(){var P=S.P;if(!P||!P.scenes.length)return;var own=P.scenes.filter(function(s){return s.local}).length;
   if(!confirm('¿Rehacer todas las imágenes'+(isReceta(P)?' con la olla y los personajes':'')+'?'+(own?' Las '+own+' que subiste vos no se tocan.':'')+(S.settings.key?'':' Tarda 45 segundos por imagen: podés dejarlo trabajando.')))return;
   resetImgs();save(1);render();run(function(){return Pipe.images()})}};
 try{if(S.view==='editor')render()}catch(e){}
@@ -4692,6 +4695,32 @@ console.info('[Estudio Viral] v3.44: receta con la olla y los personajes, imáge
 })();
 </script>
 <!-- ===== FIN v3.44 ===== -->
+
+<!-- ===== ESTUDIO VIRAL · v3.45 · ORIXÁS: ADIÓS A LAS IMÁGENES ORIENTALES =====
+     La IA de imágenes no entiende el "no": si lee "no templos chinos", dibuja templos chinos.
+     Ahora el pedido dice solo lo que SÍ queremos, empieza por los rasgos y es más corto.
+     Agregado al final. Para quitarlo, borrá desde acá hasta "FIN v3.45". -->
+<script id="ev345">
+(function(){'use strict';if(window.__ev345)return;window.__ev345=true;
+var LEAD='Black Afro-Brazilian people with African features';
+function cut(t,n){t=String(t||'').replace(/\s+/g,' ').trim();if(t.length<=n)return t;t=t.slice(0,n);var k=Math.max(t.lastIndexOf(','),t.lastIndexOf('.'),t.lastIndexOf(';'));if(k<=n*.5)k=t.lastIndexOf(' ');return (k>0?t.slice(0,k):t).replace(/\s+(?:a|an|the|of|with|and|in|on)$/i,'').trim()}
+function shortDesc(d,nm){return cut(String(d||'').replace(/\bwith the (?:regal )?presence of (?:an? )?/gi,'like ').replace(new RegExp(',?\\s*'+String(nm||'@@').replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\s*,','g'),',').replace(/\b(?:representing|who is|known as|the orisha of|orisha of)[^,.;]*[,.;]?/gi,'').replace(/^\s*(?:a|an)\s+/i,'').replace(/\b(?:majestic|beautiful|powerful)\s+/gi,''),70)}
+function clean(t,afro){t=String(t||'').replace(/[,.]?\s*(?:NOT|not|no|without)\s+(?:East\s+)?(?:Asian|Chinese|Japanese)[^,.]*/g,'').replace(/Setting:\s*/gi,'');
+  if(afro)t=t.replace(/\btemples?\b/gi,'Yoruba shrine').replace(/\bpagodas?\b/gi,'shrine').replace(/\bkimonos?\b/gi,'African robes').replace(/\b(?:East\s+)?Asian\b/gi,'African');return t}
+function compact(P,s,afro){var core=(window.EV344&&EV344.rp&&EV344.rp(P,s))||s.prompt,parts=[];
+  parts.push((afro?LEAD+'. ':'')+cut(clean(core,afro),165));
+  try{var cs=castIn(P,{prompt:core,text:s.text}).slice(0,2).map(function(c){var d=shortDesc(c.desc,c.name);d=d.replace(/^(?:(?:a|an)\s+)?(?:\w+\s+){0,2}?(?:black|african|afro-brazilian)\s+(?:woman|man|king|queen|goddess|god|warrior)\b(?:\s+(?:like|with|of)\s+[^,]*)?,?\s*/i,'').replace(/^(?:wearing|dressed in|in)\s+/i,'');return d?c.name+' wears '+cut(d,48):''}).filter(Boolean);if(cs.length)parts.push(cs.join(', '))}catch(e){}
+  if(!afro){var pe=(typeof PEOPLE_P!=='undefined'&&PEOPLE_P[P.people])||'';if(pe&&!/\b(black|african|afro|asian|european|caucasian|latin[oa]?|hispanic)\b/i.test(parts.join(' ')))parts.push(cut(pe,80))}
+  parts.push(cut(Pipe.styleText(),45)+(P.format==='vertical'?', vertical':P.format==='cuadrado'?', square':', wide'));
+  return cut(parts.filter(Boolean).join('. '),360)}
+var suO=Pipe.sceneURL;Pipe.sceneURL=function(s){var u=suO.apply(this,arguments),P=S.P;if(!s||s.local||!P)return u;
+  var m=String(u||'').match(/^(https:\/\/[^/]+\/(?:prompt|image)\/)([^?]*)(\?.*)?$/);if(!m)return u;
+  var afro=!!(window.EV343&&EV343.isAfro(P));return m[1]+encodeURIComponent(compact(P,s,afro))+(m[3]||'')};
+window.EV345={compact:compact};
+console.info('[Estudio Viral] v3.45: pedidos de imagen cortos (el servicio gratis ignora los largos) y Orixás sin rasgos orientales');
+})();
+</script>
+<!-- ===== FIN v3.45 ===== -->
 
 </body>
 </html>
