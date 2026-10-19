@@ -2297,7 +2297,7 @@ window.__ev32export=exportMp4;
 (function(){
 'use strict';
 if(window.__ev33)return;window.__ev33=true;
-var VERSION='3.51';
+var VERSION='3.52';
 var COLORS=['#7dd3fc','#ff9de2','#a7f3d0','#fdba74','#c4b5fd'];
 var MOVES=['zoomin','panr','tiltup','dolly','panl','zoomout','track','tiltdown'];
 
@@ -2618,7 +2618,7 @@ if('serviceWorker' in navigator&&/^https:$/.test(location.protocol)){window.addE
   reg.addEventListener('updatefound',function(){var w=reg.installing;if(!w)return;w.addEventListener('statechange',function(){if(w.state==='installed'&&navigator.serviceWorker.controller)toast('Hay una versión nueva de Estudio Viral: cerrá y volvé a abrir la app para verla ✨')})})}).catch(function(e){console.info('[v3.33] sin app instalable (falta sw.js en GitHub):',e&&e.message)})})}
 
 /* Novedades */
-var NEWS=['✅ <b>3.51</b>: nuevo botón «Arreglar guion y escenas (una sola vez)»: deja en «Tu guion» solo lo que dice el narrador y lo pone al lado de cada foto, sin tocar las fotos que subiste. Con «Deshacer» vuelve todo como estaba.','🧹 <b>3.50</b>: la escobita «Limpiar» reconoce más formas de instrucciones y, si no encuentra nada, se lo pasa sola a la IA. «Limpiar con IA» funciona de a 6 escenas.','🧹 <b>3.49</b>: «Limpiar con IA» ya no falla con «no devolvió datos válidos» (ahora limpia de a 6 escenas).','🧹 <b>3.48</b>: la app saca sola las instrucciones que vienen pegadas en los guiones («narración en español latino», «escena siguiendo exactamente…», «estilo…»), así la voz y los subtítulos dicen solo lo del narrador. Botones «Limpiar», «Limpiar con IA» y «Deshacer» en Guion y en Vista.','↩️ <b>3.47</b>: el botón «atrás» del celular ya no cierra la app: primero cierra lo que esté abierto, después vuelve a Vista y a Mis Proyectos. Para salir, tocás «atrás» dos veces.','🗣️ <b>3.46</b>: la voz ya no lee los emojis ni los hashtags del guion (antes decía «corazón», «estatua», «almohadilla»). Nuevo interruptor para hacer el video <b>sin voz</b> (solo subtítulos y música), en la pestaña Voz y en Vista.','🌍 <b>3.45</b>: arreglado lo de las imágenes orientales: el servicio gratis ignoraba los pedidos largos y devolvía cualquier imagen. Ahora cada pedido es corto y empieza por lo importante. En los videos de Orixás las personas salen afrobrasileñas. La Receta usa primeros planos de los personajes con la olla. Las miniaturas de «Vista» ahora se ven.','🍲 <b>3.44</b>: en la Receta de Orixás cada imagen muestra la misma olla grande con los dos personajes (ya no jarros sueltos). En «Vista» ves las imágenes mientras se crean y tenés «Rehacer todas las imágenes».','🌍 <b>3.43</b>: en videos de Orixás las personas salen afrobrasileñas y africanas (nada asiático). La app respeta el límite gratis de 1 imagen cada 45 segundos y ya no deja el cartel amarillo «Free limit reached». En el celular, «Vista» trae los primeros pasos: personajes, fotos de referencia y generar imágenes.','📱 <b>3.42</b>: en el celular el editor ahora va por partes (Vista, Guion, Escena, Estilo y Línea) con botones abajo, sin tener que bajar tanto. Botones más grandes y nada se sale de la pantalla.','🍲 <b>3.41</b>: nueva <b>Receta de Orixás</b> (dos personajes echan ingredientes en la olla y el final se ilumina). Efectos nuevos: frasco que se vuelca, humo, estallido de luz y aura. Cartel con texto en cada escena. Ayuda para darle movimiento real (Wan, Kling, Hailuo) y grabar tu gesto con la cámara. Bajar y subir todas las voces juntas para Applio.','📲 <b>3.40</b>: pasá tus proyectos de la PC al celu con un código QR (sin WhatsApp). Modo Cine (todo el video o solo algunas escenas), color de acento, música que baja sola cuando habla la voz y la nueva sección <b>Video largo a clips</b>.','💾 <b>3.39</b>: el video exportado queda guardado en el proyecto. Al volver a abrirlo aparecen directo Descargar, YouTube, TikTok e Instagram, sin exportar de nuevo.','🎙️ <b>3.38 · Voces más naturales</b>: velocidad por personaje (por ejemplo Oxalá lento y pausado), botón «Subir mi voz» en cada escena (opcional) y la IA escribe los diálogos con pausas y emoción, sin narrador.','💾 <b>3.37</b>: las voces quedan guardadas en la compu. Si recargás la página no se pierden, y si falta alguna se hace sola antes de reproducir.','🥁 <b>3.36 · Sonidos sagrados</b>: atabaque con repique, adjá/sineta, agogô, chocalho, Terreiro, Encruzilhada, Mar de Iemanjá y Mata sagrada. Opción de transiciones con golpe de tambor y campanita.','🕯️ <b>3.35 · Religión afro</b>: sección nueva en Géneros y Estilos con Itán, Mensaje de la entidad, Conocé a la entidad, Oración del día, Ofrenda explicada, Mitos y verdades, Fechas especiales, Pontos cantados, Cuentos para chicos, Exus y Pombagiras, Umbanda y Orixás. Y 9 estilos sagrados: Arte afrobrasileño, Terreiro, Mata sagrada, Encruzilhada nocturna, Pintura sacra, Ícono dorado, Vitral, Escultura africana y Afrofuturismo.','🔧 <b>3.34</b>: en los diálogos, cada escena reconoce sola quién habla y usa su voz, y pone el sonido del lugar (selva, río, cascada, fuego, tambores…). «Armar escenas» ya no borra las imágenes que hiciste.','👥 <b>Modo Diálogo</b>: dos (o más) personajes hablan, cada uno con su voz. Lo elegís en «Nuevo video».',
+var NEWS=['⚡ <b>3.52</b>: nuevas <b>Recetas</b> (botón «⚡ Recetas» en Mis Proyectos): elegís Itán, Mensaje del día, Mini documental, Explicativo, Trailer, Top 5, Cuento o Historia solidaria, escribís el tema y la IA hace todo el video. Y nuevo <b>🎞️ Video real gratis</b> en cada escena: busca videos de verdad (ríos, fuego, selva, mar…) en Wikimedia Commons y Archive.org, o los pone solos en todas las escenas.','✅ <b>3.51</b>: nuevo botón «Arreglar guion y escenas (una sola vez)»: deja en «Tu guion» solo lo que dice el narrador y lo pone al lado de cada foto, sin tocar las fotos que subiste. Con «Deshacer» vuelve todo como estaba.','🧹 <b>3.50</b>: la escobita «Limpiar» reconoce más formas de instrucciones y, si no encuentra nada, se lo pasa sola a la IA. «Limpiar con IA» funciona de a 6 escenas.','🧹 <b>3.49</b>: «Limpiar con IA» ya no falla con «no devolvió datos válidos» (ahora limpia de a 6 escenas).','🧹 <b>3.48</b>: la app saca sola las instrucciones que vienen pegadas en los guiones («narración en español latino», «escena siguiendo exactamente…», «estilo…»), así la voz y los subtítulos dicen solo lo del narrador. Botones «Limpiar», «Limpiar con IA» y «Deshacer» en Guion y en Vista.','↩️ <b>3.47</b>: el botón «atrás» del celular ya no cierra la app: primero cierra lo que esté abierto, después vuelve a Vista y a Mis Proyectos. Para salir, tocás «atrás» dos veces.','🗣️ <b>3.46</b>: la voz ya no lee los emojis ni los hashtags del guion (antes decía «corazón», «estatua», «almohadilla»). Nuevo interruptor para hacer el video <b>sin voz</b> (solo subtítulos y música), en la pestaña Voz y en Vista.','🌍 <b>3.45</b>: arreglado lo de las imágenes orientales: el servicio gratis ignoraba los pedidos largos y devolvía cualquier imagen. Ahora cada pedido es corto y empieza por lo importante. En los videos de Orixás las personas salen afrobrasileñas. La Receta usa primeros planos de los personajes con la olla. Las miniaturas de «Vista» ahora se ven.','🍲 <b>3.44</b>: en la Receta de Orixás cada imagen muestra la misma olla grande con los dos personajes (ya no jarros sueltos). En «Vista» ves las imágenes mientras se crean y tenés «Rehacer todas las imágenes».','🌍 <b>3.43</b>: en videos de Orixás las personas salen afrobrasileñas y africanas (nada asiático). La app respeta el límite gratis de 1 imagen cada 45 segundos y ya no deja el cartel amarillo «Free limit reached». En el celular, «Vista» trae los primeros pasos: personajes, fotos de referencia y generar imágenes.','📱 <b>3.42</b>: en el celular el editor ahora va por partes (Vista, Guion, Escena, Estilo y Línea) con botones abajo, sin tener que bajar tanto. Botones más grandes y nada se sale de la pantalla.','🍲 <b>3.41</b>: nueva <b>Receta de Orixás</b> (dos personajes echan ingredientes en la olla y el final se ilumina). Efectos nuevos: frasco que se vuelca, humo, estallido de luz y aura. Cartel con texto en cada escena. Ayuda para darle movimiento real (Wan, Kling, Hailuo) y grabar tu gesto con la cámara. Bajar y subir todas las voces juntas para Applio.','📲 <b>3.40</b>: pasá tus proyectos de la PC al celu con un código QR (sin WhatsApp). Modo Cine (todo el video o solo algunas escenas), color de acento, música que baja sola cuando habla la voz y la nueva sección <b>Video largo a clips</b>.','💾 <b>3.39</b>: el video exportado queda guardado en el proyecto. Al volver a abrirlo aparecen directo Descargar, YouTube, TikTok e Instagram, sin exportar de nuevo.','🎙️ <b>3.38 · Voces más naturales</b>: velocidad por personaje (por ejemplo Oxalá lento y pausado), botón «Subir mi voz» en cada escena (opcional) y la IA escribe los diálogos con pausas y emoción, sin narrador.','💾 <b>3.37</b>: las voces quedan guardadas en la compu. Si recargás la página no se pierden, y si falta alguna se hace sola antes de reproducir.','🥁 <b>3.36 · Sonidos sagrados</b>: atabaque con repique, adjá/sineta, agogô, chocalho, Terreiro, Encruzilhada, Mar de Iemanjá y Mata sagrada. Opción de transiciones con golpe de tambor y campanita.','🕯️ <b>3.35 · Religión afro</b>: sección nueva en Géneros y Estilos con Itán, Mensaje de la entidad, Conocé a la entidad, Oración del día, Ofrenda explicada, Mitos y verdades, Fechas especiales, Pontos cantados, Cuentos para chicos, Exus y Pombagiras, Umbanda y Orixás. Y 9 estilos sagrados: Arte afrobrasileño, Terreiro, Mata sagrada, Encruzilhada nocturna, Pintura sacra, Ícono dorado, Vitral, Escultura africana y Afrofuturismo.','🔧 <b>3.34</b>: en los diálogos, cada escena reconoce sola quién habla y usa su voz, y pone el sonido del lugar (selva, río, cascada, fuego, tambores…). «Armar escenas» ya no borra las imágenes que hiciste.','👥 <b>Modo Diálogo</b>: dos (o más) personajes hablan, cada uno con su voz. Lo elegís en «Nuevo video».',
   '🎨 <b>Subtítulos de colores</b>: cada personaje con su color y su nombre arriba, así se entiende quién habla aunque esté sin sonido.',
   '🖼️ <b>Máximo 6 imágenes</b>: el tiempo de cada una se calcula solo con las voces.',
   '💓 <b>La imagen late con la voz</b>: parece viva mientras el personaje habla.',
@@ -4878,6 +4878,250 @@ console.info('[Estudio Viral] v3.51: repartir la narración del guion en las esc
 })();
 </script>
 <!-- ===== FIN v3.51 ===== -->
+
+
+<!-- ===== v3.52: RECETAS DE UN SOLO PEDIDO y VIDEOS REALES GRATIS ===== -->
+<style>
+.ev52-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.ev52-rc{text-align:left;padding:10px;border-radius:12px;border:1px solid var(--line,#ffffff1f);background:var(--card,#ffffff08);color:var(--txt,#fff);cursor:pointer;font:inherit}
+.ev52-rc b{display:block;font-size:14px;margin:2px 0}
+.ev52-rc small{display:block;opacity:.7;font-size:12px;line-height:1.35}
+.ev52-rc.on{outline:2px solid var(--acc,#7c5cff);background:#7c5cff22}
+.ev52-rc .e{font-size:22px}
+.ev52-res{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-top:10px}
+.ev52-it{position:relative;border-radius:10px;overflow:hidden;border:1px solid var(--line,#ffffff1f);background:#000;cursor:pointer;padding:0;color:#fff;font:inherit;text-align:left}
+.ev52-it img{width:100%;aspect-ratio:16/10;object-fit:cover;display:block;background:#222}
+.ev52-it .t{display:block;padding:5px 7px;font-size:11.5px;line-height:1.3;max-height:3.2em;overflow:hidden;background:#111}
+.ev52-it .d{position:absolute;top:5px;right:5px;background:#000a;padding:1px 6px;border-radius:6px;font-size:11px}
+.ev52-it.on{outline:2px solid var(--acc,#7c5cff)}
+.ev52-prev video{width:100%;max-height:44vh;border-radius:10px;background:#000;display:block}
+.ev52-banner{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:12px;margin-bottom:12px;border-radius:14px;background:linear-gradient(135deg,#7c5cff26,#f59e0b1f);border:1px solid #7c5cff55}
+</style>
+<script id="ev352">
+(function(){'use strict';if(window.__ev352)return;window.__ev352=true;
+
+/* ---------- utilidades ---------- */
+function sheet(html){$('#sheetin').innerHTML=html;$('#sheet').classList.add('open')}
+function head(t){return '<div class="between" style="margin-bottom:10px"><div class="h1" style="font-size:19px">'+t+'</div><button class="btn sm" onclick="closeSheet()">✕ Cerrar</button></div>'}
+function fmtD(s){s=Math.round(+s||0);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+function strip(h){var d=document.createElement('div');d.innerHTML=String(h||'');return (d.textContent||'').replace(/\s+/g,' ').trim()}
+function msg(id,t,bad){var m=$('#'+id);if(!m)return;m.innerHTML=t||'';m.style.color=bad?'#ff6b6b':''}
+function spin(t){return '<span class="spin" style="width:12px;height:12px;vertical-align:-2px"></span> '+t}
+function copyTxt(t,ok){try{navigator.clipboard.writeText(t).then(function(){toast(ok||'Copiado ✅')},function(){prompt('Copiá este texto:',t)})}catch(e){prompt('Copiá este texto:',t)}}
+
+/* =====================================================================
+   1) RECETAS: un video completo con un solo pedido (como OpenMontage)
+   ===================================================================== */
+var ENT=(function(){var g=genreOf('af_orixas');var l=(g&&g.subs)||['Oxum','Xangô','Iemanjá','Ogum'];return l.concat(['Exu','Pombagira','Caboclo','Preto Velho','Zé Pilintra'])})();
+var REC=[
+ {id:'itan',e:'🌊',n:'Itán de Orixá',d:'Historia sagrada contada como leyenda, en la antigua África.',genre:'af_itan',sub:'Orixás',ent:true,dur:60,ipm:10,
+  ph:'Ej: Cómo Oxum salvó al mundo con su danza (si lo dejás vacío, la IA elige un itán tradicional)',
+  g:'Estructura: 1) gancho fuerte en la primera frase; 2) presentá al Orixá y el lugar en la antigua tierra yoruba de África; 3) el problema o conflicto; 4) el giro; 5) la enseñanza final y una pregunta para que la gente comente.'},
+ {id:'mensaje',e:'💬',n:'Mensaje del día',d:'La entidad te habla directo, con un consejo para hoy.',genre:'af_mensaje',sub:'Orixás',ent:true,dur:30,ipm:10,
+  ph:'Ej: protección para el trabajo, abrir caminos, salud (opcional)',
+  g:'La entidad le habla directo a quien mira, en primera persona, cálida y poderosa. Cierre: invitá a escribir "Axé" en los comentarios si lo sintió.'},
+ {id:'receta',e:'🍲',n:'Receta de Orixás',d:'Dos personajes echan ingredientes en una olla gigante.',special:'receta'},
+ {id:'doc',e:'🏛️',n:'Mini documental',d:'Hechos reales narrados con épica. Ideal con videos reales.',genre:'documental',dur:90,ipm:8,clips:true,
+  ph:'Ej: La historia de los tambores africanos que llegaron a Brasil',
+  g:'Estructura de documental: gancho con un dato impactante; contexto (dónde y cuándo); tres momentos clave en orden; cierre con una reflexión o un dato sorprendente. Solo hechos reales; si algo es tradición o leyenda, decilo así.'},
+ {id:'explica',e:'📘',n:'Explicativo animado',d:'Un tema difícil explicado fácil, paso a paso.',genre:'motiongfx',dur:60,ipm:12,
+  ph:'Ej: Qué es la Umbanda en 1 minuto',
+  g:'Explicalo como a un amigo: 1) pregunta gancho; 2) la idea en una frase simple; 3) tres pasos o razones con ejemplos de todos los días; 4) resumen en una frase y llamado a seguir la cuenta.'},
+ {id:'trailer',e:'🎬',n:'Trailer de cine',d:'Frases cortas, tensión que sube y golpe final.',genre:'cinematica',dur:45,ipm:18,pre:{style:'blockbuster',music:'epica',grade:'tealorange',transition:'flash'},
+  ph:'Ej: La guerra de Ogum contra el hierro oxidado',
+  g:'Tráiler de película: frases muy cortas y épicas del narrador ("En un mundo donde..."), tensión que sube escena a escena, golpe final con el título y la palabra PRÓXIMAMENTE. No cuentes el final.'},
+ {id:'top5',e:'🏆',n:'Top 5',d:'Ranking del 5 al 1 con datos sorprendentes.',genre:'top5',dur:60,ipm:12,
+  ph:'Ej: 5 cosas que no sabías de Iemanjá',
+  g:'Del puesto 5 al 1: cada puesto con su nombre y un dato sorprendente; el número 1 es el más impactante; cierre preguntando cuál agregarían.'},
+ {id:'cuento',e:'🧒',n:'Cuento para chicos',d:'Tierno, palabras simples y una enseñanza.',genre:'story',dur:60,ipm:10,pre:{style:'anim3d',music:'alegre'},
+  ph:'Ej: El tamborcito que no se animaba a sonar',
+  g:'Cuento para chicos de 5 a 10 años: palabras simples, personajes tiernos, un pequeño problema que se resuelve con amistad o valentía, y una enseñanza clara al final.'},
+ {id:'solidario',e:'🤝',n:'Historia solidaria',d:'Una causa del barrio: quiénes son y cómo ayudar.',genre:'drama',sub:'Social',dur:60,ipm:10,pre:{style:'hiperreal',music:'calma'},
+  ph:'Ej: Un día en el comedor del barrio: ollas a leña y mucho amor',
+  g:'Historia real de una causa solidaria o comunitaria: gancho emotivo, quiénes son y qué hacen, una escena concreta del día a día, lo que cambia en la gente y un llamado claro a ayudar, compartir o seguir la cuenta. Cálido, digno y sin golpes bajos.'}
+];
+function recOf(id){return REC.find(function(r){return r.id===id})}
+var R={sel:'',tema:'',ent:'Oxum',dur:0,fmt:'vertical',style:'',clips:false};
+
+function recStyle(r){var g=r.genre&&genreOf(r.genre);return (r.pre&&r.pre.style)||(g&&g.pre&&g.pre.style)||'hiperreal'}
+function recUI(){var r=recOf(R.sel);
+  var cards='<div class="ev52-grid">'+REC.map(function(x){return '<button class="ev52-rc '+(R.sel===x.id?'on':'')+'" onclick="EV352.pick(\''+x.id+'\')"><span class="e">'+x.e+'</span><b>'+esc(x.n)+'</b><small>'+esc(x.d)+'</small></button>'}).join('')+'</div>';
+  var form='';
+  if(r){var st=R.style||recStyle(r);
+   form='<div class="card" style="padding:12px;margin-top:12px"><h3 style="margin-bottom:4px">'+r.e+' '+esc(r.n)+'</h3>'+
+    (r.ent?'<div class="lbl">Entidad u Orixá</div><select class="sel" onchange="EV352.R.ent=this.value">'+ENT.map(function(n){return '<option '+(R.ent===n?'selected':'')+'>'+esc(n)+'</option>'}).join('')+'</select>':'')+
+    '<div class="lbl">¿De qué trata?</div><textarea class="inp" id="ev52tema" rows="3" placeholder="'+esc(r.ph)+'" oninput="EV352.R.tema=this.value">'+esc(R.tema)+'</textarea>'+
+    '<div class="lbl">Duración</div><div class="seg">'+[30,45,60,90].map(function(d){return '<button class="'+((R.dur||r.dur)===d?'on':'')+'" onclick="EV352.set(\'dur\','+d+')">'+d+' s</button>'}).join('')+'</div>'+
+    '<div class="lbl">Formato</div><div class="seg">'+[['vertical','📱 Vertical'],['horizontal','🖥️ Horizontal'],['cuadrado','⬜ Cuadrado']].map(function(f){return '<button class="'+(R.fmt===f[0]?'on':'')+'" onclick="EV352.set(\'fmt\',\''+f[0]+'\')">'+f[1]+'</button>'}).join('')+'</div>'+
+    '<div class="lbl">Estilo de las imágenes</div><select class="sel" onchange="EV352.R.style=this.value">'+STYLES.filter(function(x){return x.id!=='custom'}).map(function(x){return '<option value="'+x.id+'" '+(st===x.id?'selected':'')+'>'+esc(x.n)+'</option>'}).join('')+'</select>'+
+    '<label class="row" style="gap:8px;margin-top:12px;align-items:flex-start;cursor:pointer"><input type="checkbox" '+(R.clips?'checked':'')+' onchange="EV352.R.clips=this.checked" style="margin-top:3px"><span>🎞️ <b>Usar videos reales gratis</b> donde se pueda (ríos, fuego, selva, mar, tambores…). Salen de Wikimedia Commons, con movimiento de verdad. Las escenas que no tengan video quedan con imagen.</span></label>'+
+    '<button class="btn grad" id="ev52go" style="width:100%;margin-top:14px" onclick="EV352.create()">'+ic('bolt')+'Crear video completo</button>'+
+    '<div class="ev40-mini" style="margin-top:6px">La IA escribe el guion, arma las escenas, hace imágenes y voz, y exporta el video. Después podés cambiar cualquier escena.</div>'+
+    '<div class="pmsg" id="ev52msg"></div></div>'}
+  sheet(head('⚡ Recetas: un video con un solo pedido')+'<div class="sub" style="margin-bottom:10px">Elegí qué tipo de video querés, escribí el tema y listo.</div>'+cards+form);
+  if(r)setTimeout(function(){var t=$('#ev52tema');t&&t.focus()},50)}
+
+/* el guion de la receta se suma al pedido a la IA (sin tocar lo que escribiste) */
+var msO=Pipe.makeScenes;Pipe.makeScenes=async function(){var P=S.P,r=P&&P.recipe&&recOf(P.recipe);
+  if(!r||P.mode!=='idea'||!r.g)return msO.apply(this,arguments);
+  var old=P.idea;P.idea=String(old||'').trim()+' — Cómo armarlo: '+r.g;
+  try{return await msO.apply(this,arguments)}finally{if(S.P===P)P.idea=old;try{save()}catch(e){}}};
+
+async function create(){var r=recOf(R.sel);if(!r)return;var tema=String(R.tema||'').trim();
+  if(!tema&&!r.ent){msg('ev52msg','Escribí de qué trata el video.',1);return}
+  var g=r.genre&&genreOf(r.genre);var P=newProject('idea');P.format=R.fmt||'vertical';
+  if(g){P.genre=g.id;P.sub=r.sub||'';applyPreset(g.pre,P)}if(r.pre)applyPreset(r.pre,P);
+  var st=R.style||recStyle(r);P.style=st;Object.entries(styleOf(st).fx||{}).forEach(function(e){if(e[0] in P)P[e[0]]=e[1]});
+  P.duration=R.dur||r.dur;P.ipm=r.ipm||P.ipm;if(P.format==='horizontal')P.ipm=Math.min(P.ipm,10);
+  P.idea=r.ent?((r.id==='itan'?'Itán de ':'Mensaje de ')+R.ent+(tema?': '+tema:' (elegí un itán tradicional y conocido)')):tema;
+  P.recipe=r.id;P.useClips=!!R.clips;P.name=(tema||P.idea).slice(0,60);P._nameSet=1;P.title=P.name;
+  closeSheet();openProject(P);P=S.P;toast(r.e+' Receta «'+r.n+'» en marcha: la IA arma todo, podés dejarla trabajando');
+  run(async function(){await Pipe.makeScenes(true);if(S.P!==P)return;if(P.useClips&&P.scenes.length)await autoClips(true);if(S.P!==P)return;await Pipe.auto()})}
+
+/* =====================================================================
+   2) VIDEOS REALES GRATIS (Wikimedia Commons y Archive.org)
+   ===================================================================== */
+var STOP={a:1,an:1,the:1,of:1,and:1,with:1,in:1,on:1,at:1,to:1,from:1,by:1,for:1,is:1,are:1,his:1,her:1,their:1,its:1,into:1,over:1,under:1,very:1,shot:1,view:1,close:1,closeup:1,wide:1,cinematic:1,light:1,lighting:1,style:1,looking:1,standing:1,scene:1,background:1,detailed:1,beautiful:1,dramatic:1,soft:1,warm:1,golden:1,huge:1,big:1,small:1,young:1,old:1,woman:1,man:1,people:1,person:1};
+function guessQ(s){var w=String(s.prompt||s.text||'').toLowerCase().replace(/[^a-z\s]/g,' ').split(/\s+/).filter(function(x){return x.length>3&&!STOP[x]});var o=[];w.forEach(function(x){if(o.indexOf(x)<0)o.push(x)});return o.slice(0,2).join(' ')||'nature'}
+
+var C={i:0,q:'',src:'commons',res:[],pick:-1,busy:false};
+function api(u){return fetch(u).then(function(r){if(!r.ok)throw new Error('El servicio respondió '+r.status);return r.json()})}
+function bestDeriv(v){var ds=(v.derivatives||[]).filter(function(d){return /^video\/(webm|mp4)/.test(d.type||'')&&d.src});
+  var sc=function(d){var m=Math.min(+d.width||0,+d.height||0)||480;return Math.abs(m-480)+(m<240?400:0)+(/mp4/.test(d.type)?-5:0)};
+  ds.sort(function(a,b){return sc(a)-sc(b)});if(ds[0])return ds[0].src;
+  if((v.size||0)<80e6&&/^video\//.test(v.mime||''))return v.url;return ''}
+async function searchCommons(q){
+  var u='https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrnamespace=6&gsrlimit=30'+
+    '&gsrsearch='+encodeURIComponent(q+' filetype:video')+'&prop=videoinfo&viprop=url|size|mime|derivatives|extmetadata&viurlwidth=360'+
+    '&viextmetadatafilter=LicenseShortName|Artist|ObjectName';
+  var j=await api(u),pages=Object.values((j.query&&j.query.pages)||{}).sort(function(a,b){return (a.index||0)-(b.index||0)});
+  return pages.map(function(p){var v=(p.videoinfo||[])[0];if(!v)return null;var src=bestDeriv(v);if(!src)return null;var m=v.extmetadata||{};
+    var title=strip((m.ObjectName&&m.ObjectName.value)||p.title.replace(/^File:/,'').replace(/\.[a-z0-9]+$/i,''));
+    return {src:src,thumb:v.thumburl||'',title:title,dur:+v.duration||0,w:+v.width||0,h:+v.height||0,page:v.descriptionurl||('https://commons.wikimedia.org/wiki/'+encodeURIComponent(p.title)),
+      credit:title+' · '+(strip(m.Artist&&m.Artist.value)||'autor en Wikimedia')+' · '+((m.LicenseShortName&&m.LicenseShortName.value)||'licencia libre')+' · Wikimedia Commons',from:'Wikimedia Commons'}})
+   .filter(function(x){return x&&(!x.dur||x.dur<=300)})}
+async function searchArchive(q){
+  var u='https://archive.org/advancedsearch.php?q='+encodeURIComponent('('+q+') AND mediatype:(movies)')+'&fl[]=identifier&fl[]=title&fl[]=licenseurl&rows=24&output=json';
+  var j=await api(u),docs=((j.response||{}).docs||[]).slice(0,16);
+  var out=await Promise.all(docs.map(async function(d){try{var m=await api('https://archive.org/metadata/'+encodeURIComponent(d.identifier));
+      var fs=(m.files||[]).filter(function(f){return /\.mp4$/i.test(f.name)&&(+f.size||0)>0&&(+f.size)<60e6&&(!f.length||+f.length<=240)});
+      fs.sort(function(a,b){return (+a.size)-(+b.size)});var f=fs[0];if(!f)return null;
+      return {src:'https://archive.org/download/'+encodeURIComponent(d.identifier)+'/'+f.name.split('/').map(encodeURIComponent).join('/'),thumb:'https://archive.org/services/img/'+encodeURIComponent(d.identifier),
+        title:strip(d.title||d.identifier),dur:+f.length||0,w:+f.width||0,h:+f.height||0,page:'https://archive.org/details/'+encodeURIComponent(d.identifier),
+        credit:strip(d.title||d.identifier)+' · Internet Archive'+(d.licenseurl?' · '+d.licenseurl:''),from:'Archive.org'}}catch(e){return null}}));
+  return out.filter(Boolean)}
+
+function resHTML(){if(C.busy)return '<div class="sub" style="margin-top:12px">'+spin('Buscando videos libres…')+'</div>';
+  if(!C.res.length)return C.q?'<div class="sub" style="margin-top:12px">No encontré videos con esas palabras. Probá en inglés y más simple (ej: <b>river</b>, <b>fire</b>, <b>forest</b>, <b>drums</b>, <b>ocean</b>) o cambiá de buscador.</div>':'';
+  return '<div class="ev52-res">'+C.res.map(function(x,k){return '<button class="ev52-it '+(C.pick===k?'on':'')+'" onclick="EV352.prev('+k+')"><img loading="lazy" src="'+esc(x.thumb)+'" alt="" onerror="this.style.visibility=\'hidden\'">'+(x.dur?'<span class="d">'+fmtD(x.dur)+'</span>':'')+'<span class="t">'+esc(x.title)+'</span></button>'}).join('')+'</div>'}
+function prevHTML(){var x=C.res[C.pick];if(!x)return '';
+  return '<div class="card ev52-prev" style="padding:10px;margin-top:10px"><video src="'+esc(x.src)+'" controls autoplay muted loop playsinline></video>'+
+   '<div class="ev40-mini" style="margin-top:6px">'+esc(x.credit)+' · <a href="'+esc(x.page)+'" target="_blank" rel="noopener">ver página</a></div>'+
+   '<button class="btn grad" id="ev52use" style="width:100%;margin-top:8px" onclick="EV352.use()">'+ic('check')+'Usar en la escena '+(C.i+1)+'</button><div class="pmsg" id="ev52cmsg"></div></div>'}
+function clipUI(){
+  sheet(head('🎞️ Video real gratis · escena '+(C.i+1))+
+   '<div class="row" style="gap:6px"><input class="inp" id="ev52q" style="flex:1" placeholder="Qué buscar (mejor en inglés: river, fire, forest…)" value="'+esc(C.q)+'" onkeydown="if(event.key===\'Enter\')EV352.search(this.value)"><button class="btn grad" onclick="EV352.search($(\'#ev52q\').value)">'+ic('search')+'Buscar</button></div>'+
+   '<div class="row wrap" style="gap:6px;margin-top:8px"><div class="seg" style="flex:1;min-width:220px">'+[['commons','Wikimedia Commons'],['archive','Archive.org']].map(function(s){return '<button class="'+(C.src===s[0]?'on':'')+'" onclick="EV352.src(\''+s[0]+'\')">'+s[1]+'</button>'}).join('')+'</div>'+
+   '<button class="btn sm" onclick="EV352.aiWords()">✨ Que la IA elija las palabras</button></div>'+
+   '<div class="ev40-mini">Videos libres de usar. Si lo publicás, poné los créditos (están en «Guion y storyboard» → Videos reales gratis → Copiar créditos).</div>'+
+   '<div id="ev52prev">'+prevHTML()+'</div><div id="ev52res">'+resHTML()+'</div>')}
+function paintRes(){var a=$('#ev52res');if(a)a.innerHTML=resHTML();var b=$('#ev52prev');if(b)b.innerHTML=prevHTML()}
+async function doSearch(q){C.q=String(q||'').trim();if(!C.q)return;C.busy=true;C.res=[];C.pick=-1;paintRes();
+  try{C.res=C.src==='archive'?await searchArchive(C.q):await searchCommons(C.q)}
+  catch(e){C.res=[];toast('No pude buscar: '+(e.message||'sin conexión'),1)}finally{C.busy=false;paintRes()}}
+
+async function download(url,onp){var r;try{r=await fetch(url)}catch(e){throw new Error('El sitio no dejó bajar el video directo. Tocá «ver página», bajalo y subilo con «Subir mi video» en la escena.')}
+  if(!r.ok)throw new Error('No se pudo bajar el video ('+r.status+').');
+  var tot=+r.headers.get('content-length')||0;if(!r.body||!r.body.getReader)return await r.blob();
+  var rd=r.body.getReader(),parts=[],got=0;for(;;){var x=await rd.read();if(x.done)break;parts.push(x.value);got+=x.value.length;if(got>120e6)throw new Error('El video es demasiado pesado.');onp&&onp(got,tot)}
+  return new Blob(parts,{type:r.headers.get('content-type')||(/\.mp4/i.test(url)?'video/mp4':'video/webm')})}
+/* comprueba que este aparato pueda mostrar el video y saca una foto para la miniatura */
+function probe(blob){return new Promise(function(res,rej){var v=document.createElement('video'),u=URL.createObjectURL(blob),done=false;v.muted=true;v.playsInline=true;v.preload='auto';
+  var fin=function(ok,val){if(done)return;done=true;clearTimeout(to);if(ok)res(val);else{URL.revokeObjectURL(u);rej(val)}};
+  var to=setTimeout(function(){fin(false,new Error('Este aparato no puede mostrar ese video. Probá con otro.'))},20000);
+  v.onerror=function(){fin(false,new Error('Este aparato no puede mostrar ese formato de video. Probá con otro.'))};
+  v.onloadeddata=function(){try{v.currentTime=Math.min(1,(v.duration||2)/3)}catch(e){fin(true,{v:v,u:u})}};
+  v.onseeked=function(){fin(true,{v:v,u:u})};v.src=u})}
+function snap(v){return new Promise(function(res){try{var w=v.videoWidth,h=v.videoHeight,k=Math.min(1,720/Math.max(w,h)),c=document.createElement('canvas');c.width=Math.round(w*k);c.height=Math.round(h*k);
+  c.getContext('2d').drawImage(v,0,0,c.width,c.height);c.toBlob(function(b){res(b)},'image/jpeg',.85)}catch(e){res(null)}})}
+async function putClip(s,x,onp){var blob=await download(x.src,onp);var pr=await probe(blob);
+  try{var th=await snap(pr.v);var key='clip:'+s.id;await IDB.set(key,blob);try{RT.clips[s.id]&&RT.clips[s.id].pause()}catch(e){}delete RT.clips[s.id];s.clip=key;
+   if(th&&!s.local){Pipe.pushVar(s);var ik='local:clipimg_'+s.id+'_'+Date.now();await IDB.set(ik,th);s.img=ik;s.local=true}
+   if(!s.frame||s.frame==='auto')s.frame='center';s.clipCredit=x.credit;s.clipPage=x.page;await loadClip(s);if(s.local)try{await loadImg(s.img,9)}catch(e){}save(1)}
+  finally{URL.revokeObjectURL(pr.u)}}
+async function useOne(){var x=C.res[C.pick],s=S.P&&S.P.scenes[C.i];if(!x||!s)return;var b=$('#ev52use');if(b)b.disabled=true;
+  try{await putClip(s,x,function(g,t){msg('ev52cmsg',spin('Bajando el video… '+(g/1e6).toFixed(1)+(t?' de '+(t/1e6).toFixed(1):'')+' MB'))});
+   closeSheet();toast('🎞️ Video real puesto en la escena '+(C.i+1)+' ✅');try{renderSel();renderScenesOnly(1);paintScene(s);renderTL();seekScene(C.i)}catch(e){}}
+  catch(e){msg('ev52cmsg','❌ '+esc(e.message||e),1);if(b)b.disabled=false}}
+
+/* la IA elige palabras de búsqueda en inglés para cada escena */
+async function kwAI(list){var P=S.P;var out=await AI.chat([{role:'system',content:'Respondés SOLO JSON válido.'},{role:'user',content:
+  'Para cada escena de un video, escribí una búsqueda corta EN INGLÉS (1 a 3 palabras comunes) para encontrar un video real de archivo en Wikimedia Commons que sirva de fondo: paisajes, naturaleza, elementos (agua, fuego, viento), animales, objetos, lugares, multitudes, instrumentos. '+
+  'Nada de nombres propios, dioses, personajes ni conceptos abstractos (si la escena es de un personaje, buscá el lugar o el elemento que lo rodea). Si ningún video real puede servir, poné "".\n'+
+  'Formato: {"q":["...","..."]} con exactamente '+list.length+' elementos, en orden.\n\nEscenas:\n'+list.map(function(s,k){return (k+1)+') '+String(s.text||'').slice(0,160)+' | imagen: '+String(s.prompt||'').slice(0,200)}).join('\n')}],{temp:.3});
+  var d=AI.json(out);return (d&&Array.isArray(d.q)?d.q:[]).map(function(x){return String(x||'').trim()})}
+
+/* pone videos reales en todas las escenas que no tengan */
+async function autoClips(fromRecipe){var P=S.P;if(!P||!P.scenes.length)throw new Error('Primero armá las escenas.');
+  var todo=P.scenes.filter(function(s){return !s.clip});if(!todo.length){toast('Todas las escenas ya tienen video');return}
+  Pipe.setBusy('La IA elige qué video real buscar para cada escena…');Pipe.prog(.05);
+  var qs=[];try{qs=await kwAI(todo)}catch(e){qs=todo.map(guessQ)}
+  var used={},put=0,dl=0;
+  try{for(var k=0;k<todo.length;k++){if(S.P!==P)return;var s=todo[k],q=qs[k]||'';if(!q)continue;s.clipQ=q;
+     Pipe.setBusy('Videos reales: escena '+(P.scenes.indexOf(s)+1)+' de '+P.scenes.length+' («'+q+'»)…');Pipe.prog(.05+.9*k/todo.length);
+     var res=[];try{res=await searchCommons(q)}catch(e){continue}
+     var want=FORMATS[P.format]||FORMATS.vertical,vert=want.r[1]>want.r[0];
+     res.sort(function(a,b){var oa=a.w&&a.h?(a.h>a.w)===vert:false,ob=b.w&&b.h?(b.h>b.w)===vert:false;return (ob?1:0)-(oa?1:0)});
+     for(var j=0;j<Math.min(3,res.length);j++){var x=res[j];if(used[x.src])continue;
+       try{await putClip(s,x,function(g){dl=g});used[x.src]=1;put++;try{paintScene(s)}catch(e){}break}catch(e){}}}}
+  finally{Pipe.setBusy('');Pipe.prog(0)}
+  try{renderScenesOnly(1);renderSel();renderTL()}catch(e){}
+  toast(put?'🎞️ Puse videos reales en '+put+' escena(s). Las demás quedan con imagen.':'No encontré videos reales que sirvan para estas escenas; quedan con imagen.',!put&&!fromRecipe)}
+
+function credits(){var P=S.P;var l=(P.scenes||[]).filter(function(s){return s.clip&&s.clipCredit}).map(function(s){return '• '+s.clipCredit+(s.clipPage?' — '+s.clipPage:'')});
+  if(!l.length)return toast('Ninguna escena tiene videos reales todavía',1);copyTxt('Videos de archivo:\n'+l.join('\n'),'Créditos copiados ✅ Pegalos en la descripción del video')}
+
+/* ---------- botones en la app ---------- */
+/* panel de la escena */
+var rsO=renderSel;renderSel=function(){rsO.apply(this,arguments);try{var el=$('#selpanel');if(!el||!S.P||el.querySelector('.ev352'))return;
+  var i=clamp(S.sel,0,Math.max(0,S.P.scenes.length-1)),s=S.P.scenes[i];if(!s)return;var anchor=el.querySelector('.tools-main');
+  var d=document.createElement('div');d.className='ev32-box ev352';
+  d.innerHTML='<h4>🎞️ Video real gratis</h4><div class="ev32-mini" style="margin-top:0">Buscá un video de verdad (río, fuego, selva, mar, tambores…) y ponelo en esta escena. Gratis y sin cuenta.</div>'+
+   (s.clip&&s.clipCredit?'<div class="ev32-mini">Ahora: '+esc(s.clipCredit)+'</div>':'')+
+   '<div class="row wrap" style="gap:6px;margin-top:6px"><button class="btn sm grad" onclick="EV352.open('+i+')">'+ic('search')+'Buscar video real</button>'+(s.clip?'<button class="btn sm" onclick="EV352.remove('+i+')">Sacar el video</button>':'')+'</div>';
+  if(anchor)anchor.parentNode.insertBefore(d,anchor.nextSibling);else el.appendChild(d)}catch(e){console.warn('[v3.52]',e)}};
+
+/* pestaña «Guion y storyboard» */
+var tcO=tContenido;tContenido=function(){var h=tcO.apply(this,arguments);try{var P=S.P;if(P&&P.scenes.length){var n=P.scenes.filter(function(s){return s.clip}).length;
+  h+='<div class="card box ev352b" style="padding:12px"><h3>🎞️ Videos reales gratis</h3><div class="ev40-mini" style="margin-top:2px">La IA busca en Wikimedia Commons un video de verdad para cada escena (paisajes, agua, fuego, animales, lugares). Sirve sobre todo de fondo; las escenas sin video quedan con su imagen. '+(n?'<b>'+n+' de '+P.scenes.length+'</b> escenas ya tienen video.':'')+'</div>'+
+   '<div class="row wrap" style="gap:6px;margin-top:8px"><button class="btn sm grad" data-busy onclick="run(function(){return EV352.auto()})">'+ic('spark')+'Poner videos en todas</button>'+(n?'<button class="btn sm" onclick="EV352.credits()">'+ic('copy')+'Copiar créditos</button>':'')+'</div></div>'}}catch(e){}return h};
+
+/* «Mis proyectos»: botón Recetas */
+var vpO=vProjects;vProjects=function(m){vpO.apply(this,arguments);try{var w=m.querySelector('.ev40-top')||m.querySelector('.between');if(w&&!m.querySelector('.ev52-rb')){var b=document.createElement('button');b.className='btn ev52-rb';b.textContent='⚡ Recetas';b.onclick=function(){EV352.open_rec()};w.insertBefore(b,w.firstChild)}}catch(e){}};
+/* «Nuevo video»: aviso arriba del paso 1 */
+var vwO=vWizard;vWizard=function(m){vwO.apply(this,arguments);try{if(S.wiz&&S.wiz.step===1&&!m.querySelector('.ev52-banner')){var md=m.querySelector('.modes');if(md){var d=document.createElement('div');d.className='ev52-banner';
+  d.innerHTML='<div><b>⚡ ¿Querés hacerlo con un solo pedido?</b><div class="sub">Itán, mensaje del día, documental, trailer, top 5, cuento… escribís el tema y la IA hace todo.</div></div><button class="btn grad" onclick="EV352.open_rec()">Ver recetas</button>';md.parentNode.insertBefore(d,md)}}}catch(e){}};
+
+window.EV352={R:R,C:C,
+  open_rec:function(){R.sel=R.sel||'';recUI()},
+  pick:function(id){var r=recOf(id);if(!r)return;if(r.special==='receta'){if(window.EV341&&EV341.recetaOpen)EV341.recetaOpen();else toast('La receta de Orixás no está disponible',1);return}
+    if(R.sel!==id){R.sel=id;R.dur=0;R.style='';R.clips=!!r.clips}recUI();setTimeout(function(){var f=$('#ev52go');f&&f.scrollIntoView({behavior:'smooth',block:'center'})},80)},
+  set:function(k,v){R[k]=v;recUI()},
+  create:function(){create().catch(function(e){toast(e.message||String(e),1)})},
+  open:function(i){var s=S.P&&S.P.scenes[i];if(!s)return;if(C.i!==i||!C.q){C.i=i;C.q=s.clipQ||guessQ(s);C.res=[];C.pick=-1}clipUI();if(!C.res.length)doSearch(C.q)},
+  search:function(q){doSearch(q)},
+  src:function(x){C.src=x;clipUI();doSearch(C.q)},
+  prev:function(k){C.pick=k;var b=$('#ev52prev');if(b){b.innerHTML=prevHTML();b.scrollIntoView({behavior:'smooth',block:'start'})}document.querySelectorAll('.ev52-it').forEach(function(e,j){e.classList.toggle('on',j===k)})},
+  use:function(){useOne()},
+  aiWords:async function(){var s=S.P&&S.P.scenes[C.i];if(!s)return;try{toast('La IA está pensando qué buscar…');var q=(await kwAI([s]))[0];if(!q){toast('La IA dice que para esta escena no hay video real que sirva. Probá con tus palabras.',1);return}C.q=q;var i=$('#ev52q');if(i)i.value=q;doSearch(q)}catch(e){toast('La IA no respondió: escribí vos las palabras',1)}},
+  remove:function(i){var s=S.P.scenes[i];if(!s)return;Pipe.removeClip(i);delete s.clipCredit;delete s.clipPage;if(s.img&&/^local:clipimg_/.test(s.img)){var v=(s.vars||[]).find(function(x){return !/^local:/.test(x.img)});s.local=false;s.img=v?v.img:'';if(v&&v.prompt)s.prompt=v.prompt}save(1);try{renderSel();renderScenesOnly(1)}catch(e){}toast('Video sacado de la escena '+(i+1)+(s.img?'':'. Tocá «Generar imágenes» para hacerle una imagen'))},
+  auto:function(){return autoClips(false)},credits:credits,
+  _search:{commons:searchCommons,archive:searchArchive}};
+try{render()}catch(e){}
+console.info('[Estudio Viral] v3.52: recetas de un solo pedido y videos reales gratis');
+})();
+</script>
+<!-- ===== FIN v3.52 ===== -->
 
 </body>
 </html>
