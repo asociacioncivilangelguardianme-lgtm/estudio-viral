@@ -2297,7 +2297,7 @@ window.__ev32export=exportMp4;
 (function(){
 'use strict';
 if(window.__ev33)return;window.__ev33=true;
-var VERSION='3.53';
+var VERSION='3.54';
 var COLORS=['#7dd3fc','#ff9de2','#a7f3d0','#fdba74','#c4b5fd'];
 var MOVES=['zoomin','panr','tiltup','dolly','panl','zoomout','track','tiltdown'];
 
@@ -2618,7 +2618,7 @@ if('serviceWorker' in navigator&&/^https:$/.test(location.protocol)){window.addE
   reg.addEventListener('updatefound',function(){var w=reg.installing;if(!w)return;w.addEventListener('statechange',function(){if(w.state==='installed'&&navigator.serviceWorker.controller)toast('Hay una versión nueva de Estudio Viral: cerrá y volvé a abrir la app para verla ✨')})})}).catch(function(e){console.info('[v3.33] sin app instalable (falta sw.js en GitHub):',e&&e.message)})})}
 
 /* Novedades */
-var NEWS=['✨ <b>3.53</b>: nuevos <b>Textos animados</b>: en cada escena podés poner una frase corta que aparece moviéndose (rebote, suave, palabra por palabra, máquina de escribir, deslizando o con brillo) con estilo caja negra, letras grandes, dorado sagrado o neón. En «Guion y storyboard» está «Que la IA ponga los textos» y el <b>cartel de cierre</b> (ej: «Seguinos para más»). Las recetas ya los ponen solas.','⚡ <b>3.52</b>: nuevas <b>Recetas</b> (botón «⚡ Recetas» en Mis Proyectos): elegís Itán, Mensaje del día, Mini documental, Explicativo, Trailer, Top 5, Cuento o Historia solidaria, escribís el tema y la IA hace todo el video. Y nuevo <b>🎞️ Video real gratis</b> en cada escena: busca videos de verdad (ríos, fuego, selva, mar…) en Wikimedia Commons y Archive.org, o los pone solos en todas las escenas.','✅ <b>3.51</b>: nuevo botón «Arreglar guion y escenas (una sola vez)»: deja en «Tu guion» solo lo que dice el narrador y lo pone al lado de cada foto, sin tocar las fotos que subiste. Con «Deshacer» vuelve todo como estaba.','🧹 <b>3.50</b>: la escobita «Limpiar» reconoce más formas de instrucciones y, si no encuentra nada, se lo pasa sola a la IA. «Limpiar con IA» funciona de a 6 escenas.','🧹 <b>3.49</b>: «Limpiar con IA» ya no falla con «no devolvió datos válidos» (ahora limpia de a 6 escenas).','🧹 <b>3.48</b>: la app saca sola las instrucciones que vienen pegadas en los guiones («narración en español latino», «escena siguiendo exactamente…», «estilo…»), así la voz y los subtítulos dicen solo lo del narrador. Botones «Limpiar», «Limpiar con IA» y «Deshacer» en Guion y en Vista.','↩️ <b>3.47</b>: el botón «atrás» del celular ya no cierra la app: primero cierra lo que esté abierto, después vuelve a Vista y a Mis Proyectos. Para salir, tocás «atrás» dos veces.','🗣️ <b>3.46</b>: la voz ya no lee los emojis ni los hashtags del guion (antes decía «corazón», «estatua», «almohadilla»). Nuevo interruptor para hacer el video <b>sin voz</b> (solo subtítulos y música), en la pestaña Voz y en Vista.','🌍 <b>3.45</b>: arreglado lo de las imágenes orientales: el servicio gratis ignoraba los pedidos largos y devolvía cualquier imagen. Ahora cada pedido es corto y empieza por lo importante. En los videos de Orixás las personas salen afrobrasileñas. La Receta usa primeros planos de los personajes con la olla. Las miniaturas de «Vista» ahora se ven.','🍲 <b>3.44</b>: en la Receta de Orixás cada imagen muestra la misma olla grande con los dos personajes (ya no jarros sueltos). En «Vista» ves las imágenes mientras se crean y tenés «Rehacer todas las imágenes».','🌍 <b>3.43</b>: en videos de Orixás las personas salen afrobrasileñas y africanas (nada asiático). La app respeta el límite gratis de 1 imagen cada 45 segundos y ya no deja el cartel amarillo «Free limit reached». En el celular, «Vista» trae los primeros pasos: personajes, fotos de referencia y generar imágenes.','📱 <b>3.42</b>: en el celular el editor ahora va por partes (Vista, Guion, Escena, Estilo y Línea) con botones abajo, sin tener que bajar tanto. Botones más grandes y nada se sale de la pantalla.','🍲 <b>3.41</b>: nueva <b>Receta de Orixás</b> (dos personajes echan ingredientes en la olla y el final se ilumina). Efectos nuevos: frasco que se vuelca, humo, estallido de luz y aura. Cartel con texto en cada escena. Ayuda para darle movimiento real (Wan, Kling, Hailuo) y grabar tu gesto con la cámara. Bajar y subir todas las voces juntas para Applio.','📲 <b>3.40</b>: pasá tus proyectos de la PC al celu con un código QR (sin WhatsApp). Modo Cine (todo el video o solo algunas escenas), color de acento, música que baja sola cuando habla la voz y la nueva sección <b>Video largo a clips</b>.','💾 <b>3.39</b>: el video exportado queda guardado en el proyecto. Al volver a abrirlo aparecen directo Descargar, YouTube, TikTok e Instagram, sin exportar de nuevo.','🎙️ <b>3.38 · Voces más naturales</b>: velocidad por personaje (por ejemplo Oxalá lento y pausado), botón «Subir mi voz» en cada escena (opcional) y la IA escribe los diálogos con pausas y emoción, sin narrador.','💾 <b>3.37</b>: las voces quedan guardadas en la compu. Si recargás la página no se pierden, y si falta alguna se hace sola antes de reproducir.','🥁 <b>3.36 · Sonidos sagrados</b>: atabaque con repique, adjá/sineta, agogô, chocalho, Terreiro, Encruzilhada, Mar de Iemanjá y Mata sagrada. Opción de transiciones con golpe de tambor y campanita.','🕯️ <b>3.35 · Religión afro</b>: sección nueva en Géneros y Estilos con Itán, Mensaje de la entidad, Conocé a la entidad, Oración del día, Ofrenda explicada, Mitos y verdades, Fechas especiales, Pontos cantados, Cuentos para chicos, Exus y Pombagiras, Umbanda y Orixás. Y 9 estilos sagrados: Arte afrobrasileño, Terreiro, Mata sagrada, Encruzilhada nocturna, Pintura sacra, Ícono dorado, Vitral, Escultura africana y Afrofuturismo.','🔧 <b>3.34</b>: en los diálogos, cada escena reconoce sola quién habla y usa su voz, y pone el sonido del lugar (selva, río, cascada, fuego, tambores…). «Armar escenas» ya no borra las imágenes que hiciste.','👥 <b>Modo Diálogo</b>: dos (o más) personajes hablan, cada uno con su voz. Lo elegís en «Nuevo video».',
+var NEWS=['⛪ <b>3.54</b>: nuevo <b>Perfil del canal</b> en Ajustes (ya viene cargado con Camino de Fe): la firma, los hashtags fijos #CaminoDeFe #Umbanda #Orixas y el cartel de cierre «Guardalo y dejá tu Axé» se ponen solos en cada video. Y nueva <b>🖼️ Portada</b> en «Guion y storyboard»: elegís una escena y la app arma la tapa con letras grandes y el nombre del canal, para TikTok o YouTube.','✨ <b>3.53</b>: nuevos <b>Textos animados</b>: en cada escena podés poner una frase corta que aparece moviéndose (rebote, suave, palabra por palabra, máquina de escribir, deslizando o con brillo) con estilo caja negra, letras grandes, dorado sagrado o neón. En «Guion y storyboard» está «Que la IA ponga los textos» y el <b>cartel de cierre</b> (ej: «Seguinos para más»). Las recetas ya los ponen solas.','⚡ <b>3.52</b>: nuevas <b>Recetas</b> (botón «⚡ Recetas» en Mis Proyectos): elegís Itán, Mensaje del día, Mini documental, Explicativo, Trailer, Top 5, Cuento o Historia solidaria, escribís el tema y la IA hace todo el video. Y nuevo <b>🎞️ Video real gratis</b> en cada escena: busca videos de verdad (ríos, fuego, selva, mar…) en Wikimedia Commons y Archive.org, o los pone solos en todas las escenas.','✅ <b>3.51</b>: nuevo botón «Arreglar guion y escenas (una sola vez)»: deja en «Tu guion» solo lo que dice el narrador y lo pone al lado de cada foto, sin tocar las fotos que subiste. Con «Deshacer» vuelve todo como estaba.','🧹 <b>3.50</b>: la escobita «Limpiar» reconoce más formas de instrucciones y, si no encuentra nada, se lo pasa sola a la IA. «Limpiar con IA» funciona de a 6 escenas.','🧹 <b>3.49</b>: «Limpiar con IA» ya no falla con «no devolvió datos válidos» (ahora limpia de a 6 escenas).','🧹 <b>3.48</b>: la app saca sola las instrucciones que vienen pegadas en los guiones («narración en español latino», «escena siguiendo exactamente…», «estilo…»), así la voz y los subtítulos dicen solo lo del narrador. Botones «Limpiar», «Limpiar con IA» y «Deshacer» en Guion y en Vista.','↩️ <b>3.47</b>: el botón «atrás» del celular ya no cierra la app: primero cierra lo que esté abierto, después vuelve a Vista y a Mis Proyectos. Para salir, tocás «atrás» dos veces.','🗣️ <b>3.46</b>: la voz ya no lee los emojis ni los hashtags del guion (antes decía «corazón», «estatua», «almohadilla»). Nuevo interruptor para hacer el video <b>sin voz</b> (solo subtítulos y música), en la pestaña Voz y en Vista.','🌍 <b>3.45</b>: arreglado lo de las imágenes orientales: el servicio gratis ignoraba los pedidos largos y devolvía cualquier imagen. Ahora cada pedido es corto y empieza por lo importante. En los videos de Orixás las personas salen afrobrasileñas. La Receta usa primeros planos de los personajes con la olla. Las miniaturas de «Vista» ahora se ven.','🍲 <b>3.44</b>: en la Receta de Orixás cada imagen muestra la misma olla grande con los dos personajes (ya no jarros sueltos). En «Vista» ves las imágenes mientras se crean y tenés «Rehacer todas las imágenes».','🌍 <b>3.43</b>: en videos de Orixás las personas salen afrobrasileñas y africanas (nada asiático). La app respeta el límite gratis de 1 imagen cada 45 segundos y ya no deja el cartel amarillo «Free limit reached». En el celular, «Vista» trae los primeros pasos: personajes, fotos de referencia y generar imágenes.','📱 <b>3.42</b>: en el celular el editor ahora va por partes (Vista, Guion, Escena, Estilo y Línea) con botones abajo, sin tener que bajar tanto. Botones más grandes y nada se sale de la pantalla.','🍲 <b>3.41</b>: nueva <b>Receta de Orixás</b> (dos personajes echan ingredientes en la olla y el final se ilumina). Efectos nuevos: frasco que se vuelca, humo, estallido de luz y aura. Cartel con texto en cada escena. Ayuda para darle movimiento real (Wan, Kling, Hailuo) y grabar tu gesto con la cámara. Bajar y subir todas las voces juntas para Applio.','📲 <b>3.40</b>: pasá tus proyectos de la PC al celu con un código QR (sin WhatsApp). Modo Cine (todo el video o solo algunas escenas), color de acento, música que baja sola cuando habla la voz y la nueva sección <b>Video largo a clips</b>.','💾 <b>3.39</b>: el video exportado queda guardado en el proyecto. Al volver a abrirlo aparecen directo Descargar, YouTube, TikTok e Instagram, sin exportar de nuevo.','🎙️ <b>3.38 · Voces más naturales</b>: velocidad por personaje (por ejemplo Oxalá lento y pausado), botón «Subir mi voz» en cada escena (opcional) y la IA escribe los diálogos con pausas y emoción, sin narrador.','💾 <b>3.37</b>: las voces quedan guardadas en la compu. Si recargás la página no se pierden, y si falta alguna se hace sola antes de reproducir.','🥁 <b>3.36 · Sonidos sagrados</b>: atabaque con repique, adjá/sineta, agogô, chocalho, Terreiro, Encruzilhada, Mar de Iemanjá y Mata sagrada. Opción de transiciones con golpe de tambor y campanita.','🕯️ <b>3.35 · Religión afro</b>: sección nueva en Géneros y Estilos con Itán, Mensaje de la entidad, Conocé a la entidad, Oración del día, Ofrenda explicada, Mitos y verdades, Fechas especiales, Pontos cantados, Cuentos para chicos, Exus y Pombagiras, Umbanda y Orixás. Y 9 estilos sagrados: Arte afrobrasileño, Terreiro, Mata sagrada, Encruzilhada nocturna, Pintura sacra, Ícono dorado, Vitral, Escultura africana y Afrofuturismo.','🔧 <b>3.34</b>: en los diálogos, cada escena reconoce sola quién habla y usa su voz, y pone el sonido del lugar (selva, río, cascada, fuego, tambores…). «Armar escenas» ya no borra las imágenes que hiciste.','👥 <b>Modo Diálogo</b>: dos (o más) personajes hablan, cada uno con su voz. Lo elegís en «Nuevo video».',
   '🎨 <b>Subtítulos de colores</b>: cada personaje con su color y su nombre arriba, así se entiende quién habla aunque esté sin sonido.',
   '🖼️ <b>Máximo 6 imágenes</b>: el tiempo de cada una se calcula solo con las voces.',
   '💓 <b>La imagen late con la voz</b>: parece viva mientras el personaje habla.',
@@ -5238,6 +5238,99 @@ console.info('[Estudio Viral] v3.53: textos animados');
 })();
 </script>
 <!-- ===== FIN v3.53 ===== -->
+
+
+<!-- ===== ESTUDIO VIRAL · v3.54 · PERFIL DEL CANAL (CAMINO DE FE) Y PORTADA DEL VIDEO ===== -->
+<script>
+(function(){
+"use strict";
+function isMobile(){return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)}
+
+/* ---------- 1) PERFIL DEL CANAL ---------- */
+var CF={canal:'Camino de Fe',firma:'@oxum_ogum',tags:'#CaminoDeFe #Umbanda #Orixas',cierre:'GUARDALO Y DEJÁ TU AXÉ ✨'};
+var st=S.settings;
+if(!st.perfilSet){st.canal=st.canal||CF.canal;st.firma=st.firma||CF.firma;st.tagsFijos=st.tagsFijos||CF.tags;st.cierreFijo=st.cierreFijo||CF.cierre;st.perfilSet=1;try{store.set('ev_settings',st)}catch(e){}}
+
+function mergeTags(a,b){var seen={},out=[];(String(a||'')+' '+String(b||'')).split(/[\s,]+/).forEach(function(t){t=t.trim();if(!t)return;if(t[0]!=='#')t='#'+t;var k=t.toLowerCase();if(!seen[k]){seen[k]=1;out.push(t)}});return out.join(' ')}
+
+/* la descripción siempre lleva los hashtags fijos del canal (primero) */
+var capO=EV33.caption;
+EV33.caption=function(){var P=S.P,k=(P&&P.pack)||{};var c=(k.caption||vt(P)||'').trim(),h=(k.hashtags||'').trim();var fx=(S.settings.tagsFijos||'').trim();
+  if(!h&&!fx)return capO.apply(this,arguments);if(!h)h='#fyp #parati #orixas #umbanda #candomble #espiritualidad';return (c+'\n\n'+mergeTags(fx,h)).trim()};
+
+/* cada proyecto arranca con el cartel de cierre del canal (una sola vez: si lo borrás, no vuelve) */
+function applyCierre(P){if(!P||P.outroSet)return;var c=(S.settings.cierreFijo||'').trim();P.outroSet=1;if(c&&!String(P.outro||'').trim()){P.outro=c.slice(0,60);P.outroAnim=P.outroAnim||'palabras';P.outroLook=P.outroLook||(P.genre&&/^af_/.test(P.genre)?'dorado':'caja')}try{save()}catch(e){}}
+var vEdO=vEditor;vEditor=function(){try{applyCierre(S.P)}catch(e){}return vEdO.apply(this,arguments)};
+
+var setO=vSettings;
+vSettings=function(m){setO.apply(this,arguments);var st=S.settings;
+  var html='<div class="card box ev354" style="max-width:680px"><h3>⛪ Perfil del canal</h3><div class="hint">Se pone solo en todos tus videos: la firma, los hashtags fijos en la descripción y el cartel de cierre al final.</div>'+
+   '<div class="cols2"><div><div class="lbl">Nombre del canal</div><input class="inp" value="'+esc(st.canal||'')+'" onchange="EV354.set(\'canal\',this.value)"></div>'+
+   '<div><div class="lbl">Firma (@usuario)</div><input class="inp" placeholder="@micanal" value="'+esc(st.firma||'')+'" onchange="EV354.set(\'firma\',this.value)"></div></div>'+
+   '<div class="lbl">Hashtags fijos (van en todos los videos)</div><input class="inp" value="'+esc(st.tagsFijos||'')+'" onchange="EV354.set(\'tagsFijos\',this.value)">'+
+   '<div class="lbl">Cartel de cierre de todos los videos</div><input class="inp" maxlength="60" value="'+esc(st.cierreFijo||'')+'" onchange="EV354.set(\'cierreFijo\',this.value)">'+
+   '<div class="row wrap" style="margin-top:10px;gap:6px"><button class="btn sm" onclick="EV354.reset()">Volver a Camino de Fe</button></div></div>';
+  var first=m.querySelector('.card.box');if(first)first.insertAdjacentHTML('afterend',html);else m.insertAdjacentHTML('beforeend',html)};
+
+/* ---------- 2) PORTADA (MINIATURA) ---------- */
+var PT={fmt:null,i:null,url:null};
+function sceneOk(s){var im=s&&RT.imgs[s.img];return im&&!im._ev32?im:null}
+function firstOk(P){for(var k=0;k<P.scenes.length;k++)if(sceneOk(P.scenes[k]))return k;return -1}
+function coverTitle(P){return String((P.pack&&P.pack.title)||vt(P)||'').trim()}
+
+function drawCover(P,fmt,i,title){var W=fmt==='yt'?1280:1080,H=fmt==='yt'?720:1920;var c=document.createElement('canvas');c.width=W;c.height=H;var x=c.getContext('2d');
+  x.fillStyle='#120a05';x.fillRect(0,0,W,H);
+  var im=sceneOk(P.scenes[i]);if(im){var iw=im.naturalWidth||im.width,ih=im.naturalHeight||im.height,sc=Math.max(W/iw,H/ih),dw=iw*sc,dh=ih*sc;x.drawImage(im,(W-dw)/2,(H-dh)/2,dw,dh)}
+  var g=x.createLinearGradient(0,H*.42,0,H);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,.88)');x.fillStyle=g;x.fillRect(0,0,W,H);
+  var g2=x.createLinearGradient(0,0,0,H*.18);g2.addColorStop(0,'rgba(0,0,0,.55)');g2.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g2;x.fillRect(0,0,W,H*.18);
+  /* título grande */
+  var T=String(title||'').toUpperCase(),fs=Math.round(fmt==='yt'?84:118),lines;x.textAlign='center';x.textBaseline='alphabetic';
+  do{x.font='900 '+fs+'px Montserrat,Impact,sans-serif';lines=wrap(x,T,W*(fmt==='yt'?.9:.86));if(lines.length<=3)break;fs-=6}while(fs>40);
+  var lh=fs*1.08,base=fmt==='yt'?H*.9:H*.82,y0=base-(lines.length-1)*lh;
+  lines.forEach(function(l,k){var y=y0+k*lh;x.lineJoin='round';x.lineWidth=fs*.2;x.strokeStyle='#000';x.strokeText(l,W/2,y);x.fillStyle=k===lines.length-1?'#ffd400':'#fff';x.fillText(l,W/2,y)});
+  /* nombre del canal arriba */
+  var cn=(S.settings.canal||'').trim(),fi=(S.settings.firma||'').trim();
+  if(cn){var f2=Math.round(fmt==='yt'?34:48);x.font='800 '+f2+'px Montserrat,sans-serif';var tw=x.measureText(cn).width+f2*1.2,bx=fmt==='yt'?W*.04:(W-tw)/2,by=H*(fmt==='yt'?.06:.055);
+    x.fillStyle='rgba(214,160,40,.95)';roundRect(x,bx,by,tw,f2*1.5,f2*.75);x.fill();x.fillStyle='#1a0e00';x.textAlign='left';x.textBaseline='middle';x.fillText(cn,bx+f2*.6,by+f2*.78)}
+  if(fi){var f3=Math.round(fmt==='yt'?26:36);x.font='700 '+f3+'px Inter,sans-serif';x.textBaseline='middle';x.textAlign=fmt==='yt'?'right':'center';x.lineWidth=f3*.22;x.strokeStyle='rgba(0,0,0,.8)';var fx=fmt==='yt'?W*.96:W/2,fy=fmt==='yt'?H*.06+f3:H*.955;x.strokeText(fi,fx,fy);x.fillStyle='#fff';x.fillText(fi,fx,fy)}
+  return c}
+
+function make(){var P=S.P;if(!P)return;var i=PT.i;if(i==null||!sceneOk(P.scenes[i]))i=firstOk(P);if(i<0)return toast('Primero generá las imágenes de las escenas',1);PT.i=i;
+  var fmt=PT.fmt||(P.format==='horizontal'?'yt':'vt');PT.fmt=fmt;var t=(($('#ev354t')||{}).value);if(t==null)t=coverTitle(P);P.coverTitle=t;save();
+  var c;try{c=drawCover(P,fmt,i,t)}catch(e){return toast('No se pudo dibujar la portada: '+(e.message||e),1)}
+  c.toBlob(function(b){if(!b)return toast('No se pudo crear la imagen (probá con otra escena)',1);if(PT.url)URL.revokeObjectURL(PT.url);PT.url=URL.createObjectURL(b);PT.blob=b;var el=$('#ev354prev');if(el){el.src=PT.url;el.style.display='block'}var d=$('#ev354dl');if(d)d.disabled=false},'image/jpeg',.92)}
+
+function download(){if(!PT.blob)return toast('Primero tocá «Hacer portada»',1);var P=S.P,name='Portada - '+((vt(P)||'video').replace(/[^\w\-áéíóúñ ]/gi,'').trim()||'video')+'.jpg';
+  var f=new File([PT.blob],name,{type:'image/jpeg'});
+  if(isMobile()&&navigator.canShare&&navigator.canShare({files:[f]})){navigator.share({files:[f]}).catch(function(){});return}
+  var a=document.createElement('a');a.href=PT.url;a.download=name;document.body.appendChild(a);a.click();a.remove();toast('Portada descargada ✅')}
+
+function panel(){var P=S.P;if(!P||!P.scenes.length)return '';var fmt=PT.fmt||(P.format==='horizontal'?'yt':'vt'),i=PT.i==null?firstOk(P):PT.i,has=firstOk(P)>=0;
+  var t=P.coverTitle!=null?P.coverTitle:coverTitle(P);
+  return '<div class="card box ev354p" style="padding:12px"><h3>🖼️ Portada del video <span class="sub">la tapa que se ve antes de tocar play</span></h3>'+
+   (has?'<div class="lbl">Texto grande</div><input class="inp" id="ev354t" maxlength="60" value="'+esc(t)+'" onchange="EV354.make()">'+
+   '<div class="seg" style="margin-top:8px"><button class="'+(fmt==='vt'?'on':'')+'" onclick="EV354.fmt(\'vt\')">📱 TikTok / Reels</button><button class="'+(fmt==='yt'?'on':'')+'" onclick="EV354.fmt(\'yt\')">📺 YouTube</button></div>'+
+   '<div class="lbl">Imagen de fondo (tocá una)</div><div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px">'+P.scenes.map(function(s,k){var im=sceneOk(s);if(!im)return '';return '<img src="'+esc(im.src)+'" onclick="EV354.pick('+k+')" style="width:58px;height:58px;object-fit:cover;border-radius:8px;cursor:pointer;flex:none;border:3px solid '+(k===i?'var(--acc,#7c5cff)':'transparent')+'">'}).join('')+'</div>'+
+   '<div class="row wrap" style="gap:6px;margin-top:8px"><button class="btn sm grad" onclick="EV354.make()">'+ic('spark')+'Hacer portada</button><button class="btn sm" id="ev354dl" '+(PT.blob?'':'disabled')+' onclick="EV354.download()">'+ic('down')+'Descargar</button></div>'+
+   '<img id="ev354prev" src="'+(PT.url||'')+'" style="'+(PT.url?'':'display:none;')+'margin-top:10px;max-width:'+(fmt==='yt'?'100%':'220px')+';border-radius:10px;box-shadow:0 2px 12px rgba(0,0,0,.3)">'+
+   '<div class="hint">En TikTok la elegís en «Seleccionar portada → Subir». En YouTube, en «Miniatura».</div>'
+   :'<div class="hint">Cuando las escenas tengan imagen, acá armás la portada con letras grandes y el nombre del canal.</div>')+'</div>'}
+
+var tcO=tContenido;tContenido=function(){var h=tcO.apply(this,arguments);try{h+=panel()}catch(e){console.warn('[v3.54]',e)}return h};
+var opO=openProject;openProject=function(){PT={fmt:null,i:null,url:null};return opO.apply(this,arguments)};
+
+window.EV354={
+  set:function(k,v){S.settings[k]=String(v||'').trim();saveSettings();toast('Guardado ✅')},
+  reset:function(){var s=S.settings;s.canal=CF.canal;s.firma=CF.firma;s.tagsFijos=CF.tags;s.cierreFijo=CF.cierre;saveSettings();try{render()}catch(e){}toast('Perfil de Camino de Fe cargado ✅')},
+  make:make,download:download,
+  fmt:function(f){PT.fmt=f;render();setTimeout(make,60)},
+  pick:function(k){PT.i=k;render();setTimeout(make,60)}};
+
+try{render()}catch(e){}
+console.info('[Estudio Viral] v3.54: perfil del canal y portada');
+})();
+</script>
+<!-- ===== FIN v3.54 ===== -->
 
 </body>
 </html>
