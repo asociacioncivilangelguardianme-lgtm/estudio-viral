@@ -2297,7 +2297,7 @@ window.__ev32export=exportMp4;
 (function(){
 'use strict';
 if(window.__ev33)return;window.__ev33=true;
-var VERSION='3.56';
+var VERSION='3.57';
 var COLORS=['#7dd3fc','#ff9de2','#a7f3d0','#fdba74','#c4b5fd'];
 var MOVES=['zoomin','panr','tiltup','dolly','panl','zoomout','track','tiltdown'];
 
@@ -2618,7 +2618,7 @@ if('serviceWorker' in navigator&&/^https:$/.test(location.protocol)){window.addE
   reg.addEventListener('updatefound',function(){var w=reg.installing;if(!w)return;w.addEventListener('statechange',function(){if(w.state==='installed'&&navigator.serviceWorker.controller)toast('Hay una versión nueva de Estudio Viral: cerrá y volvé a abrir la app para verla ✨')})})}).catch(function(e){console.info('[v3.33] sin app instalable (falta sw.js en GitHub):',e&&e.message)})})}
 
 /* Novedades */
-var NEWS=['🍲 <b>3.56</b>: en la Receta, las escenas de ingredientes piden primero la olla gigante y un frasquito de vidrio (antes decía «jarrito de barro» y a veces salían jarrones en vez de la olla).','⛪ <b>3.55</b>: el <b>Perfil del canal</b> (firma, hashtags fijos y cartel de cierre) se pone <b>solo en los videos de religión</b>. En «Guion y storyboard» cada video tiene un interruptor para ponerlo o sacarlo a mano.','⛪ <b>3.54</b>: nuevo <b>Perfil del canal</b> en Ajustes (ya viene cargado con Camino de Fe): la firma, los hashtags fijos #CaminoDeFe #Umbanda #Orixas y el cartel de cierre «Guardalo y dejá tu Axé» se ponen solos en cada video. Y nueva <b>🖼️ Portada</b> en «Guion y storyboard»: elegís una escena y la app arma la tapa con letras grandes y el nombre del canal, para TikTok o YouTube.','✨ <b>3.53</b>: nuevos <b>Textos animados</b>: en cada escena podés poner una frase corta que aparece moviéndose (rebote, suave, palabra por palabra, máquina de escribir, deslizando o con brillo) con estilo caja negra, letras grandes, dorado sagrado o neón. En «Guion y storyboard» está «Que la IA ponga los textos» y el <b>cartel de cierre</b> (ej: «Seguinos para más»). Las recetas ya los ponen solas.','⚡ <b>3.52</b>: nuevas <b>Recetas</b> (botón «⚡ Recetas» en Mis Proyectos): elegís Itán, Mensaje del día, Mini documental, Explicativo, Trailer, Top 5, Cuento o Historia solidaria, escribís el tema y la IA hace todo el video. Y nuevo <b>🎞️ Video real gratis</b> en cada escena: busca videos de verdad (ríos, fuego, selva, mar…) en Wikimedia Commons y Archive.org, o los pone solos en todas las escenas.','✅ <b>3.51</b>: nuevo botón «Arreglar guion y escenas (una sola vez)»: deja en «Tu guion» solo lo que dice el narrador y lo pone al lado de cada foto, sin tocar las fotos que subiste. Con «Deshacer» vuelve todo como estaba.','🧹 <b>3.50</b>: la escobita «Limpiar» reconoce más formas de instrucciones y, si no encuentra nada, se lo pasa sola a la IA. «Limpiar con IA» funciona de a 6 escenas.','🧹 <b>3.49</b>: «Limpiar con IA» ya no falla con «no devolvió datos válidos» (ahora limpia de a 6 escenas).','🧹 <b>3.48</b>: la app saca sola las instrucciones que vienen pegadas en los guiones («narración en español latino», «escena siguiendo exactamente…», «estilo…»), así la voz y los subtítulos dicen solo lo del narrador. Botones «Limpiar», «Limpiar con IA» y «Deshacer» en Guion y en Vista.','↩️ <b>3.47</b>: el botón «atrás» del celular ya no cierra la app: primero cierra lo que esté abierto, después vuelve a Vista y a Mis Proyectos. Para salir, tocás «atrás» dos veces.','🗣️ <b>3.46</b>: la voz ya no lee los emojis ni los hashtags del guion (antes decía «corazón», «estatua», «almohadilla»). Nuevo interruptor para hacer el video <b>sin voz</b> (solo subtítulos y música), en la pestaña Voz y en Vista.','🌍 <b>3.45</b>: arreglado lo de las imágenes orientales: el servicio gratis ignoraba los pedidos largos y devolvía cualquier imagen. Ahora cada pedido es corto y empieza por lo importante. En los videos de Orixás las personas salen afrobrasileñas. La Receta usa primeros planos de los personajes con la olla. Las miniaturas de «Vista» ahora se ven.','🍲 <b>3.44</b>: en la Receta de Orixás cada imagen muestra la misma olla grande con los dos personajes (ya no jarros sueltos). En «Vista» ves las imágenes mientras se crean y tenés «Rehacer todas las imágenes».','🌍 <b>3.43</b>: en videos de Orixás las personas salen afrobrasileñas y africanas (nada asiático). La app respeta el límite gratis de 1 imagen cada 45 segundos y ya no deja el cartel amarillo «Free limit reached». En el celular, «Vista» trae los primeros pasos: personajes, fotos de referencia y generar imágenes.','📱 <b>3.42</b>: en el celular el editor ahora va por partes (Vista, Guion, Escena, Estilo y Línea) con botones abajo, sin tener que bajar tanto. Botones más grandes y nada se sale de la pantalla.','🍲 <b>3.41</b>: nueva <b>Receta de Orixás</b> (dos personajes echan ingredientes en la olla y el final se ilumina). Efectos nuevos: frasco que se vuelca, humo, estallido de luz y aura. Cartel con texto en cada escena. Ayuda para darle movimiento real (Wan, Kling, Hailuo) y grabar tu gesto con la cámara. Bajar y subir todas las voces juntas para Applio.','📲 <b>3.40</b>: pasá tus proyectos de la PC al celu con un código QR (sin WhatsApp). Modo Cine (todo el video o solo algunas escenas), color de acento, música que baja sola cuando habla la voz y la nueva sección <b>Video largo a clips</b>.','💾 <b>3.39</b>: el video exportado queda guardado en el proyecto. Al volver a abrirlo aparecen directo Descargar, YouTube, TikTok e Instagram, sin exportar de nuevo.','🎙️ <b>3.38 · Voces más naturales</b>: velocidad por personaje (por ejemplo Oxalá lento y pausado), botón «Subir mi voz» en cada escena (opcional) y la IA escribe los diálogos con pausas y emoción, sin narrador.','💾 <b>3.37</b>: las voces quedan guardadas en la compu. Si recargás la página no se pierden, y si falta alguna se hace sola antes de reproducir.','🥁 <b>3.36 · Sonidos sagrados</b>: atabaque con repique, adjá/sineta, agogô, chocalho, Terreiro, Encruzilhada, Mar de Iemanjá y Mata sagrada. Opción de transiciones con golpe de tambor y campanita.','🕯️ <b>3.35 · Religión afro</b>: sección nueva en Géneros y Estilos con Itán, Mensaje de la entidad, Conocé a la entidad, Oración del día, Ofrenda explicada, Mitos y verdades, Fechas especiales, Pontos cantados, Cuentos para chicos, Exus y Pombagiras, Umbanda y Orixás. Y 9 estilos sagrados: Arte afrobrasileño, Terreiro, Mata sagrada, Encruzilhada nocturna, Pintura sacra, Ícono dorado, Vitral, Escultura africana y Afrofuturismo.','🔧 <b>3.34</b>: en los diálogos, cada escena reconoce sola quién habla y usa su voz, y pone el sonido del lugar (selva, río, cascada, fuego, tambores…). «Armar escenas» ya no borra las imágenes que hiciste.','👥 <b>Modo Diálogo</b>: dos (o más) personajes hablan, cada uno con su voz. Lo elegís en «Nuevo video».',
+var NEWS=['🚀 <b>3.57</b>: en Mis Proyectos hay botones nuevos: <b>💬 Responder comentario</b> (el video empieza con el globito del comentario y la IA lo responde), <b>💡 Ideas</b> (7 ideas para la semana y fechas especiales que se acercan) y <b>🎞️ Varios videos</b> (una fila que la app hace sola, uno tras otro). En «Guion y storyboard» está <b>📺 Serie</b> para hacer la Parte 2, 3… con los mismos personajes. Y <b>💾 Copia de seguridad</b>: te avisa una vez por semana y la guarda con un toque (también en Ajustes).','🍲 <b>3.56</b>: en la Receta, las escenas de ingredientes piden primero la olla gigante y un frasquito de vidrio (antes decía «jarrito de barro» y a veces salían jarrones en vez de la olla).','⛪ <b>3.55</b>: el <b>Perfil del canal</b> (firma, hashtags fijos y cartel de cierre) se pone <b>solo en los videos de religión</b>. En «Guion y storyboard» cada video tiene un interruptor para ponerlo o sacarlo a mano.','⛪ <b>3.54</b>: nuevo <b>Perfil del canal</b> en Ajustes (ya viene cargado con Camino de Fe): la firma, los hashtags fijos #CaminoDeFe #Umbanda #Orixas y el cartel de cierre «Guardalo y dejá tu Axé» se ponen solos en cada video. Y nueva <b>🖼️ Portada</b> en «Guion y storyboard»: elegís una escena y la app arma la tapa con letras grandes y el nombre del canal, para TikTok o YouTube.','✨ <b>3.53</b>: nuevos <b>Textos animados</b>: en cada escena podés poner una frase corta que aparece moviéndose (rebote, suave, palabra por palabra, máquina de escribir, deslizando o con brillo) con estilo caja negra, letras grandes, dorado sagrado o neón. En «Guion y storyboard» está «Que la IA ponga los textos» y el <b>cartel de cierre</b> (ej: «Seguinos para más»). Las recetas ya los ponen solas.','⚡ <b>3.52</b>: nuevas <b>Recetas</b> (botón «⚡ Recetas» en Mis Proyectos): elegís Itán, Mensaje del día, Mini documental, Explicativo, Trailer, Top 5, Cuento o Historia solidaria, escribís el tema y la IA hace todo el video. Y nuevo <b>🎞️ Video real gratis</b> en cada escena: busca videos de verdad (ríos, fuego, selva, mar…) en Wikimedia Commons y Archive.org, o los pone solos en todas las escenas.','✅ <b>3.51</b>: nuevo botón «Arreglar guion y escenas (una sola vez)»: deja en «Tu guion» solo lo que dice el narrador y lo pone al lado de cada foto, sin tocar las fotos que subiste. Con «Deshacer» vuelve todo como estaba.','🧹 <b>3.50</b>: la escobita «Limpiar» reconoce más formas de instrucciones y, si no encuentra nada, se lo pasa sola a la IA. «Limpiar con IA» funciona de a 6 escenas.','🧹 <b>3.49</b>: «Limpiar con IA» ya no falla con «no devolvió datos válidos» (ahora limpia de a 6 escenas).','🧹 <b>3.48</b>: la app saca sola las instrucciones que vienen pegadas en los guiones («narración en español latino», «escena siguiendo exactamente…», «estilo…»), así la voz y los subtítulos dicen solo lo del narrador. Botones «Limpiar», «Limpiar con IA» y «Deshacer» en Guion y en Vista.','↩️ <b>3.47</b>: el botón «atrás» del celular ya no cierra la app: primero cierra lo que esté abierto, después vuelve a Vista y a Mis Proyectos. Para salir, tocás «atrás» dos veces.','🗣️ <b>3.46</b>: la voz ya no lee los emojis ni los hashtags del guion (antes decía «corazón», «estatua», «almohadilla»). Nuevo interruptor para hacer el video <b>sin voz</b> (solo subtítulos y música), en la pestaña Voz y en Vista.','🌍 <b>3.45</b>: arreglado lo de las imágenes orientales: el servicio gratis ignoraba los pedidos largos y devolvía cualquier imagen. Ahora cada pedido es corto y empieza por lo importante. En los videos de Orixás las personas salen afrobrasileñas. La Receta usa primeros planos de los personajes con la olla. Las miniaturas de «Vista» ahora se ven.','🍲 <b>3.44</b>: en la Receta de Orixás cada imagen muestra la misma olla grande con los dos personajes (ya no jarros sueltos). En «Vista» ves las imágenes mientras se crean y tenés «Rehacer todas las imágenes».','🌍 <b>3.43</b>: en videos de Orixás las personas salen afrobrasileñas y africanas (nada asiático). La app respeta el límite gratis de 1 imagen cada 45 segundos y ya no deja el cartel amarillo «Free limit reached». En el celular, «Vista» trae los primeros pasos: personajes, fotos de referencia y generar imágenes.','📱 <b>3.42</b>: en el celular el editor ahora va por partes (Vista, Guion, Escena, Estilo y Línea) con botones abajo, sin tener que bajar tanto. Botones más grandes y nada se sale de la pantalla.','🍲 <b>3.41</b>: nueva <b>Receta de Orixás</b> (dos personajes echan ingredientes en la olla y el final se ilumina). Efectos nuevos: frasco que se vuelca, humo, estallido de luz y aura. Cartel con texto en cada escena. Ayuda para darle movimiento real (Wan, Kling, Hailuo) y grabar tu gesto con la cámara. Bajar y subir todas las voces juntas para Applio.','📲 <b>3.40</b>: pasá tus proyectos de la PC al celu con un código QR (sin WhatsApp). Modo Cine (todo el video o solo algunas escenas), color de acento, música que baja sola cuando habla la voz y la nueva sección <b>Video largo a clips</b>.','💾 <b>3.39</b>: el video exportado queda guardado en el proyecto. Al volver a abrirlo aparecen directo Descargar, YouTube, TikTok e Instagram, sin exportar de nuevo.','🎙️ <b>3.38 · Voces más naturales</b>: velocidad por personaje (por ejemplo Oxalá lento y pausado), botón «Subir mi voz» en cada escena (opcional) y la IA escribe los diálogos con pausas y emoción, sin narrador.','💾 <b>3.37</b>: las voces quedan guardadas en la compu. Si recargás la página no se pierden, y si falta alguna se hace sola antes de reproducir.','🥁 <b>3.36 · Sonidos sagrados</b>: atabaque con repique, adjá/sineta, agogô, chocalho, Terreiro, Encruzilhada, Mar de Iemanjá y Mata sagrada. Opción de transiciones con golpe de tambor y campanita.','🕯️ <b>3.35 · Religión afro</b>: sección nueva en Géneros y Estilos con Itán, Mensaje de la entidad, Conocé a la entidad, Oración del día, Ofrenda explicada, Mitos y verdades, Fechas especiales, Pontos cantados, Cuentos para chicos, Exus y Pombagiras, Umbanda y Orixás. Y 9 estilos sagrados: Arte afrobrasileño, Terreiro, Mata sagrada, Encruzilhada nocturna, Pintura sacra, Ícono dorado, Vitral, Escultura africana y Afrofuturismo.','🔧 <b>3.34</b>: en los diálogos, cada escena reconoce sola quién habla y usa su voz, y pone el sonido del lugar (selva, río, cascada, fuego, tambores…). «Armar escenas» ya no borra las imágenes que hiciste.','👥 <b>Modo Diálogo</b>: dos (o más) personajes hablan, cada uno con su voz. Lo elegís en «Nuevo video».',
   '🎨 <b>Subtítulos de colores</b>: cada personaje con su color y su nombre arriba, así se entiende quién habla aunque esté sin sonido.',
   '🖼️ <b>Máximo 6 imágenes</b>: el tiempo de cada una se calcula solo con las voces.',
   '💓 <b>La imagen late con la voz</b>: parece viva mientras el personaje habla.',
@@ -3901,7 +3901,7 @@ async function needPeer(){if(window.Peer)return;await loadScript(['https://cdnjs
 function stopX(){X.dead=true;try{X.conn&&X.conn.close()}catch(e){}try{X.peer&&X.peer.destroy()}catch(e){}X.conn=null;X.peer=null}
 async function idbKeys(){var db=await IDB.open();return new Promise(function(res,rej){var r=db.transaction('f').objectStore('f').getAllKeys();r.onsuccess=function(){res(r.result||[])};r.onerror=function(){rej(r.error)}})}
 /* junta los proyectos elegidos + sus fotos, videos, voces y video exportado */
-async function collect(ps){var keys=[];try{keys=await idbKeys()}catch(e){}var want=[],seen={};
+async function collect(ps,noVid){var keys=[];try{keys=await idbKeys()}catch(e){}if(noVid)keys=keys.filter(function(k){return !(typeof k==='string'&&k.indexOf('video:')===0)});var want=[],seen={};
   ps.forEach(function(p){var js=JSON.stringify(p),sigs={};
     (function walk(o){if(typeof o==='string'){if(o.length>1)sigs['|'+fnv(o)+'|'+o.length]=1}else if(o&&typeof o==='object')for(var k in o)walk(o[k])})(p);
     keys.forEach(function(k){if(typeof k!=='string'||seen[k])return;var ok=k==='video:'+p.id||js.indexOf('"'+k+'"')>=0;
@@ -3925,7 +3925,7 @@ async function applyPack(hd,getBlob){if(!hd||hd.app!=='estudio-viral'||!Array.is
   return {added:added,updated:updated,copies:copies,ids:touched}}
 function doneMsg(r){var n=r.added+r.updated+r.copies;return '✅ ¡Listo! Llegó'+(n>1?'ron ':' ')+n+' proyecto'+(n>1?'s':'')+(r.copies?' ('+r.copies+' como copia, porque acá tenías una versión más nueva)':'')+'.'}
 /* ---- archivo (por si la conexión directa no anda) ---- */
-async function buildFile(ps){var files=await collect(ps),hd=packHead(ps,files),js=new TextEncoder().encode(JSON.stringify(hd)),pre=new Uint8Array(8);
+async function buildFile(ps,noVid){var files=await collect(ps,noVid),hd=packHead(ps,files),js=new TextEncoder().encode(JSON.stringify(hd)),pre=new Uint8Array(8);
   pre.set([69,86,80,75]);new DataView(pre.buffer).setUint32(4,js.length,true);return new Blob([pre,js].concat(files.map(function(f){return f.blob})),{type:'application/octet-stream'})}
 async function readFile(file){var pre=new Uint8Array(await file.slice(0,8).arrayBuffer());
   if(pre[0]===91||pre[0]===123){var arr=JSON.parse(await file.text());if(!Array.isArray(arr))arr=[arr];return applyPack({app:'estudio-viral',projects:arr,files:[]},function(){return null})}
@@ -4138,7 +4138,7 @@ var veO=vEditor;vEditor=function(m){var r=veO.apply(this,arguments);try{var u=$(
 /* ======================================================================
    acciones (botones)
    ====================================================================== */
-window.EV340={CL:CL,
+window.EV340={CL:CL,buildFile:buildFile,readFile:readFile,
   acc:function(c){S.P.accent=c;save();render();Player.seek(1.2)},
   cineMode:function(){var P=S.P;if(!P)return;
     if(P._cine){var pv=P._cinePrev||{};Object.keys(CINE).forEach(function(k){if(k in pv)P[k]=pv[k]});P._cine=false;delete P._cinePrev;toast('Modo Cine desactivado')}
@@ -4969,14 +4969,16 @@ var msO=Pipe.makeScenes;Pipe.makeScenes=async function(){var P=S.P,r=P&&P.recipe
 
 async function create(){var r=recOf(R.sel);if(!r)return;var tema=String(R.tema||'').trim();
   if(!tema&&!r.ent){msg('ev52msg','Escribí de qué trata el video.',1);return}
-  var g=r.genre&&genreOf(r.genre);var P=newProject('idea');P.format=R.fmt||'vertical';
-  if(g){P.genre=g.id;P.sub=r.sub||'';applyPreset(g.pre,P)}if(r.pre)applyPreset(r.pre,P);
-  var st=R.style||recStyle(r);P.style=st;Object.entries(styleOf(st).fx||{}).forEach(function(e){if(e[0] in P)P[e[0]]=e[1]});
-  P.duration=R.dur||r.dur;P.ipm=r.ipm||P.ipm;if(P.format==='horizontal')P.ipm=Math.min(P.ipm,10);
-  P.idea=r.ent?((r.id==='itan'?'Itán de ':'Mensaje de ')+R.ent+(tema?': '+tema:' (elegí un itán tradicional y conocido)')):tema;
-  P.recipe=r.id;P.useClips=!!R.clips;P.name=(tema||P.idea).slice(0,60);P._nameSet=1;P.title=P.name;
+  var P=buildP(r,tema,R.ent,R.dur,R.fmt,R.style,R.clips);
   closeSheet();openProject(P);P=S.P;toast(r.e+' Receta «'+r.n+'» en marcha: la IA arma todo, podés dejarla trabajando');
   run(async function(){await Pipe.makeScenes(true);if(S.P!==P)return;try{if(window.EV353)await EV353.ai()}catch(e){}if(S.P!==P)return;if(P.useClips&&P.scenes.length)await autoClips(true);if(S.P!==P)return;await Pipe.auto()})}
+function buildP(r,tema,ent,dur,fmt,style,clips){tema=String(tema||'').trim();ent=ent||'Oxum';
+  var g=r.genre&&genreOf(r.genre);var P=newProject('idea');P.format=fmt||'vertical';
+  if(g){P.genre=g.id;P.sub=r.sub||'';applyPreset(g.pre,P)}if(r.pre)applyPreset(r.pre,P);
+  var st=style||recStyle(r);P.style=st;Object.entries(styleOf(st).fx||{}).forEach(function(e){if(e[0] in P)P[e[0]]=e[1]});
+  P.duration=dur||r.dur;P.ipm=r.ipm||P.ipm;if(P.format==='horizontal')P.ipm=Math.min(P.ipm,10);
+  P.idea=r.ent?((r.id==='itan'?'Itán de ':'Mensaje de ')+ent+(tema?': '+tema:' (elegí un itán tradicional y conocido)')):tema;
+  P.recipe=r.id;P.useClips=!!clips;P.name=(tema||P.idea).slice(0,60);P._nameSet=1;P.title=P.name;return P}
 
 /* =====================================================================
    2) VIDEOS REALES GRATIS (Wikimedia Commons y Archive.org)
@@ -5102,7 +5104,7 @@ var vpO=vProjects;vProjects=function(m){vpO.apply(this,arguments);try{var w=m.qu
 var vwO=vWizard;vWizard=function(m){vwO.apply(this,arguments);try{if(S.wiz&&S.wiz.step===1&&!m.querySelector('.ev52-banner')){var md=m.querySelector('.modes');if(md){var d=document.createElement('div');d.className='ev52-banner';
   d.innerHTML='<div><b>⚡ ¿Querés hacerlo con un solo pedido?</b><div class="sub">Itán, mensaje del día, documental, trailer, top 5, cuento… escribís el tema y la IA hace todo.</div></div><button class="btn grad" onclick="EV352.open_rec()">Ver recetas</button>';md.parentNode.insertBefore(d,md)}}}catch(e){}};
 
-window.EV352={R:R,C:C,
+window.EV352={R:R,C:C,REC:REC,ENT:ENT,recOf:recOf,buildP:buildP,autoClips:function(q){return autoClips(q)},
   open_rec:function(){R.sel=R.sel||'';recUI()},
   pick:function(id){var r=recOf(id);if(!r)return;if(r.special==='receta'){if(window.EV341&&EV341.recetaOpen)EV341.recetaOpen();else toast('La receta de Orixás no está disponible',1);return}
     if(R.sel!==id){R.sel=id;R.dur=0;R.style='';R.clips=!!r.clips}recUI();setTimeout(function(){var f=$('#ev52go');f&&f.scrollIntoView({behavior:'smooth',block:'center'})},80)},
@@ -5348,6 +5350,224 @@ console.info('[Estudio Viral] v3.54: perfil del canal y portada');
 })();
 </script>
 <!-- ===== FIN v3.54 ===== -->
+
+<!-- ===== ESTUDIO VIRAL · v3.57 · RESPONDER COMENTARIOS, SERIES, BANCO DE IDEAS, VARIOS VIDEOS DE UNA VEZ Y COPIA DE SEGURIDAD =====
+     Agregado al final. Para quitarlo, borrá desde acá hasta "FIN v3.57". -->
+<style>
+.ev57-row{display:flex;gap:8px;align-items:flex-start;padding:10px;border-radius:12px;border:1px solid var(--line,#ffffff1f);background:var(--card,#ffffff08);margin-top:8px}
+.ev57-row .e{font-size:22px;line-height:1}
+.ev57-row .tx{flex:1;min-width:0}
+.ev57-row .tx b{display:block;font-size:14px}
+.ev57-row .tx small{display:block;opacity:.75;font-size:12px;line-height:1.35;margin-top:2px}
+.ev57-row .bt{display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-end;align-items:center;max-width:52%}
+.ev57-date{display:inline-block;padding:4px 8px;border-radius:8px;background:#f59e0b22;border:1px solid #f59e0b55;font-size:12px;margin:3px 4px 0 0}
+.ev57-bk{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:12px;margin-bottom:12px;border-radius:14px;background:#22c55e1a;border:1px solid #22c55e55}
+.ev57-fila{position:fixed;left:50%;transform:translateX(-50%);bottom:84px;z-index:60;background:#111c;color:#fff;border:1px solid #7c5cff;border-radius:999px;padding:7px 14px;font-size:13px;backdrop-filter:blur(6px);display:flex;gap:10px;align-items:center}
+.ev57-fila button{color:#ffb4b4;text-decoration:underline;font-size:12px}
+.ev57-st{font-size:11px;padding:2px 7px;border-radius:6px;background:#ffffff14;white-space:nowrap}
+.ev57-st.ok{background:#22c55e33}.ev57-st.err{background:#ef444433}.ev57-st.run{background:#7c5cff44}
+</style>
+<script id="ev357">
+(function(){'use strict';if(window.__ev357)return;window.__ev357=true;
+function sheet(html){$('#sheetin').innerHTML=html;$('#sheet').classList.add('open')}
+function head(t){return '<div class="between" style="margin-bottom:10px"><div class="h1" style="font-size:19px">'+t+'</div><button class="btn sm" onclick="closeSheet()">✕ Cerrar</button></div>'}
+function wait(ms){return new Promise(function(r){setTimeout(r,ms)})}
+function E(){return window.EV352||{}}
+function rec(id){return E().recOf?E().recOf(id):null}
+var TIPOS=['itan','mensaje','top5','explica','doc','trailer','cuento','solidario'];
+function tipoOpts(cur){return TIPOS.map(function(id){var r=rec(id);return r?'<option value="'+id+'" '+(cur===id?'selected':'')+'>'+r.e+' '+esc(r.n)+'</option>':''}).join('')}
+function entOpts(cur,none){var l=(E().ENT||['Oxum','Xangô','Iemanjá','Ogum','Exu','Pombagira','Caboclo','Preto Velho']).slice();if(cur&&l.indexOf(cur)<0)l.unshift(cur);
+  return (none?'<option value="" '+(!cur?'selected':'')+'>'+none+'</option>':'')+l.map(function(n){return '<option '+(cur===n?'selected':'')+'>'+esc(n)+'</option>'}).join('')}
+
+/* ---------- arma un video entero y espera a que termine de grabar ---------- */
+async function produce(P){openProject(P);P=S.P;
+  try{if(!P.scenes.length)await Pipe.makeScenes(true)}catch(e){toast(e.message||String(e),1)}
+  if(S.P!==P||!P.scenes.length)return false;
+  try{if(window.EV353)await EV353.ai()}catch(e){}
+  if(S.P!==P)return false;
+  try{if(P.useClips&&E().autoClips)await E().autoClips(true)}catch(e){}
+  if(S.P!==P)return false;
+  await Pipe.auto();
+  var t0=Date.now();await wait(1500);
+  while(Player.playing&&Date.now()-t0<30*60000){if(S.P!==P)return false;await wait(1500)}
+  await wait(2500);return P.status==='done'}
+
+/* =====================================================================
+   1) RESPONDER UN COMENTARIO CON UN VIDEO
+   ===================================================================== */
+var RP={user:'',text:'',ent:'',dur:45};
+function replyUI(){
+  sheet(head('💬 Responder un comentario con un video')+
+   '<div class="sub" style="margin-bottom:10px">Copiá el comentario de TikTok. El video empieza con el globito del comentario y la IA arma la respuesta. A la gente le encanta y comenta más para que le respondas.</div>'+
+   '<div class="card" style="padding:12px"><div class="lbl">Usuario que comentó (opcional)</div><input class="inp" placeholder="@usuario" value="'+esc(RP.user)+'" oninput="EV357.RP.user=this.value">'+
+   '<div class="lbl">El comentario</div><textarea class="inp" id="ev57c" rows="3" placeholder="Ej: ¿Qué Orixá me protege si nací en diciembre?" oninput="EV357.RP.text=this.value">'+esc(RP.text)+'</textarea>'+
+   '<div class="lbl">¿Quién responde?</div><select class="sel" onchange="EV357.RP.ent=this.value">'+entOpts(RP.ent,'El narrador (yo)')+'</select>'+
+   '<div class="lbl">Duración</div><div class="seg">'+[30,45,60].map(function(d){return '<button class="'+(RP.dur===d?'on':'')+'" onclick="EV357.RP.dur='+d+';EV357.reply()">'+d+' s</button>'}).join('')+'</div>'+
+   '<button class="btn grad" style="width:100%;margin-top:14px" onclick="EV357.replyGo()">'+ic('bolt')+'Crear video de respuesta</button><div class="pmsg" id="ev57m"></div></div>');
+  setTimeout(function(){var t=$('#ev57c');t&&t.focus()},50)}
+function replyGo(){var c=String(RP.text||'').trim();if(!c){var m=$('#ev57m');if(m){m.textContent='Pegá el comentario que querés responder.';m.style.color='#ff6b6b'}return}
+  var u=String(RP.user||'').trim();if(u&&u[0]!=='@')u='@'+u;
+  var r=rec('mensaje')||rec('explica');var P=E().buildP(r,'',RP.ent||'Oxum',RP.dur,'vertical');
+  P.recipe='';P.hook=false;P.reply={user:u||'@seguidor',text:c.slice(0,160)};
+  P.idea='Un seguidor comentó: "'+c+'". Hacé un video corto que RESPONDA ese comentario. La primera frase retoma la pregunta en pocas palabras (por ejemplo "Me preguntaron…"); después respondé claro, cálido y con respeto'+
+    (RP.ent?', con la voz y la sabiduría de '+RP.ent+', hablándole directo a quien preguntó':'')+'. Si es religión afro (Orixás, Umbanda, Quimbanda), aclará con respeto que cada casa puede tener su fundamento. Terminá invitando a dejar más preguntas en los comentarios.';
+  P.name=P.title=c.replace(/\s+/g,' ').slice(0,60);P._nameSet=1;closeSheet();toast('💬 Armando la respuesta: podés dejarla trabajando');
+  run(function(){return produce(P)})}
+
+/* el globito del comentario (los primeros 5 segundos) */
+function drawReply(ctx,W,H,t,P){var r=P.reply;if(!r||!r.text)return;var a=t<.3?t/.3:t>5.2?Math.max(0,1-(t-5.2)/.5):1;if(a<=0)return;
+  try{ctx.save();ctx.globalAlpha=a;var mn=Math.min(W,H),fs=Math.round(mn*.047),bw=W*.84,x=(W-bw)/2,pad=fs*.75,hs=Math.round(fs*.7),av=Math.round(hs*1.5);
+    ctx.font='800 '+fs+'px Inter,sans-serif';var lines=wrap(ctx,String(r.text),bw-pad*2);if(lines.length>4){lines=lines.slice(0,4);lines[3]=lines[3].replace(/\s*\S*$/,'')+'…'}
+    var bh=pad+av+fs*.45+lines.length*fs*1.22+pad*.7,y=H*(P.format==='horizontal'?.07:.13),sc=t<.3?.85+.15*(t/.3):1;
+    ctx.translate(W/2,y);ctx.scale(sc,sc);ctx.translate(-W/2,-y);
+    ctx.shadowColor='rgba(0,0,0,.35)';ctx.shadowBlur=fs*.7;ctx.fillStyle='#fff';roundRect(ctx,x,y,bw,bh,fs*.6);ctx.fill();
+    ctx.beginPath();ctx.moveTo(x+fs*1.3,y+bh-1);ctx.lineTo(x+fs*1.1,y+bh+fs*.8);ctx.lineTo(x+fs*2.4,y+bh-1);ctx.closePath();ctx.fill();ctx.shadowBlur=0;
+    var ax=x+pad,ay=y+pad;ctx.fillStyle='#fe2c55';ctx.beginPath();ctx.arc(ax+av/2,ay+av/2,av/2,0,7);ctx.fill();
+    var u=String(r.user||'@seguidor'),ini=(u.replace(/^@/,'')[0]||'?').toUpperCase();
+    ctx.fillStyle='#fff';ctx.font='900 '+Math.round(av*.55)+'px Inter,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(ini,ax+av/2,ay+av/2+1);
+    ctx.textAlign='left';ctx.fillStyle='#777';ctx.font='700 '+hs+'px Inter,sans-serif';ctx.fillText('Respuesta a '+u,ax+av+fs*.45,ay+av/2);
+    ctx.fillStyle='#111';ctx.font='800 '+fs+'px Inter,sans-serif';ctx.textBaseline='top';lines.forEach(function(l,k){ctx.fillText(l,x+pad,ay+av+fs*.45+k*fs*1.22)});
+    ctx.restore()}catch(e){try{ctx.restore()}catch(_){}}}
+var dfO=drawFrame;drawFrame=function(ctx,W,H,t){dfO.apply(this,arguments);var P=S.P;if(P&&P.reply)drawReply(ctx,W,H,t,P)};
+
+/* =====================================================================
+   2) SERIES: Parte 1, 2, 3…
+   ===================================================================== */
+function partN(P){return (P&&P.series&&P.series.n)||1}
+function nextPart(){var P=S.P;if(!P||!P.scenes.length)return toast('Primero terminá esta parte',1);var n=partN(P);
+  if(!confirm('Se crea la Parte '+(n+1)+' con los mismos personajes, estilo y voz, y sigue la historia donde terminó esta.\nLa IA arma todo el video (podés dejarla trabajando). ¿Seguimos?'))return;
+  if(!P.series){P.series={id:uid(),n:1,base:vt(P)};save(1)}
+  var base=P.series.base||vt(P),Q=JSON.parse(JSON.stringify(P));
+  Q.id=uid();Q.createdAt=Q.updatedAt=Date.now();Q.scenes=[];Q.script='';Q.paraphrased='';Q.sourceText='';Q.status='draft';Q.mode='idea';
+  ['pack','coverTitle','reply','ytDesc','ambDone','dlgVoices','recetaSet'].forEach(function(k){delete Q[k]});
+  Q.series={id:P.series.id,n:n+1,base:base};Q.name=Q.title=base+' · Parte '+(n+1);Q._nameSet=1;
+  var prev=String(P.script||P.scenes.map(function(s){return s.text}).join(' ')).replace(/\s+/g,' ').slice(0,1800);
+  Q.idea='Parte '+(n+1)+' de la serie «'+base+'». Lo que pasó en la parte anterior: '+prev+' — Continuá la historia justo donde terminó, con los mismos personajes. Empezá con un recordatorio de una sola frase ("En la parte anterior…") y terminá en suspenso, invitando a ver la Parte '+(n+2)+'.';
+  Q.outro='SEGUÍ PARA LA PARTE '+(n+2)+' 👉';Q.outroAnim='palabras';Q.outroSet=1;
+  toast('📺 Armando la Parte '+(n+1)+'…');run(function(){return produce(Q)})}
+function seriesCard(){var P=S.P;if(!P||!P.scenes.length)return '';var n=partN(P),base=(P.series&&P.series.base)||vt(P);
+  var all=S.projects.filter(function(x){return P.series&&x.series&&x.series.id===P.series.id}).sort(function(a,b){return partN(a)-partN(b)});
+  return '<div class="card box ev57s" style="padding:12px"><h3>📺 Serie <span class="sub">'+(P.series?'Parte '+n+' de «'+esc(base)+'»':'convertí este video en la Parte 1')+'</span></h3>'+
+   '<div class="ev40-mini" style="margin-top:2px">La gente que ve una parte vuelve al canal a buscar la siguiente. La nueva parte usa los mismos personajes, estilo y voz, y termina con «Seguí para la parte…».</div>'+
+   (all.length>1?'<div class="row wrap" style="gap:6px;margin-top:8px">'+all.map(function(x){return '<button class="btn sm'+(x.id===P.id?' grad':'')+'" onclick="openProject(S.projects.find(function(p){return p.id===\''+x.id+'\'}))">Parte '+partN(x)+'</button>'}).join('')+'</div>':'')+
+   '<div class="row wrap" style="gap:6px;margin-top:8px"><button class="btn sm grad" data-busy onclick="EV357.nextPart()">'+ic('plus')+'Hacer la Parte '+(n+1)+'</button></div></div>'}
+var tcO=tContenido;tContenido=function(){var h=tcO.apply(this,arguments);try{h+=seriesCard()}catch(e){console.warn('[v3.57]',e)}return h};
+
+/* =====================================================================
+   3) BANCO DE IDEAS + FECHAS ESPECIALES
+   ===================================================================== */
+/* Fechas según la tradición más difundida en Brasil, Argentina y Uruguay (cada casa puede tener las suyas) */
+var FECHAS=[[1,20,'Oxóssi'],[2,2,'Iemanjá'],[4,23,'Ogum'],[5,13,'Pretos Velhos'],[6,24,'Xangô'],[7,26,'Nanã'],[8,16,'Obaluaiê / Omolu'],[9,27,'Ibeji / Erês'],[9,30,'Xangô'],[11,15,'Día de la Umbanda'],[12,4,'Iansã'],[12,8,'Oxum']];
+var MES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+function proximas(dias){var hoy=new Date();hoy.setHours(0,0,0,0);var out=[];
+  FECHAS.forEach(function(f){var d=new Date(hoy.getFullYear(),f[0]-1,f[1]);if(d<hoy)d.setFullYear(d.getFullYear()+1);var n=Math.round((d-hoy)/864e5);if(n<=dias)out.push({n:n,d:f[1]+' de '+MES[f[0]-1],q:f[2]})});
+  return out.sort(function(a,b){return a.n-b.n})}
+var ID={list:store.get('ev_ideas',[])||[],busy:false};
+function saveIdeas(){store.set('ev_ideas',ID.list.slice(0,40))}
+function ideaRow(x,k){var r=rec(x.tipo)||rec('itan');
+  return '<div class="ev57-row"><span class="e">'+r.e+'</span><div class="tx"><b>'+esc(x.tema)+'</b><small>'+esc(r.n)+(x.ent?' · '+esc(x.ent):'')+(x.gancho?' · 🪝 «'+esc(x.gancho)+'»':'')+'</small></div>'+
+   '<div class="bt"><button class="btn sm grad" onclick="EV357.ideaGo('+k+')">Crear</button><button class="btn sm" onclick="EV357.ideaQ('+k+')">+ Fila</button><button class="btn sm" title="Borrar" onclick="EV357.ideaDel('+k+')">'+ic('trash')+'</button></div></div>'}
+function ideasUI(){var px=proximas(75);
+  sheet(head('💡 Banco de ideas')+
+   (px.length?'<div class="card" style="padding:12px;margin-bottom:10px"><b>📅 Fechas que se acercan</b><div style="margin-top:4px">'+px.map(function(f){return '<span class="ev57-date">'+esc(f.q)+' · '+f.d+(f.n===0?' (¡hoy!)':' (en '+f.n+' días)')+'</span>'}).join('')+'</div><div class="ev40-mini" style="margin-top:6px">Según la tradición más difundida; cada casa puede tener sus propias fechas. Subí el video unos días antes.</div></div>':'')+
+   '<button class="btn grad" style="width:100%" data-busy onclick="EV357.ideasAI()">'+ic('spark')+(ID.list.length?'Pedir 7 ideas más':'Pedir 7 ideas para la semana')+'</button><div class="pmsg" id="ev57im"></div>'+
+   (ID.list.length?ID.list.map(ideaRow).join('')+'<div class="row" style="margin-top:10px"><button class="btn sm" onclick="if(confirm(\'¿Borrar todas las ideas?\')){EV357.ID.list=[];EV357.save();EV357.ideas()}">Borrar todas</button></div>'
+    :'<div class="ev40-mini" style="margin-top:10px">La IA te propone temas mezclando Orixás, Umbanda y Quimbanda, y tiene en cuenta las fechas que se acercan. «Crear» hace el video ya; «+ Fila» lo guarda para hacer varios juntos.</div>'))}
+async function ideasAI(){if(ID.busy)return;ID.busy=true;var m=$('#ev57im');if(m)m.innerHTML='<span class="spin" style="width:12px;height:12px;vertical-align:-2px"></span> La IA está pensando ideas…';
+  try{var px=proximas(45).map(function(f){return f.q+' ('+f.d+')'}).join(', '),ya=ID.list.map(function(x){return x.tema}).slice(0,20).join(' | ');
+    var d=AI.json(await AI.chat([{role:'system',content:'Sos estratega de contenido de una cuenta de TikTok y YouTube sobre religión afro (Orixás, Umbanda y Quimbanda) llamada '+(S.settings.canal||'Camino de Fe')+'. Respondés SOLO JSON válido.'},
+      {role:'user',content:'Proponé 7 ideas de videos virales distintas para esta semana, en español rioplatense. Mezclá las tres líneas: Orixás (itanes y enseñanzas), Umbanda (Caboclos, Pretos Velhos, guías) y Quimbanda (Exus, Pombagiras), siempre con respeto. '+
+       (px?'Fechas que se acercan (usá al menos una): '+px+'. ':'')+(ya?'No repitas estas: '+ya+'. ':'')+
+       'Tipos posibles: itan (historia sagrada), mensaje (la entidad habla en primera persona), top5, explica (explicativo simple), doc (mini documental), cuento (para chicos). Variá los tipos.\n'+
+       'Formato: {"ideas":[{"tipo":"itan","entidad":"Oxum","tema":"tema concreto en 4 a 10 palabras","gancho":"primera frase del video, máx 10 palabras"}]}'}],{temp:.95}));
+    var l=(d&&d.ideas)||[];if(!l.length)throw new Error('La IA no devolvió ideas. Probá de nuevo.');
+    l.forEach(function(x){var t=String(x.tipo||'').toLowerCase();if(TIPOS.indexOf(t)<0)t='itan';var tema=String(x.tema||'').trim();if(!tema)return;
+      ID.list.unshift({tipo:t,ent:String(x.entidad||'').trim().slice(0,30),tema:tema.slice(0,90),gancho:String(x.gancho||'').trim().slice(0,90)})});
+    saveIdeas();toast('💡 '+l.length+' ideas nuevas')}
+  catch(e){if(m){m.textContent=e.message||String(e);m.style.color='#ff6b6b'}ID.busy=false;return}
+  ID.busy=false;ideasUI()}
+function ideaToP(x){var r=rec(x.tipo)||rec('itan');var tema=x.tema+(x.gancho?'. Empezá con este gancho: "'+x.gancho+'"':'');
+  var P=E().buildP(r,r.ent?tema:tema,x.ent||'Oxum',x.dur||r.dur,'vertical');if(!r.ent&&x.ent)P.idea=P.idea+' (sobre '+x.ent+')';P.name=P.title=x.tema.slice(0,60);return P}
+
+/* =====================================================================
+   4) VARIOS VIDEOS DE UNA VEZ (fila)
+   ===================================================================== */
+var F={list:store.get('ev_fila',[])||[],run:false,stop:false,cur:-1,add:{tipo:'itan',ent:'Oxum',tema:'',dur:60}};
+F.list.forEach(function(x){if(x.st==='run')x.st='wait'});
+function saveF(){store.set('ev_fila',F.list)}
+function stTxt(x){return x.st==='ok'?'<span class="ev57-st ok">✅ Listo</span>':x.st==='err'?'<span class="ev57-st err">⚠️ Falló</span>':x.st==='run'?'<span class="ev57-st run">⏳ Haciendo</span>':'<span class="ev57-st">En espera</span>'}
+function filaUI(){var a=F.add,r=rec(a.tipo),wait=F.list.filter(function(x){return x.st!=='ok'}).length;
+  sheet(head('🎞️ Hacer varios videos de una vez')+
+   '<div class="sub" style="margin-bottom:10px">Poné varios videos en la fila y la app los hace solos, uno detrás del otro. Cada uno tarda unos 10 minutos (el servicio gratis hace 1 imagen cada 45 segundos). <b>Dejá la página abierta</b> y la compu sin suspender.</div>'+
+   '<div class="card" style="padding:12px"><b>Agregar a la fila</b><div class="cols2" style="margin-top:6px"><div><div class="lbl">Tipo</div><select class="sel" onchange="EV357.F.add.tipo=this.value;EV357.fila()">'+tipoOpts(a.tipo)+'</select></div>'+
+   (r&&r.ent?'<div><div class="lbl">Entidad u Orixá</div><select class="sel" onchange="EV357.F.add.ent=this.value">'+entOpts(a.ent)+'</select></div>':'<div></div>')+'</div>'+
+   '<div class="lbl">¿De qué trata?</div><input class="inp" id="ev57ft" placeholder="'+esc(r?r.ph:'')+'" value="'+esc(a.tema)+'" oninput="EV357.F.add.tema=this.value" onkeydown="if(event.key===\'Enter\')EV357.filaAdd()">'+
+   '<div class="lbl">Duración</div><div class="seg">'+[30,45,60,90].map(function(d){return '<button class="'+(a.dur===d?'on':'')+'" onclick="EV357.F.add.dur='+d+';EV357.fila()">'+d+' s</button>'}).join('')+'</div>'+
+   '<button class="btn" style="width:100%;margin-top:10px" onclick="EV357.filaAdd()">'+ic('plus')+'Agregar</button></div>'+
+   (F.list.length?F.list.map(function(x,k){var rr=rec(x.tipo)||rec('itan');return '<div class="ev57-row"><span class="e">'+rr.e+'</span><div class="tx"><b>'+esc(x.tema||(x.ent?rr.n+' de '+x.ent:rr.n))+'</b><small>'+esc(rr.n)+(x.ent&&rr.ent?' · '+esc(x.ent):'')+' · '+(x.dur||rr.dur)+' s</small></div><div class="bt">'+stTxt(x)+
+     (x.st==='ok'&&x.pid?'<button class="btn sm" onclick="EV357.openP(\''+x.pid+'\')">Abrir</button>':'')+(x.st!=='run'?'<button class="btn sm" title="Sacar" onclick="EV357.filaDel('+k+')">'+ic('trash')+'</button>':'')+'</div></div>'}).join('')+
+     '<div class="row wrap" style="gap:6px;margin-top:12px">'+(F.run?'<button class="btn" onclick="EV357.filaStop()">⏹ Parar después de este</button>':(wait?'<button class="btn grad" onclick="EV357.filaGo()">▶ Empezar ('+wait+' video'+(wait>1?'s':'')+')</button>':''))+
+     (F.list.some(function(x){return x.st==='ok'})?'<button class="btn sm" onclick="EV357.filaClean()">Sacar los terminados</button>':'')+'</div>'
+   :'<div class="ev40-mini" style="margin-top:10px">Todavía no hay videos en la fila. También podés sumarlos desde 💡 Ideas.</div>'))}
+function badge(){var b=$('#ev57fb');if(!F.run){if(b)b.remove();return}
+  if(!b){b=document.createElement('div');b.id='ev57fb';b.className='ev57-fila';document.body.appendChild(b)}
+  var tot=F.list.length,done=F.list.filter(function(x){return x.st==='ok'||x.st==='err'}).length;
+  b.innerHTML='<span>🎞️ Fila: haciendo el video '+(done+1)+' de '+tot+'</span><button onclick="EV357.fila()">Ver</button>'+(F.stop?'<span>(para después de este)</span>':'<button onclick="EV357.filaStop()">Parar</button>')}
+async function filaGo(){if(F.run)return;if(!E().buildP)return toast('Falta la parte de Recetas',1);F.run=true;F.stop=false;closeSheet();badge();
+  try{for(var k=0;k<F.list.length;k++){var x=F.list[k];if(x.st==='ok')continue;if(F.stop)break;
+      x.st='run';saveF();badge();var P,ok=false;
+      try{P=x.idea?ideaToP(x):E().buildP(rec(x.tipo)||rec('itan'),x.tema,x.ent,x.dur,'vertical');ok=await produce(P)}catch(e){console.warn('[fila]',e)}
+      x.st=ok?'ok':'err';x.pid=P&&P.id;saveF();badge();if(!ok&&S.P!==P){F.stop=true}}
+  }finally{var n=F.list.filter(function(x){return x.st==='ok'}).length;F.run=false;badge();toast(F.stop&&F.list.some(function(x){return x.st==='wait'})?'Fila en pausa. Tocá «Empezar» para seguir.':'🎞️ ¡Fila terminada! '+n+' video(s) listos en Mis Proyectos.');try{render()}catch(e){}}}
+
+/* =====================================================================
+   5) COPIA DE SEGURIDAD
+   ===================================================================== */
+function lastBk(){return +store.get('ev_lastbk',0)||0}
+function dias(t){return t?Math.floor((Date.now()-t)/864e5):null}
+async function backup(){if(!window.EV340||!EV340.buildFile)return exportData();if(!S.projects.length)return toast('Todavía no hay proyectos para guardar',1);
+  try{save(1)}catch(e){}toast('💾 Armando la copia…');
+  try{var b=await EV340.buildFile(S.projects,true),d=new Date(),f='Copia Estudio Viral '+d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+'.estudioviral';
+    var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=f;document.body.appendChild(a);a.click();setTimeout(function(){a.remove();URL.revokeObjectURL(a.href)},60000);
+    store.set('ev_lastbk',Date.now());store.set('ev_bksnooze',0);toast('💾 Copia guardada ('+(b.size/1048576).toFixed(1)+' MB). Guardala en Drive o en un pendrive.');try{render()}catch(e){}}
+  catch(e){toast('No pude armar la copia: '+(e.message||e),1)}}
+async function restore(f){if(!f)return;if(!window.EV340||!EV340.readFile)return importData(f);
+  try{var r=await EV340.readFile(f);toast('✅ Copia recuperada: '+(r.added+r.updated+r.copies)+' proyecto(s)');try{render()}catch(e){}}catch(e){toast(e.message||String(e),1)}}
+function needBk(){if(S.projects.length<1)return false;var t=lastBk(),sn=+store.get('ev_bksnooze',0)||0;if(sn&&Date.now()<sn)return false;return !t||dias(t)>=7}
+
+/* ---------- Mis proyectos: botones y aviso ---------- */
+var vpO=vProjects;vProjects=function(m){vpO.apply(this,arguments);try{
+  var rb=m.querySelector('.ev52-rb');if(rb&&!m.querySelector('.ev57-b')){[['💡 Ideas','ideas'],['💬 Responder comentario','reply'],['🎞️ Varios videos','fila']].reverse().forEach(function(x){var b=document.createElement('button');b.className='btn ev57-b';b.textContent=x[0];b.onclick=function(){EV357[x[1]]()};rb.after(b)})}
+  if(needBk()&&!m.querySelector('.ev57-bk')){var t=lastBk(),d=document.createElement('div');d.className='ev57-bk';
+    d.innerHTML='<div><b>💾 '+(t?'Hace '+dias(t)+' días que no guardás una copia':'Todavía no guardaste una copia de tus proyectos')+'</b><div class="sub">Tus proyectos viven solo en este navegador. Si se borra el historial o cambiás de compu, se pierden.</div></div>'+
+      '<div class="row" style="gap:6px"><button class="btn grad" onclick="EV357.backup()">Guardar copia ahora</button><button class="btn sm" onclick="EV357.snooze()">Más tarde</button></div>';
+    m.insertBefore(d,m.firstChild)}}catch(e){console.warn('[v3.57]',e)}};
+
+/* ---------- Ajustes: copia de seguridad ---------- */
+var setO=vSettings;vSettings=function(m){setO.apply(this,arguments);try{var t=lastBk();
+  var html='<div class="card box ev57k" style="max-width:680px"><h3>💾 Copia de seguridad</h3><div class="hint">Guarda todos tus proyectos con sus imágenes y voces en un archivo (sin los videos ya exportados, que pesan mucho y se vuelven a hacer con un toque). Te aviso una vez por semana. '+(t?'Última copia: hace '+dias(t)+' día(s).':'Todavía no guardaste ninguna.')+'</div>'+
+   '<div class="row wrap" style="gap:6px;margin-top:10px"><button class="btn grad" onclick="EV357.backup()">💾 Guardar copia ahora</button><label class="btn">'+ic('upload')+'Recuperar una copia<input type="file" hidden accept=".estudioviral,.json" onchange="EV357.restore(this.files[0])"></label></div></div>';
+  var first=m.querySelector('.card.box');if(first)first.insertAdjacentHTML('afterend',html);else m.insertAdjacentHTML('beforeend',html)}catch(e){}};
+
+window.EV357={RP:RP,ID:ID,F:F,produce:produce,
+  reply:function(){replyUI()},replyGo:replyGo,nextPart:nextPart,
+  ideas:function(){ideasUI()},ideasAI:function(){return ideasAI()},save:saveIdeas,
+  ideaGo:function(k){var x=ID.list[k];if(!x)return;closeSheet();toast('💡 Armando «'+x.tema+'»…');var P=ideaToP(x);run(function(){return produce(P)})},
+  ideaQ:function(k){var x=ID.list[k];if(!x)return;var r=rec(x.tipo);F.list.push({tipo:x.tipo,ent:x.ent,tema:x.tema,gancho:x.gancho,idea:1,dur:r?r.dur:60,st:'wait'});saveF();ID.list.splice(k,1);saveIdeas();ideasUI();toast('Agregada a la fila 🎞️ ('+F.list.filter(function(y){return y.st==='wait'}).length+' en espera)')},
+  ideaDel:function(k){ID.list.splice(k,1);saveIdeas();ideasUI()},
+  fila:function(){filaUI()},
+  filaAdd:function(){var a=F.add,r=rec(a.tipo);if(!String(a.tema).trim()&&!(r&&r.ent)){toast('Escribí de qué trata',1);return}F.list.push({tipo:a.tipo,ent:r&&r.ent?a.ent:'',tema:String(a.tema).trim(),dur:a.dur,st:'wait'});a.tema='';saveF();filaUI();setTimeout(function(){var i=$('#ev57ft');i&&i.focus()},50)},
+  filaDel:function(k){F.list.splice(k,1);saveF();filaUI()},
+  filaClean:function(){F.list=F.list.filter(function(x){return x.st!=='ok'});saveF();filaUI()},
+  filaGo:function(){filaGo()},filaStop:function(){F.stop=true;badge();toast('La fila para cuando termine este video');if($('#sheet').classList.contains('open'))filaUI()},
+  openP:function(id){var p=S.projects.find(function(x){return x.id===id});if(p){closeSheet();openProject(p)}else toast('Ese proyecto ya no está',1)},
+  backup:backup,restore:restore,snooze:function(){store.set('ev_bksnooze',Date.now()+2*864e5);try{render()}catch(e){}},
+  proximas:proximas,drawReply:drawReply};
+try{render()}catch(e){}
+console.info('[Estudio Viral] v3.57: responder comentarios, series, ideas, varios videos y copia de seguridad');
+})();
+</script>
+<!-- ===== FIN v3.57 ===== -->
 
 </body>
 </html>
