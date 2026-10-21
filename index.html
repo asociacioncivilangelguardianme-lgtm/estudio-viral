@@ -6217,6 +6217,54 @@ console.info('[Estudio Viral] v3.62: la voz saltea rótulos tipo «Clip 1 (…):
 </script>
 <!-- ===== FIN v3.62 ===== -->
 
+<!-- ===== ESTUDIO VIRAL · v3.63 · SUBIR A YOUTUBE UN VIDEO QUE YA TENÉS =====
+     Sin volver a hacer voces ni exportar: elegís el archivo de video de la compu y se sube.
+     Para quitarlo, borrá desde acá hasta "FIN v3.63". -->
+<script id="ev363">
+(function(){'use strict';if(window.__ev363)return;window.__ev363=true;
+function noClient(){return !S.settings.ytClient}
+function pick(){var i=document.createElement('input');i.type='file';i.accept='video/*,.mp4,.webm,.mov';i.onchange=function(){var f=i.files&&i.files[0];if(f)form(f)};i.click()}
+function form(f){YT._file=f;var name=f.name.replace(/\.[^.]+$/,'').replace(/[_]+/g,' ').trim().slice(0,95);
+ if(noClient()){YT.open();return}
+ $('#ytbox').innerHTML='<h3>'+ic('upload')+'Subir a YouTube</h3>'+
+ '<div class="info">'+ic('check')+'<span>Video elegido: <b>'+esc(f.name)+'</b> ('+(f.size/1048576).toFixed(1)+' MB). No hace falta rehacer voces ni exportar.</span></div>'+
+ '<div class="lbl">Título</div><input class="inp" id="ytt" maxlength="100" value="'+esc(name)+'">'+
+ '<div class="lbl">Descripción</div><textarea class="inp" id="ytd" rows="4"></textarea>'+
+ '<div class="lbl">Quién lo puede ver</div><select class="sel" id="ytp"><option value="private">Privado (solo vos, para revisar)</option><option value="unlisted">No listado (solo con el link)</option><option value="public">Público</option></select>'+
+ '<div class="hint" style="margin-top:8px">Si es vertical y dura menos de 3 minutos, YouTube lo pone como <b>Short</b> (podés sumar #Shorts al título).</div>'+
+ '<div class="pmsg" id="ytmsg"></div><div style="height:8px;background:var(--line);border-radius:6px;margin-top:10px;overflow:hidden"><div id="ytbar" style="height:100%;width:0;background:#ff0033;transition:width .3s"></div></div>'+
+ '<div class="row" style="margin-top:14px"><button class="btn" id="ytc" onclick="YT.close()">Cancelar</button><button class="btn" onclick="EV363.pick()">Elegir otro</button><button class="btn grad" id="ytgo" onclick="EV363.go()">'+ic('upload')+'Subir ahora</button></div>';
+ YT.show()}
+async function go(){var f=YT._file;if(!f)return pick();var title=$('#ytt').value.trim()||f.name,desc=$('#ytd').value,priv=$('#ytp').value,btn=$('#ytgo');btn.disabled=true;
+ try{YT.msg('Conectando con tu cuenta de Google…');var tok=await YT.token();var type=f.type||'video/mp4';YT.msg('Preparando la subida…');
+  var r=await fetch('https://www.googleapis.com/upload/youtube/v3/videos?uploadType=resumable&part=snippet,status',{method:'POST',
+   headers:{Authorization:'Bearer '+tok,'Content-Type':'application/json; charset=UTF-8','X-Upload-Content-Type':type,'X-Upload-Content-Length':String(f.size)},
+   body:JSON.stringify({snippet:{title:title.slice(0,100),description:desc.slice(0,4900),categoryId:'22',defaultLanguage:(S.settings.lang||'es')},status:{privacyStatus:priv,selfDeclaredMadeForKids:false}})});
+  if(!r.ok){var m='';try{m=(await r.json()).error.message}catch(e){}if(r.status===401)YT.tok=null;throw new Error(YT.why(r.status,m))}
+  var up=r.headers.get('Location');if(!up)throw new Error('YouTube no devolvió el link de subida. Probá de nuevo.');
+  var v=await new Promise(function(res,rej){var x=new XMLHttpRequest();YT.xhr=x;x.open('PUT',up);x.setRequestHeader('Content-Type',type);
+   x.upload.onprogress=function(e){if(e.lengthComputable){var pc=Math.round(e.loaded/e.total*100);var b=$('#ytbar');if(b)b.style.width=pc+'%';YT.msg('Subiendo… '+pc+'%')}};
+   x.onload=function(){YT.xhr=null;if(x.status>=200&&x.status<300){try{res(JSON.parse(x.responseText))}catch(e){res({})}}else{var m='';try{m=JSON.parse(x.responseText).error.message}catch(e){}rej(new Error(YT.why(x.status,m)))}};
+   x.onerror=function(){YT.xhr=null;rej(new Error('Se cortó la conexión mientras subía. Probá de nuevo.'))};x.onabort=function(){rej(new Error('Subida cancelada.'))};x.send(f)});
+  var link='https://youtu.be/'+(v.id||'');YT._file=null;
+  YT.msg('✅ ¡Listo! Tu video está en YouTube'+(priv==='private'?' (privado: cambialo a público desde YouTube Studio cuando quieras)':'')+'.<br><a href="'+link+'" target="_blank" rel="noopener">Ver el video</a> · <a href="https://studio.youtube.com" target="_blank" rel="noopener">Abrir YouTube Studio</a> · <a href="#" onclick="EV363.pick();return false">Subir otro</a>');
+  $('#ytc').textContent='Cerrar';btn.style.display='none';toast('Video subido a YouTube ✅')}
+ catch(e){YT.msg('❌ '+e.message,1);btn.disabled=false}}
+/* el botón rojo: si el proyecto ya tiene video guardado lo usa; si no, deja elegir el archivo de la compu */
+var oO=YT.open.bind(YT);YT.open=async function(){if(!RT.video&&S.P){try{await loadVideo(S.P,true)}catch(e){}}
+ if(RT.video||noClient())return oO();
+ $('#ytbox').innerHTML='<h3>'+ic('upload')+'Subir a YouTube</h3><div class="hint">Este proyecto no tiene un video exportado en esta compu. Si ya lo tenés como archivo (por ejemplo, lo pasaste de la otra PC), elegilo y se sube directo, <b>sin rehacer voces</b>.</div><div class="row" style="margin-top:14px"><button class="btn" onclick="YT.close()">Cerrar</button><button class="btn grad" onclick="EV363.pick()">'+ic('upload')+'Elegir video de la compu</button></div>';YT.show()};
+/* botón en Mis proyectos */
+function bar(){return '<div class="ev363-bar" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px 14px;margin:0 0 14px;border:1px solid rgba(255,0,51,.45);background:rgba(255,0,51,.08);border-radius:12px"><span style="font-size:22px">▶️</span><span style="flex:1;min-width:180px"><b>¿Ya tenés el video terminado?</b> Subilo a YouTube directo, sin rehacer voces.</span><button class="btn" style="background:#ff0033;color:#fff;border-color:#ff0033" onclick="EV363.pick()">'+ic('upload')+'Subir video a YouTube</button></div>'}
+var vpO=vProjects;vProjects=function(m){var r=vpO.apply(this,arguments);try{if(m&&!m.querySelector('.ev363-bar')){var d=document.createElement('div');d.innerHTML=bar();m.insertBefore(d.firstChild,m.firstChild)}}catch(e){}return r};
+window.EV363={pick:pick,go:go};
+try{render()}catch(e){}
+console.info('[Estudio Viral] v3.63: subir a YouTube un video que ya tenés');
+})();
+</script>
+<!-- ===== FIN v3.63 ===== -->
+
+
 
 
 </body>
