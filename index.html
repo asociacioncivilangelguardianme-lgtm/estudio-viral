@@ -6183,6 +6183,35 @@ console.info('[Estudio Viral] v3.61: historia con personaje');
 </script>
 <!-- ===== FIN v3.61 ===== -->
 
+<!-- ===== ESTUDIO VIRAL · v3.62 · LA VOZ YA NO LEE «CLIP 1 (LA TORMENTA):» =====
+     Si el texto de la escena trae rótulos como «Clip 1 (La Tormenta):», «Escena 3:», «Narrador:»
+     o acotaciones entre paréntesis, la voz y los subtítulos los saltean.
+     Para quitarlo, borrá desde acá hasta "FIN v3.62". -->
+<script id="ev362">
+(function(){'use strict';if(window.__ev362)return;window.__ev362=true;
+var LBL=/^[ \t]*(?:clip|escena|toma|plano|parte|cuadro|segmento|imagen|video|scene|shot|part)[ \t]*(?:n[°º.]?[ \t]*)?\d+[ \t]*(?:\([^)\n]*\)|[-–—][^:\n]{0,50}(?=:))?[ \t]*[:.\-–—][ \t]*/gimu;
+var WHO=/^[ \t]*(?:narrador(?:a)?|voz(?:[ \t]+en[ \t]+off)?|locutor(?:a)?|narration|narrator|voice[ \t]*over|vo)[ \t]*(?:\([^)\n]*\))?[ \t]*:[ \t]*/gimu;
+function clean(t){var x=String(t==null?'':t);if(!x)return x;
+ x=x.replace(LBL,'').replace(WHO,'').replace(/\([^()\n]{0,120}\)/g,' ').replace(/\[[^\]\n]{0,120}\]/g,' ');
+ return x.replace(/[ \t]{2,}/g,' ').replace(/\s+([,.;:!?…])/g,'$1').replace(/^[\s,.;:\-–—]+/,'').trim()}
+var LABELLED=/^[ \t]*(?:(?:clip|escena|toma|plano|parte|cuadro|segmento|imagen|video|scene|shot|part)[ \t]*(?:n[°º.]?[ \t]*)?\d+|narrador|voz|locutor|narrator)|\(/imu;
+var mkO=Voice.make.bind(Voice);
+Voice.make=function(text){var a=[].slice.call(arguments);var c=clean(text);a[0]=c||String(text||'');return mkO.apply(null,a)};
+try{if(window.SpeechSynthesisUtterance){var U=window.SpeechSynthesisUtterance;var W=function(t){return new U(clean(t)||t)};W.prototype=U.prototype;window.SpeechSynthesisUtterance=W}}catch(e){}
+var dsO=drawSubs;drawSubs=function(ctx,W,H,text){var a=[].slice.call(arguments),c=clean(text)||text;a[3]=c;if(c===text)return dsO.apply(this,a);
+ var sc=null,o1,o2;try{sc=S.P&&S.P.scenes.find(function(x){return x.text===text})}catch(e){}
+ if(sc){o1=sc.text;o2=sc.textPtSrc;sc.text=c;if(o2===o1)sc.textPtSrc=c}
+ try{return dsO.apply(this,a)}finally{if(sc){sc.text=o1;sc.textPtSrc=o2}}};
+/* las voces ya hechas leyendo el rótulo se rehacen solas una vez */
+var vO=Pipe.voices;Pipe.voices=async function(){var P=S.P;try{if(P)P.scenes.forEach(function(s){var v=RT.voices[s.id];if(v&&!v.mine&&!v._lbl&&LABELLED.test(s.text||''))delete RT.voices[s.id]})}catch(e){}
+ var r=await vO.apply(this,arguments);try{if(P)P.scenes.forEach(function(s){var v=RT.voices[s.id];if(v)v._lbl=true})}catch(e){}return r};
+window.EV362={clean:clean};
+console.info('[Estudio Viral] v3.62: la voz saltea rótulos tipo «Clip 1 (…):»');
+})();
+</script>
+<!-- ===== FIN v3.62 ===== -->
+
+
 
 </body>
 </html>
