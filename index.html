@@ -616,15 +616,15 @@ const MUSIC=[
  {id:'calma',n:'Calma',e:'🌙',bpm:60,chords:[[48,55,60,64,71],[45,52,57,60,64],[41,48,53,57,64],[43,50,55,59,62]],wave:'triangle',cut:2200,g:2,bell:1},
  {id:'tension',n:'Tensión',e:'⏱️',bpm:120,chords:[[40,47,52,55],[41,48,53,56]],kick:1,wave:'sawtooth',cut:600},
  {id:'alegre',n:'Alegre',e:'☀️',bpm:110,chords:[[48,55,60,64],[43,50,55,59],[45,52,57,60],[41,48,53,57]],arp:1,kick:1,wave:'triangle',cut:2200},
- {id:'africana',n:'Africana (tambores)',e:'🥁',bpm:104,chords:[[45,52,57,60,64],[43,50,55,59,62],[41,48,53,57,60],[43,50,55,59,62]],wave:'triangle',cut:1800,kick:1,conga:1,shaker:1,marimba:1,bass:1,g:1.2},
+ {id:'africana',n:'Africana (tambores)',e:'🥁',bpm:96,chords:[[45,52,57,60,64],[43,50,55,59,62],[41,48,53,57,60],[43,50,55,59,62]],wave:'sine',cut:1400,g:.55,afro:1},
  {id:'espiritual',n:'Espiritual / Celestial',e:'✨',bpm:56,chords:[[50,57,62,66,69],[47,54,59,62,66],[43,50,55,59,62],[45,52,57,61,64]],wave:'sine',cut:3000,g:2.2,bell:1,choir:1},
  {id:'romantica',n:'Romántica',e:'💖',bpm:72,chords:[[48,55,60,64,67],[45,52,57,60,64],[41,48,53,57,60],[43,50,55,59,62]],wave:'triangle',cut:2400,g:1.7,arp:1,bell:1},
  {id:'triste',n:'Triste / Emotiva',e:'💧',bpm:62,chords:[[45,52,57,60,64],[41,48,53,57,60],[48,55,60,64,67],[43,50,55,59,62]],wave:'sine',cut:1800,g:2.2,bell:1},
  {id:'terror',n:'Terror',e:'👻',bpm:50,chords:[[40,46,52,55],[41,47,53,56],[39,45,51,54],[40,46,52,55]],wave:'sawtooth',cut:500,g:1.8,heart:1,drone:1},
  {id:'aventura',n:'Aventura',e:'🗺️',bpm:96,chords:[[50,57,62,66],[48,55,60,64],[43,50,55,59],[45,52,57,61]],wave:'sawtooth',cut:1600,kick:1,snare:1,arp:1,bass:1},
- {id:'fiesta',n:'Fiesta / Baile',e:'🎉',bpm:124,chords:[[45,52,57,60],[41,48,53,57],[48,55,60,64],[43,50,55,59]],wave:'square',cut:2600,kick:1,snare:1,hat:1,bass:1,arp:1},
+ {id:'fiesta',n:'Fiesta / Baile',e:'🎉',bpm:126,chords:[[45,52,57,60],[41,48,53,57],[48,55,60,64],[43,50,55,59]],wave:'sawtooth',cut:3200,kick:1,dance:1},
  {id:'lofi',n:'Lo-fi relajado',e:'🎧',bpm:80,chords:[[50,57,60,64,67],[47,55,59,62,66],[45,52,55,60,64],[43,50,53,57,60]],wave:'triangle',cut:1500,g:1.5,kick:1,snare:1,hat:1},
- {id:'cumbia',n:'Cumbia / Latina',e:'💃',bpm:100,chords:[[45,52,57,60],[40,47,52,56],[45,52,57,60],[40,47,52,56]],wave:'square',cut:2200,kick:1,guira:1,conga:1,bass:1,marimba:1},
+ {id:'cumbia',n:'Cumbia / Latina',e:'💃',bpm:92,chords:[[45,52,57,60],[40,47,52,56],[45,52,57,60],[40,47,52,56]],wave:'square',cut:2400,nopad:1,guira:1,cumbia:1},
  {id:'upload',n:'Mi música',e:'🎵'},
 ];
 const CAMS={auto:'Automático',zoomin:'Acercamiento (Zoom in)',zoomout:'Alejamiento (Zoom out)',panl:'Paneo ←',panr:'Paneo →',tiltup:'Inclinación ↑ (Tilt)',tiltdown:'Inclinación ↓ (Tilt)',dolly:'Dolly in',track:'Seguimiento (Tracking)',static:'Plano fijo'};
@@ -1331,7 +1331,7 @@ function scheduleMusic(ac,out,id,t0,total,vol){const nodes=[];const m=musicOf(id
  const mf=n=>440*Math.pow(2,(n-69)/12);const lp=ac.createBiquadFilter();lp.type='lowpass';lp.frequency.value=m.cut;const mg=ac.createGain();mg.gain.value=vol*.5*(m.g||1);lp.connect(mg).connect(out);
  const beat=60/m.bpm,cl=beat*(m.bpm>100?8:4);let k=0;
  for(let t=0;t<total;t+=cl,k++){const ch=m.chords[k%m.chords.length];
-  ch.forEach((n,j)=>{const o=ac.createOscillator();o.type=j===0?'sine':m.wave;o.frequency.value=mf(n);o.detune.value=j%2?6:-6;const g=ac.createGain();const st=t0+t,en=Math.min(st+cl+.3,t0+total);
+  if(!m.nopad)ch.forEach((n,j)=>{const o=ac.createOscillator();o.type=j===0?'sine':m.wave;o.frequency.value=mf(n);o.detune.value=j%2?6:-6;const g=ac.createGain();const st=t0+t,en=Math.min(st+cl+.3,t0+total);
    g.gain.setValueAtTime(0,st);g.gain.linearRampToValueAtTime(j===0?.5:.16,st+.6);g.gain.setValueAtTime(j===0?.5:.16,Math.max(st+.6,en-.5));g.gain.linearRampToValueAtTime(0,en);o.connect(g).connect(lp);o.start(st);o.stop(en+.05);nodes.push(o)});
   if(m.arp)ch.forEach((n,j)=>[0,1].forEach(r=>{const st=t0+t+(j+r*ch.length)*cl/(ch.length*2);if(st>t0+total-.2)return;const o=ac.createOscillator();o.type='triangle';o.frequency.value=mf(n+12);const g=ac.createGain();g.gain.setValueAtTime(.12,st);g.gain.exponentialRampToValueAtTime(.001,st+.3);o.connect(g).connect(mg);o.start(st);o.stop(st+.35);nodes.push(o)}))}
  if(m.kick){for(let t=0;t<total-.3;t+=beat){const st=t0+t;const o=ac.createOscillator();o.frequency.setValueAtTime(120,st);o.frequency.exponentialRampToValueAtTime(40,st+.15);const g=ac.createGain();g.gain.setValueAtTime(vol*1.2,st);g.gain.exponentialRampToValueAtTime(.001,st+.25);o.connect(g).connect(out);o.start(st);o.stop(st+.3);nodes.push(o)}}
@@ -1348,6 +1348,25 @@ function scheduleMusic(ac,out,id,t0,total,vol){const nodes=[];const m=musicOf(id
   if(m.guira)[0,.5,.75].forEach(f=>nz(st+beat*f,.05,V*.16,'highpass',6000));
   if(m.conga){const pat=[[0,320],[.5,220],[.75,320]];pat.forEach(([f,fr])=>hit(st+beat*f,fr,fr*.8,.22,V*(b4%2?.25:.32)))}
   if(m.marimba&&R()<.8){const n=ch[1+Math.floor(R()*(ch.length-1))]+12;hit(st+(R()<.5?0:beat/2),mf(n),0,.35,V*.22,'sine')}
+  if(m.afro){const pl=beat/3;for(let q=0;q<3;q++){const p=b4*3+q,pt=st+q*pl;if(pt>end-.12)break;
+    if([0,2,4,5,7,9,11].includes(p)){hit(pt,1180,0,.09,V*.13,'square');hit(pt,1770,0,.06,V*.06,'sine')}
+    nz(pt,.035,V*(q?.05:.09),'highpass',6000);
+    if(p===0||p===6){hit(pt,110,65,.32,V*.95);hit(pt,mf(ch[0]-12),0,.5,V*.3,'triangle')}
+    if(p===3||p===4||p===9||p===10)hit(pt,240,200,.16,V*.45);
+    if(p===7||p===11){nz(pt,.07,V*.32,'bandpass',2600,1.2);hit(pt,420,360,.06,V*.25)}
+    if(p===8&&(bar>>2)%2)hit(pt,190,115,.38,V*.5);
+    if(R()<.38){const n=ch[Math.floor(R()*ch.length)]+24;hit(pt,mf(n),0,.45,V*.16,'triangle');hit(pt,mf(n)*3,0,.12,V*.03,'sine')}}}
+  if(m.cumbia){if(b4===0||b4===2){hit(st,95,60,.22,V*.9);hit(st,mf(ch[0]-24+(b4===2?7:0)),0,beat*.9,V*.5,'triangle')}
+    if(b4===1||b4===3)hit(st+beat/2,mf(ch[0]-12+(b4===3?7:0)),0,beat*.4,V*.3,'triangle');
+    if(b4===1||b4===3){hit(st+beat/2,380,330,.12,V*.42);nz(st+beat/2,.05,V*.18,'bandpass',3000)}
+    if(b4===3)nz(st+beat*.75,.03,V*.22,'bandpass',4500,2);
+    ch.slice(1).forEach(n=>hit(st+beat/2,mf(n+12),0,.13,V*.07,'square',lp));
+    [0,.5].forEach(f=>{if(R()<.55){const n=ch[1+Math.floor(R()*(ch.length-1))]+24;hit(st+beat*f,mf(n),0,beat*.45,V*.09,'sawtooth',lp)}})}
+  if(m.dance){const base=vol*.5*(m.g||1);mg.gain.setValueAtTime(base*.2,st);mg.gain.linearRampToValueAtTime(base,st+beat*.6);
+    if(b4===1||b4===3){nz(st,.12,V*.55,'bandpass',1300,.9);nz(st+.012,.1,V*.4,'bandpass',1500,.9)}
+    nz(st+beat/2,.14,V*.25,'highpass',8000);nz(st+beat/4,.03,V*.08,'highpass',9000);nz(st+beat*.75,.03,V*.08,'highpass',9000);
+    hit(st+beat/2,mf(ch[0]-12),0,beat*.42,V*.38,'sawtooth',lp);hit(st+beat/2,mf(ch[0]-24),0,beat*.42,V*.3,'square',lp);
+    [0,1,2,3].forEach(q=>{const n=ch[(bar*4+q)%ch.length]+12+(q===3?12:0);hit(st+q*beat/4,mf(n),0,beat*.22,V*.07,'sawtooth',lp)})}
   if(m.bell&&b4===0){const n=ch[ch.length-1]+12;hit(st,mf(n),0,2.2,V*.12,'sine');hit(st,mf(n)*2.01,0,1.2,V*.04,'sine')}
   if(m.heart&&b4%2===0){hit(st,70,40,.2,V*.9);hit(st+.25,60,35,.22,V*.7)}}
  if(m.drone||m.choir){const ch0=m.chords[0];(m.choir?ch0.slice(1,4).map(n=>n+12):[ch0[0]-12,ch0[0]-5]).forEach((n,j)=>{const o=ac.createOscillator();o.type=m.choir?'sawtooth':'sawtooth';o.frequency.value=mf(n);o.detune.value=(j-1)*8;const f=ac.createBiquadFilter();f.type='lowpass';f.frequency.value=m.choir?1100:300;const g=ac.createGain();g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(V*(m.choir?.06:.1),t0+2);g.gain.setValueAtTime(V*(m.choir?.06:.1),t0+Math.max(2,total-1.5));g.gain.linearRampToValueAtTime(0,t0+total);o.connect(f).connect(g).connect(out);o.start(t0);o.stop(t0+total+.05);nodes.push(o)})}
