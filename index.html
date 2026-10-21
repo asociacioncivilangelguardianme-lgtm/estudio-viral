@@ -6273,15 +6273,15 @@ FIN v3.64". -->
 (function(){'use strict';if(window.__ev364)return;window.__ev364=true;
 var UP='https://www.youtube.com/upload';
 function sname(n){return String(n||'video').replace(/[^\w\-áéíóúñÁÉÍÓÚÑ ]/g,'').trim().slice(0,60)||'video'}
-function save(blob,name){var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){a.remove();URL.revokeObjectURL(a.href)},60000)}
+function saveFile(blob,name){var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){a.remove();URL.revokeObjectURL(a.href)},60000)}
 function copy(t){return new Promise(function(res){try{navigator.clipboard.writeText(t).then(function(){res(true)},function(){res(false)})}catch(e){res(false)}})}
 function defTitle(P){if(!P)return '';var vert=P.format==='vertical',t=vt(P).slice(0,95);return t+(vert&&!/#shorts/i.test(t)?' #Shorts':'')}
-function defDesc(P){if(!P)return '';if(P.ytDesc!=null)return P.ytDesc;var tags=(P.name+' '+(P.title||'')+' '+(P.idea||'')).match(/\b(oxum|ogum|xang[oô]|iemanj[aá]|ians[aã]|oxal[aá]|ox[oó]ssi|exu|nan[aã])\b/gi)||[];
+function defDesc(P){if(!P)return '';if(P.ytDesc!=null&&String(P.ytDesc).trim())return P.ytDesc;if(P.pack&&P.pack.caption&&window.EV33&&EV33.caption)return EV33.caption();var tags=(P.name+' '+(P.title||'')+' '+(P.idea||'')).match(/\b(oxum|ogum|xang[oô]|iemanj[aá]|ians[aã]|oxal[aá]|ox[oó]ssi|exu|nan[aã])\b/gi)||[];
  var uniq=[];tags.forEach(function(x){var k='#'+x.normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/^./,function(c){return c.toUpperCase()});if(uniq.indexOf(k)<0)uniq.push(k)});
  return ((P.idea||'').slice(0,300)+'\n\n'+uniq.join(' ')+(P.format==='vertical'?' #Shorts':'')).trim()}
-async function studio(){var P=S.P,t=$('#ytt')?$('#ytt').value.trim():defTitle(P),d=$('#ytd')?$('#ytd').value:defDesc(P);if(P){P.ytDesc=d;try{window.save&&window.save()}catch(e){}}
+async function studio(){var P=S.P,t=$('#ytt')?$('#ytt').value.trim():defTitle(P),d=$('#ytd')?$('#ytd').value:defDesc(P);if(P){P.ytDesc=d;try{save()}catch(e){}}
  var w=window.open(UP,'_blank');try{if(w)w.opener=null}catch(e){}
- if(RT.video&&!YT._file){try{var b=RT.video.file||await (await fetch(RT.video.url)).blob();save(b,sname(t.replace(/#\w+/g,''))+'.'+(RT.video.ext||'mp4'))}catch(e){}}
+ if(RT.video&&!YT._file){try{var b=RT.video.file||await (await fetch(RT.video.url)).blob();saveFile(b,sname(t.replace(/#\w+/g,''))+'.'+(RT.video.ext||'mp4'))}catch(e){}}
  var ok=await copy(t+'\n\n'+d);
  $('#ytbox').innerHTML='<h3>▶️ Ya se abrió YouTube Studio</h3><ol class="hint" style="padding-left:18px;line-height:1.7">'+
   '<li>En la pestaña nueva de YouTube, fijate arriba a la derecha que sea el <b>canal correcto</b>.</li>'+
@@ -6293,15 +6293,24 @@ async function studio(){var P=S.P,t=$('#ytt')?$('#ytt').value.trim():defTitle(P)
 function chooser(){var P=S.P;
  $('#ytbox').innerHTML='<h3>'+ic('upload')+'Subir a YouTube</h3>'+
  '<div class="lbl">Título</div><input class="inp" id="ytt" maxlength="100" value="'+esc(defTitle(P))+'">'+
- '<div class="lbl">Descripción y hashtags</div><textarea class="inp" id="ytd" rows="4" placeholder="Escribí algo y abajo los hashtags: #Oxum #Ogum #Orixás">'+esc(defDesc(P))+'</textarea>'+
+ '<div class="between" style="margin-top:10px"><div class="lbl" style="margin:0">Descripción y hashtags</div><button class="btn sm grad" id="ytai" onclick="EV364.ai()">✨ Escribir con IA</button></div><textarea class="inp" id="ytd" rows="7" placeholder="Escribí de qué trata el video y abajo los hashtags: #Oxum #Ogum #Orixás" oninput="if(S.P){S.P.ytDesc=this.value;save()}">'+esc(defDesc(P))+'</textarea>'+
  '<div class="hint" style="margin-top:6px">Los hashtags van con <b>#</b> adelante y sin espacios (el # se hace con <b>Alt Gr + 3</b>).</div>'+
  '<div class="row" style="margin-top:14px;flex-wrap:wrap"><button class="btn" onclick="YT.close()">Cancelar</button>'+
  '<button class="btn" style="background:#ff0033;color:#fff;border-color:#ff0033" onclick="EV364.studio()">▶️ Subir con YouTube Studio (sale público)</button></div>'+
  '<div class="hint" style="margin-top:12px;border-top:1px solid var(--line);padding-top:10px">Otra opción: <a href="#" onclick="EV364.direct();return false">subida directa desde acá</a>. Por ahora sale <b>privada</b> hasta que Google apruebe tu app.</div>';YT.show()}
+async function ai(){var P=S.P;if(!P)return;var bt=$('#ytai'),ta=$('#ytd');if(bt){bt.disabled=true;bt.textContent='Escribiendo…'}var old=ta?ta.value:'';if(ta){ta.value='La IA está escribiendo de qué trata el video…';ta.disabled=true}
+ var txt=(P.script||P.paraphrased||(P.scenes||[]).map(function(s){return s.text||s.prompt}).join(' ')||P.idea||'').slice(0,6000);
+ try{var d=AI.json(await AI.chat([{role:'system',content:'Sos experto en YouTube y redes sobre religión, espiritualidad y cultura afro (Orixás, Umbanda, Candomblé). Respondés solo JSON válido.'},
+   {role:'user',content:'Escribí los textos para publicar este video en YouTube. Idioma: '+(LANGS[P.lang||'es']||'español')+'. Título del video: "'+vt(P)+'". Contenido:\n"""'+txt+'"""\nDescripción: 3 a 5 frases cálidas que cuenten de qué trata la historia y por qué verla (sin spoilers del final), y una última frase invitando a suscribirse y comentar. Después 8 a 12 hashtags (del tema y populares, sin espacios).\n{"description":"","hashtags":["#..."]}'}],{temp:.85}));
+  P.pack=P.pack||{};if(d.description)P.pack.caption=String(d.description).trim();if(d.hashtags)P.pack.hashtags=[].concat(d.hashtags).join(' ');
+  var out=(window.EV33&&EV33.caption)?EV33.caption():((P.pack.caption||'')+'\n\n'+(P.pack.hashtags||'')).trim();if(P.format==='vertical'&&!/#shorts/i.test(out))out+=' #Shorts';
+  P.ytDesc=out;save(1);if(ta)ta.value=out;toast('Descripción lista ✅ Podés cambiarla si querés.')}
+ catch(e){console.warn('[v3.65]',e&&e.stack);if(ta)ta.value=old;toast('La IA no respondió: '+(e.message||e),1)}
+ finally{if(ta)ta.disabled=false;if(bt){bt.disabled=false;bt.textContent='✨ Volver a escribir'}}}
 var oO=YT.open;
-YT.open=async function(){if(!RT.video&&S.P){try{await loadVideo(S.P,true)}catch(e){}}if(!RT.video)return oO.apply(this,arguments);YT._file=null;chooser()};
+YT.open=async function(){if(!RT.video&&S.P){try{await loadVideo(S.P,true)}catch(e){}}if(!RT.video)return oO.apply(this,arguments);YT._file=null;chooser();var P=S.P;if(P&&!(P.ytDesc&&String(P.ytDesc).trim())&&!(P.pack&&P.pack.caption))ai()};
 async function direct(){var t=$('#ytt')&&$('#ytt').value,d=$('#ytd')&&$('#ytd').value;if(S.P&&d!=null)S.P.ytDesc=d;await oO.apply(YT);if(t&&$('#ytt'))$('#ytt').value=t;if(d!=null&&$('#ytd'))$('#ytd').value=d}
-window.EV364={studio:studio,direct:direct};
+window.EV364={studio:studio,direct:direct,ai:ai};
 /* la franja roja de Proyectos abre YouTube Studio directo */
 var vpO=vProjects;vProjects=function(m){var r=vpO.apply(this,arguments);try{var b=m.querySelector('.ev363-bar');if(b&&!b._v364){b._v364=1;
  b.innerHTML='<span style="font-size:22px">▶️</span><span style="flex:1;min-width:180px"><b>¿Ya tenés el video terminado?</b> Subilo con YouTube Studio, sin rehacer voces.</span><a class="btn" style="background:#ff0033;color:#fff;border-color:#ff0033" href="'+UP+'" target="_blank" rel="noopener">'+ic('upload')+'Abrir YouTube Studio</a>'}}catch(e){}return r};
