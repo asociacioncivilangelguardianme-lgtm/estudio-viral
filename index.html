@@ -5924,5 +5924,246 @@ console.info('[Estudio Viral] v3.60: mi carpeta en la nube con PIN');
 </script>
 <!-- ===== FIN v3.60 ===== -->
 
+<!-- ===== ESTUDIO VIRAL · v3.61 · HISTORIA CON PERSONAJE =====
+     Elegís (o creás) un personaje, contás la idea y la IA arma 4 a 8 escenas seguidas donde el mismo
+     personaje hace distintas acciones. Las imágenes salen: automáticas, con Gemini escena por escena
+     (misma cara) o en UNA historieta que la app recorta sola. Los personajes quedan guardados para otras historias.
+     Agregado al final. Para quitarlo, borrá desde acá hasta "FIN v3.61". -->
+<style>
+.ev61 .card{padding:12px;margin-top:10px}
+.ev61 .num{display:inline-flex;width:24px;height:24px;border-radius:50%;align-items:center;justify-content:center;background:var(--acc,#7c5cff);color:#fff;font-weight:800;font-size:13px;margin-right:6px}
+.ev61-ref{width:96px;height:128px;object-fit:cover;border-radius:12px;border:2px solid var(--acc,#7c5cff);background:#ffffff0d;display:block}
+.ev61-noref{width:96px;height:128px;border-radius:12px;border:2px dashed #ffffff33;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12px;opacity:.7;padding:6px}
+.ev61-chars{display:flex;gap:8px;overflow-x:auto;padding:4px 0 6px}
+.ev61-ch{flex:0 0 auto;text-align:center;font-size:12px;cursor:pointer;background:none;border:2px solid transparent;border-radius:12px;padding:3px;color:inherit}
+.ev61-ch.on{border-color:var(--acc,#7c5cff)}
+.ev61-ch img,.ev61-ch .ph{width:58px;height:58px;object-fit:cover;border-radius:10px;display:block;margin:0 auto 3px;background:#ffffff14}
+.ev61-sc{display:flex;gap:10px;align-items:flex-start;padding:10px;border-radius:12px;border:1px solid var(--line,#ffffff1f);margin-top:8px}
+.ev61-sc .th{width:64px;height:86px;border-radius:9px;object-fit:cover;background:#ffffff10;flex:0 0 auto}
+.ev61-sc .tx{flex:1;min-width:0}
+.ev61-opt{display:block;width:100%;text-align:left;padding:12px;border-radius:14px;border:1px solid var(--line,#ffffff26);background:var(--card,#ffffff08);color:inherit;margin-top:8px;cursor:pointer}
+.ev61-opt>b{display:block;font-size:15px;margin-bottom:2px}
+.ev61-grid{position:relative;display:inline-block;max-width:100%}
+.ev61-grid img{max-width:100%;max-height:340px;display:block;border-radius:10px}
+.ev61-grid .ln{position:absolute;background:#ff3b6b;opacity:.9}
+.ev61-chk{display:flex;gap:8px;align-items:flex-start;margin-top:6px;font-size:14px}
+.ev61-chk input{margin-top:3px}
+.ev61-new{border:2px solid #f59e0b!important;background:linear-gradient(135deg,#f59e0b1f,#7c5cff1f)!important}
+</style>
+<script id="ev361">
+(function(){'use strict';if(window.__ev361)return;window.__ev361=true;
+var LIB_KEY='ev_personajes';
+var H=null; // datos del asistente
+function lib(){return store.get(LIB_KEY,[])||[]}
+function setLib(a){store.set(LIB_KEY,a.slice(0,40))}
+function sheet(html){$('#sheetin').innerHTML='<div class="ev61">'+html+'</div>';$('#sheet').classList.add('open');paint()}
+function head(t){return '<div class="between" style="margin-bottom:6px"><div class="h1" style="font-size:19px">'+t+'</div><button class="btn sm" onclick="closeSheet()">✕ Cerrar</button></div>'}
+function fmtTxt(f){return f==='vertical'?'formato vertical 9:16':f==='cuadrado'?'formato cuadrado 1:1':'formato horizontal 16:9'}
+function paint(){document.querySelectorAll('.ev61 img[data-ref]').forEach(async function(el){var u=await refURL(el.dataset.ref);if(u)el.src=u})}
+function copyTxt(id){var t=document.getElementById(id);if(!t)return;var ok=function(){toast('Copiado ✅ Ahora pegalo en Gemini o ChatGPT')};
+  try{navigator.clipboard.writeText(t.value).then(ok,function(){t.select();document.execCommand('copy');ok()})}catch(e){t.select();document.execCommand('copy');ok()}}
+function gptLinks(){return '<div class="row wrap" style="gap:6px;margin-top:8px"><a class="btn sm grad" href="https://gemini.google.com/app" target="_blank" rel="noopener">'+ic('spark')+'Abrir Gemini</a><a class="btn sm" href="https://chatgpt.com/" target="_blank" rel="noopener">'+ic('spark')+'Abrir ChatGPT</a><a class="btn sm" href="https://copilot.microsoft.com/" target="_blank" rel="noopener">'+ic('spark')+'Abrir Copilot</a></div>'}
+function lookOf(name){var g=glossIn(name||'',1)[0];return g&&normName(g.name)===normName(name)?g.desc:(g?g.desc:'')}
+function styleOpts(sel){return STYLES.map(function(s){return '<option value="'+s.id+'"'+(s.id===sel?' selected':'')+'>'+esc(s.n)+'</option>'}).join('')}
+function gridOf(n,f){if(n===4)return[2,2];if(n===6)return f==='horizontal'?[3,2]:[2,3];if(n===8)return f==='horizontal'?[4,2]:[2,4];if(n===9)return[3,3];return null}
+async function blobOfImg(im){var c=document.createElement('canvas'),sw=im.naturalWidth||im.width,sh=im.naturalHeight||im.height,cr=im._crop||0;c.width=sw;c.height=Math.round(sh*(1-cr));c.getContext('2d').drawImage(im,0,0,sw,c.height,0,0,sw,c.height);
+  return await new Promise(function(r){c.toBlob(r,'image/jpeg',.92)})}
+async function saveRefBlob(blob){var key='ref:'+uid();await IDB.set(key,blob);return key}
+
+/* ---------- traducir el aspecto a inglés (las IA de imágenes lo entienden mejor) ---------- */
+async function descEN(){var n=H.name.trim(),look=H.look.trim(),trad=lookOf(n);
+  if(H.desc&&H._descFor===n+'|'+look)return H.desc;
+  var d='';
+  if(look){try{var o=AI.json(await AI.chat([{role:'system',content:'Respondés SOLO JSON válido.'},{role:'user',content:'Convertí esta descripción de un personaje en una descripción visual en INGLÉS para una IA de imágenes (25 a 45 palabras): rasgos de la cara, piel, pelo, ropa con colores exactos, accesorios. Sin nombre propio, sin escenario.'+(trad?' Aspecto tradicional de referencia: '+trad+'.':'')+'\nPersonaje: '+n+'\nDescripción: '+look+'\n{"desc":"..."}'}],{temp:.3}));d=String(o.desc||'').trim()}catch(e){d=''}
+    if(!d)d=look}
+  else d=trad||'';
+  if(!d)throw new Error('Contame cómo es '+(n||'el personaje')+' (o subí una foto y describilo en pocas palabras).');
+  H.desc=d;H._descFor=n+'|'+look;return d}
+
+/* ---------- asistente ---------- */
+function start(){var st=(S.P&&S.P.style)||(S.wiz&&S.wiz.style)||'neo_anime';
+  H={_trad:false,name:'',look:'',desc:'',ref:'',idea:'',n:4,format:(S.P&&S.P.format)||'vertical',style:st,shots:true,cont:true,narr:true,seedK:seed()};
+  view()}
+function charPicker(){var L=lib();if(!L.length)return '';
+  return '<div class="lbl" style="margin-top:4px">Tus personajes guardados (tocá uno para usarlo)</div><div class="ev61-chars">'+L.map(function(c,k){var on=H.name&&normName(H.name)===normName(c.name);
+    return '<button class="ev61-ch'+(on?' on':'')+'" onclick="EV361.pick('+k+')">'+(c.ref?'<img data-ref="'+esc(c.ref)+'">':'<div class="ph"></div>')+esc(c.name)+'</button>'}).join('')+'</div>'}
+function view(){var trad=lookOf(H.name),g=gridOf(H.n,H.format);
+  sheet(head('📖 Historia con personaje')+
+  '<div class="hint">El mismo personaje en todas las escenas, haciendo cosas distintas, una detrás de otra como una historia.</div>'+
+  '<div class="card"><b><span class="num">1</span>El personaje</b>'+charPicker()+
+   '<div class="lbl">Nombre</div><input class="inp" id="e61n" value="'+esc(H.name)+'" placeholder="Ej: Oxum, Ogum, Pombagira Maria Padilha, Don Ramón…" oninput="EV361.set(\'name\',this.value)">'+
+   (trad?'<div class="hint" style="margin-top:4px">✅ Conozco el aspecto tradicional de '+esc(H.name)+'. Si no escribís nada abajo, uso ese.</div>':'')+
+   '<div class="lbl">¿Cómo es? (en español, como se lo contarías a alguien)</div><textarea class="inp" id="e61l" rows="2" placeholder="Ej: mujer africana joven, piel oscura, vestido dorado, corona y espejo de oro, muchas pulseras" oninput="EV361.set(\'look\',this.value)">'+esc(H.look)+'</textarea>'+
+   '<div class="lbl">Foto de referencia (para que la cara salga igual)</div>'+
+   '<div class="row" style="gap:12px;align-items:flex-start">'+(H.ref?'<img class="ev61-ref" data-ref="'+esc(H.ref)+'">':'<div class="ev61-noref">Sin foto todavía</div>')+
+    '<div style="display:flex;flex-direction:column;gap:6px;flex:1">'+
+     '<label class="btn sm" style="cursor:pointer">'+ic('plus')+'Subir una foto<input type="file" accept="image/*" hidden onchange="EV361.refFile(this.files[0])"></label>'+
+     '<button class="btn sm" data-busy onclick="EV361.refAuto()">'+ic('spark')+(H.ref?'Crear otra acá (gratis)':'Crear la foto acá (gratis)')+'</button>'+
+     '<button class="btn sm" onclick="EV361.refGem()">'+ic('spark')+'Crearla en Gemini (mejor calidad)</button>'+
+     (H.ref?'<button class="btn xs" onclick="EV361.set(\'ref\',\'\');EV361.view()">'+ic('trash')+'Quitar foto</button>':'')+
+    '</div></div></div>'+
+  '<div class="card"><b><span class="num">2</span>La historia</b>'+
+   '<div class="lbl">¿Qué pasa? (una o dos frases alcanzan)</div><textarea class="inp" id="e61i" rows="3" placeholder="Ej: Oxum ayuda a una mujer que perdió las ganas de vivir y le enseña a quererse de nuevo" oninput="EV361.set(\'idea\',this.value)">'+esc(H.idea)+'</textarea>'+
+   '<button class="btn xs" style="margin-top:6px" data-busy onclick="EV361.suggest()">💡 Sugerime una historia</button>'+
+   '<div class="lbl">Cantidad de escenas</div><div class="seg">'+[4,5,6,8].map(function(k){return '<button class="'+(H.n===k?'on':'')+'" onclick="EV361.set(\'n\','+k+');EV361.view()">'+k+'</button>'}).join('')+'</div>'+
+   '<div class="hint" style="margin-top:4px">'+(H.n===4?'4 escenas: inicio, problema, giro y final. Ideal para Reels y TikTok (unos 25 a 35 segundos).':H.n===5?'5 escenas: suma una escena de tensión antes del final. (La historieta en 1 imagen funciona con 4, 6 u 8.)':H.n===6?'6 escenas: historia más completa (40 a 50 segundos).':'8 escenas: historia larga, para YouTube o un itán completo (1 minuto o más).')+'</div>'+
+   '<div class="lbl">Formato</div><div class="seg">'+[['vertical','Vertical'],['horizontal','Horizontal'],['cuadrado','Cuadrado']].map(function(f){return '<button class="'+(H.format===f[0]?'on':'')+'" onclick="EV361.set(\'format\',\''+f[0]+'\');EV361.view()">'+f[1]+'</button>'}).join('')+'</div>'+
+   '<div class="lbl">Estilo de las imágenes</div><select class="sel" onchange="EV361.set(\'style\',this.value)">'+styleOpts(H.style)+'</select>'+
+   '<label class="ev61-chk"><input type="checkbox" '+(H.shots?'checked':'')+' onchange="EV361.set(\'shots\',this.checked)"><span><b>Planos variados</b>: plano general, medio y primer plano, como en una película</span></label>'+
+   '<label class="ev61-chk"><input type="checkbox" '+(H.cont?'checked':'')+' onchange="EV361.set(\'cont\',this.checked)"><span><b>Continuidad</b>: misma ropa, mismo lugar y la luz avanza en orden (amanecer → noche)</span></label>'+
+   '<label class="ev61-chk"><input type="checkbox" '+(H.narr?'checked':'')+' onchange="EV361.set(\'narr\',this.checked)"><span><b>Con narrador</b>: escribe lo que dice la voz en cada escena</span></label>'+
+  '</div>'+
+  '<div class="card"><b><span class="num">3</span>¡A crear!</b><div class="hint">La IA escribe las '+H.n+' escenas seguidas, con el personaje en todas. Después elegís cómo hacer las imágenes.</div>'+
+   '<button class="btn grad" style="width:100%;margin-top:10px" data-busy onclick="EV361.create()">'+ic('spark')+'Crear la historia</button></div>')}
+
+function set(k,v){H[k]=v;if(k==='name'){H.desc='';clearTimeout(set._t);set._t=setTimeout(function(){var has=!!lookOf(H.name);if(has!==!!H._trad){H._trad=has;keep(view)}},450)}}
+function keep(fn){var a=document.activeElement,id=a&&a.id,pos=a&&a.selectionStart;fn();if(id){var el=document.getElementById(id);if(el){el.focus();try{el.setSelectionRange(pos,pos)}catch(e){}}}}
+function pick(k){var c=lib()[k];if(!c)return;H.name=c.name;H.look=c.look||'';H.desc=c.desc||'';H._descFor=c.name+'|'+(c.look||'');H.ref=c.ref||'';H._trad=!!lookOf(c.name);if(c.style)H.style=c.style;view();toast('Personaje: '+c.name)}
+async function refFile(f){if(!f)return;H.ref=await saveRefBlob(f);view();toast('Foto de referencia lista ✅')}
+async function busy(msg,fn){var bs=document.querySelectorAll('.ev61 [data-busy]');bs.forEach(function(b){b.disabled=true});toast(msg);
+  try{return await fn()}catch(e){toast(e.message||String(e),1)}finally{document.querySelectorAll('.ev61 [data-busy]').forEach(function(b){b.disabled=false})}}
+function refAuto(){if(!H.name.trim())return toast('Primero escribí el nombre del personaje',1);
+  busy('Creando la foto del personaje… (tarda unos segundos)',async function(){var d=await descEN(),st=styleOf(H.style);H.seedK=seed();
+    var p=H.name+', '+d+', full body character reference sheet, single character, front view, standing, calm neutral pose, face clearly visible, plain soft neutral background, '+(H.style==='custom'?'cinematic illustration':st.p)+', vertical composition, family friendly, fully clothed, no text, no watermark';
+    var im=null;try{im=await loadImg(AI.imgURL(p,768,1152,H.seedK),9)}catch(e){im=null}
+    if(!im)throw new Error('El servicio gratis está ocupado. Probá de nuevo en un rato o usá "Crearla en Gemini".');
+    var b=await blobOfImg(im).catch(function(){return null});if(!b)throw new Error('No pude guardar la foto. Probá "Crearla en Gemini".');
+    H.ref=await saveRefBlob(b);view();toast('Foto del personaje lista ✅ Si no te gusta, tocá "Crear otra"')})}
+function refGem(){var n=H.name.trim()||'el personaje',st=styleOf(H.style),trad=lookOf(H.name);
+  var txt='Creá la imagen de referencia de un personaje para una historia: '+n+'. '+(H.look.trim()?'Cómo es: '+H.look.trim()+'. ':trad?'Aspecto (en inglés): '+trad+'. ':'')+'Cuerpo entero, de frente, de pie, postura tranquila, la cara bien visible y nítida, fondo liso neutro, una sola persona, estilo '+st.n+', formato vertical, sin textos ni letras. Esta imagen la voy a usar para que el personaje salga igual en todas las escenas.';
+  sheet(head('✨ Crear la foto en Gemini')+
+   '<div class="card"><b>1) Copiá el pedido</b><textarea class="inp" id="e61g" rows="6" style="margin-top:6px">'+esc(txt)+'</textarea><button class="btn sm" style="margin-top:6px" onclick="EV361.copy(\'e61g\')">'+ic('copy')+'Copiar pedido</button></div>'+
+   '<div class="card"><b>2) Pegalo en Gemini o ChatGPT</b> y descargá la imagen que te dé.'+gptLinks()+'</div>'+
+   '<div class="card"><b>3) Subila acá</b><br><label class="btn sm grad" style="margin-top:8px;cursor:pointer">'+ic('img')+'Subir la foto del personaje<input type="file" accept="image/*" hidden onchange="EV361.refFile(this.files[0])"></label>'+
+   '<button class="btn sm" style="margin-top:8px" onclick="EV361.view()">'+ic('back')+'Volver</button></div>')}
+function suggest(){if(!H.name.trim())return toast('Primero escribí el nombre del personaje',1);
+  busy('Pensando una historia…',async function(){var trad=lookOf(H.name);
+    var o=AI.json(await AI.chat([{role:'system',content:'Respondés SOLO JSON válido.'},{role:'user',content:'Proponé UNA idea de historia corta y emotiva para un video viral de '+H.n+' escenas, en español rioplatense, con '+H.name+' como protagonista'+(trad?' (es una entidad de la religión afro; respetá su tradición, sus elementos y su carácter)':'')+'. Una o dos frases, que tenga un problema y un final que emocione. {"idea":"..."}'}],{temp:.95}));
+    if(!o.idea)throw new Error('La IA no respondió, probá de nuevo');H.idea=String(o.idea).trim();view()})}
+
+/* ---------- crear la historia ---------- */
+var SHOTS=['wide establishing shot','medium shot','close-up shot on the face','over-the-shoulder shot','low angle heroic shot','medium close-up','wide shot','final epic wide shot'];
+function create(){var n=H.name.trim();if(!n)return toast('Escribí el nombre del personaje',1);if(!H.idea.trim())return toast('Contá qué pasa en la historia (o tocá "Sugerime una historia")',1);
+  busy('La IA está escribiendo las '+H.n+' escenas… (puede tardar hasta 1 minuto)',async function(){
+    var d=await descEN(),trad=lookOf(n),N=H.n;
+    var arc=N===4?'1) presentación del personaje y su mundo, 2) aparece el problema, 3) el giro: el personaje actúa, 4) final que emociona':
+      N===5?'1) presentación, 2) problema, 3) tensión o prueba, 4) el personaje actúa, 5) final que emociona':
+      'presentación, problema, tensión que crece, el personaje actúa, giro y un final poderoso que emocione';
+    var rules=['Exactamente '+N+' escenas, en orden, una continúa a la anterior (causa y consecuencia).',
+      'En TODAS las escenas aparece '+n+' haciendo una ACCIÓN distinta y concreta (caminar, mirar, tocar, ofrecer, abrazar, levantar…), nunca solo posando.',
+      'Arco de la historia: '+arc+'.',
+      'El "prompt" (en INGLÉS) SIEMPRE empieza con el nombre exacto "'+n+'", después la acción, el lugar, '+(H.shots?'el tipo de plano, ':'')+'la luz y la emoción de la cara. Sin texto ni letras.',
+      'No describas la ropa ni la cara en el prompt (eso ya lo sé), solo la acción, el lugar y la luz.',
+      H.cont?'Continuidad: el mismo lugar principal (o lugares que se conectan), la misma ropa, y la luz avanza en orden (por ejemplo amanecer → día → atardecer → noche).':'',
+      H.shots?'Variá los planos como en una película: empezá con un plano general, usá primeros planos en los momentos de emoción y terminá con un plano general épico.':'',
+      H.narr?'"text": lo que dice el narrador en '+LANGS[S.settings.lang||'es']+', 1 o 2 frases por escena, la primera escena con un gancho que atrape.':'"text": dejalo vacío ("").',
+      '"action": en español, 3 a 8 palabras, qué hace '+n+' en esa escena.',
+      trad?'Es una entidad de la religión afro: respetá su tradición, sus colores, sus elementos y su carácter. Nada que la ridiculice.':''].filter(Boolean).join('\n- ');
+    var fmt='{"title":"título corto y atractivo","music":"uno de '+MUSIC.filter(function(m){return m.id!=='none'&&m.id!=='upload'}).map(function(m){return m.id}).join('|')+'","scenes":[{"action":"...","text":"...","prompt":"...","shot":"...","camera":"uno de '+Object.keys(CAMS).filter(function(k){return k!=='auto'}).join('|')+'","ambient":"uno de '+Object.keys(AMB).join('|')+'"}]}';
+    var data=null,err;
+    for(var r=0;r<2&&!data;r++){try{var o=AI.json(await AI.chat([{role:'system',content:'Sos guionista y director de arte de videos virales. Respondés SOLO con JSON válido.'},{role:'user',content:'Personaje principal: '+n+' (se ve así: '+d+').\nHistoria: "'+H.idea.trim()+'".\nReglas:\n- '+rules+'\nFormato exacto: '+fmt}],{temp:.85}));if(o&&o.scenes&&o.scenes.length)data=o}catch(e){err=e}}
+    if(!data)throw err||new Error('La IA no generó escenas, probá de nuevo.');
+    var sc=data.scenes.slice(0,N);
+    var P=newProject('idea');P.format=H.format;P.style=H.style;applyFx(styleOf(H.style).fx);P.idea=H.idea.trim();P.genre=trad?'af_itan':'';
+    P.title=data.title||n;P.name=String(data.title||('Historia de '+n)).slice(0,60);P._nameSet=true;
+    if(data.music&&MUSIC.some(function(m){return m.id===data.music}))P.music=data.music;
+    P.cast=[{name:n,desc:d,ref:H.ref||'',user:true}];P.character='';P.story={n:N,char:n,v:361};
+    P.scenes=Pipe.parseScenes(sc.map(function(x,i){var p=String(x.prompt||x.text||'').trim();if(!nameRe(n).test(p))p=n+' '+p;
+      if(H.shots&&!/shot|close-?up|angle/i.test(p))p+=', '+(x.shot||SHOTS[Math.min(i,SHOTS.length-1)]);return {text:H.narr?x.text:'',prompt:p,camera:x.camera,ambient:x.ambient}}));
+    var sd=hashSeed(n);P.scenes.forEach(function(s,i){s.seed=sd;s.action=String((sc[i]&&sc[i].action)||'').trim()});
+    P.script=P.scenes.map(function(s){return s.text}).join(' ');P.duration=Math.max(20,N*7);
+    // guardo el personaje para otras historias
+    var L=lib().filter(function(c){return normName(c.name)!==normName(n)});L.unshift({name:n,look:H.look,desc:d,ref:H.ref||'',style:H.style,at:Date.now()});setLib(L);
+    if(sc.length<N)toast('La IA hizo '+sc.length+' de '+N+' escenas. Podés seguir igual.',1);
+    S.projects.unshift(P);openProject(P);setTimeout(function(){how()},300)})}
+
+/* ---------- ¿cómo hacemos las imágenes? ---------- */
+function how(){var P=S.P;if(!P)return;var c=(P.cast||[])[0]||{},N=P.scenes.length,g=gridOf(N,P.format);
+  sheet(head('🎨 ¿Cómo hacemos las '+N+' imágenes?')+
+   '<div class="hint">La historia ya está escrita. Elegí cómo crear las imágenes (después podés cambiar cualquier escena).</div>'+
+   (g?'<button class="ev61-opt ev61-new" onclick="EV361.grid()"><b>🗂️ Historieta: las '+N+' en una sola imagen (recomendado)</b><span class="hint">Le pedís a Gemini UNA imagen con las '+N+' escenas en cuadritos. Como salen todas juntas, el personaje queda <b>igualito</b> en todas. La app la recorta sola.</span></button>':'')+
+   '<button class="ev61-opt" onclick="EV361.gem()"><b>✨ Con Gemini, escena por escena (misma cara)</b><span class="hint">Mejor calidad. Le mostrás la foto del personaje una vez y después pegás cada escena. '+(c.ref?'':'(Conviene tener foto de referencia.)')+'</span></button>'+
+   '<button class="ev61-opt" onclick="closeSheet();run(function(){return Pipe.images()})"><b>⚡ Automático y gratis (acá mismo)</b><span class="hint">La app las hace sola en un minuto. Es lo más rápido, pero la cara puede variar un poco entre escenas.</span></button>')}
+
+/* Gemini: todas las escenas en una lista */
+function scenePrompt(P,i){var s=P.scenes[i],c=(P.cast||[])[0]||{},st=styleOf(P.style),N=P.scenes.length,shot=(s.prompt.match(/(wide establishing shot|medium close-up|medium shot|close-up[^,]*|over-the-shoulder shot|low angle[^,]*|final epic wide shot|wide shot)/i)||[])[0];
+  return 'Escena '+(i+1)+' de '+N+' de la misma historia. '+(c.name?'Usá a '+c.name+' EXACTAMENTE como en la foto que te mostré: misma cara, mismo pelo, misma ropa, mismos colores y mismas joyas. ':'')+
+   (s.action?'Qué hace: '+s.action+'. ':'')+'Escena (en inglés): '+s.prompt+'. '+(shot?'Encuadre: '+shot+'. ':'')+
+   (i>0?'Tiene que verse como la continuación de la escena anterior (mismo lugar y misma luz que avanza). ':'')+'Estilo '+st.n+', '+fmtTxt(P.format)+', alta calidad, sin textos ni letras.'}
+function presentTxt(P){var c=(P.cast||[])[0]||{},st=styleOf(P.style);
+  return 'Vamos a crear juntos las '+P.scenes.length+' imágenes de una historia: "'+vt(P)+'". Te subo la foto de '+(c.name||'el personaje')+'. Memorizalo: en TODAS las escenas tiene que salir exactamente igual (misma cara, pelo, ropa, colores y joyas). Estilo de todas: '+st.n+', '+fmtTxt(P.format)+', sin textos ni letras. Por ahora no hagas ninguna imagen: respondé solo "Listo" y esperá mis escenas.'}
+async function gem(){var P=S.P;if(!P)return;var c=(P.cast||[])[0]||{},ru=c.ref?await refURL(c.ref):'';
+  sheet(head('✨ Las '+P.scenes.length+' escenas con Gemini')+
+   '<div class="card"><b>Paso 1 · Una sola vez:</b> abrí un chat <b>nuevo</b> en Gemini, subí la foto del personaje y pegá esta presentación.'+
+    (ru?'<div class="row" style="gap:10px;margin-top:8px;align-items:center"><img src="'+ru+'" style="width:70px;height:90px;object-fit:cover;border-radius:9px"><a class="btn xs" href="'+ru+'" download="'+esc(c.name||'personaje')+'-referencia.jpg">'+ic('down')+'Descargar la foto</a></div>':'<div class="hint">Este personaje no tiene foto. Podés seguir igual (Gemini lo crea con el texto) o ponerle una en Personajes.</div>')+
+    '<textarea class="inp" id="e61p" rows="4" style="margin-top:8px">'+esc(presentTxt(P))+'</textarea><button class="btn sm" style="margin-top:6px" onclick="EV361.copy(\'e61p\')">'+ic('copy')+'Copiar presentación</button>'+gptLinks()+'</div>'+
+   '<div class="card"><b>Paso 2 · Escena por escena</b> (en el <b>mismo chat</b>): copiá, pegá en Gemini, descargá la imagen y subila acá.'+
+    P.scenes.map(function(s,i){var im=RT.imgs[s.img];return '<div class="ev61-sc">'+(im?'<img class="th" src="'+esc(im.src)+'">':'<div class="th"></div>')+'<div class="tx"><b>Escena '+(i+1)+'</b>'+(s.action?' · '+esc(s.action):'')+
+      '<textarea class="inp" id="e61s'+i+'" rows="3" style="margin-top:4px;font-size:12px">'+esc(scenePrompt(P,i))+'</textarea>'+
+      '<div class="row wrap" style="gap:6px;margin-top:4px"><button class="btn xs" onclick="EV361.copy(\'e61s'+i+'\')">'+ic('copy')+'Copiar</button><label class="btn xs grad" style="cursor:pointer">'+ic('img')+(s.local?'Cambiar imagen':'Subir imagen')+'<input type="file" accept="image/*" hidden onchange="EV361.put('+i+',this.files[0])"></label>'+(s.local?'<span class="hint" style="margin:0">✅ lista</span>':'')+'</div></div></div>'}).join('')+
+   '</div>'+
+   '<div class="card"><b>¿Gemini llegó a su límite?</b><div class="hint">Seguí en ChatGPT o Copilot: mismo paso 1 y mismas escenas. Las que falten las podés hacer con el botón automático.</div><button class="btn sm" style="margin-top:6px" onclick="closeSheet();run(function(){return Pipe.images()})">⚡ Hacer las que faltan automático</button></div>')}
+async function put(i,f){if(!f)return;await run(function(){return Pipe.setImage(i,f)});var P=S.P;if(P&&P.scenes.every(function(s){return s.local||RT.imgs[s.img]})){toast('¡Las '+P.scenes.length+' imágenes listas! ✅ Tocá Reproducir para verla');closeSheet()}else gem()}
+
+/* Historieta en una sola imagen → se recorta sola */
+function gridTxt(P,cols,rows){var c=(P.cast||[])[0]||{},st=styleOf(P.style),N=P.scenes.length;
+  return 'Creá UNA sola imagen dividida en '+N+' viñetas iguales, en una cuadrícula de '+cols+' columnas por '+rows+' filas, separadas por una línea blanca finita. Es una historia en orden: se lee de izquierda a derecha y de arriba hacia abajo. '+
+   (c.name?c.name+' aparece en TODAS las viñetas, exactamente igual'+(c.ref?' que en la foto que te paso':'')+' (misma cara, pelo, ropa, colores y joyas). Cómo es (en inglés): '+c.desc+'. ':'')+
+   'Estilo '+st.n+'. '+(P.format==='vertical'?'Cada viñeta vertical.':P.format==='horizontal'?'Cada viñeta horizontal.':'Cada viñeta cuadrada.')+' Sin textos, sin globos de diálogo, sin números.\n\n'+
+   P.scenes.map(function(s,i){return 'Viñeta '+(i+1)+': '+(s.action?s.action+' — ':'')+s.prompt}).join('\n')}
+async function grid(){var P=S.P;if(!P)return;var g=gridOf(P.scenes.length,P.format);if(!g)return toast('La historieta funciona con 4, 6 u 8 escenas',1);
+  H=H||{};H.gc=H.gc||g[0];H.gr=H.gr||g[1];if(H.gc*H.gr!==P.scenes.length){H.gc=g[0];H.gr=g[1]}
+  var c=(P.cast||[])[0]||{},ru=c.ref?await refURL(c.ref):'';
+  sheet(head('🗂️ Historieta en una sola imagen')+
+   '<div class="card"><b>1) Copiá el pedido</b>'+(ru?'<div class="row" style="gap:10px;margin-top:8px;align-items:center"><img src="'+ru+'" style="width:60px;height:78px;object-fit:cover;border-radius:9px"><span class="hint" style="margin:0">Subí también esta foto en Gemini junto con el pedido.</span><a class="btn xs" href="'+ru+'" download="'+esc(c.name||'personaje')+'-referencia.jpg">'+ic('down')+'Descargar</a></div>':'')+
+    '<textarea class="inp" id="e61h" rows="7" style="margin-top:8px;font-size:12px">'+esc(gridTxt(P,H.gc,H.gr))+'</textarea><button class="btn sm" style="margin-top:6px" onclick="EV361.copy(\'e61h\')">'+ic('copy')+'Copiar pedido</button></div>'+
+   '<div class="card"><b>2) Pegalo en Gemini o ChatGPT</b> y descargá la imagen.'+gptLinks()+'</div>'+
+   '<div class="card"><b>3) Subila: la app la corta en '+P.scenes.length+' escenas</b>'+
+    '<div class="lbl">Cómo vino la cuadrícula</div><div class="seg">'+gridChoices(P.scenes.length).map(function(x){return '<button class="'+(H.gc===x[0]&&H.gr===x[1]?'on':'')+'" onclick="EV361.gset('+x[0]+','+x[1]+')">'+x[0]+' col × '+x[1]+' filas</button>'}).join('')+'</div>'+
+    '<label class="btn grad" style="margin-top:10px;cursor:pointer;width:100%">'+ic('img')+'Subir la historieta<input type="file" accept="image/*" hidden onchange="EV361.gload(this.files[0])"></label>'+
+    '<div id="e61gp" style="margin-top:10px"></div></div>')}
+function gridChoices(n){return n===4?[[2,2],[4,1],[1,4]]:n===6?[[2,3],[3,2]]:n===8?[[2,4],[4,2]]:[[3,3]]}
+function gset(c,r){H.gc=c;H.gr=r;if(H.gimg)return gpreview();grid()}
+async function gload(f){if(!f)return;try{H.gimg=await new Promise(function(res,rej){var x=new Image();x.onload=function(){res(x)};x.onerror=function(){rej(new Error('No pude abrir esa imagen'))};x.src=URL.createObjectURL(f)});
+  var r=H.gimg.width/H.gimg.height,P=S.P,ch=gridChoices(P.scenes.length);
+  // adivino la cuadrícula según la forma de la imagen y el formato de las viñetas
+  var cell=P.format==='vertical'?9/16:P.format==='horizontal'?16/9:1,best=ch[0],bd=1e9;ch.forEach(function(x){var d=Math.abs(Math.log((r*x[1]/x[0])/cell));if(d<bd){bd=d;best=x}});
+  if(!H._gTouched){H.gc=best[0];H.gr=best[1]}gpreview()}catch(e){toast(e.message,1)}}
+function gpreview(){var el=document.getElementById('e61gp');if(!el||!H.gimg){grid();return}var cuts=cutsOf(H.gimg,H.gc,H.gr),W=H.gimg.width,Hh=H.gimg.height;
+  document.querySelectorAll('.ev61 .seg button').forEach(function(b){var m=b.textContent.match(/(\d) col × (\d)/);if(m)b.classList.toggle('on',+m[1]===H.gc&&+m[2]===H.gr)});
+  el.innerHTML='<div class="ev61-grid"><img src="'+H.gimg.src+'">'+cuts.xs.slice(1,-1).map(function(x){return '<div class="ln" style="left:'+(x/W*100)+'%;top:0;bottom:0;width:2px"></div>'}).join('')+cuts.ys.slice(1,-1).map(function(y){return '<div class="ln" style="top:'+(y/Hh*100)+'%;left:0;right:0;height:2px"></div>'}).join('')+'</div>'+
+   '<div class="hint">Las líneas rojas muestran dónde corto. Si no coinciden con los cuadritos, elegí arriba otra cuadrícula.</div>'+
+   '<button class="btn grad" style="width:100%;margin-top:8px" onclick="EV361.gapply()">'+ic('check')+'Cortar y poner en las '+(H.gc*H.gr)+' escenas</button>'}
+/* busca las líneas de separación (blancas o negras) cerca de donde deberían estar */
+function cutsOf(im,cols,rows){var W=im.width,Hh=im.height,k=Math.min(1,600/Math.max(W,Hh)),w=Math.max(1,Math.round(W*k)),h=Math.max(1,Math.round(Hh*k));
+  var c=document.createElement('canvas');c.width=w;c.height=h;var x=c.getContext('2d');x.drawImage(im,0,0,w,h);var d;try{d=x.getImageData(0,0,w,h).data}catch(e){d=null}
+  function score(pos,vert){if(!d)return 0;var len=vert?h:w,sum=0,sum2=0;for(var t=0;t<len;t+=2){var px=vert?pos:t,py=vert?t:pos,o=(py*w+px)*4,l=(d[o]*.3+d[o+1]*.59+d[o+2]*.11);sum+=l;sum2+=l*l}
+    var n=Math.ceil(len/2),m=sum/n,v=sum2/n-m*m;return (Math.abs(m-128)/128)*2-Math.sqrt(Math.max(0,v))/64}
+  function find(N,len,vert){var out=[0];for(var i=1;i<N;i++){var ex=Math.round(len*i/N),r=Math.round(len*.06/1),best=ex,bs=-1e9;for(var p=Math.max(1,ex-r);p<=Math.min(len-2,ex+r);p++){var s=score(p,vert)-Math.abs(p-ex)/(r*4);if(s>bs){bs=s;best=p}}out.push(best)}out.push(len);return out}
+  var xs=find(cols,w,true).map(function(v){return Math.round(v/k)}),ys=find(rows,h,false).map(function(v){return Math.round(v/k)});xs[xs.length-1]=W;ys[ys.length-1]=Hh;return {xs:xs,ys:ys}}
+async function gapply(){var P=S.P,im=H.gimg;if(!P||!im)return;var cuts=cutsOf(im,H.gc,H.gr),xs=cuts.xs,ys=cuts.ys,n=0;closeSheet();
+  await run(async function(){for(var r=0;r<H.gr;r++)for(var c=0;c<H.gc;c++){var i=r*H.gc+c;if(i>=P.scenes.length)continue;
+    var x0=xs[c],x1=xs[c+1],y0=ys[r],y1=ys[r+1],pw=Math.round((x1-x0)*.025)+2,ph=Math.round((y1-y0)*.025)+2;x0+=pw;x1-=pw;y0+=ph;y1-=ph;
+    var cv=document.createElement('canvas');cv.width=Math.max(1,x1-x0);cv.height=Math.max(1,y1-y0);cv.getContext('2d').drawImage(im,x0,y0,x1-x0,y1-y0,0,0,cv.width,cv.height);
+    var b=await new Promise(function(res){cv.toBlob(res,'image/jpeg',.92)});await Pipe.setImage(i,b);n++}});
+  H.gimg=null;toast('¡Listo! La historieta quedó cortada en '+n+' escenas ✅ Tocá Reproducir para verla')}
+
+/* ---------- botones en la app ---------- */
+var wzO=vWizard;vWizard=function(m){wzO.apply(this,arguments);try{if(S.wiz&&S.wiz.step===1){var md=m.querySelector('.modes');if(md&&!md.querySelector('.ev61-new')){var b=document.createElement('button');b.className='card mode ev61-new';
+  b.innerHTML='<div class="mi" style="background:#f59e0b22;color:#f59e0b">'+ic('user')+'</div><div><h3>Historia con personaje <span class="tag neo">NUEVO</span></h3><p>Un personaje (Oxum, Ogum, un guía o quien quieras) haciendo distintas acciones en 4 a 8 escenas seguidas. Sale igual en todas.</p></div>';
+  b.onclick=function(){start()};md.insertBefore(b,md.firstChild)}}}catch(e){console.warn('[v3.61]',e)}};
+var cO=castHTML;castHTML=function(){var h=cO.apply(this,arguments),P=S.P,N=P&&P.scenes?P.scenes.length:0,extra='<div class="row wrap" style="margin-top:8px;gap:6px">'+
+  (N?'<button class="btn sm" onclick="EV361.gem()">'+ic('spark')+'Todas las escenas en Gemini</button>':'')+(N&&gridOf(N,P.format)?'<button class="btn sm" onclick="EV361.grid()">🗂️ Historieta en 1 imagen</button>':'')+
+  '<button class="btn sm" onclick="EV361.start()">📖 Nueva historia con personaje</button></div>';
+  var i=h.lastIndexOf('</div></details>');return i>0?h.slice(0,i)+extra+h.slice(i):h};
+
+window.EV361={start:start,view:view,set:set,pick:pick,refFile:refFile,refAuto:refAuto,refGem:refGem,suggest:suggest,create:create,how:how,gem:gem,put:put,grid:grid,gset:function(c,r){H._gTouched=true;gset(c,r)},gload:gload,gapply:gapply,copy:copyTxt,_cuts:cutsOf,_gridTxt:gridTxt,_scenePrompt:scenePrompt,_H:function(){return H}};
+try{render()}catch(e){}
+console.info('[Estudio Viral] v3.61: historia con personaje');
+})();
+</script>
+<!-- ===== FIN v3.61 ===== -->
+
+
 </body>
 </html>
