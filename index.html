@@ -2319,7 +2319,7 @@ window.__ev32export=exportMp4;
 (function(){
 'use strict';
 if(window.__ev33)return;window.__ev33=true;
-var VERSION='3.65';
+var VERSION='3.66';
 var COLORS=['#7dd3fc','#ff9de2','#a7f3d0','#fdba74','#c4b5fd'];
 var MOVES=['zoomin','panr','tiltup','dolly','panl','zoomout','track','tiltdown'];
 
@@ -4455,7 +4455,7 @@ async function makeReceta(){var A=rcName('a'),B=rcName('b'),m=$('#rcmsg'),btn=$(
   catch(e){m.innerHTML='❌ '+esc(e.message||e);m.style.color='#ff6b6b'}finally{btn.disabled=false}}
 
 /* botón en Mis Proyectos */
-var vpO=vProjects;vProjects=function(m){vpO.apply(this,arguments);try{var w=m.querySelector('.ev40-top');if(w&&!w.querySelector('.ev41-rc')){var b=document.createElement('button');b.className='btn ev41-rc';b.textContent='🍲 Receta de Orixás';b.onclick=function(){EV341.recetaOpen()};w.insertBefore(b,w.firstChild)}}catch(e){}};
+var vpO=vProjects;vProjects=function(m){vpO.apply(this,arguments);try{var w=m.querySelector('.ev40-top');if(false&&w&&!w.querySelector('.ev41-rc')){/* v3.66: la Receta de Orixás queda solo dentro de «Recetas» */var b=document.createElement('button');b.className='btn ev41-rc';b.textContent='🍲 Receta de Orixás';b.onclick=function(){EV341.recetaOpen()};w.insertBefore(b,w.firstChild)}}catch(e){}};
 
 /* ======================================================================
    acciones
