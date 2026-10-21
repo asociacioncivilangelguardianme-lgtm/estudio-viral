@@ -977,6 +977,7 @@ Además "character": descripción física en inglés del personaje principal par
     const real=/hiperreal|hyper-?real|ultra-?real|photo-?real|fotorreal|realista|realistic/i.test(base);const cat=styleOf(P.style).c;
     if(real&&cat!=='realismo'&&P.style!=='custom'){P.style='hiperreal';toast('Tu guion pide imágenes realistas: puse el estilo Hiperrealismo de Cine')}P.title=st.title||P.title||P.name;if(P.name.startsWith('Proyecto')&&st.title)P.name=st.title.slice(0,60);
     P.scenes=this.parseScenes(st.scenes);P.character='';const oldCast=P.cast||[];P.cast=(st.cast&&st.cast.length?st.cast:extractCast(st.scenes.map(x=>x.prompt))).map(withTradition);keepMine(P,oldCast);P.scenes.forEach(sc=>{const c=castIn(P,sc);if(c.length===1)sc.seed=hashSeed(c[0].name)});S.sel=0;RT.voices={};RT.video=null;P.status='draft';save(1);
+    if(P.mode!=='musica'&&!P.noVoice&&window.EV365&&P.scenes.length&&P.scenes.every(x=>!String(x.text||'').trim())){try{await EV365.narrate(P,true)}catch(e){console.warn('[v3.65]',e)}}
     toast(`Leí tu guion: ${st.scenes.length} escenas con sus prompts de imagen ✅`);render();if(!fromAuto)this.images().catch(e=>toast(e.message,1));return}
    dur=RT.narr?RT.narr.duration:wordsOf(base)/2.5;instr=`Este es el guion. NO cambies las palabras, solo dividilo en orden:\n"""${base.slice(0,12000)}"""${gtxt}`}
   const n=this.nScenes(dur);this.setBusy('La IA está escribiendo el guion y el storyboard…');this.prog(.1);
@@ -6319,6 +6320,34 @@ console.info('[Estudio Viral] v3.64: subir con YouTube Studio');
 })();
 </script>
 <!-- ===== FIN v3.64 ===== -->
+
+<!-- ===== ESTUDIO VIRAL · v3.65 · NARRACIÓN QUE VA CON LAS IMÁGENES =====
+     Si el guion trae solo la descripción de cada clip (cámara, dron, 360…) y no lo que dice el narrador,
+     la IA escribe la narración de cada escena contando la historia de esa imagen. También hay un botón para hacerlo a mano.
+     Para quitarlo, borrá desde acá hasta "FIN v3.65". -->
+<script id="ev365">
+(function(){'use strict';if(window.__ev365)return;window.__ev365=true;
+var CAM=/\b(toma|plano|c[aá]mara|dron|drone|[oó]rbita|360|paneo|travelling|tracking|seguimiento|zoom|primer plano|close-?up|shot|cinematogr[aá]fic\w*|fluida|4k|8k)\b/i;
+function looksLikeDirections(t){t=String(t||'').trim();if(!t)return true;var m=t.match(new RegExp(CAM.source,'gi'));return !!(m&&m.length>=1&&t.split(/\s+/).length<60)}
+async function narrate(P,auto){P=P||S.P;if(!P||!P.scenes||!P.scenes.length)return toast('Primero armá las escenas',1);
+ var list=P.scenes.map(function(s,i){return (i+1)+'. '+String(s.prompt||s.text||'').slice(0,400)}).join('\n');
+ Pipe.setBusy('La IA está escribiendo la narración que va con cada imagen…');
+ try{var d=AI.json(await AI.chat([{role:'system',content:'Sos narrador de historias virales de mitología africana y de los Orixás. Respondés SOLO JSON válido.'},
+   {role:'user',content:'Este video tiene '+P.scenes.length+' escenas. Cada línea describe lo que se VE en la imagen (con indicaciones de cámara que NO hay que leer):\n'+list+'\n\nEscribí lo que dice el NARRADOR en '+(LANGS[P.lang||'es']||'español')+' para cada escena, en el mismo orden: 1 o 2 frases cortas por escena (máximo 25 palabras), que cuenten la historia de forma emocionante y tengan relación directa con lo que se ve. La primera escena con un gancho fuerte. NUNCA menciones la cámara, el dron, tomas, planos, 360, ni palabras técnicas. Título "'+vt(P)+'".\n{"lines":["frase escena 1","frase escena 2"]}'}],{temp:.8}));
+  var L=(d&&(d.lines||d.scenes||d.narration))||[];if(!L.length)throw new Error('La IA no devolvió la narración');
+  P.scenes.forEach(function(s,i){var t=L[i];if(t&&typeof t==='object')t=t.text||t.line||'';t=String(t||'').replace(/^\s*\d+[.)-]\s*/,'').trim();if(t){s.text=t;delete RT.voices[s.id]}});
+  save(1);toast(auto?'Tu guion no traía narrador: la IA escribió la narración de cada escena ✍️ Revisala y cambiala si querés.':'Narración lista ✅ Ya podés generar las voces.')}
+ finally{Pipe.setBusy('')}try{render()}catch(e){}}
+function card(){var P=S.P;if(!P||P.mode==='musica'||!P.scenes||!P.scenes.length)return '';var bad=P.scenes.some(function(s){return looksLikeDirections(s.text)});
+ return '<div class="card box ev365"><h3>✍️ Narración que va con las imágenes</h3><div class="hint">'+(bad?'<b>Ojo:</b> algunas escenas no tienen narración o tienen indicaciones de cámara (dron, 360, toma…). ':'')+'La IA escribe lo que dice el narrador en cada escena, contando la historia de cada imagen. Las imágenes no cambian.</div><div class="row" style="margin-top:8px"><button class="btn grad" data-busy onclick="run(()=>EV365.narrate())">✍️ Escribir narración con IA</button></div></div>'}
+var tcO=tContenido;tContenido=function(){var h=tcO.apply(this,arguments);try{return card()+h}catch(e){return h}};
+window.EV365={narrate:narrate};
+try{render()}catch(e){}
+console.info('[Estudio Viral] v3.65: narración que va con las imágenes');
+})();
+</script>
+<!-- ===== FIN v3.65 ===== -->
+
 
 
 
