@@ -1002,7 +1002,7 @@ Además "character": descripción física en inglés del personaje principal par
   render();if(!fromAuto)this.images().catch(e=>toast(e.message,1))},
  // Lee guiones ya armados por escenas (de ChatGPT, Gemini, etc.): "Escena 1 … Prompt Visual … Narrador: …"
  structured(text){const t=String(text||'').replace(/\r/g,'');
-  const heads=[...t.matchAll(/^[ \t#*>\-]*(?:escena|scene|toma|plano)\s*(\d+)\s*[:.\-–—)]?\s*(.*)$/gim)];if(heads.length<2)return null;
+  const heads=[...t.matchAll(/^[ \t#*>\-]*(?:escena|scene|toma|plano|clip|shot|parte|cuadro|segmento)\s*(?:n[°º.]?\s*)?(\d+)\s*[:.\-–—)]?\s*(.*)$/gim)];if(heads.length<2)return null;
   const head=t.slice(0,heads[0].index),out={title:'',format:'',scenes:[],cast:[]};
   // Bloque opcional "PERSONAJES" al principio:  - Oxum: beautiful young Black African woman, ...
   const pi=head.search(/personajes|characters|reparto/i);if(pi>=0)head.slice(pi).split('\n').slice(1).forEach(l=>{const m=l.replace(/[*_]/g,'').match(/^\s*[-•]?\s*([A-ZÁÉÍÓÚÑ][\p{L}]{1,20}(?: [A-ZÁÉÍÓÚÑ][\p{L}]{1,20})?)\s*[:=–—-]\s*(.{12,})$/u);if(m)out.cast.push({name:m[1].trim(),desc:m[2].trim()})});
@@ -1013,17 +1013,19 @@ Además "character": descripción física en inglés del personaje principal par
    const parts=[];let cur=null;
    body.split('\n').forEach(line=>{const L=line.replace(/^[\s*_>\-•]+|[*_]+$/g,'').replace(/\*\*/g,'').trim();if(!L){return}
     const m=L.match(LBL);if(m&&L.indexOf(':')<70){cur={lab:m[1].trim(),txt:m[2].trim()};parts.push(cur)}else if(cur)cur.txt+=(cur.txt?' ':'')+L;else parts.push(cur={lab:'',txt:L})});
-   let prompt='',note='',lines=[];
+   let prompt='',note='',lines=[],desc='';
    parts.forEach(p=>{const lab=p.lab.toLowerCase();
     if(/^prompt/.test(lab))prompt+=(prompt?' ':'')+p.txt;
     else if(/^(nota|animaci|c[aá]mara|sonido|m[uú]sica)/.test(lab))note+=' '+p.txt;
     else if(p.lab){const say=p.txt.replace(/\([^)]*\)/g,' ').replace(/^["“”«»']+|["“”«»']+$/g,'').replace(/\s+/g,' ').trim();if(say&&/[a-záéíóúñ]{2}/i.test(say))lines.push(say)}
-    else if(!prompt&&/^[\x00-\x7F]+$/.test(p.txt)&&p.txt.split(' ').length>6)prompt=p.txt;});
+    else if(!prompt&&/^[\x00-\x7F]+$/.test(p.txt)&&p.txt.split(' ').length>6)prompt=p.txt;
+    else if(!p.lab)desc+=(desc?' ':'')+p.txt;});
    const n=(note+' '+prompt).toLowerCase();
    const cam=/paneo|slow pan|\bpan\b/.test(n)?'panr':/close-?up|primer plano|macro/.test(n)?'zoomin':/wide shot|plano general|panor[aá]mic/.test(n)?'zoomout':/camina|walking|slow motion|tracking|sigue|following/.test(n)?'track':/sube|tilt up|desde abajo|majestic|epic/.test(n)?'tiltup':'auto';
    const amb=/\b(waterfall|cascada)\b/.test(n)?'cascada':/\b(airport|aeropuerto)\b/.test(n)?'aeropuerto':/\b(airplane|plane|avi[oó]n|jet)\b/.test(n)?'avion':/\b(train|tren|subway|subte)\b/.test(n)?'tren':/\b(siren|sirena|ambulance|ambulancia|police car|patrullero)\b/.test(n)?'sirena':/\b(helicopter|helic[oó]ptero)\b/.test(n)?'helicoptero':/\b(hospital|clinic|cl[ií]nica)\b/.test(n)?'hospital':/\b(battle|batalla|war|guerra|explosion\w*|soldiers?)\b/.test(n)?'batalla':/\b(stadium|estadio)\b/.test(n)?'estadio':/\b(office|oficina)\b/.test(n)?'oficina':/\b(caf[eé]|restaurant\w*|bar)\b/.test(n)?'cafe':/\b(snow\w*|nieve|blizzard|ventisca)\b/.test(n)?'nieve':/\b(port|puerto|ship|barco|harbor)\b/.test(n)?'barco':/\b(traffic|tr[aá]nsito|street|calle|cars?|autos?|avenue|avenida)\b/.test(n)?'trafico':/\b(construction|obra)\b/.test(n)?'construccion':/\b(robot\w*|laborator\w*|computer\w*|tecnolog\w*)\b/.test(n)?'tecnologia':/\b(forg\w*|anvil|yunque|forja|hammer\w*|martillo)\b/.test(n)?'forja':/\b(celebrat\w*|cheer\w*|festej\w*|petals|fiesta|party)\b/.test(n)?'festejo':/\b(drums?|tambor\w*)\b/.test(n)?'tambores':/\b(fire|fuego|flames?)\b/.test(n)?'fuego':/\b(river|r[ií]o|stream|arroyo|waterfall|cascada)\b/.test(n)?'rio':/\b(sea|mar|ocean|oc[eé]ano|beach|playa|waves?)\b/.test(n)?'oceano':/\b(jungle|selva|tropical)\b/.test(n)?'selva':/\b(forest|bosque|monte|woods)\b/.test(n)?'bosque':/\b(cave|cueva)\b/.test(n)?'cueva':/\b(desert|desierto)\b/.test(n)?'desierto':/\b(magic\w*|m[aá]gic\w*|aura|celestial|spell|hechizo)\b/.test(n)?'magia':/\b(market|mercado|crowd|multitud)\b/.test(n)?'multitud':/rain|lluvia/.test(n)?'lluvia':/storm|tormenta|thunder|trueno|lightning|rayo/.test(n)?'tormenta':/city|ciudad|village|pueblo|street/.test(n)?'ciudad':/night|noche/.test(n)?'noche':/space|espacio|stars/.test(n)?'espacio':'none';
-   const name=(h[2]||'').replace(/[*#]/g,'').trim();
-   out.scenes.push({text:lines.join(' '),prompt:(prompt||name||lines.join(' ')).replace(/\b(8k|4k)( resolution)?\b,?/gi,'').trim(),camera:cam,ambient:amb})});
+   const name0=(h[2]||'').replace(/[*#]/g,'').trim(),ttl=(name0.match(/^\(([^)]*)\)/)||[])[1]||'',name=name0.replace(/^\([^)]*\)\s*[:.\-–—]?\s*/,'').replace(/^[:.\-–—]\s*/,'').trim()||desc||ttl;
+   let cam2=cam;if(cam2==='auto'){const q=(name+' '+desc).toLowerCase();cam2=/acercamiento|zoom in|primer plano/.test(q)?'zoomin':/alejamiento|zoom out|plano general|panor[aá]mic/.test(q)?'zoomout':/seguimiento|tracking/.test(q)?'track':/dron|elev[aá]ndose|hacia el cielo|inclinaci[oó]n/.test(q)?'tiltup':/paneo|[oó]rbita|360/.test(q)?'panr':/dolly/.test(q)?'dolly':'auto'}
+   out.scenes.push({text:lines.join(' '),prompt:(prompt||name||lines.join(' ')).replace(/\b(8k|4k)( resolution)?\b,?/gi,'').trim(),camera:cam2,ambient:amb})});
   return out.scenes.length>=2?out:null},
  naiveSplit(text,n){const sent=text.match(/[^.!?¿¡]+[.!?]*/g)||[text];const per=Math.max(1,Math.ceil(sent.length/n)),sc=[];
   for(let i=0;i<sent.length;i+=per){const t=sent.slice(i,i+per).join(' ').trim();if(t)sc.push({text:t,prompt:t})}return {title:'',character:'',scenes:sc}},
