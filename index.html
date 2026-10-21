@@ -2297,7 +2297,7 @@ window.__ev32export=exportMp4;
 (function(){
 'use strict';
 if(window.__ev33)return;window.__ev33=true;
-var VERSION='3.57';
+var VERSION='3.58';
 var COLORS=['#7dd3fc','#ff9de2','#a7f3d0','#fdba74','#c4b5fd'];
 var MOVES=['zoomin','panr','tiltup','dolly','panl','zoomout','track','tiltdown'];
 
@@ -2618,7 +2618,7 @@ if('serviceWorker' in navigator&&/^https:$/.test(location.protocol)){window.addE
   reg.addEventListener('updatefound',function(){var w=reg.installing;if(!w)return;w.addEventListener('statechange',function(){if(w.state==='installed'&&navigator.serviceWorker.controller)toast('Hay una versión nueva de Estudio Viral: cerrá y volvé a abrir la app para verla ✨')})})}).catch(function(e){console.info('[v3.33] sin app instalable (falta sw.js en GitHub):',e&&e.message)})})}
 
 /* Novedades */
-var NEWS=['🚀 <b>3.57</b>: en Mis Proyectos hay botones nuevos: <b>💬 Responder comentario</b> (el video empieza con el globito del comentario y la IA lo responde), <b>💡 Ideas</b> (7 ideas para la semana y fechas especiales que se acercan) y <b>🎞️ Varios videos</b> (una fila que la app hace sola, uno tras otro). En «Guion y storyboard» está <b>📺 Serie</b> para hacer la Parte 2, 3… con los mismos personajes. Y <b>💾 Copia de seguridad</b>: te avisa una vez por semana y la guarda con un toque (también en Ajustes).','🍲 <b>3.56</b>: en la Receta, las escenas de ingredientes piden primero la olla gigante y un frasquito de vidrio (antes decía «jarrito de barro» y a veces salían jarrones en vez de la olla).','⛪ <b>3.55</b>: el <b>Perfil del canal</b> (firma, hashtags fijos y cartel de cierre) se pone <b>solo en los videos de religión</b>. En «Guion y storyboard» cada video tiene un interruptor para ponerlo o sacarlo a mano.','⛪ <b>3.54</b>: nuevo <b>Perfil del canal</b> en Ajustes (ya viene cargado con Camino de Fe): la firma, los hashtags fijos #CaminoDeFe #Umbanda #Orixas y el cartel de cierre «Guardalo y dejá tu Axé» se ponen solos en cada video. Y nueva <b>🖼️ Portada</b> en «Guion y storyboard»: elegís una escena y la app arma la tapa con letras grandes y el nombre del canal, para TikTok o YouTube.','✨ <b>3.53</b>: nuevos <b>Textos animados</b>: en cada escena podés poner una frase corta que aparece moviéndose (rebote, suave, palabra por palabra, máquina de escribir, deslizando o con brillo) con estilo caja negra, letras grandes, dorado sagrado o neón. En «Guion y storyboard» está «Que la IA ponga los textos» y el <b>cartel de cierre</b> (ej: «Seguinos para más»). Las recetas ya los ponen solas.','⚡ <b>3.52</b>: nuevas <b>Recetas</b> (botón «⚡ Recetas» en Mis Proyectos): elegís Itán, Mensaje del día, Mini documental, Explicativo, Trailer, Top 5, Cuento o Historia solidaria, escribís el tema y la IA hace todo el video. Y nuevo <b>🎞️ Video real gratis</b> en cada escena: busca videos de verdad (ríos, fuego, selva, mar…) en Wikimedia Commons y Archive.org, o los pone solos en todas las escenas.','✅ <b>3.51</b>: nuevo botón «Arreglar guion y escenas (una sola vez)»: deja en «Tu guion» solo lo que dice el narrador y lo pone al lado de cada foto, sin tocar las fotos que subiste. Con «Deshacer» vuelve todo como estaba.','🧹 <b>3.50</b>: la escobita «Limpiar» reconoce más formas de instrucciones y, si no encuentra nada, se lo pasa sola a la IA. «Limpiar con IA» funciona de a 6 escenas.','🧹 <b>3.49</b>: «Limpiar con IA» ya no falla con «no devolvió datos válidos» (ahora limpia de a 6 escenas).','🧹 <b>3.48</b>: la app saca sola las instrucciones que vienen pegadas en los guiones («narración en español latino», «escena siguiendo exactamente…», «estilo…»), así la voz y los subtítulos dicen solo lo del narrador. Botones «Limpiar», «Limpiar con IA» y «Deshacer» en Guion y en Vista.','↩️ <b>3.47</b>: el botón «atrás» del celular ya no cierra la app: primero cierra lo que esté abierto, después vuelve a Vista y a Mis Proyectos. Para salir, tocás «atrás» dos veces.','🗣️ <b>3.46</b>: la voz ya no lee los emojis ni los hashtags del guion (antes decía «corazón», «estatua», «almohadilla»). Nuevo interruptor para hacer el video <b>sin voz</b> (solo subtítulos y música), en la pestaña Voz y en Vista.','🌍 <b>3.45</b>: arreglado lo de las imágenes orientales: el servicio gratis ignoraba los pedidos largos y devolvía cualquier imagen. Ahora cada pedido es corto y empieza por lo importante. En los videos de Orixás las personas salen afrobrasileñas. La Receta usa primeros planos de los personajes con la olla. Las miniaturas de «Vista» ahora se ven.','🍲 <b>3.44</b>: en la Receta de Orixás cada imagen muestra la misma olla grande con los dos personajes (ya no jarros sueltos). En «Vista» ves las imágenes mientras se crean y tenés «Rehacer todas las imágenes».','🌍 <b>3.43</b>: en videos de Orixás las personas salen afrobrasileñas y africanas (nada asiático). La app respeta el límite gratis de 1 imagen cada 45 segundos y ya no deja el cartel amarillo «Free limit reached». En el celular, «Vista» trae los primeros pasos: personajes, fotos de referencia y generar imágenes.','📱 <b>3.42</b>: en el celular el editor ahora va por partes (Vista, Guion, Escena, Estilo y Línea) con botones abajo, sin tener que bajar tanto. Botones más grandes y nada se sale de la pantalla.','🍲 <b>3.41</b>: nueva <b>Receta de Orixás</b> (dos personajes echan ingredientes en la olla y el final se ilumina). Efectos nuevos: frasco que se vuelca, humo, estallido de luz y aura. Cartel con texto en cada escena. Ayuda para darle movimiento real (Wan, Kling, Hailuo) y grabar tu gesto con la cámara. Bajar y subir todas las voces juntas para Applio.','📲 <b>3.40</b>: pasá tus proyectos de la PC al celu con un código QR (sin WhatsApp). Modo Cine (todo el video o solo algunas escenas), color de acento, música que baja sola cuando habla la voz y la nueva sección <b>Video largo a clips</b>.','💾 <b>3.39</b>: el video exportado queda guardado en el proyecto. Al volver a abrirlo aparecen directo Descargar, YouTube, TikTok e Instagram, sin exportar de nuevo.','🎙️ <b>3.38 · Voces más naturales</b>: velocidad por personaje (por ejemplo Oxalá lento y pausado), botón «Subir mi voz» en cada escena (opcional) y la IA escribe los diálogos con pausas y emoción, sin narrador.','💾 <b>3.37</b>: las voces quedan guardadas en la compu. Si recargás la página no se pierden, y si falta alguna se hace sola antes de reproducir.','🥁 <b>3.36 · Sonidos sagrados</b>: atabaque con repique, adjá/sineta, agogô, chocalho, Terreiro, Encruzilhada, Mar de Iemanjá y Mata sagrada. Opción de transiciones con golpe de tambor y campanita.','🕯️ <b>3.35 · Religión afro</b>: sección nueva en Géneros y Estilos con Itán, Mensaje de la entidad, Conocé a la entidad, Oración del día, Ofrenda explicada, Mitos y verdades, Fechas especiales, Pontos cantados, Cuentos para chicos, Exus y Pombagiras, Umbanda y Orixás. Y 9 estilos sagrados: Arte afrobrasileño, Terreiro, Mata sagrada, Encruzilhada nocturna, Pintura sacra, Ícono dorado, Vitral, Escultura africana y Afrofuturismo.','🔧 <b>3.34</b>: en los diálogos, cada escena reconoce sola quién habla y usa su voz, y pone el sonido del lugar (selva, río, cascada, fuego, tambores…). «Armar escenas» ya no borra las imágenes que hiciste.','👥 <b>Modo Diálogo</b>: dos (o más) personajes hablan, cada uno con su voz. Lo elegís en «Nuevo video».',
+var NEWS=['🎧 <b>3.58</b>: <b>sonidos reales</b>. Las campanitas (adjá/sineta), cigarras, aves africanas, pájaros, grillos, ranas, lechuza, monos, sabana y selva ahora son grabaciones de verdad de Wikimedia Commons (antes se fabricaban y sonaban a timbre). En la pestaña Sonido podés escucharlas y tocar 🔄 para probar otra grabación. La campanita de las transiciones también es real.','🚀 <b>3.57</b>: en Mis Proyectos hay botones nuevos: <b>💬 Responder comentario</b> (el video empieza con el globito del comentario y la IA lo responde), <b>💡 Ideas</b> (7 ideas para la semana y fechas especiales que se acercan) y <b>🎞️ Varios videos</b> (una fila que la app hace sola, uno tras otro). En «Guion y storyboard» está <b>📺 Serie</b> para hacer la Parte 2, 3… con los mismos personajes. Y <b>💾 Copia de seguridad</b>: te avisa una vez por semana y la guarda con un toque (también en Ajustes).','🍲 <b>3.56</b>: en la Receta, las escenas de ingredientes piden primero la olla gigante y un frasquito de vidrio (antes decía «jarrito de barro» y a veces salían jarrones en vez de la olla).','⛪ <b>3.55</b>: el <b>Perfil del canal</b> (firma, hashtags fijos y cartel de cierre) se pone <b>solo en los videos de religión</b>. En «Guion y storyboard» cada video tiene un interruptor para ponerlo o sacarlo a mano.','⛪ <b>3.54</b>: nuevo <b>Perfil del canal</b> en Ajustes (ya viene cargado con Camino de Fe): la firma, los hashtags fijos #CaminoDeFe #Umbanda #Orixas y el cartel de cierre «Guardalo y dejá tu Axé» se ponen solos en cada video. Y nueva <b>🖼️ Portada</b> en «Guion y storyboard»: elegís una escena y la app arma la tapa con letras grandes y el nombre del canal, para TikTok o YouTube.','✨ <b>3.53</b>: nuevos <b>Textos animados</b>: en cada escena podés poner una frase corta que aparece moviéndose (rebote, suave, palabra por palabra, máquina de escribir, deslizando o con brillo) con estilo caja negra, letras grandes, dorado sagrado o neón. En «Guion y storyboard» está «Que la IA ponga los textos» y el <b>cartel de cierre</b> (ej: «Seguinos para más»). Las recetas ya los ponen solas.','⚡ <b>3.52</b>: nuevas <b>Recetas</b> (botón «⚡ Recetas» en Mis Proyectos): elegís Itán, Mensaje del día, Mini documental, Explicativo, Trailer, Top 5, Cuento o Historia solidaria, escribís el tema y la IA hace todo el video. Y nuevo <b>🎞️ Video real gratis</b> en cada escena: busca videos de verdad (ríos, fuego, selva, mar…) en Wikimedia Commons y Archive.org, o los pone solos en todas las escenas.','✅ <b>3.51</b>: nuevo botón «Arreglar guion y escenas (una sola vez)»: deja en «Tu guion» solo lo que dice el narrador y lo pone al lado de cada foto, sin tocar las fotos que subiste. Con «Deshacer» vuelve todo como estaba.','🧹 <b>3.50</b>: la escobita «Limpiar» reconoce más formas de instrucciones y, si no encuentra nada, se lo pasa sola a la IA. «Limpiar con IA» funciona de a 6 escenas.','🧹 <b>3.49</b>: «Limpiar con IA» ya no falla con «no devolvió datos válidos» (ahora limpia de a 6 escenas).','🧹 <b>3.48</b>: la app saca sola las instrucciones que vienen pegadas en los guiones («narración en español latino», «escena siguiendo exactamente…», «estilo…»), así la voz y los subtítulos dicen solo lo del narrador. Botones «Limpiar», «Limpiar con IA» y «Deshacer» en Guion y en Vista.','↩️ <b>3.47</b>: el botón «atrás» del celular ya no cierra la app: primero cierra lo que esté abierto, después vuelve a Vista y a Mis Proyectos. Para salir, tocás «atrás» dos veces.','🗣️ <b>3.46</b>: la voz ya no lee los emojis ni los hashtags del guion (antes decía «corazón», «estatua», «almohadilla»). Nuevo interruptor para hacer el video <b>sin voz</b> (solo subtítulos y música), en la pestaña Voz y en Vista.','🌍 <b>3.45</b>: arreglado lo de las imágenes orientales: el servicio gratis ignoraba los pedidos largos y devolvía cualquier imagen. Ahora cada pedido es corto y empieza por lo importante. En los videos de Orixás las personas salen afrobrasileñas. La Receta usa primeros planos de los personajes con la olla. Las miniaturas de «Vista» ahora se ven.','🍲 <b>3.44</b>: en la Receta de Orixás cada imagen muestra la misma olla grande con los dos personajes (ya no jarros sueltos). En «Vista» ves las imágenes mientras se crean y tenés «Rehacer todas las imágenes».','🌍 <b>3.43</b>: en videos de Orixás las personas salen afrobrasileñas y africanas (nada asiático). La app respeta el límite gratis de 1 imagen cada 45 segundos y ya no deja el cartel amarillo «Free limit reached». En el celular, «Vista» trae los primeros pasos: personajes, fotos de referencia y generar imágenes.','📱 <b>3.42</b>: en el celular el editor ahora va por partes (Vista, Guion, Escena, Estilo y Línea) con botones abajo, sin tener que bajar tanto. Botones más grandes y nada se sale de la pantalla.','🍲 <b>3.41</b>: nueva <b>Receta de Orixás</b> (dos personajes echan ingredientes en la olla y el final se ilumina). Efectos nuevos: frasco que se vuelca, humo, estallido de luz y aura. Cartel con texto en cada escena. Ayuda para darle movimiento real (Wan, Kling, Hailuo) y grabar tu gesto con la cámara. Bajar y subir todas las voces juntas para Applio.','📲 <b>3.40</b>: pasá tus proyectos de la PC al celu con un código QR (sin WhatsApp). Modo Cine (todo el video o solo algunas escenas), color de acento, música que baja sola cuando habla la voz y la nueva sección <b>Video largo a clips</b>.','💾 <b>3.39</b>: el video exportado queda guardado en el proyecto. Al volver a abrirlo aparecen directo Descargar, YouTube, TikTok e Instagram, sin exportar de nuevo.','🎙️ <b>3.38 · Voces más naturales</b>: velocidad por personaje (por ejemplo Oxalá lento y pausado), botón «Subir mi voz» en cada escena (opcional) y la IA escribe los diálogos con pausas y emoción, sin narrador.','💾 <b>3.37</b>: las voces quedan guardadas en la compu. Si recargás la página no se pierden, y si falta alguna se hace sola antes de reproducir.','🥁 <b>3.36 · Sonidos sagrados</b>: atabaque con repique, adjá/sineta, agogô, chocalho, Terreiro, Encruzilhada, Mar de Iemanjá y Mata sagrada. Opción de transiciones con golpe de tambor y campanita.','🕯️ <b>3.35 · Religión afro</b>: sección nueva en Géneros y Estilos con Itán, Mensaje de la entidad, Conocé a la entidad, Oración del día, Ofrenda explicada, Mitos y verdades, Fechas especiales, Pontos cantados, Cuentos para chicos, Exus y Pombagiras, Umbanda y Orixás. Y 9 estilos sagrados: Arte afrobrasileño, Terreiro, Mata sagrada, Encruzilhada nocturna, Pintura sacra, Ícono dorado, Vitral, Escultura africana y Afrofuturismo.','🔧 <b>3.34</b>: en los diálogos, cada escena reconoce sola quién habla y usa su voz, y pone el sonido del lugar (selva, río, cascada, fuego, tambores…). «Armar escenas» ya no borra las imágenes que hiciste.','👥 <b>Modo Diálogo</b>: dos (o más) personajes hablan, cada uno con su voz. Lo elegís en «Nuevo video».',
   '🎨 <b>Subtítulos de colores</b>: cada personaje con su color y su nombre arriba, así se entiende quién habla aunque esté sin sonido.',
   '🖼️ <b>Máximo 6 imágenes</b>: el tiempo de cada una se calcula solo con las voces.',
   '💓 <b>La imagen late con la voz</b>: parece viva mientras el personaje habla.',
@@ -5568,6 +5568,148 @@ console.info('[Estudio Viral] v3.57: responder comentarios, series, ideas, vario
 })();
 </script>
 <!-- ===== FIN v3.57 ===== -->
+
+<!-- ===== ESTUDIO VIRAL · v3.58 · SONIDOS REALES (campanitas, cigarras, aves africanas y más) =====
+     Antes estos sonidos se fabricaban con tonos y sonaban a timbre. Ahora la app baja grabaciones reales y gratis
+     de Wikimedia Commons (una sola vez, quedan guardadas). Si no hay internet o falla, usa el sonido de antes.
+     Agregado al final. Para quitarlo, borrá desde acá hasta "FIN v3.58". -->
+<script id="ev358">
+(function(){'use strict';if(window.__ev358)return;window.__ev358=true;
+
+/* qué buscar para cada sonido (en orden: si una búsqueda no trae nada bueno, prueba la siguiente) */
+var Q={
+  adja:['handbell ringing','hand bell','small bell ringing','sleigh bells'],
+  sineta:['handbell ringing','hand bell','small bell ringing'],
+  campanas:['church bells','bells ringing','carillon'],
+  agogo:['agogo bell','cowbell','agogô'],
+  cigarras:['cicada chorus','cicada song','Magicicada chorus','cicadas'],
+  aves_africa:['dawn chorus Africa','birds Kenya','African birds','Hadada ibis','bird song Tanzania'],
+  pajaros:['dawn chorus','birdsong morning','bird song garden'],
+  sabana:['savanna ambience','savannah night Africa','African bush ambience'],
+  noche:['crickets night','night crickets','field crickets'],
+  ranas:['frog chorus','frogs pond night','tree frogs'],
+  lechuza:['owl hooting','tawny owl','owl call night'],
+  monos:['howler monkeys','monkeys jungle','chimpanzee calls'],
+  selva:['rainforest ambience','tropical rainforest sounds','jungle ambience']};
+var NAME={adja:'Campanita (adjá / sineta)',campanas:'Campanas',agogo:'Agogô',cigarras:'Cigarras',aves_africa:'Aves africanas',pajaros:'Pájaros',sabana:'Sabana africana',noche:'Grillos (noche)',ranas:'Ranas',lechuza:'Lechuza / búho',monos:'Monos',selva:'Selva tropical'};
+var BAD=/spoken|pronunc|wikipedia|lecture|interview|speech|narrat|podcast|poem|reading|anthem|song of the|music|sonata|symphony|piano|guitar|choir|hymn|remix|voice/i;
+var REAL={};             // tipo -> {buf,gain,title,page,lic,art}
+var LOAD={};             // tipo -> promesa
+function on(){return S.settings.realSnd!==false}
+
+/* ---------- buscar en Wikimedia Commons ---------- */
+function api(u){return fetch(u).then(function(r){if(!r.ok)throw new Error('Commons '+r.status);return r.json()})}
+function strip(h){var d=document.createElement('div');d.innerHTML=String(h||'');return (d.textContent||'').replace(/\s+/g,' ').trim()}
+function pickSrc(v){var ds=(v.derivatives||[]).filter(function(d){return /^audio\//.test(d.type||'')&&d.src});
+  var mp3=ds.find(function(d){return /mpeg|mp3/.test(d.type)}),ogg=ds.find(function(d){return /ogg/.test(d.type)});
+  var safari=/^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  if(safari&&mp3)return mp3.src;if((v.size||0)<12e6&&/^audio\/(ogg|wav|x-wav|mpeg|webm|flac)/.test(v.mime||''))return v.url;return (mp3||ogg||{}).src||''}
+async function search(q){
+  var u='https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrnamespace=6&gsrlimit=25'+
+    '&gsrsearch='+encodeURIComponent(q+' filetype:audio')+'&prop=videoinfo&viprop=url|size|mime|derivatives|extmetadata'+
+    '&viextmetadatafilter=LicenseShortName|Artist|ObjectName';
+  var j=await api(u),pages=Object.values((j.query&&j.query.pages)||{}).sort(function(a,b){return (a.index||0)-(b.index||0)});
+  return pages.map(function(p){var v=(p.videoinfo||[])[0];if(!v)return null;var d=+v.duration||0,t=p.title||'';
+    if(BAD.test(t)||/^File:(LL-|[A-Za-z]{2,3}(-[A-Za-z]{2,4})?-)/.test(t)||d<6||d>900)return null;var src=pickSrc(v);if(!src)return null;var m=v.extmetadata||{};
+    return {src:src,title:t.replace(/^File:/,'').replace(/\.[a-z0-9]+$/i,''),dur:d,page:v.descriptionurl||'',lic:strip(m.LicenseShortName&&m.LicenseShortName.value),art:strip(m.Artist&&m.Artist.value).slice(0,80)}}).filter(Boolean)}
+
+/* volumen parejo: todas las grabaciones suenan más o menos igual de fuerte */
+function level(buf){var c=buf.getChannelData(0),n=c.length,step=Math.max(1,Math.floor(n/200000)),s=0,k=0,pk=0;for(var i=0;i<n;i+=step){var x=c[i];s+=x*x;k++;if(Math.abs(x)>pk)pk=Math.abs(x)}
+  var rms=Math.sqrt(s/Math.max(1,k))||.01;return Math.min(4,Math.min(.12/rms,.95/Math.max(pk,.01)))}
+
+async function decodeBlob(b){var ac=getAC();var ab=await b.arrayBuffer();return await new Promise(function(ok,no){try{var p=ac.decodeAudioData(ab,ok,no);if(p&&p.then)p.then(ok,no)}catch(e){no(e)}})}
+async function useItem(type,it,blob){var buf=await decodeBlob(blob);if(!buf||buf.duration<3)throw new Error('grabación muy corta');
+  REAL[type]={buf:buf,gain:level(buf),title:it.title,page:it.page,lic:it.lic,art:it.art,idx:it.idx||0};return REAL[type]}
+
+/* baja la grabación (o la saca de la compu si ya estaba) */
+function load(type,skip){var base=type==='sineta'?'adja':type;if(!Q[base])return Promise.resolve(null);
+  if(!skip&&REAL[base])return Promise.resolve(REAL[base]);if(!skip&&LOAD[base])return LOAD[base];
+  var p=(async function(){
+    if(!skip){try{var c=await IDB.get('ramb:'+base);if(c&&c.blob)return await useItem(base,c,c.blob)}catch(e){}}
+    var want=skip||0,n=0,last;
+    for(var qi=0;qi<Q[base].length;qi++){var list=[];try{list=await search(Q[base][qi])}catch(e){last=e;continue}
+      for(var i=0;i<list.length;i++){if(n++<want)continue;var it=list[i];
+        try{var r=await fetch(it.src);if(!r.ok)continue;var b=await r.blob();if(b.size>15e6)continue;it.idx=n;var x=await useItem(base,it,b);
+          try{await IDB.set('ramb:'+base,{blob:b,title:it.title,page:it.page,lic:it.lic,art:it.art,idx:n})}catch(e){}return x}catch(e){last=e}}}
+    if(last)console.info('[v3.58] sin grabación real para',base,last&&last.message);return null})();
+  LOAD[base]=p;p.then(function(){},function(){}).then(function(){delete LOAD[base]});return p}
+
+/* ---------- tocar la grabación en el video ---------- */
+function play(ac,out,type,st,en,vol,opt){var R=REAL[type];if(!R)return null;opt=opt||{};
+  var g=ac.createGain(),v=vol*R.gain*(opt.mul||1),fi=Math.min(.35,(en-st)/4);
+  g.gain.setValueAtTime(0,st);g.gain.linearRampToValueAtTime(v,st+fi);g.gain.setValueAtTime(v,Math.max(st+fi,en-fi));g.gain.linearRampToValueAtTime(0,en);g.connect(out);
+  var s=ac.createBufferSource();s.buffer=R.buf;s.loop=true;var d=R.buf.duration,lead=Math.min(.6,d*.05);
+  s.loopStart=lead;s.loopEnd=d-.05;var off=lead+((opt.off!=null?opt.off:st)%(d-lead-.1));      // sigue de corrido entre escenas
+  if(opt.hp){var f=ac.createBiquadFilter();f.type='highpass';f.frequency.value=opt.hp;s.connect(f).connect(g)}else s.connect(g);
+  s.start(st,off);s.stop(en+.05);return s}
+
+var USE={adja:'adja',campanas:'campanas',agogo:'agogo',cigarras:'cigarras',aves_africa:'aves_africa',pajaros:'pajaros',sabana:'sabana',noche:'noche',ranas:'ranas',lechuza:'lechuza',monos:'monos',selva:'selva'};
+var ambO=ambience;
+ambience=function(ac,out,type,st,en,vol){
+  if(on()){
+    if(USE[type]&&REAL[USE[type]]){var s=play(ac,out,USE[type],st,en,vol);if(s){var extra=[];
+        if(type==='agogo'){try{extra=ambO(ac,out,'chocalho',st,en,vol*.4)||[]}catch(e){}}
+        return [s].concat(extra)}}
+    /* mezclas sagradas: tambor de antes + campanita de verdad */
+    if(REAL.adja&&(type==='terreiro'||type==='iemanja')){var n=[];
+      try{n=n.concat(ambO(ac,out,type==='terreiro'?'atabaque':'oceano',st,en,vol*(type==='terreiro'?.55:1))||[])}catch(e){}
+      if(type==='terreiro'){try{n=n.concat(ambO(ac,out,'fuego',st,en,vol*.35)||[])}catch(e){}}
+      var b=play(ac,out,'adja',st,en,vol,{mul:.7});if(b)n.push(b);return n}
+    if(type==='encruzilhada'&&REAL.noche){var m=ambO.apply(this,arguments)||[];var c=play(ac,out,'noche',st,en,vol,{mul:.6});if(c)m.push(c);return m}}
+  return ambO.apply(this,arguments)};
+
+/* transición: golpe de tambor + campanita de verdad (en vez del «timbre») */
+function drum(ac,g,t,f0,f1,d,gain){var o=ac.createOscillator(),gg=ac.createGain();o.type='sine';o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(f1,t+d*.6);
+  gg.gain.setValueAtTime(.0001,t);gg.gain.exponentialRampToValueAtTime(gain,t+.005);gg.gain.exponentialRampToValueAtTime(.0005,t+d);o.connect(gg).connect(g);o.start(t);o.stop(t+d+.02);return o}
+function bellHit(ac,out,at,vol,dur){var R=REAL.adja;if(!R)return null;var d=R.buf.duration,g=ac.createGain(),v=vol*R.gain*.9;dur=dur||1.4;
+  g.gain.setValueAtTime(0,at);g.gain.linearRampToValueAtTime(v,at+.01);g.gain.setValueAtTime(v,at+dur*.35);g.gain.exponentialRampToValueAtTime(.0005,at+dur);g.connect(out);
+  var s=ac.createBufferSource();s.buffer=R.buf;var off=findHit(R);s.connect(g);s.start(at,off);s.stop(at+dur+.05);return s}
+function findHit(R){if(R.hit!=null)return R.hit;var c=R.buf.getChannelData(0),sr=R.buf.sampleRate,win=Math.floor(sr*.02),best=0,bi=0,prev=0;
+  for(var i=0;i+win<c.length&&i<sr*30;i+=win){var e=0;for(var k=i;k<i+win;k+=4)e+=c[k]*c[k];if(e-prev>best){best=e-prev;bi=i}prev=e}
+  return R.hit=Math.max(0,bi/sr-.01)}
+var whO=whoosh;
+whoosh=function(ac,out,at,vol){var P=S.P;if(!(on()&&P&&P.sfxTambor&&REAL.adja))return whO.apply(this,arguments);at=Math.max(at,ac.currentTime);
+  var g=ac.createGain();g.gain.value=vol;g.connect(out);var a=drum(ac,g,at+.15,105,72,.6,.55);drum(ac,g,at+.02,330,290,.09,.14);bellHit(ac,g,at+.18,.55,1.3);return a};
+
+/* ---------- antes de reproducir o exportar: bajar las grabaciones que hagan falta ---------- */
+function needed(P){var t={};if(!P)return [];if(P.amb)(P.scenes||[]).forEach(function(s){var a=s.amb;if(!a||a==='none')return;
+    if(USE[a])t[USE[a]]=1;if(a==='terreiro'||a==='iemanja')t.adja=1;if(a==='encruzilhada')t.noche=1});
+  if(P.sfx&&P.sfxTambor)t.adja=1;return Object.keys(t).filter(function(k){return !REAL[k]})}
+var runO=Player.run.bind(Player);
+Player.run=async function(record){var P=S.P,need=on()?needed(P):[];
+  if(need.length&&!this.playing){Pipe.setBusy('Bajando sonidos reales ('+need.map(function(k){return NAME[k]||k}).join(', ')+')…');
+    try{await Promise.race([Promise.all(need.map(function(k){return load(k).catch(function(){return null})})),new Promise(function(r){setTimeout(r,25000)})])}catch(e){}
+    Pipe.setBusy('');var miss=need.filter(function(k){return !REAL[k]});if(miss.length)toast('No pude bajar: '+miss.map(function(k){return NAME[k]||k}).join(', ')+'. Uso el sonido de antes.',1)}
+  return runO(record)};
+
+/* ---------- pestaña Sonido: escuchar, cambiar de grabación y créditos ---------- */
+var PV=null;
+async function preview(k){try{if(PV){try{PV.stop()}catch(e){}PV=null}var ac=getAC();await ac.resume();toast('🔊 Buscando '+(NAME[k]||k)+'…');
+  var R=await load(k);if(!R)return toast('No encontré una grabación. Revisá la conexión e intentá de nuevo.',1);
+  var t=ac.currentTime+.05,dur=k==='adja'||k==='agogo'?6:8;PV=play(ac,ac.destination,k,t,t+dur,.9,{off:0});refresh()}catch(e){toast('No se pudo: '+(e.message||e),1)}}
+async function another(k){var cur=REAL[k],skip=(cur&&cur.idx)||1;toast('🔄 Buscando otra grabación de '+(NAME[k]||k)+'…');delete REAL[k];
+  try{await IDB.del?IDB.del('ramb:'+k):IDB.set('ramb:'+k,null)}catch(e){}
+  var R=await load(k,skip);if(!R){toast('No hay más grabaciones para probar. Vuelvo a la primera.',1);await load(k,0)}refresh();preview(k)}
+function credits(){var l=Object.keys(REAL).map(function(k){var R=REAL[k];return R?(NAME[k]||k)+': «'+R.title+'»'+(R.art?' de '+R.art:'')+(R.lic?' ('+R.lic+')':'')+' — Wikimedia Commons':''}).filter(Boolean);return l.join('\n')}
+function panel(){var keys=['adja','campanas','agogo','cigarras','aves_africa','pajaros','sabana','noche','ranas','lechuza','monos','selva'];
+  return '<div class="card box ev358"><h3>🎧 Sonidos reales <span class="sub">grabaciones de verdad, gratis</span></h3>'+
+   '<div class="hint">Campanitas, cigarras, aves africanas y otros sonidos ahora son <b>grabaciones reales</b> de Wikimedia Commons (antes se fabricaban y sonaban a timbre). Se bajan una sola vez y quedan guardadas. Si una no te gusta, tocá 🔄 para probar otra.</div>'+
+   '<label style="display:flex;gap:8px;align-items:center;margin:8px 0;cursor:pointer"><input type="checkbox" '+(on()?'checked':'')+' onchange="S.settings.realSnd=this.checked;saveSettings();render()"><span>Usar sonidos reales</span></label>'+
+   (on()?'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:6px">'+keys.map(function(k){var R=REAL[k];
+     return '<div class="row" style="gap:4px;align-items:center;padding:6px 8px;border:1px solid var(--line,#ffffff1f);border-radius:10px"><span style="flex:1;font-size:13px">'+esc(NAME[k])+(R?' <span title="'+esc(R.title)+'">✅</span>':'')+'</span>'+
+      '<button class="btn sm" title="Escuchar" onclick="EV358.preview(\''+k+'\')">'+ic('play')+'</button><button class="btn sm" title="Probar otra grabación" onclick="EV358.another(\''+k+'\')">🔄</button></div>'}).join('')+'</div>'+
+    (Object.keys(REAL).length?'<details style="margin-top:8px"><summary class="hint" style="cursor:pointer">Créditos (para la descripción si querés)</summary><textarea class="inp" id="ev58cr" rows="4" readonly style="margin-top:6px">'+esc(credits())+'</textarea><button class="btn sm" style="margin-top:6px" onclick="EV33.copy(\'ev58cr\')">'+ic('copy')+'Copiar</button></details>':''):'')+'</div>'}
+function refresh(){var el=document.querySelector('.ev358');if(el){var d=document.createElement('div');d.innerHTML=panel();el.replaceWith(d.firstChild)}}
+var tsO=tSonido;tSonido=function(){var h=tsO.apply(this,arguments);try{h+=panel()}catch(e){console.warn('[v3.58]',e)}return h};
+
+/* al abrir, recupera las grabaciones ya guardadas (sin internet) */
+(async function(){try{for(var k in Q){var c=await IDB.get('ramb:'+k);if(c&&c.blob&&!REAL[k]){try{await useItem(k,c,c.blob)}catch(e){}}}}catch(e){}})();
+
+window.EV358={preview:preview,another:another,load:load,REAL:REAL,credits:credits,_search:search};
+console.info('[Estudio Viral] v3.58: sonidos reales');
+})();
+</script>
+<!-- ===== FIN v3.58 ===== -->
 
 </body>
 </html>
