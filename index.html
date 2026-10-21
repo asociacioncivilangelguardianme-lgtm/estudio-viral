@@ -6205,7 +6205,11 @@ var dsO=drawSubs;drawSubs=function(ctx,W,H,text){var a=[].slice.call(arguments),
 /* las voces ya hechas leyendo el rótulo se rehacen solas una vez */
 var vO=Pipe.voices;Pipe.voices=async function(){var P=S.P;try{if(P)P.scenes.forEach(function(s){var v=RT.voices[s.id];if(v&&!v.mine&&!v._lbl&&LABELLED.test(s.text||''))delete RT.voices[s.id]})}catch(e){}
  var r=await vO.apply(this,arguments);try{if(P)P.scenes.forEach(function(s){var v=RT.voices[s.id];if(v)v._lbl=true})}catch(e){}return r};
-window.EV362={clean:clean};
+/* además se borra el rótulo del texto de la escena, para que no aparezca más en las cajitas */
+function strip(t){var x=String(t||'');var y=x.replace(LBL,'').replace(WHO,'').replace(/^[\s,.;:\-–—]+/,'');return y.trim()?y:x}
+function fixScenes(){var P=S.P;if(!P||!P.scenes)return false;var ch=false;P.scenes.forEach(function(sc){if(sc&&typeof sc.text==='string'){var n=strip(sc.text);if(n!==sc.text){if(sc.textPtSrc===sc.text)sc.textPtSrc=n;var v=RT.voices[sc.id];if(v&&!v.mine)delete RT.voices[sc.id];sc.text=n;ch=true}}});return ch}
+var rO=render;render=function(){var ch=false;try{ch=fixScenes()}catch(e){}var r=rO.apply(this,arguments);if(ch){try{save()}catch(e){}}return r};
+window.EV362={clean:clean,fix:fixScenes};
 console.info('[Estudio Viral] v3.62: la voz saltea rótulos tipo «Clip 1 (…):»');
 })();
 </script>
