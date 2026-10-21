@@ -2297,7 +2297,7 @@ window.__ev32export=exportMp4;
 (function(){
 'use strict';
 if(window.__ev33)return;window.__ev33=true;
-var VERSION='3.59';
+var VERSION='3.60';
 var COLORS=['#7dd3fc','#ff9de2','#a7f3d0','#fdba74','#c4b5fd'];
 var MOVES=['zoomin','panr','tiltup','dolly','panl','zoomout','track','tiltdown'];
 
@@ -2618,7 +2618,7 @@ if('serviceWorker' in navigator&&/^https:$/.test(location.protocol)){window.addE
   reg.addEventListener('updatefound',function(){var w=reg.installing;if(!w)return;w.addEventListener('statechange',function(){if(w.state==='installed'&&navigator.serviceWorker.controller)toast('Hay una versión nueva de Estudio Viral: cerrá y volvé a abrir la app para verla ✨')})})}).catch(function(e){console.info('[v3.33] sin app instalable (falta sw.js en GitHub):',e&&e.message)})})}
 
 /* Novedades */
-var NEWS=['🎧 <b>3.59</b>: <b>todos los sonidos son grabaciones reales</b>: lluvia, tormenta, mar, fuego, río, selva, ciudad, mercado, tren, reloj, latidos, forja, batalla y más, los sagrados (atabaque, chocalho, campanita, agogô) y las transiciones. Las mezclas (Terreiro, Mar de Iemanjá, Encruzilhada, Mata sagrada) también. Se repiten sin que se note el corte. En la pestaña Sonido: escuchar, 🔄 probar otra y «Bajar todos ahora».','🎧 <b>3.58</b>: <b>sonidos reales</b>. Las campanitas (adjá/sineta), cigarras, aves africanas, pájaros, grillos, ranas, lechuza, monos, sabana y selva ahora son grabaciones de verdad de Wikimedia Commons (antes se fabricaban y sonaban a timbre). En la pestaña Sonido podés escucharlas y tocar 🔄 para probar otra grabación. La campanita de las transiciones también es real.','🚀 <b>3.57</b>: en Mis Proyectos hay botones nuevos: <b>💬 Responder comentario</b> (el video empieza con el globito del comentario y la IA lo responde), <b>💡 Ideas</b> (7 ideas para la semana y fechas especiales que se acercan) y <b>🎞️ Varios videos</b> (una fila que la app hace sola, uno tras otro). En «Guion y storyboard» está <b>📺 Serie</b> para hacer la Parte 2, 3… con los mismos personajes. Y <b>💾 Copia de seguridad</b>: te avisa una vez por semana y la guarda con un toque (también en Ajustes).','🍲 <b>3.56</b>: en la Receta, las escenas de ingredientes piden primero la olla gigante y un frasquito de vidrio (antes decía «jarrito de barro» y a veces salían jarrones en vez de la olla).','⛪ <b>3.55</b>: el <b>Perfil del canal</b> (firma, hashtags fijos y cartel de cierre) se pone <b>solo en los videos de religión</b>. En «Guion y storyboard» cada video tiene un interruptor para ponerlo o sacarlo a mano.','⛪ <b>3.54</b>: nuevo <b>Perfil del canal</b> en Ajustes (ya viene cargado con Camino de Fe): la firma, los hashtags fijos #CaminoDeFe #Umbanda #Orixas y el cartel de cierre «Guardalo y dejá tu Axé» se ponen solos en cada video. Y nueva <b>🖼️ Portada</b> en «Guion y storyboard»: elegís una escena y la app arma la tapa con letras grandes y el nombre del canal, para TikTok o YouTube.','✨ <b>3.53</b>: nuevos <b>Textos animados</b>: en cada escena podés poner una frase corta que aparece moviéndose (rebote, suave, palabra por palabra, máquina de escribir, deslizando o con brillo) con estilo caja negra, letras grandes, dorado sagrado o neón. En «Guion y storyboard» está «Que la IA ponga los textos» y el <b>cartel de cierre</b> (ej: «Seguinos para más»). Las recetas ya los ponen solas.','⚡ <b>3.52</b>: nuevas <b>Recetas</b> (botón «⚡ Recetas» en Mis Proyectos): elegís Itán, Mensaje del día, Mini documental, Explicativo, Trailer, Top 5, Cuento o Historia solidaria, escribís el tema y la IA hace todo el video. Y nuevo <b>🎞️ Video real gratis</b> en cada escena: busca videos de verdad (ríos, fuego, selva, mar…) en Wikimedia Commons y Archive.org, o los pone solos en todas las escenas.','✅ <b>3.51</b>: nuevo botón «Arreglar guion y escenas (una sola vez)»: deja en «Tu guion» solo lo que dice el narrador y lo pone al lado de cada foto, sin tocar las fotos que subiste. Con «Deshacer» vuelve todo como estaba.','🧹 <b>3.50</b>: la escobita «Limpiar» reconoce más formas de instrucciones y, si no encuentra nada, se lo pasa sola a la IA. «Limpiar con IA» funciona de a 6 escenas.','🧹 <b>3.49</b>: «Limpiar con IA» ya no falla con «no devolvió datos válidos» (ahora limpia de a 6 escenas).','🧹 <b>3.48</b>: la app saca sola las instrucciones que vienen pegadas en los guiones («narración en español latino», «escena siguiendo exactamente…», «estilo…»), así la voz y los subtítulos dicen solo lo del narrador. Botones «Limpiar», «Limpiar con IA» y «Deshacer» en Guion y en Vista.','↩️ <b>3.47</b>: el botón «atrás» del celular ya no cierra la app: primero cierra lo que esté abierto, después vuelve a Vista y a Mis Proyectos. Para salir, tocás «atrás» dos veces.','🗣️ <b>3.46</b>: la voz ya no lee los emojis ni los hashtags del guion (antes decía «corazón», «estatua», «almohadilla»). Nuevo interruptor para hacer el video <b>sin voz</b> (solo subtítulos y música), en la pestaña Voz y en Vista.','🌍 <b>3.45</b>: arreglado lo de las imágenes orientales: el servicio gratis ignoraba los pedidos largos y devolvía cualquier imagen. Ahora cada pedido es corto y empieza por lo importante. En los videos de Orixás las personas salen afrobrasileñas. La Receta usa primeros planos de los personajes con la olla. Las miniaturas de «Vista» ahora se ven.','🍲 <b>3.44</b>: en la Receta de Orixás cada imagen muestra la misma olla grande con los dos personajes (ya no jarros sueltos). En «Vista» ves las imágenes mientras se crean y tenés «Rehacer todas las imágenes».','🌍 <b>3.43</b>: en videos de Orixás las personas salen afrobrasileñas y africanas (nada asiático). La app respeta el límite gratis de 1 imagen cada 45 segundos y ya no deja el cartel amarillo «Free limit reached». En el celular, «Vista» trae los primeros pasos: personajes, fotos de referencia y generar imágenes.','📱 <b>3.42</b>: en el celular el editor ahora va por partes (Vista, Guion, Escena, Estilo y Línea) con botones abajo, sin tener que bajar tanto. Botones más grandes y nada se sale de la pantalla.','🍲 <b>3.41</b>: nueva <b>Receta de Orixás</b> (dos personajes echan ingredientes en la olla y el final se ilumina). Efectos nuevos: frasco que se vuelca, humo, estallido de luz y aura. Cartel con texto en cada escena. Ayuda para darle movimiento real (Wan, Kling, Hailuo) y grabar tu gesto con la cámara. Bajar y subir todas las voces juntas para Applio.','📲 <b>3.40</b>: pasá tus proyectos de la PC al celu con un código QR (sin WhatsApp). Modo Cine (todo el video o solo algunas escenas), color de acento, música que baja sola cuando habla la voz y la nueva sección <b>Video largo a clips</b>.','💾 <b>3.39</b>: el video exportado queda guardado en el proyecto. Al volver a abrirlo aparecen directo Descargar, YouTube, TikTok e Instagram, sin exportar de nuevo.','🎙️ <b>3.38 · Voces más naturales</b>: velocidad por personaje (por ejemplo Oxalá lento y pausado), botón «Subir mi voz» en cada escena (opcional) y la IA escribe los diálogos con pausas y emoción, sin narrador.','💾 <b>3.37</b>: las voces quedan guardadas en la compu. Si recargás la página no se pierden, y si falta alguna se hace sola antes de reproducir.','🥁 <b>3.36 · Sonidos sagrados</b>: atabaque con repique, adjá/sineta, agogô, chocalho, Terreiro, Encruzilhada, Mar de Iemanjá y Mata sagrada. Opción de transiciones con golpe de tambor y campanita.','🕯️ <b>3.35 · Religión afro</b>: sección nueva en Géneros y Estilos con Itán, Mensaje de la entidad, Conocé a la entidad, Oración del día, Ofrenda explicada, Mitos y verdades, Fechas especiales, Pontos cantados, Cuentos para chicos, Exus y Pombagiras, Umbanda y Orixás. Y 9 estilos sagrados: Arte afrobrasileño, Terreiro, Mata sagrada, Encruzilhada nocturna, Pintura sacra, Ícono dorado, Vitral, Escultura africana y Afrofuturismo.','🔧 <b>3.34</b>: en los diálogos, cada escena reconoce sola quién habla y usa su voz, y pone el sonido del lugar (selva, río, cascada, fuego, tambores…). «Armar escenas» ya no borra las imágenes que hiciste.','👥 <b>Modo Diálogo</b>: dos (o más) personajes hablan, cada uno con su voz. Lo elegís en «Nuevo video».',
+var NEWS=['☁️ <b>3.60</b>: nueva <b>Mi carpeta</b> (botón en Mis Proyectos): tus proyectos se guardan en tu propio Vercel, cifrados con tu PIN. En otra compu o celular escribís el PIN y aparecen para seguir donde los dejaste. Se guardan solos cada vez que salís de un proyecto.','🎧 <b>3.59</b>: <b>todos los sonidos son grabaciones reales</b>: lluvia, tormenta, mar, fuego, río, selva, ciudad, mercado, tren, reloj, latidos, forja, batalla y más, los sagrados (atabaque, chocalho, campanita, agogô) y las transiciones. Las mezclas (Terreiro, Mar de Iemanjá, Encruzilhada, Mata sagrada) también. Se repiten sin que se note el corte. En la pestaña Sonido: escuchar, 🔄 probar otra y «Bajar todos ahora».','🎧 <b>3.58</b>: <b>sonidos reales</b>. Las campanitas (adjá/sineta), cigarras, aves africanas, pájaros, grillos, ranas, lechuza, monos, sabana y selva ahora son grabaciones de verdad de Wikimedia Commons (antes se fabricaban y sonaban a timbre). En la pestaña Sonido podés escucharlas y tocar 🔄 para probar otra grabación. La campanita de las transiciones también es real.','🚀 <b>3.57</b>: en Mis Proyectos hay botones nuevos: <b>💬 Responder comentario</b> (el video empieza con el globito del comentario y la IA lo responde), <b>💡 Ideas</b> (7 ideas para la semana y fechas especiales que se acercan) y <b>🎞️ Varios videos</b> (una fila que la app hace sola, uno tras otro). En «Guion y storyboard» está <b>📺 Serie</b> para hacer la Parte 2, 3… con los mismos personajes. Y <b>💾 Copia de seguridad</b>: te avisa una vez por semana y la guarda con un toque (también en Ajustes).','🍲 <b>3.56</b>: en la Receta, las escenas de ingredientes piden primero la olla gigante y un frasquito de vidrio (antes decía «jarrito de barro» y a veces salían jarrones en vez de la olla).','⛪ <b>3.55</b>: el <b>Perfil del canal</b> (firma, hashtags fijos y cartel de cierre) se pone <b>solo en los videos de religión</b>. En «Guion y storyboard» cada video tiene un interruptor para ponerlo o sacarlo a mano.','⛪ <b>3.54</b>: nuevo <b>Perfil del canal</b> en Ajustes (ya viene cargado con Camino de Fe): la firma, los hashtags fijos #CaminoDeFe #Umbanda #Orixas y el cartel de cierre «Guardalo y dejá tu Axé» se ponen solos en cada video. Y nueva <b>🖼️ Portada</b> en «Guion y storyboard»: elegís una escena y la app arma la tapa con letras grandes y el nombre del canal, para TikTok o YouTube.','✨ <b>3.53</b>: nuevos <b>Textos animados</b>: en cada escena podés poner una frase corta que aparece moviéndose (rebote, suave, palabra por palabra, máquina de escribir, deslizando o con brillo) con estilo caja negra, letras grandes, dorado sagrado o neón. En «Guion y storyboard» está «Que la IA ponga los textos» y el <b>cartel de cierre</b> (ej: «Seguinos para más»). Las recetas ya los ponen solas.','⚡ <b>3.52</b>: nuevas <b>Recetas</b> (botón «⚡ Recetas» en Mis Proyectos): elegís Itán, Mensaje del día, Mini documental, Explicativo, Trailer, Top 5, Cuento o Historia solidaria, escribís el tema y la IA hace todo el video. Y nuevo <b>🎞️ Video real gratis</b> en cada escena: busca videos de verdad (ríos, fuego, selva, mar…) en Wikimedia Commons y Archive.org, o los pone solos en todas las escenas.','✅ <b>3.51</b>: nuevo botón «Arreglar guion y escenas (una sola vez)»: deja en «Tu guion» solo lo que dice el narrador y lo pone al lado de cada foto, sin tocar las fotos que subiste. Con «Deshacer» vuelve todo como estaba.','🧹 <b>3.50</b>: la escobita «Limpiar» reconoce más formas de instrucciones y, si no encuentra nada, se lo pasa sola a la IA. «Limpiar con IA» funciona de a 6 escenas.','🧹 <b>3.49</b>: «Limpiar con IA» ya no falla con «no devolvió datos válidos» (ahora limpia de a 6 escenas).','🧹 <b>3.48</b>: la app saca sola las instrucciones que vienen pegadas en los guiones («narración en español latino», «escena siguiendo exactamente…», «estilo…»), así la voz y los subtítulos dicen solo lo del narrador. Botones «Limpiar», «Limpiar con IA» y «Deshacer» en Guion y en Vista.','↩️ <b>3.47</b>: el botón «atrás» del celular ya no cierra la app: primero cierra lo que esté abierto, después vuelve a Vista y a Mis Proyectos. Para salir, tocás «atrás» dos veces.','🗣️ <b>3.46</b>: la voz ya no lee los emojis ni los hashtags del guion (antes decía «corazón», «estatua», «almohadilla»). Nuevo interruptor para hacer el video <b>sin voz</b> (solo subtítulos y música), en la pestaña Voz y en Vista.','🌍 <b>3.45</b>: arreglado lo de las imágenes orientales: el servicio gratis ignoraba los pedidos largos y devolvía cualquier imagen. Ahora cada pedido es corto y empieza por lo importante. En los videos de Orixás las personas salen afrobrasileñas. La Receta usa primeros planos de los personajes con la olla. Las miniaturas de «Vista» ahora se ven.','🍲 <b>3.44</b>: en la Receta de Orixás cada imagen muestra la misma olla grande con los dos personajes (ya no jarros sueltos). En «Vista» ves las imágenes mientras se crean y tenés «Rehacer todas las imágenes».','🌍 <b>3.43</b>: en videos de Orixás las personas salen afrobrasileñas y africanas (nada asiático). La app respeta el límite gratis de 1 imagen cada 45 segundos y ya no deja el cartel amarillo «Free limit reached». En el celular, «Vista» trae los primeros pasos: personajes, fotos de referencia y generar imágenes.','📱 <b>3.42</b>: en el celular el editor ahora va por partes (Vista, Guion, Escena, Estilo y Línea) con botones abajo, sin tener que bajar tanto. Botones más grandes y nada se sale de la pantalla.','🍲 <b>3.41</b>: nueva <b>Receta de Orixás</b> (dos personajes echan ingredientes en la olla y el final se ilumina). Efectos nuevos: frasco que se vuelca, humo, estallido de luz y aura. Cartel con texto en cada escena. Ayuda para darle movimiento real (Wan, Kling, Hailuo) y grabar tu gesto con la cámara. Bajar y subir todas las voces juntas para Applio.','📲 <b>3.40</b>: pasá tus proyectos de la PC al celu con un código QR (sin WhatsApp). Modo Cine (todo el video o solo algunas escenas), color de acento, música que baja sola cuando habla la voz y la nueva sección <b>Video largo a clips</b>.','💾 <b>3.39</b>: el video exportado queda guardado en el proyecto. Al volver a abrirlo aparecen directo Descargar, YouTube, TikTok e Instagram, sin exportar de nuevo.','🎙️ <b>3.38 · Voces más naturales</b>: velocidad por personaje (por ejemplo Oxalá lento y pausado), botón «Subir mi voz» en cada escena (opcional) y la IA escribe los diálogos con pausas y emoción, sin narrador.','💾 <b>3.37</b>: las voces quedan guardadas en la compu. Si recargás la página no se pierden, y si falta alguna se hace sola antes de reproducir.','🥁 <b>3.36 · Sonidos sagrados</b>: atabaque con repique, adjá/sineta, agogô, chocalho, Terreiro, Encruzilhada, Mar de Iemanjá y Mata sagrada. Opción de transiciones con golpe de tambor y campanita.','🕯️ <b>3.35 · Religión afro</b>: sección nueva en Géneros y Estilos con Itán, Mensaje de la entidad, Conocé a la entidad, Oración del día, Ofrenda explicada, Mitos y verdades, Fechas especiales, Pontos cantados, Cuentos para chicos, Exus y Pombagiras, Umbanda y Orixás. Y 9 estilos sagrados: Arte afrobrasileño, Terreiro, Mata sagrada, Encruzilhada nocturna, Pintura sacra, Ícono dorado, Vitral, Escultura africana y Afrofuturismo.','🔧 <b>3.34</b>: en los diálogos, cada escena reconoce sola quién habla y usa su voz, y pone el sonido del lugar (selva, río, cascada, fuego, tambores…). «Armar escenas» ya no borra las imágenes que hiciste.','👥 <b>Modo Diálogo</b>: dos (o más) personajes hablan, cada uno con su voz. Lo elegís en «Nuevo video».',
   '🎨 <b>Subtítulos de colores</b>: cada personaje con su color y su nombre arriba, así se entiende quién habla aunque esté sin sonido.',
   '🖼️ <b>Máximo 6 imágenes</b>: el tiempo de cada una se calcula solo con las voces.',
   '💓 <b>La imagen late con la voz</b>: parece viva mientras el personaje habla.',
@@ -5766,6 +5766,163 @@ console.info('[Estudio Viral] v3.58: sonidos reales');
 })();
 </script>
 <!-- ===== FIN v3.58 ===== -->
+
+<!-- ===== ESTUDIO VIRAL · v3.60 · MI CARPETA EN LA NUBE (CON PIN) =====
+     Tus proyectos se guardan en tu propio Vercel, cifrados con tu PIN. Desde cualquier compu o celular
+     escribís el PIN y aparecen. Agregado al final. Para quitarlo, borrá desde acá hasta "FIN v3.60". -->
+<style>
+.ev60-row{display:flex;gap:8px;align-items:center;padding:9px 10px;border-radius:12px;border:1px solid var(--line,#ffffff1f);background:var(--card,#ffffff08);margin-top:6px}
+.ev60-row .tx{flex:1;min-width:0}.ev60-row .tx b{display:block;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ev60-row .tx small{display:block;opacity:.7;font-size:12px}
+.ev60-tag{font-size:11px;padding:2px 7px;border-radius:6px;background:#ffffff14;white-space:nowrap}
+.ev60-tag.new{background:#f59e0b33}.ev60-tag.ok{background:#22c55e33}.ev60-tag.cl{background:#7c5cff44}
+.ev60-pin{letter-spacing:6px;font-size:20px;font-weight:800;text-align:center}
+.ev60-ban{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:12px;margin-bottom:12px;border-radius:14px;background:#7c5cff1f;border:1px solid #7c5cff66}
+</style>
+<script id="ev360">
+(function(){'use strict';if(window.__ev360)return;window.__ev360=true;
+var API='/api/cloud',PART=3400000;
+var CL={h:null,key:null,files:null,index:null,busy:'',err:'',up:store.get('ev_cloudup',{})||{},auto:store.get('ev_cloudauto',true)!==false,q:[],qrun:false};
+function sheet(html){$('#sheetin').innerHTML=html;$('#sheet').classList.add('open')}
+function head(t){return '<div class="between" style="margin-bottom:10px"><div class="h1" style="font-size:19px">'+t+'</div><button class="btn sm" onclick="closeSheet()">✕ Cerrar</button></div>'}
+function mb(n){return n>1048576?(n/1048576).toFixed(1)+' MB':Math.max(1,Math.round(n/1024))+' KB'}
+function when(t){if(!t)return '';var d=new Date(t),hoy=new Date();var hh=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');return d.toDateString()===hoy.toDateString()?'hoy '+hh:d.getDate()+'/'+(d.getMonth()+1)+' '+hh}
+function isOpen(){return $('#sheet').classList.contains('open')&&!!document.querySelector('.ev60')}
+
+/* ---------- cifrado con el PIN (en el navegador) ---------- */
+var te=new TextEncoder(),td=new TextDecoder();
+function hex(buf){return [].map.call(new Uint8Array(buf),function(b){return b.toString(16).padStart(2,'0')}).join('')}
+async function login(pin){pin=String(pin||'').trim();
+  CL.h=hex(await crypto.subtle.digest('SHA-256',te.encode('ev-cloud-v1|'+pin)));
+  var base=await crypto.subtle.importKey('raw',te.encode(pin),'PBKDF2',false,['deriveKey']);
+  CL.key=await crypto.subtle.deriveKey({name:'PBKDF2',salt:te.encode('estudio-viral-carpeta-v1'),iterations:200000,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}
+async function enc(bytes){var iv=crypto.getRandomValues(new Uint8Array(12));var c=await crypto.subtle.encrypt({name:'AES-GCM',iv:iv},CL.key,bytes);var o=new Uint8Array(12+c.byteLength);o.set(iv);o.set(new Uint8Array(c),12);return o}
+async function dec(bytes){bytes=new Uint8Array(bytes);return new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM',iv:bytes.slice(0,12)},CL.key,bytes.slice(12)))}
+
+/* ---------- servidor ---------- */
+async function call(op,n,body){var u=API+'?op='+op+'&h='+CL.h+(n?'&n='+encodeURIComponent(n):'');
+  var r=await fetch(u,body!==undefined?{method:'POST',headers:{'Content-Type':'application/octet-stream'},body:body}:{});
+  if(r.status===503){var e=new Error('nostore');e.nostore=1;throw e}
+  if(r.status===404&&op!=='get'){var e2=new Error('noapi');e2.noapi=1;throw e2}
+  if(!r.ok){var j={};try{j=await r.json()}catch(_){}throw new Error(j.error||('El servidor respondió '+r.status))}return r}
+async function refreshList(){var j=await (await call('list')).json();CL.files={};(j.files||[]).forEach(function(f){CL.files[f.n]=f});return CL.files}
+async function getFile(n){var f=CL.files&&CL.files[n];
+  if(f){try{var r=await fetch(f.url+(f.url.indexOf('?')<0?'?':'&')+'t='+Date.now(),{cache:'no-store'});if(r.ok)return new Uint8Array(await r.arrayBuffer())}catch(e){}}
+  var r2=await call('get',n);return new Uint8Array(await r2.arrayBuffer())}
+async function loadIndex(){await refreshList();if(!CL.files['index.bin']){CL.index={v:1,projects:{}};return CL.index}
+  var raw=await getFile('index.bin');var js;try{js=JSON.parse(td.decode(await dec(raw)))}catch(e){var x=new Error('PIN incorrecto');x.badpin=1;throw x}
+  CL.index=js&&js.projects?js:{v:1,projects:{}};return CL.index}
+async function saveIndex(){await call('put','index.bin',await enc(te.encode(JSON.stringify(CL.index))))}
+
+/* ---------- subir y bajar proyectos ---------- */
+async function upload(p,quiet){if(!CL.key)throw new Error('Primero entrá con tu PIN');if(!window.EV340||!EV340.buildFile)throw new Error('Falta la parte de «Pasar al celu»');
+  try{if(S.P&&S.P.id===p.id)save(1)}catch(e){}p=S.projects.find(function(x){return x.id===p.id})||p;
+  var blob=await EV340.buildFile([p],true),data=await enc(new Uint8Array(await blob.arrayBuffer()));
+  var parts=Math.max(1,Math.ceil(data.length/PART));
+  for(var i=0;i<parts;i++){if(!quiet)setBusy('Subiendo «'+(p.name||'proyecto')+'» '+(parts>1?(i+1)+' de '+parts:'')+'…');await call('put','p_'+p.id+'_'+i+'.bin',data.slice(i*PART,(i+1)*PART))}
+  await loadIndex();var old=CL.index.projects[p.id];
+  CL.index.projects[p.id]={id:p.id,name:p.name||'Proyecto',updatedAt:p.updatedAt||Date.now(),parts:parts,size:data.length,status:p.status||'draft',scenes:(p.scenes||[]).length,at:Date.now()};
+  await saveIndex();
+  if(old&&old.parts>parts){for(var k=parts;k<old.parts;k++){try{await call('del','p_'+p.id+'_'+k+'.bin','')}catch(e){}}}
+  CL.up[p.id]=p.updatedAt||Date.now();store.set('ev_cloudup',CL.up);return true}
+async function download(id){var it=CL.index&&CL.index.projects[id];if(!it)throw new Error('Ese proyecto ya no está en la carpeta');await refreshList();
+  var chunks=[],tot=0;for(var i=0;i<it.parts;i++){setBusy('Bajando «'+it.name+'» '+(it.parts>1?(i+1)+' de '+it.parts:'')+'…');var c=await getFile('p_'+id+'_'+i+'.bin');chunks.push(c);tot+=c.length}
+  var all=new Uint8Array(tot),o=0;chunks.forEach(function(c){all.set(c,o);o+=c.length});
+  var plain=await dec(all),r=await EV340.readFile(new File([plain],it.name+'.estudioviral'));CL.up[id]=it.updatedAt;store.set('ev_cloudup',CL.up);return r}
+async function remove(id){var it=CL.index.projects[id];if(!it)return;await call('del','p_'+id+'_','');await loadIndex();delete CL.index.projects[id];await saveIndex()}
+
+function setBusy(t){CL.busy=t||'';var m=$('#ev60busy');if(m)m.innerHTML=t?'<span class="spin" style="width:12px;height:12px;vertical-align:-2px"></span> '+esc(t):''}
+async function act(fn,okMsg){if(CL.busy)return toast('Esperá: '+CL.busy,1);try{var r=await fn();setBusy('');if(okMsg)toast(okMsg);if(isOpen())ui();return r}
+  catch(e){setBusy('');if(e.nostore||e.noapi){CL.err=e.nostore?'nostore':'noapi';if(isOpen())ui();return}toast(e.message||String(e),1);if(isOpen())ui()}}
+
+/* ---------- guardado automático ---------- */
+function changed(p){return p&&p.scenes&&p.scenes.length&&(CL.up[p.id]||0)<(p.updatedAt||0)}
+function queue(p){if(!CL.key||!CL.auto||!changed(p))return;if(CL.q.indexOf(p.id)<0)CL.q.push(p.id);setTimeout(pump,1500)}
+async function pump(){if(CL.qrun||CL.busy||!CL.q.length)return;CL.qrun=true;
+  try{while(CL.q.length){var id=CL.q.shift(),p=S.projects.find(function(x){return x.id===id});if(!p||!changed(p))continue;
+      if(Player&&Player.playing&&Player.rec){CL.q.unshift(id);break}   // no molestar mientras graba
+      try{await upload(p,true);toast('☁️ «'+(p.name||'Proyecto')+'» guardado en tu carpeta')}catch(e){if(e.nostore||e.noapi){CL.auto=false;break}console.warn('[carpeta]',e)}}}
+  finally{CL.qrun=false;if(CL.q.length)setTimeout(pump,20000)}}
+var opO=openProject;openProject=function(){var prev=S.P;var r=opO.apply(this,arguments);try{if(prev&&(!S.P||prev.id!==S.P.id))queue(prev)}catch(e){}return r};
+var goO=go;go=function(v){var prev=S.view==='editor'&&S.P;var r=goO.apply(this,arguments);try{if(prev)queue(prev)}catch(e){}return r};
+setInterval(function(){try{if(S.P&&S.P.status==='done')queue(S.P)}catch(e){}},45000);
+window.addEventListener('pagehide',function(){try{if(S.P)save(1)}catch(e){}});
+
+/* ---------- pantalla «Mi carpeta» ---------- */
+function setupHelp(){return '<div class="card" style="padding:12px;border-color:#f59e0b88"><b>⚙️ Falta un paso único en Vercel (2 minutos)</b>'+
+  (CL.err==='noapi'?'<div class="hint" style="margin-top:6px">Tu página todavía no tiene la versión nueva. Esperá un par de minutos a que Vercel termine de publicarla y recargá.</div>':
+  '<ol class="hint" style="padding-left:18px;margin-top:6px"><li>Entrá a <a href="https://vercel.com/dashboard" target="_blank" rel="noopener">vercel.com</a> y abrí tu proyecto <b>estudio-viral</b>.</li><li>Arriba tocá <b>Storage</b> → <b>Create Database</b> (o «Create») → elegí <b>Blob</b> → nombre: <b>mi-carpeta</b> → <b>Create</b>.</li><li>Cuando pregunte, conectalo a <b>estudio-viral</b> con todos los entornos marcados → <b>Connect</b>.</li><li>Andá a <b>Deployments</b> → el primero → <b>⋯</b> → <b>Redeploy</b>. Esperá un minuto y recargá esta página.</li></ol>'+
+  '<div class="ev40-mini">Es gratis dentro del plan Hobby de Vercel (con un límite de espacio). Los videos ya exportados no se suben, así ocupa mucho menos.</div>')+
+  '<button class="btn sm" style="margin-top:8px" onclick="EV360.retry()">Ya lo hice, probar de nuevo</button></div>'}
+function ui(){var h='';
+  if(CL.err){h=setupHelp()}
+  else if(!CL.key){var rem=!!store.get('ev_cloudpin','');
+    h='<div class="sub" style="margin-bottom:10px">Guardá tus proyectos en tu carpeta y abrilos desde cualquier compu o celular con tu PIN. Se guardan <b>cifrados</b>: sin el PIN nadie puede ver lo que hay adentro.</div>'+
+     '<div class="card" style="padding:14px"><div class="lbl">Tu PIN</div><input class="inp ev60-pin" id="ev60p" type="password" inputmode="text" autocomplete="off" placeholder="••••••" onkeydown="if(event.key===\'Enter\')EV360.enter()">'+
+     '<div class="ev40-mini" style="margin-top:4px">Mínimo 6 letras o números. Mejor mezclá letras y números (ej: oxum2026). <b>Anotalo</b>: si lo olvidás no hay forma de recuperar la carpeta.</div>'+
+     '<label style="display:flex;gap:8px;align-items:center;margin-top:10px;cursor:pointer"><input type="checkbox" id="ev60r" checked><span>Recordar el PIN en esta compu</span></label>'+
+     '<button class="btn grad" style="width:100%;margin-top:12px" onclick="EV360.enter()">☁️ Entrar a mi carpeta</button><div class="pmsg" id="ev60m"></div>'+
+     '<div id="ev60new" style="display:none;margin-top:10px"><div class="lbl">Repetí el PIN para crear tu carpeta nueva</div><input class="inp ev60-pin" id="ev60p2" type="password" autocomplete="off" placeholder="••••••" onkeydown="if(event.key===\'Enter\')EV360.enter()">'+
+     '<button class="btn" style="width:100%;margin-top:8px" onclick="EV360.enter()">✨ Crear mi carpeta</button></div></div>'}
+  else{var idx=(CL.index&&CL.index.projects)||{},ids=Object.keys(idx).sort(function(a,b){return (idx[b].updatedAt||0)-(idx[a].updatedAt||0)});
+    var loc=S.projects.filter(function(p){return p.scenes&&p.scenes.length&&!idx[p.id]}),used=ids.reduce(function(s,k){return s+(idx[k].size||0)},0);
+    h='<div class="row wrap between" style="gap:6px;margin-bottom:6px"><span class="sub">✅ Conectado · '+ids.length+' proyecto(s) · '+mb(used)+'</span><div class="row" style="gap:6px"><button class="btn sm" onclick="EV360.reload()">'+ic('refresh')+'</button><button class="btn sm" onclick="EV360.logout()">Salir</button></div></div>'+
+     '<label style="display:flex;gap:8px;align-items:center;margin:4px 0 8px;cursor:pointer"><input type="checkbox" '+(CL.auto?'checked':'')+' onchange="EV360.setAuto(this.checked)"><span><b>Guardar solo</b>: cada vez que salís de un proyecto o terminás un video, se sube a la carpeta.</span></label>'+
+     '<div id="ev60busy" class="hint" style="min-height:18px">'+(CL.busy?esc(CL.busy):'')+'</div>'+
+     (loc.length?'<button class="btn grad" style="width:100%;margin:4px 0" onclick="EV360.upAll()">⬆️ Subir todos los proyectos de esta compu ('+loc.length+')</button>':'')+
+     '<div class="lbl" style="margin-top:8px">En tu carpeta</div>'+
+     (ids.length?ids.map(function(id){var it=idx[id],lp=S.projects.find(function(p){return p.id===id});
+       var tag=!lp?'<span class="ev60-tag cl">Solo en la carpeta</span>':(it.updatedAt||0)>(lp.updatedAt||0)+1000?'<span class="ev60-tag new">Más nuevo en la carpeta</span>':(lp.updatedAt||0)>(it.updatedAt||0)+1000?'<span class="ev60-tag new">Más nuevo acá</span>':'<span class="ev60-tag ok">Igual en las dos</span>';
+       var btn=!lp||(it.updatedAt||0)>(lp.updatedAt||0)+1000?'<button class="btn sm grad" onclick="EV360.down(\''+id+'\')">Abrir</button>':(lp.updatedAt||0)>(it.updatedAt||0)+1000?'<button class="btn sm" onclick="EV360.up(\''+id+'\')">⬆️ Subir</button>':'<button class="btn sm" onclick="EV360.openLocal(\''+id+'\')">Abrir</button>';
+       return '<div class="ev60-row"><div class="tx"><b>'+esc(it.name)+'</b><small>'+(it.status==='done'?'🎬 ':'')+it.scenes+' escenas · '+mb(it.size||0)+' · guardado '+when(it.at)+'</small></div>'+tag+btn+'<button class="btn sm" title="Borrar de la carpeta" onclick="EV360.del(\''+id+'\')">'+ic('trash')+'</button></div>'}).join('')
+      :'<div class="hint">Tu carpeta está vacía. Subí tus proyectos con el botón de arriba.</div>')+
+     (loc.length?'<div class="lbl" style="margin-top:12px">Solo en esta compu</div>'+loc.map(function(p){return '<div class="ev60-row"><div class="tx"><b>'+esc(p.name||'Proyecto')+'</b><small>'+(p.scenes||[]).length+' escenas</small></div><button class="btn sm" onclick="EV360.up(\''+p.id+'\')">⬆️ Subir</button></div>'}).join(''):'')+
+     '<div class="ev40-mini" style="margin-top:10px">Los videos exportados no se suben (pesan mucho): al abrir el proyecto en otra compu, tocás Exportar y se vuelve a hacer igual.</div>'}
+  sheet('<div class="ev60">'+head('☁️ Mi carpeta')+h+'</div>');if(!CL.key&&!CL.err)setTimeout(function(){var i=$('#ev60p');i&&i.focus()},50)}
+
+async function enter(pin,rem,silent){var m=$('#ev60m');pin=String(pin!=null?pin:(($('#ev60p')||{}).value||'')).trim();
+  if(pin.length<6){if(m){m.textContent='El PIN tiene que tener al menos 6 letras o números.';m.style.color='#ff6b6b'}return}
+  if(rem==null)rem=!!($('#ev60r')||{}).checked;if(m){m.innerHTML='<span class="spin" style="width:12px;height:12px;vertical-align:-2px"></span> Abriendo tu carpeta…';m.style.color=''}
+  try{await login(pin);var idx=await loadIndex();
+    if(!CL.files['index.bin']){if(silent){CL.key=null;CL.h=null;return}
+      var c2=$('#ev60p2');
+      if(!c2||!c2.value){CL.key=null;CL.h=null;CL.pend=pin;var box=$('#ev60new');if(box)box.style.display='block';if(m){m.innerHTML='No encontré ninguna carpeta con ese PIN.<br>• Si ya tenías una, <b>revisá el PIN</b> (puede ser una letra distinta).<br>• Si es la primera vez, escribilo otra vez abajo para <b>crear tu carpeta</b>.';m.style.color='#f59e0b'}setTimeout(function(){var i=$('#ev60p2');i&&i.focus()},50);return}
+      if(c2.value.trim()!==pin){CL.key=null;CL.h=null;if(m){m.textContent='Los dos PIN no son iguales. Probá de nuevo.';m.style.color='#ff6b6b'}return}
+      await saveIndex()}
+    if(rem)store.set('ev_cloudpin',pin);else store.set('ev_cloudpin','');CL.err='';if(!silent){ui();toast('☁️ Carpeta abierta')}try{render()}catch(e){}}
+  catch(e){CL.key=null;CL.h=null;if(e.nostore||e.noapi){CL.err=e.nostore?'nostore':'noapi';if(!silent)ui();return}
+    if(silent)return;if(m){m.textContent=e.badpin?'Ese PIN no abre esta carpeta. Revisalo.':(e.message||String(e));m.style.color='#ff6b6b'}}}
+
+/* ---------- botones en Mis proyectos ---------- */
+var vpO=vProjects;vProjects=function(m){vpO.apply(this,arguments);try{
+  var rb=m.querySelector('.ev52-rb');if(rb&&!m.querySelector('.ev60-b')){var b=document.createElement('button');b.className='btn ev60-b';b.textContent='☁️ Mi carpeta';b.onclick=function(){EV360.open()};rb.parentNode.insertBefore(b,rb)}
+  if(!CL.key&&!m.querySelector('.ev60-ban')&&S.projects.filter(function(p){return p.scenes&&p.scenes.length}).length===0){var d=document.createElement('div');d.className='ev60-ban';
+    d.innerHTML='<div><b>☁️ ¿Ya tenés proyectos en otra compu?</b><div class="sub">Si los guardaste en tu carpeta, escribí tu PIN y aparecen acá.</div></div><button class="btn grad" onclick="EV360.open()">Abrir mi carpeta</button>';m.insertBefore(d,m.firstChild)}
+  if(CL.key&&CL.index&&!m.querySelector('.ev60-ban')){var miss=Object.keys(CL.index.projects).filter(function(id){return !S.projects.some(function(p){return p.id===id})});
+    if(miss.length){var d2=document.createElement('div');d2.className='ev60-ban';d2.innerHTML='<div><b>☁️ Hay '+miss.length+' proyecto(s) en tu carpeta que no están en esta compu</b></div><button class="btn grad" onclick="EV360.downAll()">Traerlos todos</button>';m.insertBefore(d2,m.firstChild)}}}catch(e){console.warn('[v3.60]',e)}};
+
+window.EV360={CL:CL,
+  open:function(){ui()},enter:function(){return enter()},
+  retry:function(){CL.err='';var pin=store.get('ev_cloudpin','');if(pin)enter(pin,true,true).then(ui);else ui()},
+  reload:function(){act(async function(){setBusy('Actualizando…');await loadIndex()})},
+  logout:function(){if(!confirm('¿Salir de tu carpeta en esta compu? (tus proyectos quedan guardados en la carpeta)'))return;CL.key=null;CL.h=null;CL.index=null;store.set('ev_cloudpin','');ui();try{render()}catch(e){}},
+  setAuto:function(v){CL.auto=!!v;store.set('ev_cloudauto',CL.auto);toast(v?'Guardado automático prendido ☁️':'Guardado automático apagado')},
+  up:function(id){var p=S.projects.find(function(x){return x.id===id});if(p)act(function(){return upload(p)},'☁️ Subido')},
+  upAll:function(){var idx=(CL.index&&CL.index.projects)||{},ps=S.projects.filter(function(p){return p.scenes&&p.scenes.length&&(!idx[p.id]||changed(p))});
+    act(async function(){for(var i=0;i<ps.length;i++){setBusy('Subiendo '+(i+1)+' de '+ps.length+': «'+(ps[i].name||'Proyecto')+'»…');await upload(ps[i],true)}},'☁️ Listo: '+ps.length+' proyecto(s) en tu carpeta')},
+  down:function(id){act(async function(){await download(id);try{render()}catch(e){}},'✅ Proyecto traído de tu carpeta')},
+  downAll:function(){var ids=Object.keys((CL.index&&CL.index.projects)||{}).filter(function(id){return !S.projects.some(function(p){return p.id===id})});
+    act(async function(){for(var i=0;i<ids.length;i++)await download(ids[i]);try{render()}catch(e){}},'✅ '+ids.length+' proyecto(s) traídos de tu carpeta')},
+  openLocal:function(id){var p=S.projects.find(function(x){return x.id===id});if(p){closeSheet();openProject(p)}},
+  del:function(id){var it=CL.index.projects[id];if(!it||!confirm('¿Borrar «'+it.name+'» de tu carpeta? (si está en esta compu, acá no se borra)'))return;act(function(){return remove(id)},'Borrado de la carpeta')},
+  _login:login,_upload:upload,_download:download};
+
+/* al abrir: si el PIN está recordado, entra sola */
+(function(){var pin=store.get('ev_cloudpin','');if(pin)setTimeout(function(){enter(pin,true,true).then(function(){try{render()}catch(e){}})},1200)})();
+console.info('[Estudio Viral] v3.60: mi carpeta en la nube con PIN');
+})();
+</script>
+<!-- ===== FIN v3.60 ===== -->
 
 </body>
 </html>

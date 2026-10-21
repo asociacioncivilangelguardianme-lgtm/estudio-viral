@@ -4,6 +4,7 @@
   "private": true,
   "description": "Estudio Viral IA: videos virales con IA gratis",
   "dependencies": {
-    "ws": "^8.18.0"
+    "ws": "^8.18.0",
+    "@vercel/blob": "^1.1.0"
   }
 }
