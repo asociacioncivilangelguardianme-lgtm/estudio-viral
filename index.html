@@ -2732,7 +2732,7 @@ function kit(ac,g,st,en,nodes){var R=Math.random;
     var s=nsrc(ac),bp=ac.createBiquadFilter();bp.type='bandpass';bp.frequency.value=f0*6;bp.Q.value=1.2;var ng=ac.createGain();ng.gain.setValueAtTime(gain*.35,t);ng.gain.exponentialRampToValueAtTime(.0005,t+.04);s.connect(bp).connect(ng).connect(g);s.start(t,R());s.stop(t+.06);nodes.push(s)}
   function slap(t,gain){if(t>en-.05||t<st)return;var s=nsrc(ac),bp=ac.createBiquadFilter();bp.type='bandpass';bp.frequency.value=2600;bp.Q.value=.9;var ng=ac.createGain();ng.gain.setValueAtTime(gain,t);ng.gain.exponentialRampToValueAtTime(.0005,t+.07);s.connect(bp).connect(ng).connect(g);s.start(t,R());s.stop(t+.09);nodes.push(s);drum(t,330,290,.09,gain*.5)}
   function bell(t,f,d,gain){if(t>en-.05||t<st)return;[[1,1],[2.76,.45],[5.4,.22],[8.93,.1]].forEach(function(p){var o=ac.createOscillator(),gg=ac.createGain();o.type='sine';o.frequency.value=f*p[0];gg.gain.setValueAtTime(.0001,t);gg.gain.exponentialRampToValueAtTime(gain*p[1],t+.003);gg.gain.exponentialRampToValueAtTime(.0003,t+d/(1+p[0]*.25));o.connect(gg).connect(g);o.start(t);o.stop(t+d+.05);nodes.push(o)})}
-  function shake(t,gain,d){if(t>en-.03||t<st)return;var s=nsrc(ac),hp=ac.createBiquadFilter();hp.type='highpass';hp.frequency.value=5200;var ng=ac.createGain();ng.gain.setValueAtTime(.0001,t);ng.gain.linearRampToValueAtTime(gain,t+.015);ng.gain.exponentialRampToValueAtTime(.0005,t+(d||.07));s.connect(hp).connect(ng).connect(g);s.start(t,R());s.stop(t+(d||.07)+.02);nodes.push(s)}
+  function shake(t,gain,d){if(t>en-.03||t<st)return;var s=nsrc(ac),hp=ac.createBiquadFilter();hp.type='bandpass';hp.frequency.value=4200;hp.Q.value=.6;var ng=ac.createGain();ng.gain.setValueAtTime(.0001,t);ng.gain.linearRampToValueAtTime(gain,t+.015);ng.gain.exponentialRampToValueAtTime(.0005,t+(d||.07));s.connect(hp).connect(ng).connect(g);s.start(t,R());s.stop(t+(d||.07)+.02);nodes.push(s)}
   function metal(t,f,d,gain,ratio,index){if(t>en-.05||t<st)return;ratio=ratio||1.41;index=index||1.2;
     [[1,1],[1.0045,.6]].forEach(function(q){var c=ac.createOscillator(),m=ac.createOscillator(),mg=ac.createGain(),a=ac.createGain();c.type='sine';m.type='sine';
       c.frequency.value=f*q[0];m.frequency.value=f*q[0]*ratio;mg.gain.setValueAtTime(f*index,t);mg.gain.exponentialRampToValueAtTime(f*index*.08+1,t+d);
@@ -2753,21 +2753,23 @@ function kit(ac,g,st,en,nodes){var R=Math.random;
    adja:function(lv,every){var P3=[3150,3720,4380];for(var t=st+.4+R()*.6;t<en-1;t+=(every||3.5)+R()*2.5){var dur=.7+R()*.7,n=14+Math.floor(R()*10);
        for(var k=0;k<n;k++){var tt=t+dur*k/n+(R()-.5)*.03,sw=Math.abs(Math.sin(k/n*Math.PI*3));metal(tt,P3[Math.floor(R()*3)]*(1+(R()-.5)*.02),.22+R()*.25,.12*lv*(.35+.65*sw)*(1-k/n*.4),1.41,1.1)}}},
    sineta:function(lv,every){for(var t=st+.5+R();t<en-1.2;t+=(every||4)+R()*3){var n=3+Math.floor(R()*4),f=2350*(1+(R()-.5)*.04);for(var k=0;k<n;k++)metal(t+k*(.075+R()*.03),f,.7,.11*lv*(k?.75:1),2.76,1.6)}},
-   chocalho:function(lv,bpm){bpm=bpm||104;var b=60/bpm,s16=b/4,i=0;for(var t=st+.1;t<en-.1;t+=s16,i++)shake(t,(i%4===0?.12:i%2===0?.07:.045)*lv,i%4===2?.12:.06)}}}
+   chocalho:function(lv,bpm){bpm=bpm||104;var b=60/bpm,s16=b/4,i=0;for(var t=st+.1;t<en-.1;t+=s16,i++)shake(t,(i%4===0?.6:i%2===0?.4:.28)*lv,i%4===2?.16:.09)}}}
+var HIDA={tambor_lento:1};
 ambience=function(ac,out,type,st,en,vol){
-  if(!NEWA[type])return prev.apply(this,arguments);
+  if(!NEWA[type]&&!HIDA[type])return prev.apply(this,arguments);
   var nodes=[],g=ac.createGain();g.gain.setValueAtTime(0,st);g.gain.linearRampToValueAtTime(vol,st+.4);g.gain.setValueAtTime(vol,Math.max(st+.4,en-.6));g.gain.linearRampToValueAtTime(0,en);g.connect(out);
   var K=kit(ac,g,st,en,nodes),bpm=96+Math.floor(Math.random()*16);
   function layer(t,v){try{nodes.push.apply(nodes,prev(ac,out,t,st,en,vol*v)||[])}catch(e){}}
   switch(type){
-   case'atabaque':K.atabaque(1,bpm);K.chocalho(.5,bpm);break;
+   case'atabaque':K.atabaque(1,bpm);K.chocalho(.3,bpm);break;
    case'adja':K.adja(1,2.5);break;
    case'agogo':K.agogo(1,bpm);K.chocalho(.4,bpm);break;
    case'chocalho':K.chocalho(1,bpm);break;
    case'terreiro':K.atabaque(.55,92);K.sineta(.9,5);layer('fuego',.35);break;
    case'encruzilhada':layer('noche',.9);layer('viento',.35);for(var t=st+.5;t<en-.5;t+=1.25){K.drum(t,92,66,.6,.45);if(Math.random()<.35)K.drum(t+.31,150,120,.25,.2)}K.adja(.45,8);break;
    case'iemanja':layer('oceano',1);K.sineta(.9,4.5);break;
-   case'mata_sagrada':layer('bosque',1);K.atabaque(.35,88);break}
+   case'mata_sagrada':layer('bosque',1);K.atabaque(.35,88);break
+   case'tambor_lento':for(var t2=st+.4;t2<en-.5;t2+=1.6){K.drum(t2,88,60,.9,.75);if(Math.random()<.5)K.drum(t2+.4,140,110,.3,.3)}break}
   return nodes};
 /* transición con golpe de tambor y campanita */
 var whO=whoosh,imO=impact;
@@ -5611,7 +5613,7 @@ var Q={
   selva:['rainforest ambience','tropical rainforest sounds','jungle ambience'],
   pajaros:['dawn chorus','birdsong morning','bird song garden'],
   aves_africa:['dawn chorus Africa','birds Kenya','African birds','Hadada ibis','bird song Tanzania'],
-  sabana:['savanna ambience','savannah night Africa','African bush ambience'],
+  sabana:['savanna ambience','African savanna','savannah','Serengeti','Kruger National Park','African bush','Kenya ambience','Tanzania night','Africa night ambience','lion roar'],
   noche:['crickets night','night crickets','field crickets'],
   cigarras:['cicada chorus','cicada song','Magicicada chorus','cicadas'],
   ranas:['frog chorus','frogs pond night','tree frogs'],
@@ -5645,10 +5647,8 @@ var Q={
   tecnologia:['computer beeps','electronic beeps','sci-fi computer'],
   espacio:['space ambience','spacecraft ambience','ambient drone'],
   tambores:['african drumming','djembe ensemble','drum circle'],
-  atabaque:['atabaque','candomble drums','conga drums','djembe'],
   adja:['handbell ringing','hand bell','small bell ringing','sleigh bells'],
   agogo:['agogo bell','cowbell','agogô'],
-  chocalho:['shaker percussion','shekere','maracas'],
   whoosh:['whoosh','swoosh','woosh'],
   impacto:['bass drum hit','timpani hit','gong']};
 var NAME={lluvia:'Lluvia',tormenta:'Tormenta',viento:'Viento',oceano:'Océano',fuego:'Fuego',rio:'Río / arroyo',cascada:'Cascada',bosque:'Bosque',selva:'Selva tropical',pajaros:'Pájaros',aves_africa:'Aves africanas',sabana:'Sabana africana',noche:'Grillos (noche)',cigarras:'Cigarras',ranas:'Ranas',lechuza:'Lechuza / búho',monos:'Monos',cueva:'Cueva (gotas)',desierto:'Desierto',nieve:'Ventisca',
@@ -5656,13 +5656,13 @@ var NAME={lluvia:'Lluvia',tormenta:'Tormenta',viento:'Viento',oceano:'Océano',f
   reloj:'Reloj',telefono:'Teléfono',hospital:'Hospital',latidos:'Latidos',forja:'Forja',batalla:'Batalla',campanas:'Campanas',magia:'Magia (campanitas de viento)',tecnologia:'Tecnología',espacio:'Espacio',
   tambores:'Tambores',atabaque:'Atabaque',adja:'Campanita (adjá / sineta)',agogo:'Agogô',chocalho:'Chocalho',whoosh:'Transición (whoosh)',impacto:'Golpe del título'};
 var GROUPS=[['🌿 Naturaleza',['lluvia','tormenta','viento','oceano','fuego','rio','cascada','bosque','selva','pajaros','aves_africa','sabana','noche','cigarras','ranas','lechuza','monos','cueva','desierto','nieve']],
-  ['🕯️ Sagrados',['atabaque','adja','agogo','chocalho','tambores','campanas']],
+  ['🕯️ Sagrados',['adja','agogo','tambores','campanas']],
   ['🏙️ Gente y ciudad',['ciudad','trafico','multitud','festejo','estadio','cafe','oficina','construccion']],
   ['🚆 Transporte',['avion','aeropuerto','tren','helicoptero','barco','sirena']],
   ['⏰ Objetos y efectos',['reloj','telefono','hospital','latidos','forja','batalla','magia','tecnologia','espacio','whoosh','impacto']]];
 var MUL={sirena:.7,batalla:.75,telefono:.7,construccion:.75,helicoptero:.8,avion:.85,tormenta:.95,estadio:.85,latidos:1.2,reloj:1.1,whoosh:.9,impacto:1};
 var ONESHOT={whoosh:1,impacto:1};
-var BAD=/spoken|pronunc|wikipedia|lecture|interview|speech|narrat|podcast|poem|reading|anthem|song of the|music|sonata|symphony|piano|guitar|choir|hymn|remix|voice/i;
+var BAD=/\b(country|bluegrass|banjo|fiddle|jazz|rock|orchestra|concert|samba|band)\b|spoken|pronunc|wikipedia|lecture|interview|speech|narrat|podcast|poem|reading|anthem|song of the|music|sonata|symphony|piano|guitar|choir|hymn|remix|voice/i;
 var REAL={};             // tipo -> {buf,gain,title,page,lic,art}
 var LOAD={};             // tipo -> promesa
 function on(){return S.settings.realSnd!==false}
@@ -5719,11 +5719,11 @@ function play(ac,out,type,st,en,vol,opt){var R=REAL[type];if(!R)return null;opt=
   s.start(st,off);s.stop(en+.05);return s}
 
 var USE={};Object.keys(Q).forEach(function(k){if(!ONESHOT[k])USE[k]=k});
-var MIX={terreiro:[['atabaque',.55],['adja',.7],['fuego',.3]],iemanja:[['oceano',1],['adja',.6]],encruzilhada:[['noche',.85],['viento',.3],['atabaque',.3]],mata_sagrada:[['bosque',1],['atabaque',.35]],agogo:[['agogo',1],['chocalho',.4]]};
+var MIX={terreiro:[['atabaque',.9],['adja',.4],['fuego',.25]],iemanja:[['oceano',1],['adja',.6]],encruzilhada:[['noche',.8],['viento',.4],['tambor_lento',.9]],mata_sagrada:[['bosque',1],['atabaque',.35]],agogo:[['agogo',1],['chocalho',.5]]};
 var ambO=ambience;
 ambience=function(ac,out,type,st,en,vol){
   if(on()){var mx=MIX[type];
-    if(mx&&REAL[mx[0][0]]){var n=[];mx.forEach(function(x){if(REAL[x[0]])n.push(play(ac,out,x[0],st,en,vol,{mul:x[1]}));else{try{n=n.concat(ambO(ac,out,x[0],st,en,vol*x[1])||[])}catch(e){}}});return n.filter(Boolean)}
+    if(mx&&mx.some(function(x){return REAL[x[0]]})){var n=[];mx.forEach(function(x){if(REAL[x[0]])n.push(play(ac,out,x[0],st,en,vol,{mul:x[1]}));else{try{n=n.concat(ambO(ac,out,x[0],st,en,vol*x[1])||[])}catch(e){}}});return n.filter(Boolean)}
     if(!mx&&USE[type]&&REAL[USE[type]]){var s=play(ac,out,USE[type],st,en,vol);if(s)return [s]}}
   return ambO.apply(this,arguments)};
 
@@ -5753,7 +5753,7 @@ var runO=Player.run.bind(Player);
 Player.run=async function(record){var P=S.P,need=on()?needed(P):[];
   if(need.length&&!this.playing){Pipe.setBusy('Bajando sonidos reales ('+need.length+')… la primera vez tarda un poco, después quedan guardados');
     try{await Promise.race([Promise.all(need.map(function(k){return load(k).catch(function(){return null})})),new Promise(function(r){setTimeout(r,40000)})])}catch(e){}
-    Pipe.setBusy('');var miss=need.filter(function(k){return !REAL[k]});if(miss.length)toast('No pude bajar: '+miss.map(function(k){return NAME[k]||k}).join(', ')+'. Uso el sonido de antes.',1)}
+    Pipe.setBusy('');var miss=need.filter(function(k){return !REAL[k]});if(miss.length)toast('Sin grabación real de: '+miss.map(function(k){return NAME[k]||k}).join(', ')+'. No pasa nada: uso el sonido hecho por la app.')}
   return runO(record)};
 
 /* ---------- pestaña Sonido: escuchar, cambiar de grabación y créditos ---------- */
