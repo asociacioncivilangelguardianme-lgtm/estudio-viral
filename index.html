@@ -6483,5 +6483,47 @@ console.info('[Estudio Viral] v3.72: sonidos acordes a los Orixás');
 })();
 </script>
 <!-- ===== FIN v3.72 ===== -->
+
+<!-- ===== ESTUDIO VIRAL · v3.73 · PAISAJES DE SONIDO =====
+     Ambientes armados con varias capas, como un lugar de verdad: orilla del río con ranas, selva con aves y monos,
+     noche africana, aldea con fogata… Terreiro y Encruzilhada rehechos. Al tocar «Probar» baja antes las grabaciones reales.
+     Para quitarlo, borrá desde acá hasta "FIN v3.73". -->
+<script id="ev373">
+(function(){'use strict';if(window.__ev373)return;window.__ev373=true;
+var PAIS={
+ orilla_rio:['🐸 Orilla del río (agua, ranas y pájaros)',[['rio',1],['ranas',.55],['pajaros',.35]]],
+ selva_viva:['🐒 Selva viva (aves y monos)',[['selva',.8],['aves_africa',.6],['monos',.25]]],
+ sabana_dia:['🌾 Sabana de día (aves africanas y cigarras)',[['aves_africa',1],['sabana',.5],['cigarras',.3]]],
+ aldea:['🛖 Aldea africana (fogata, aves y tambor lejano)',[['fuego',.7],['aves_africa',.5],['atabaque',.2]]],
+ noche_africana:['🌙 Noche africana (grillos, ranas y búho)',[['noche',.8],['ranas',.45],['lechuza',.35]]],
+ cascada_mata:['💦 Cascada en la mata (agua y pájaros)',[['cascada',.8],['pajaros',.45],['aves_africa',.3]]],
+ tormenta_xango:['⚡ Tormenta de Xangô (trueno y tambor)',[['tormenta',1],['tambor_lento',.6]]],
+ terreiro:['🕯️ Terreiro (toque de atabaque y agogô)',[['atabaque',.8],['agogo',.45]]],
+ encruzilhada:['🌹 Encruzilhada (noche, búho y tambor lento)',[['noche',.75],['lechuza',.45],['tambor_lento',.85]]]};
+Object.keys(PAIS).forEach(function(k){AMB[k]=PAIS[k][0]});
+var amO=ambience;
+ambience=function(ac,out,type,st,en,vol){var P=PAIS[type];if(!P)return amO.apply(this,arguments);var n=[];
+  P[1].forEach(function(l){try{n=n.concat(ambience(ac,out,l[0],st,en,vol*l[1]*.85)||[])}catch(e){}});return n.filter(Boolean)};
+function layers(t){var o={};(function add(k){if(PAIS[k])PAIS[k][1].forEach(function(l){add(l[0])});else o[k]=1})(t);return Object.keys(o)}
+function fetchReal(types,ms){var E=window.EV358;if(!E||!E.Q||(S.settings&&S.settings.realSnd===false))return Promise.resolve();
+  var ks=[];types.forEach(function(t){layers(t).forEach(function(k){if(E.Q[k]&&!E.REAL[k]&&ks.indexOf(k)<0)ks.push(k)})});if(!ks.length)return Promise.resolve();
+  return Promise.race([Promise.all(ks.map(function(k){return E.load(k).catch(function(){})})),new Promise(function(r){setTimeout(r,ms||25000)})])}
+/* Probar: baja antes las grabaciones reales, así suena igual que en el video */
+var pvO=previewAmb;previewAmb=async function(t){var E=window.EV358;if(E&&layers(t).some(function(k){return E.Q[k]&&!E.REAL[k]})){toast('🔊 Preparando sonido…');await fetchReal([t],15000)}return pvO.apply(this,arguments)};
+/* antes de reproducir o exportar: bajar las capas de los paisajes */
+var runO=Player.run.bind(Player);Player.run=async function(){var P=S.P;try{if(P&&P.amb&&P.scenes){var ts=P.scenes.map(function(s){return s.amb}).filter(function(a){return PAIS[a]});if(ts.length){Pipe.setBusy('Preparando paisajes de sonido…');await fetchReal(ts);Pipe.setBusy('')}}}catch(e){}return runO.apply(null,arguments)};
+/* elegir paisaje según lo que pasa en la escena */
+var RXP=[['tormenta_xango',/\b(truenos?|thunder|rayos?|lightning|tormentas?|storms?)\b/i],['cascada_mata',/\b(cascadas?|waterfalls?|cataratas?)\b/i],['orilla_rio',/\b(orilla|r[ií]os?|rivers?|arroyos?|riverbank|lagunas?|lagos?|lakes?)\b/i],
+ ['noche_africana',/\b(noche|night|luna|moon|estrellas|stars)\b/i],['aldea',/\b(aldeas?|villages?|pueblos?|chozas?|huts?|fogatas?|campfire|tribu|tribe)\b/i],
+ ['selva_viva',/\b(selvas?|jungla|jungle|rainforest)\b/i],['sabana_dia',/\b(sabanas?|savann?ah?|pastizal|grassland|llanura)\b/i],['mata_sagrada',/\b(bosques?|forest|mata|[áa]rboles|trees)\b/i]];
+function guess(t){for(var i=0;i<RXP.length;i++)if(RXP[i][1].test(t))return RXP[i][0];return ''}
+var UPG={rio:1,ranas:1,selva:1,bosque:1,noche:1,cascada:1,sabana:1,tormenta:1,pajaros:1,aves_africa:1,fuego:1,viento:1,mata_sagrada:1,atabaque:1,adja:1,terreiro:1};
+function afro(P){try{return !!P&&((P.genre||'').indexOf('af_')===0||(window.EV343&&EV343.isAfro(P)))}catch(e){return false}}
+var psO=Pipe.parseScenes;Pipe.parseScenes=function(){var out=psO.apply(this,arguments);try{if(afro(S.P))out.forEach(function(s){if(s.amb&&!UPG[s.amb])return;var g=guess((s.text||'')+' '+(s.prompt||''));if(g)s.amb=g})}catch(e){}return out};
+window.EV373={PAIS:PAIS,guess:guess,layers:layers};
+console.info('[Estudio Viral] v3.73: paisajes de sonido');
+})();
+</script>
+<!-- ===== FIN v3.73 ===== -->
 </body>
 </html>
