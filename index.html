@@ -2319,7 +2319,7 @@ window.__ev32export=exportMp4;
 (function(){
 'use strict';
 if(window.__ev33)return;window.__ev33=true;
-var VERSION='3.67';
+var VERSION='3.68';
 var COLORS=['#7dd3fc','#ff9de2','#a7f3d0','#fdba74','#c4b5fd'];
 var MOVES=['zoomin','panr','tiltup','dolly','panl','zoomout','track','tiltdown'];
 
@@ -3925,8 +3925,8 @@ async function idbKeys(){var db=await IDB.open();return new Promise(function(res
 /* junta los proyectos elegidos + sus fotos, videos, voces y video exportado */
 async function collect(ps,noVid){var keys=[];try{keys=await idbKeys()}catch(e){}if(noVid)keys=keys.filter(function(k){return !(typeof k==='string'&&k.indexOf('video:')===0)});var want=[],seen={};
   ps.forEach(function(p){var js=JSON.stringify(p),sigs={};
-    (function walk(o){if(typeof o==='string'){if(o.length>1)sigs['|'+fnv(o)+'|'+o.length]=1}else if(o&&typeof o==='object')for(var k in o)walk(o[k])})(p);
-    keys.forEach(function(k){if(typeof k!=='string'||seen[k])return;var ok=k==='video:'+p.id||js.indexOf('"'+k+'"')>=0;
+    (function walk(o){if(typeof o==='string'){if(o.length>1){sigs['|'+fnv(o)+'|'+o.length]=1;/* v3.68: también el texto tal como lo lee la voz */try{var c1=window.EV362?EV362.clean(o):o,c2=window.__ev346speech?__ev346speech(c1):c1;[c1,c2,window.__ev346speech?__ev346speech(o):o].forEach(function(t){if(t&&t.length>1)sigs['|'+fnv(t)+'|'+t.length]=1})}catch(e){}}}else if(o&&typeof o==='object')for(var k in o)walk(o[k])})(p);
+    keys.forEach(function(k){if(typeof k!=='string'||seen[k])return;var ok=k==='video:'+p.id||k.indexOf('pv:'+p.id+':')===0||js.indexOf('"'+k+'"')>=0;
       if(!ok&&k.indexOf('tts:')===0){var j=k.lastIndexOf('|'),j2=k.lastIndexOf('|',j-1);if(j2>0&&sigs[k.slice(j2)])ok=true}
       if(ok){seen[k]=1;want.push(k)}})});
   var files=[];for(var i=0;i<want.length;i++){var k=want[i];try{var v=await IDB.get(k);if(v==null)continue;
@@ -4756,7 +4756,7 @@ function tidy(t){return t.replace(/\s+([,.;:!?…])/g,'$1').replace(/([¿¡])\s+
 function speech(t){return tidy(base(t).replace(EMO,' ').replace(/[#*_~|<>^`=\[\]{}\\•►▶➡→✓✔]/g,' ').replace(/(\.\s*){3,}/g,'… '))}
 /* para los subtítulos: sin hashtags ni signos sueltos (los emojis se pueden dejar) */
 function subs(t){return tidy(base(t).replace(/[#*_~|<>^`\[\]{}\\]/g,' '))}
-var DIRTY=/[\p{Extended_Pictographic}#*_~|<>@]|https?:/u;
+var DIRTY=/[\p{Extended_Pictographic}#*_~|<>@]|https?:/u;window.__ev346speech=speech;
 var mkO=Voice.make.bind(Voice);
 Voice.make=function(text){var a=[].slice.call(arguments);var c=speech(text);a[0]=c||String(text||'');return mkO.apply(null,a)};
 var dsO=drawSubs;drawSubs=function(ctx,W,H,text){var a=[].slice.call(arguments);a[3]=subs(text)||text;return dsO.apply(this,a)};
