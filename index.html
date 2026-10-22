@@ -2319,7 +2319,7 @@ window.__ev32export=exportMp4;
 (function(){
 'use strict';
 if(window.__ev33)return;window.__ev33=true;
-var VERSION='3.66';
+var VERSION='3.67';
 var COLORS=['#7dd3fc','#ff9de2','#a7f3d0','#fdba74','#c4b5fd'];
 var MOVES=['zoomin','panr','tiltup','dolly','panl','zoomout','track','tiltdown'];
 
@@ -6347,6 +6347,46 @@ console.info('[Estudio Viral] v3.65: narración que va con las imágenes');
 })();
 </script>
 <!-- ===== FIN v3.65 ===== -->
+
+<!-- ===== ESTUDIO VIRAL · v3.67 · LAS IMÁGENES NUEVAS SE VEN BIEN Y LAS VOCES QUEDAN GUARDADAS EN CADA PROYECTO =====
+     1) Si cambiás la imagen de una escena, se borra el recorte 2.5D / la animación de la imagen vieja (ya no se mezclan)
+        y la vista previa deja de mostrar el video exportado viejo.
+     2) Cada voz hecha queda guardada en el proyecto: al abrirlo se cargan solas, escena por escena.
+     Para quitarlo, borrá desde acá hasta "FIN v3.67". -->
+<script id="ev367">
+(function(){'use strict';if(window.__ev367)return;window.__ev367=true;
+/* ---------- 1) imágenes ---------- */
+var seen={},warned=false;
+function check(){var P=S.P;if(!P||!P.scenes)return;var changed=false;
+ P.scenes.forEach(function(s){if(!s)return;var k=s.id,cur=s.img||'';if(seen[k]===undefined){seen[k]=cur;return}
+  if(seen[k]!==cur){seen[k]=cur;changed=true;delete RT.fg[k];
+   if(!s.clip&&RT.clips[k]){try{RT.clips[k].pause()}catch(e){}delete RT.clips[k]}}});
+ if(changed&&RT.video){RT.video=null;if(!warned){warned=true;toast('Cambiaste imágenes: la vista previa ya muestra las nuevas. Volvé a exportar para bajar el video actualizado.')}try{renderStage()}catch(e){}}}
+var dsO=drawScene;drawScene=function(ctx,W,H,x){try{var s=x&&x.s;if(s&&seen[s.id]!==undefined&&seen[s.id]!==(s.img||''))check()}catch(e){}return dsO.apply(this,arguments)};
+var rO=render;render=function(){try{check()}catch(e){}return rO.apply(this,arguments)};
+var opO=openProject;openProject=function(){seen={};warned=false;var r=opO.apply(this,arguments);setTimeout(function(){try{check()}catch(e){}restore(S.P)},300);return r};
+/* ---------- 2) voces guardadas por escena ---------- */
+function vkey(P,s){return 'pv:'+P.id+':'+s.id}
+function wav(buf){var n=buf.length,sr=buf.sampleRate,d=buf.getChannelData(0),ab=new ArrayBuffer(44+n*2),v=new DataView(ab);
+ var w=function(o,t){for(var i=0;i<t.length;i++)v.setUint8(o+i,t.charCodeAt(i))};w(0,'RIFF');v.setUint32(4,36+n*2,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,sr,true);v.setUint32(28,sr*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);w(36,'data');v.setUint32(40,n*2,true);
+ for(var i=0;i<n;i++){var x=Math.max(-1,Math.min(1,d[i]));v.setInt16(44+i*2,x<0?x*32768:x*32767,true)}return new Blob([ab],{type:'audio/wav'})}
+async function persist(P){P=P||S.P;if(!P||!P.scenes)return;for(var i=0;i<P.scenes.length;i++){var s=P.scenes[i],v=RT.voices[s.id];
+  if(!v||!v.buf||v.mine||v._kept===v.buf||v.text!==s.text)continue;try{await IDB.set(vkey(P,s),{text:s.text,voice:v.voice,speed:v.speed,who:s.who||'',blob:wav(v.buf)});v._kept=v.buf}catch(e){console.warn('[v3.67] voz',e)}}}
+async function restore(P){P=P||S.P;if(!P||!P.scenes||P.mode==='musica')return 0;var n=0;
+ for(var i=0;i<P.scenes.length;i++){var s=P.scenes[i];if(!s.text||!s.text.trim())continue;var v=RT.voices[s.id];if(v&&v.text===s.text)continue;
+  try{var d=await IDB.get(vkey(P,s));if(!d||!d.blob||d.text!==s.text)continue;if(!s.who&&!(P.dlgVoices&&Object.keys(P.dlgVoices).length)&&d.voice&&normVoice(d.voice)!==normVoice(P.voice))continue;
+   if(S.P!==P)return n;var buf=await decode(d.blob);RT.voices[s.id]={buf:buf,text:s.text,voice:d.voice,speed:d.speed,pre:true,_kept:null};RT.voices[s.id]._kept=buf;n++}catch(e){}}
+ if(n){try{renderTL()}catch(e){}try{renderPipe()}catch(e){}}return n}
+var pvO=Pipe.voices;Pipe.voices=async function(){var P=S.P;try{await restore(P)}catch(e){}var r=await pvO.apply(this,arguments);try{await persist(P)}catch(e){}return r};
+var runO=Player.run;Player.run=async function(){try{if(!this.playing)await restore(S.P)}catch(e){}return runO.apply(this,arguments)};
+setInterval(function(){try{if(S.P)persist(S.P)}catch(e){}},5000);
+window.EV367={check:check,persist:persist,restore:restore};
+setTimeout(function(){try{check()}catch(e){}restore(S.P)},800);
+console.info('[Estudio Viral] v3.67: imágenes nuevas sin mezcla y voces guardadas por escena');
+})();
+</script>
+<!-- ===== FIN v3.67 ===== -->
+
 
 
 
