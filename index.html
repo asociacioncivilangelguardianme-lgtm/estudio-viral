@@ -616,7 +616,7 @@ const MUSIC=[
  {id:'calma',n:'Calma',e:'🌙',bpm:60,chords:[[48,55,60,64,71],[45,52,57,60,64],[41,48,53,57,64],[43,50,55,59,62]],wave:'triangle',cut:2200,g:2,bell:1},
  {id:'tension',n:'Tensión',e:'⏱️',bpm:120,chords:[[40,47,52,55],[41,48,53,56]],kick:1,wave:'sawtooth',cut:600},
  {id:'alegre',n:'Alegre',e:'☀️',bpm:110,chords:[[48,55,60,64],[43,50,55,59],[45,52,57,60],[41,48,53,57]],arp:1,kick:1,wave:'triangle',cut:2200},
- {id:'africana',n:'Africana (tambores)',e:'🥁',bpm:96,chords:[[45,52,57,60,64],[43,50,55,59,62],[41,48,53,57,60],[43,50,55,59,62]],wave:'sine',cut:1400,g:.55,afro:1},
+ {id:'africana',n:'Africana (tambores)',e:'🥁',bpm:96,chords:[[45,52,57,60,64],[43,50,55,59,62],[41,48,53,57,60],[43,50,55,59,62]],wave:'sine',cut:1400,g:.55,afro:1,nopad:1},
  {id:'espiritual',n:'Espiritual / Celestial',e:'✨',bpm:56,chords:[[50,57,62,66,69],[47,54,59,62,66],[43,50,55,59,62],[45,52,57,61,64]],wave:'sine',cut:3000,g:2.2,bell:1,choir:1},
  {id:'romantica',n:'Romántica',e:'💖',bpm:72,chords:[[48,55,60,64,67],[45,52,57,60,64],[41,48,53,57,60],[43,50,55,59,62]],wave:'triangle',cut:2400,g:1.7,arp:1,bell:1},
  {id:'triste',n:'Triste / Emotiva',e:'💧',bpm:62,chords:[[45,52,57,60,64],[41,48,53,57,60],[48,55,60,64,67],[43,50,55,59,62]],wave:'sine',cut:1800,g:2.2,bell:1},
@@ -1358,7 +1358,7 @@ function scheduleMusic(ac,out,id,t0,total,vol){const nodes=[];const m=musicOf(id
     if(p===3||p===4||p===9||p===10)hit(pt,240,200,.16,V*.45);
     if(p===7||p===11){nz(pt,.07,V*.32,'bandpass',2600,1.2);hit(pt,420,360,.06,V*.25)}
     if(p===8&&(bar>>2)%2)hit(pt,190,115,.38,V*.5);
-    if(R()<.38){const n=ch[Math.floor(R()*ch.length)]+24;hit(pt,mf(n),0,.45,V*.16,'triangle');hit(pt,mf(n)*3,0,.12,V*.03,'sine')}}}
+    if(R()<.22&&p!==0&&p!==6)hit(pt,R()<.5?150:125,R()<.5?95:80,.3,V*.4)}}
   if(m.cumbia){if(b4===0||b4===2){hit(st,95,60,.22,V*.9);hit(st,mf(ch[0]-24+(b4===2?7:0)),0,beat*.9,V*.5,'triangle')}
     if(b4===1||b4===3)hit(st+beat/2,mf(ch[0]-12+(b4===3?7:0)),0,beat*.4,V*.3,'triangle');
     if(b4===1||b4===3){hit(st+beat/2,380,330,.12,V*.42);nz(st+beat/2,.05,V*.18,'bandpass',3000)}
@@ -6465,5 +6465,23 @@ console.info('[Estudio Viral] v3.69: ficha de la serie, personajes nuevos y fina
 </script>
 <!-- ===== FIN v3.69 ===== -->
 
+
+<!-- ===== ESTUDIO VIRAL · v3.72 · SONIDOS QUE VAN CON LOS ORIXÁS =====
+     En videos de Orixás / religión afro no se usan sonidos modernos (ciudad, teléfono, tecnología, campanitas de viento…):
+     se cambian solos por sonidos de la naturaleza o sagrados. Para quitarlo, borrá desde acá hasta "FIN v3.72". -->
+<script id="ev372">
+(function(){'use strict';if(window.__ev372)return;window.__ev372=true;
+var MODERN={ciudad:1,trafico:1,avion:1,aeropuerto:1,tren:1,helicoptero:1,barco:1,sirena:1,oficina:1,cafe:1,hospital:1,reloj:1,telefono:1,tecnologia:1,construccion:1,espacio:1,estadio:1,magia:1,multitud:1,festejo:1};
+var SWAP={campanas:'adja',tambores:'atabaque'};
+function afro(P){if(!P)return false;try{if((P.genre||'').indexOf('af_')===0)return true;if(window.EV343&&EV343.isAfro&&EV343.isAfro(P))return true}catch(e){}return false}
+function fix(P,ok){if(!P||!P.scenes||!(ok||afro(P)))return 0;var n=0;P.scenes.forEach(function(s){var a=s.amb;if(!a||a==='none')return;
+  if(SWAP[a]){s.amb=SWAP[a];n++;return}
+  if(MODERN[a]){var t=(s.prompt||'')+' '+(s.text||''),g='';try{g=window.__ev336guess(t)}catch(e){}if(!g)g=/trueno|thunder|rayo|lightning|tormenta|storm/i.test(t)?'tormenta':/\b(r[ií]o|river|arroyo|stream)\b/i.test(t)?'rio':/\b(mar|ocean|sea|olas|waves)\b/i.test(t)?'oceano':/fuego|fire|llamas|flames/i.test(t)?'fuego':'';s.amb=g||'mata_sagrada';n++}});return n}
+var psO=Pipe.parseScenes;Pipe.parseScenes=function(){var out=psO.apply(this,arguments);try{if(afro(S.P))fix({scenes:out},true)}catch(e){}return out};
+var runO=Player.run.bind(Player);Player.run=function(){try{if(fix(S.P))save()}catch(e){}return runO.apply(null,arguments)};
+console.info('[Estudio Viral] v3.72: sonidos acordes a los Orixás');
+})();
+</script>
+<!-- ===== FIN v3.72 ===== -->
 </body>
 </html>
