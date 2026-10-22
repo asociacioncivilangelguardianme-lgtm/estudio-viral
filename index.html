@@ -1392,7 +1392,7 @@ function ambience(ac,out,type,st,en,vol){const nodes=[],g=ac.createGain();g.gain
   case'multitud':{const a=nz('bandpass',450,.8,.3),b2=nz('bandpass',900,1.2,.12);lfo(a.fl.frequency,.3,120);lfo(b2.gg.gain,.7,.05)}break;
   case'forja':{nz('bandpass',1100,.6,.06);for(let t=st+.4;t<en-.6;t+=.9+R()*.4){[880,1410,2230,3020].forEach((f,j)=>tone(f,t,1.1-j*.2,.12/(j+1),'sine'));burst(t,.08,.4,'lowpass',300)}}break;
   case'latidos':{const b=60/68;for(let t=st+.3;t<en-.4;t+=b){tone(70,t,.18,.7,'sine',40);tone(60,t+.22,.2,.5,'sine',35)}}break;
-  case'cueva':{nz('lowpass',180,0,.15);for(let t=st+.5;t<en-.5;t+=.7+R()*1.8){const f=900+R()*700;tone(f,t,.25,.12,'sine',f*1.6);tone(f*1.6,t+.18,.35,.03,'sine')}}break;
+  case'cueva':{nz('lowpass',180,0,.15);for(let t=st+.5;t<en-.5;t+=.7+R()*1.8){const f=900+R()*700;tone(f,t,.25,.28,'sine',f*1.6);tone(f*1.6,t+.18,.35,.08,'sine')}}break;
   case'campanas':{for(let t=st+.3;t<en-1;t+=2.8){[262,524,659,786,1046].forEach((f,j)=>tone(f*.75,t,3.5-j*.5,.14/(j+1),'sine'))}}break;
   case'magia':{nz('highpass',6000,0,.02);const sc=[1047,1175,1319,1568,1760,2093,2349];for(let t=st+.2;t<en-.3;t+=.15+R()*.45){tone(sc[Math.floor(R()*sc.length)],t,1.4,.05,'sine')}}break;
   case'desierto':{const w=nz('bandpass',350,.6,.35);lfo(w.fl.frequency,.07,160);lfo(w.gg.gain,.11,.15);nz('highpass',4000,0,.04)}break;
@@ -1416,13 +1416,13 @@ function ambience(ac,out,type,st,en,vol){const nodes=[],g=ac.createGain();g.gain
   case'tecnologia':{const o=ac.createOscillator();o.frequency.value=60;const og=ac.createGain();og.gain.value=.05;o.connect(og).connect(g);o.start(st);o.stop(en+.1);nodes.push(o);for(let t=st+.3;t<en-.2;t+=.2+R()*.6){tone([880,1320,1760,2093,2637][Math.floor(R()*5)],t,.09,.06,'square')}}break;
   case'construccion':{nz('lowpass',250,0,.15);for(let t=st+.3;t<en-.5;t+=.5+R()*.9){if(R()<.6){[700,1150,1900].forEach((f,j)=>tone(f,t,.4,.08/(j+1),'sine'));burst(t,.05,.3,'lowpass',400)}}for(let t=st+2;t<en-2;t+=6+R()*5){const o=ac.createOscillator();o.type='sawtooth';o.frequency.value=180;const og=ac.createGain();og.gain.setValueAtTime(.06,t);og.gain.setValueAtTime(.06,t+1.5);og.gain.linearRampToValueAtTime(.0005,t+1.7);const bp=ac.createBiquadFilter();bp.type='bandpass';bp.frequency.value=900;o.connect(bp).connect(og).connect(g);o.start(t);o.stop(t+1.8);nodes.push(o)}}break;
   case'telefono':{for(let t=st+.3;t<en-1;t+=3){for(let k=0;k<20;k++){const tt=t+k*.05;tone(1400,tt,.045,.14,'square');tone(1750,tt,.045,.1,'square')}}}break;
-  case'lluvia':nz('highpass',900,0,.32);nz('lowpass',500,0,.12);break;
+  case'lluvia':{nz('highpass',900,0,.3);nz('bandpass',2500,.7,.12);nz('lowpass',400,0,.14);for(let t=st+.05;t<en-.1;t+=.02+R()*.06){const f=1800+R()*3500;tone(f,t,.03,.035*R(),'sine',f*.7)}}break;
   case'tormenta':{nz('highpass',800,0,.3);const r=nz('lowpass',120,0,0);for(let t=st+1+Math.random()*2;t<en-1;t+=3+Math.random()*4){r.gg.gain.setValueAtTime(0.001,t);r.gg.gain.linearRampToValueAtTime(1.3,t+.15);r.gg.gain.exponentialRampToValueAtTime(.01,t+2.5)}}break;
   case'viento':{const w=nz('bandpass',450,.8,.45);lfo(w.fl.frequency,.13,280)}break;
   case'oceano':{const w=nz('lowpass',650,0,.25);lfo(w.gg.gain,.09,.22)}break;
   case'fuego':nz('bandpass',1100,.6,.12);for(let t=st;t<en;t+=.04+Math.random()*.18){const s=nsrc(ac),gg=ac.createGain();gg.gain.setValueAtTime(.5*Math.random()+.01,t);gg.gain.exponentialRampToValueAtTime(.001,t+.02);s.connect(gg).connect(g);s.start(t,Math.random());s.stop(t+.03);nodes.push(s)}break;
   case'ciudad':nz('lowpass',420,0,.35);break;
-  case'noche':{const o=ac.createOscillator();o.frequency.value=4400;const gg=ac.createGain();gg.gain.value=0;const m=ac.createOscillator();m.type='square';m.frequency.value=14;const md=ac.createGain();md.gain.value=.025;m.connect(md).connect(gg.gain);o.connect(gg).connect(g);o.start(st);m.start(st);o.stop(en+.1);m.stop(en+.1);nodes.push(o,m);nz('lowpass',300,0,.06)}break;
+  case'noche':{const o=ac.createOscillator();o.frequency.value=4400;const gg=ac.createGain();gg.gain.value=0;const m=ac.createOscillator();m.type='square';m.frequency.value=14;const md=ac.createGain();md.gain.value=.07;m.connect(md).connect(gg.gain);o.connect(gg).connect(g);o.start(st);m.start(st);o.stop(en+.1);m.stop(en+.1);nodes.push(o,m);nz('lowpass',300,0,.06)}break;
   case'bosque':{const w=nz('bandpass',500,.7,.18);lfo(w.fl.frequency,.1,200);for(let t=st+.5;t<en-.5;t+=.8+Math.random()*2.2){const o=ac.createOscillator(),gg=ac.createGain();const f=2200+Math.random()*1800;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f*1.4,t+.08);gg.gain.setValueAtTime(.06,t);gg.gain.exponentialRampToValueAtTime(.001,t+.12);o.connect(gg).connect(g);o.start(t);o.stop(t+.14);nodes.push(o)}}break;
   case'espacio':[55,82.6].forEach(f=>{const o=ac.createOscillator();o.frequency.value=f;const gg=ac.createGain();gg.gain.value=.12;o.connect(gg).connect(g);o.start(st);o.stop(en+.1);nodes.push(o)});nz('lowpass',260,0,.08);break}
  return nodes}
@@ -5602,8 +5602,6 @@ console.info('[Estudio Viral] v3.57: responder comentarios, series, ideas, vario
 
 /* qué buscar para cada sonido (en orden: si una búsqueda no trae nada bueno, prueba la siguiente) */
 var Q={
-  lluvia:['rain ambience','rain on leaves','heavy rain'],
-  tormenta:['thunderstorm','thunder and rain','storm thunder'],
   viento:['wind ambience','strong wind','howling wind'],
   oceano:['ocean waves','sea waves beach','waves crashing'],
   fuego:['campfire crackling','fire crackling','bonfire'],
@@ -5614,14 +5612,11 @@ var Q={
   pajaros:['dawn chorus','birdsong morning','bird song garden'],
   aves_africa:['dawn chorus Africa','birds Kenya','African birds','Hadada ibis','bird song Tanzania'],
   sabana:['savanna ambience','African savanna','savannah','Serengeti','Kruger National Park','African bush','Kenya ambience','Tanzania night','Africa night ambience','lion roar'],
-  noche:['crickets night','night crickets','field crickets'],
   cigarras:['cicada chorus','cicada song','Magicicada chorus','cicadas'],
   ranas:['frog chorus','frogs pond night','tree frogs'],
   lechuza:['owl hooting','tawny owl','owl call night'],
   monos:['howler monkeys','monkeys jungle','chimpanzee calls'],
-  cueva:['cave dripping water','water drops cave','dripping'],
   desierto:['desert wind','sand wind','desert ambience'],
-  nieve:['blizzard wind','snowstorm','winter wind'],
   ciudad:['city ambience','city street ambience','urban ambience'],
   trafico:['traffic street','road traffic','car traffic'],
   multitud:['crowd market','market ambience','crowd murmur'],
@@ -5655,14 +5650,14 @@ var NAME={lluvia:'Lluvia',tormenta:'Tormenta',viento:'Viento',oceano:'Océano',f
   ciudad:'Ciudad',trafico:'Tránsito',multitud:'Multitud / mercado',festejo:'Festejo y aplausos',estadio:'Estadio',cafe:'Bar / restaurante',oficina:'Oficina',construccion:'Obra',avion:'Avión',aeropuerto:'Aeropuerto',tren:'Tren',helicoptero:'Helicóptero',barco:'Puerto / barco',sirena:'Sirena',
   reloj:'Reloj',telefono:'Teléfono',hospital:'Hospital',latidos:'Latidos',forja:'Forja',batalla:'Batalla',campanas:'Campanas',magia:'Magia (campanitas de viento)',tecnologia:'Tecnología',espacio:'Espacio',
   tambores:'Tambores',atabaque:'Atabaque',adja:'Campanita (adjá / sineta)',agogo:'Agogô',chocalho:'Chocalho',whoosh:'Transición (whoosh)',impacto:'Golpe del título'};
-var GROUPS=[['🌿 Naturaleza',['lluvia','tormenta','viento','oceano','fuego','rio','cascada','bosque','selva','pajaros','aves_africa','sabana','noche','cigarras','ranas','lechuza','monos','cueva','desierto','nieve']],
+var GROUPS=[['🌿 Naturaleza',['viento','oceano','fuego','rio','cascada','bosque','selva','pajaros','aves_africa','sabana','cigarras','ranas','lechuza','monos','desierto']],
   ['🕯️ Sagrados',['adja','agogo','tambores','campanas']],
   ['🏙️ Gente y ciudad',['ciudad','trafico','multitud','festejo','estadio','cafe','oficina','construccion']],
   ['🚆 Transporte',['avion','aeropuerto','tren','helicoptero','barco','sirena']],
   ['⏰ Objetos y efectos',['reloj','telefono','hospital','latidos','forja','batalla','magia','tecnologia','espacio','whoosh','impacto']]];
 var MUL={sirena:.7,batalla:.75,telefono:.7,construccion:.75,helicoptero:.8,avion:.85,tormenta:.95,estadio:.85,latidos:1.2,reloj:1.1,whoosh:.9,impacto:1};
 var ONESHOT={whoosh:1,impacto:1};
-var BAD=/\b(country|bluegrass|banjo|fiddle|jazz|rock|orchestra|concert|samba|band)\b|spoken|pronunc|wikipedia|lecture|interview|speech|narrat|podcast|poem|reading|anthem|song of the|music|sonata|symphony|piano|guitar|choir|hymn|remix|voice/i;
+var BAD=/\b(country|bluegrass|banjo|fiddle|jazz|rock|orchestra|concert|samba|band)\b|spoken|pronunc|wikipedia|lecture|interview|speech|narrat|podcast|poem|reading|anthem|song of the|music|sonata|symphony|piano|guitar|choir|hymn|remix|voice|talk|interview|commentary|ansage|narration|vlog/i;
 var REAL={};             // tipo -> {buf,gain,title,page,lic,art}
 var LOAD={};             // tipo -> promesa
 function on(){return S.settings.realSnd!==false}
@@ -5693,7 +5688,7 @@ async function decodeBlob(b){var ac=getAC();var ab=await b.arrayBuffer();return 
 function loopable(buf){var ac=getAC(),sr=buf.sampleRate,xf=Math.min(Math.floor(sr*1.2),Math.floor(buf.length/4)),n=buf.length-xf;if(n<sr)return buf;
   var out=ac.createBuffer(buf.numberOfChannels,n,sr);for(var c=0;c<buf.numberOfChannels;c++){var a=buf.getChannelData(c),o=out.getChannelData(c);o.set(a.subarray(xf,xf+n));
     for(var i=0;i<xf;i++){var t=i/xf;o[n-xf+i]=a[n+i]*Math.cos(t*Math.PI/2)+a[i]*Math.sin(t*Math.PI/2)}}return out}
-async function useItem(type,it,blob){var raw=await decodeBlob(blob);if(!raw||raw.duration<(ONESHOT[type]?.3:3))throw new Error('grabación muy corta');var buf=ONESHOT[type]?raw:loopable(raw);
+async function useItem(type,it,blob){var raw=await decodeBlob(blob);if(!raw||raw.duration<(ONESHOT[type]?.3:3))throw new Error('grabación muy corta');var c0=raw.getChannelData(0),st0=Math.max(1,Math.floor(c0.length/50000)),e0=0,k0=0;for(var i0=0;i0<c0.length;i0+=st0){e0+=c0[i0]*c0[i0];k0++}if(Math.sqrt(e0/k0)<.004)throw new Error('grabación casi muda');var buf=ONESHOT[type]?raw:loopable(raw);
   REAL[type]={raw:raw,buf:buf,gain:level(buf),title:it.title,page:it.page,lic:it.lic,art:it.art,idx:it.idx||0};return REAL[type]}
 
 /* baja la grabación (o la saca de la compu si ya estaba) */
