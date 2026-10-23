@@ -1760,6 +1760,7 @@ function renderSel(){const el=$('#selpanel');if(!el||!S.P)return;const P=S.P,i=c
  <div class="row" style="margin-top:8px"><span class="sub" style="font-size:12px">Duración extra</span><button class="btn xs" onclick="sceneExtra(${i},-.5)">−</button><b style="font-size:12px">${(s.extra||0)>=0?'+':''}${(s.extra||0).toFixed(1)}s</b><button class="btn xs" onclick="sceneExtra(${i},.5)">+</button></div>
  <div class="lbl">Herramientas de IA</div><div class="tools">
   <button class="btn" data-busy onclick="Pipe.regen(${i})">${ic('refresh')}Nueva imagen</button>
+  <button class="btn" onclick="window.EV375&&EV375.pick(${i})">📸 Foto del comedor</button>
   <button class="btn" data-busy onclick="askEdit(${i})">${ic('wand')}Editar con IA</button>
   <button class="btn" data-busy onclick="run(()=>Pipe.upscale(${i}))">${ic('hd')}Mejorar calidad</button>
   <button class="btn" data-busy onclick="run(()=>Pipe.expand(${i}))">${ic('expand')}Expandir encuadre</button>
@@ -1822,7 +1823,7 @@ function tContenido(){const P=S.P;let top='';
   <div class="lbl">Tema, sensación o letra (opcional)</div><textarea class="ta" placeholder="Ej: viaje nocturno por una ciudad de neón, nostalgia" oninput="S.P.idea=this.value;save()">${esc(P.idea)}</textarea>
   ${RT.music&&P.music==='upload'?'':`<div class="lbl">Duración</div>${durSel([15,30,45,60,90,120,180])}`}${ipm}${gen('Generar escenas del videoclip')}</div>`;
  return top+`<div class="card box"><div class="between"><h3>${ic('grid')}Storyboard <span class="sub">${P.scenes.length} escenas</span></h3>
-  ${P.scenes.length?`<div class="row"><button class="btn sm" data-busy onclick="run(()=>Pipe.images())">${ic('refresh')}Generar imágenes</button><button class="btn sm grad" data-busy title="La IA estudia la historia y describe a cada personaje como se ve, para imágenes más fieles y parecidas" onclick="run(()=>Pipe.improvePrompts())">${ic('spark')}IA: mejorar imágenes</button><button class="btn sm grad" onclick="animateAll(S.P.lifeAll==='auto'?'none':'auto')">✨ ${P.lifeAll==='auto'?'Quitar animación':'Animar todas las escenas'}</button><button class="btn sm" onclick="addScene()">${ic('plus')}Escena</button></div>`:''}</div>
+  ${P.scenes.length?`<div class="row"><button class="btn sm" data-busy onclick="run(()=>Pipe.images())">${ic('refresh')}Generar imágenes</button><button class="btn sm grad" data-busy title="La IA estudia la historia y describe a cada personaje como se ve, para imágenes más fieles y parecidas" onclick="run(()=>Pipe.improvePrompts())">${ic('spark')}IA: mejorar imágenes</button><button class="btn sm grad" onclick="animateAll(S.P.lifeAll==='auto'?'none':'auto')">✨ ${P.lifeAll==='auto'?'Quitar animación':'Animar todas las escenas'}</button><button class="btn sm grad" onclick="window.EV375&&EV375.fillBtn()">📸 Fotos del comedor</button><button class="btn sm" onclick="addScene()">${ic('plus')}Escena</button></div>`:''}</div>
   ${P.character!==undefined&&P.scenes.length&&(P.character||!(P.cast||[]).length)?`<div class="lbl">Personaje fijo (se repite igual en todas las imágenes · en inglés)</div><textarea class="inp" rows="2" onchange="S.P.character=this.value;save();toast('Personaje guardado: se usa en las imágenes nuevas')">${esc(P.character||'')}</textarea>`:''}${P.scenes.length?castHTML():''}<div class="scenes" id="scenes">${scenesHTML()}</div>
   ${P.scenes.length?`<div class="genbtn"><button class="btn grad" data-busy onclick="Pipe.auto()">${ic('bolt')}Generar video</button></div>`:''}</div>`}
 function scenesHTML(){const P=S.P;if(!P.scenes.length)return `<div class="empty" style="padding:26px 10px;grid-column:1/-1"><p>Las escenas aparecen acá: cada tarjeta tiene su imagen, su texto, su cámara y su sonido ambiente.</p></div>`;const c=FORMATS[P.format].c;
@@ -2319,7 +2320,7 @@ window.__ev32export=exportMp4;
 (function(){
 'use strict';
 if(window.__ev33)return;window.__ev33=true;
-var VERSION='3.68';
+var VERSION='3.75';
 var COLORS=['#7dd3fc','#ff9de2','#a7f3d0','#fdba74','#c4b5fd'];
 var MOVES=['zoomin','panr','tiltup','dolly','panl','zoomout','track','tiltdown'];
 
@@ -2640,7 +2641,7 @@ if('serviceWorker' in navigator&&/^https:$/.test(location.protocol)){window.addE
   reg.addEventListener('updatefound',function(){var w=reg.installing;if(!w)return;w.addEventListener('statechange',function(){if(w.state==='installed'&&navigator.serviceWorker.controller)toast('Hay una versión nueva de Estudio Viral: cerrá y volvé a abrir la app para verla ✨')})})}).catch(function(e){console.info('[v3.33] sin app instalable (falta sw.js en GitHub):',e&&e.message)})})}
 
 /* Novedades */
-var NEWS=['📺 <b>3.69</b>: <b>Ficha de la serie</b>: al tocar «Hacer la Parte…» podés decir cuántas partes tiene la serie y cómo termina (la última se cierra con «FIN»), sumar un <b>personaje nuevo</b> con su foto sin perder a los demás, y pedir algo que tenga que pasar. La IA ahora recuerda todas las partes anteriores.','☁️ <b>3.60</b>: nueva <b>Mi carpeta</b> (botón en Mis Proyectos): tus proyectos se guardan en tu propio Vercel, cifrados con tu PIN. En otra compu o celular escribís el PIN y aparecen para seguir donde los dejaste. Se guardan solos cada vez que salís de un proyecto.','🎧 <b>3.59</b>: <b>todos los sonidos son grabaciones reales</b>: lluvia, tormenta, mar, fuego, río, selva, ciudad, mercado, tren, reloj, latidos, forja, batalla y más, los sagrados (atabaque, chocalho, campanita, agogô) y las transiciones. Las mezclas (Terreiro, Mar de Iemanjá, Encruzilhada, Mata sagrada) también. Se repiten sin que se note el corte. En la pestaña Sonido: escuchar, 🔄 probar otra y «Bajar todos ahora».','🎧 <b>3.58</b>: <b>sonidos reales</b>. Las campanitas (adjá/sineta), cigarras, aves africanas, pájaros, grillos, ranas, lechuza, monos, sabana y selva ahora son grabaciones de verdad de Wikimedia Commons (antes se fabricaban y sonaban a timbre). En la pestaña Sonido podés escucharlas y tocar 🔄 para probar otra grabación. La campanita de las transiciones también es real.','🚀 <b>3.57</b>: en Mis Proyectos hay botones nuevos: <b>💬 Responder comentario</b> (el video empieza con el globito del comentario y la IA lo responde), <b>💡 Ideas</b> (7 ideas para la semana y fechas especiales que se acercan) y <b>🎞️ Varios videos</b> (una fila que la app hace sola, uno tras otro). En «Guion y storyboard» está <b>📺 Serie</b> para hacer la Parte 2, 3… con los mismos personajes. Y <b>💾 Copia de seguridad</b>: te avisa una vez por semana y la guarda con un toque (también en Ajustes).','🍲 <b>3.56</b>: en la Receta, las escenas de ingredientes piden primero la olla gigante y un frasquito de vidrio (antes decía «jarrito de barro» y a veces salían jarrones en vez de la olla).','⛪ <b>3.55</b>: el <b>Perfil del canal</b> (firma, hashtags fijos y cartel de cierre) se pone <b>solo en los videos de religión</b>. En «Guion y storyboard» cada video tiene un interruptor para ponerlo o sacarlo a mano.','⛪ <b>3.54</b>: nuevo <b>Perfil del canal</b> en Ajustes (ya viene cargado con Camino de Fe): la firma, los hashtags fijos #CaminoDeFe #Umbanda #Orixas y el cartel de cierre «Guardalo y dejá tu Axé» se ponen solos en cada video. Y nueva <b>🖼️ Portada</b> en «Guion y storyboard»: elegís una escena y la app arma la tapa con letras grandes y el nombre del canal, para TikTok o YouTube.','✨ <b>3.53</b>: nuevos <b>Textos animados</b>: en cada escena podés poner una frase corta que aparece moviéndose (rebote, suave, palabra por palabra, máquina de escribir, deslizando o con brillo) con estilo caja negra, letras grandes, dorado sagrado o neón. En «Guion y storyboard» está «Que la IA ponga los textos» y el <b>cartel de cierre</b> (ej: «Seguinos para más»). Las recetas ya los ponen solas.','⚡ <b>3.52</b>: nuevas <b>Recetas</b> (botón «⚡ Recetas» en Mis Proyectos): elegís Itán, Mensaje del día, Mini documental, Explicativo, Trailer, Top 5, Cuento o Historia solidaria, escribís el tema y la IA hace todo el video. Y nuevo <b>🎞️ Video real gratis</b> en cada escena: busca videos de verdad (ríos, fuego, selva, mar…) en Wikimedia Commons y Archive.org, o los pone solos en todas las escenas.','✅ <b>3.51</b>: nuevo botón «Arreglar guion y escenas (una sola vez)»: deja en «Tu guion» solo lo que dice el narrador y lo pone al lado de cada foto, sin tocar las fotos que subiste. Con «Deshacer» vuelve todo como estaba.','🧹 <b>3.50</b>: la escobita «Limpiar» reconoce más formas de instrucciones y, si no encuentra nada, se lo pasa sola a la IA. «Limpiar con IA» funciona de a 6 escenas.','🧹 <b>3.49</b>: «Limpiar con IA» ya no falla con «no devolvió datos válidos» (ahora limpia de a 6 escenas).','🧹 <b>3.48</b>: la app saca sola las instrucciones que vienen pegadas en los guiones («narración en español latino», «escena siguiendo exactamente…», «estilo…»), así la voz y los subtítulos dicen solo lo del narrador. Botones «Limpiar», «Limpiar con IA» y «Deshacer» en Guion y en Vista.','↩️ <b>3.47</b>: el botón «atrás» del celular ya no cierra la app: primero cierra lo que esté abierto, después vuelve a Vista y a Mis Proyectos. Para salir, tocás «atrás» dos veces.','🗣️ <b>3.46</b>: la voz ya no lee los emojis ni los hashtags del guion (antes decía «corazón», «estatua», «almohadilla»). Nuevo interruptor para hacer el video <b>sin voz</b> (solo subtítulos y música), en la pestaña Voz y en Vista.','🌍 <b>3.45</b>: arreglado lo de las imágenes orientales: el servicio gratis ignoraba los pedidos largos y devolvía cualquier imagen. Ahora cada pedido es corto y empieza por lo importante. En los videos de Orixás las personas salen afrobrasileñas. La Receta usa primeros planos de los personajes con la olla. Las miniaturas de «Vista» ahora se ven.','🍲 <b>3.44</b>: en la Receta de Orixás cada imagen muestra la misma olla grande con los dos personajes (ya no jarros sueltos). En «Vista» ves las imágenes mientras se crean y tenés «Rehacer todas las imágenes».','🌍 <b>3.43</b>: en videos de Orixás las personas salen afrobrasileñas y africanas (nada asiático). La app respeta el límite gratis de 1 imagen cada 45 segundos y ya no deja el cartel amarillo «Free limit reached». En el celular, «Vista» trae los primeros pasos: personajes, fotos de referencia y generar imágenes.','📱 <b>3.42</b>: en el celular el editor ahora va por partes (Vista, Guion, Escena, Estilo y Línea) con botones abajo, sin tener que bajar tanto. Botones más grandes y nada se sale de la pantalla.','🍲 <b>3.41</b>: nueva <b>Receta de Orixás</b> (dos personajes echan ingredientes en la olla y el final se ilumina). Efectos nuevos: frasco que se vuelca, humo, estallido de luz y aura. Cartel con texto en cada escena. Ayuda para darle movimiento real (Wan, Kling, Hailuo) y grabar tu gesto con la cámara. Bajar y subir todas las voces juntas para Applio.','📲 <b>3.40</b>: pasá tus proyectos de la PC al celu con un código QR (sin WhatsApp). Modo Cine (todo el video o solo algunas escenas), color de acento, música que baja sola cuando habla la voz y la nueva sección <b>Video largo a clips</b>.','💾 <b>3.39</b>: el video exportado queda guardado en el proyecto. Al volver a abrirlo aparecen directo Descargar, YouTube, TikTok e Instagram, sin exportar de nuevo.','🎙️ <b>3.38 · Voces más naturales</b>: velocidad por personaje (por ejemplo Oxalá lento y pausado), botón «Subir mi voz» en cada escena (opcional) y la IA escribe los diálogos con pausas y emoción, sin narrador.','💾 <b>3.37</b>: las voces quedan guardadas en la compu. Si recargás la página no se pierden, y si falta alguna se hace sola antes de reproducir.','🥁 <b>3.36 · Sonidos sagrados</b>: atabaque con repique, adjá/sineta, agogô, chocalho, Terreiro, Encruzilhada, Mar de Iemanjá y Mata sagrada. Opción de transiciones con golpe de tambor y campanita.','🕯️ <b>3.35 · Religión afro</b>: sección nueva en Géneros y Estilos con Itán, Mensaje de la entidad, Conocé a la entidad, Oración del día, Ofrenda explicada, Mitos y verdades, Fechas especiales, Pontos cantados, Cuentos para chicos, Exus y Pombagiras, Umbanda y Orixás. Y 9 estilos sagrados: Arte afrobrasileño, Terreiro, Mata sagrada, Encruzilhada nocturna, Pintura sacra, Ícono dorado, Vitral, Escultura africana y Afrofuturismo.','🔧 <b>3.34</b>: en los diálogos, cada escena reconoce sola quién habla y usa su voz, y pone el sonido del lugar (selva, río, cascada, fuego, tambores…). «Armar escenas» ya no borra las imágenes que hiciste.','👥 <b>Modo Diálogo</b>: dos (o más) personajes hablan, cada uno con su voz. Lo elegís en «Nuevo video».',
+var NEWS=['📸 <b>3.75</b>: <b>Fotos reales del comedor</b>: subís una vez las fotos de verdad (Eva cocinando, las ollas, la leña, la gente) y la <b>Historia solidaria</b> las usa en vez de imágenes con IA, cada una en la escena que le corresponde y con movimiento suave. También están en cada escena («📸 Foto del comedor») y se guardan en tu carpeta con PIN para tenerlas en la compu y el celu.','📺 <b>3.69</b>: <b>Ficha de la serie</b>: al tocar «Hacer la Parte…» podés decir cuántas partes tiene la serie y cómo termina (la última se cierra con «FIN»), sumar un <b>personaje nuevo</b> con su foto sin perder a los demás, y pedir algo que tenga que pasar. La IA ahora recuerda todas las partes anteriores.','☁️ <b>3.60</b>: nueva <b>Mi carpeta</b> (botón en Mis Proyectos): tus proyectos se guardan en tu propio Vercel, cifrados con tu PIN. En otra compu o celular escribís el PIN y aparecen para seguir donde los dejaste. Se guardan solos cada vez que salís de un proyecto.','🎧 <b>3.59</b>: <b>todos los sonidos son grabaciones reales</b>: lluvia, tormenta, mar, fuego, río, selva, ciudad, mercado, tren, reloj, latidos, forja, batalla y más, los sagrados (atabaque, chocalho, campanita, agogô) y las transiciones. Las mezclas (Terreiro, Mar de Iemanjá, Encruzilhada, Mata sagrada) también. Se repiten sin que se note el corte. En la pestaña Sonido: escuchar, 🔄 probar otra y «Bajar todos ahora».','🎧 <b>3.58</b>: <b>sonidos reales</b>. Las campanitas (adjá/sineta), cigarras, aves africanas, pájaros, grillos, ranas, lechuza, monos, sabana y selva ahora son grabaciones de verdad de Wikimedia Commons (antes se fabricaban y sonaban a timbre). En la pestaña Sonido podés escucharlas y tocar 🔄 para probar otra grabación. La campanita de las transiciones también es real.','🚀 <b>3.57</b>: en Mis Proyectos hay botones nuevos: <b>💬 Responder comentario</b> (el video empieza con el globito del comentario y la IA lo responde), <b>💡 Ideas</b> (7 ideas para la semana y fechas especiales que se acercan) y <b>🎞️ Varios videos</b> (una fila que la app hace sola, uno tras otro). En «Guion y storyboard» está <b>📺 Serie</b> para hacer la Parte 2, 3… con los mismos personajes. Y <b>💾 Copia de seguridad</b>: te avisa una vez por semana y la guarda con un toque (también en Ajustes).','🍲 <b>3.56</b>: en la Receta, las escenas de ingredientes piden primero la olla gigante y un frasquito de vidrio (antes decía «jarrito de barro» y a veces salían jarrones en vez de la olla).','⛪ <b>3.55</b>: el <b>Perfil del canal</b> (firma, hashtags fijos y cartel de cierre) se pone <b>solo en los videos de religión</b>. En «Guion y storyboard» cada video tiene un interruptor para ponerlo o sacarlo a mano.','⛪ <b>3.54</b>: nuevo <b>Perfil del canal</b> en Ajustes (ya viene cargado con Camino de Fe): la firma, los hashtags fijos #CaminoDeFe #Umbanda #Orixas y el cartel de cierre «Guardalo y dejá tu Axé» se ponen solos en cada video. Y nueva <b>🖼️ Portada</b> en «Guion y storyboard»: elegís una escena y la app arma la tapa con letras grandes y el nombre del canal, para TikTok o YouTube.','✨ <b>3.53</b>: nuevos <b>Textos animados</b>: en cada escena podés poner una frase corta que aparece moviéndose (rebote, suave, palabra por palabra, máquina de escribir, deslizando o con brillo) con estilo caja negra, letras grandes, dorado sagrado o neón. En «Guion y storyboard» está «Que la IA ponga los textos» y el <b>cartel de cierre</b> (ej: «Seguinos para más»). Las recetas ya los ponen solas.','⚡ <b>3.52</b>: nuevas <b>Recetas</b> (botón «⚡ Recetas» en Mis Proyectos): elegís Itán, Mensaje del día, Mini documental, Explicativo, Trailer, Top 5, Cuento o Historia solidaria, escribís el tema y la IA hace todo el video. Y nuevo <b>🎞️ Video real gratis</b> en cada escena: busca videos de verdad (ríos, fuego, selva, mar…) en Wikimedia Commons y Archive.org, o los pone solos en todas las escenas.','✅ <b>3.51</b>: nuevo botón «Arreglar guion y escenas (una sola vez)»: deja en «Tu guion» solo lo que dice el narrador y lo pone al lado de cada foto, sin tocar las fotos que subiste. Con «Deshacer» vuelve todo como estaba.','🧹 <b>3.50</b>: la escobita «Limpiar» reconoce más formas de instrucciones y, si no encuentra nada, se lo pasa sola a la IA. «Limpiar con IA» funciona de a 6 escenas.','🧹 <b>3.49</b>: «Limpiar con IA» ya no falla con «no devolvió datos válidos» (ahora limpia de a 6 escenas).','🧹 <b>3.48</b>: la app saca sola las instrucciones que vienen pegadas en los guiones («narración en español latino», «escena siguiendo exactamente…», «estilo…»), así la voz y los subtítulos dicen solo lo del narrador. Botones «Limpiar», «Limpiar con IA» y «Deshacer» en Guion y en Vista.','↩️ <b>3.47</b>: el botón «atrás» del celular ya no cierra la app: primero cierra lo que esté abierto, después vuelve a Vista y a Mis Proyectos. Para salir, tocás «atrás» dos veces.','🗣️ <b>3.46</b>: la voz ya no lee los emojis ni los hashtags del guion (antes decía «corazón», «estatua», «almohadilla»). Nuevo interruptor para hacer el video <b>sin voz</b> (solo subtítulos y música), en la pestaña Voz y en Vista.','🌍 <b>3.45</b>: arreglado lo de las imágenes orientales: el servicio gratis ignoraba los pedidos largos y devolvía cualquier imagen. Ahora cada pedido es corto y empieza por lo importante. En los videos de Orixás las personas salen afrobrasileñas. La Receta usa primeros planos de los personajes con la olla. Las miniaturas de «Vista» ahora se ven.','🍲 <b>3.44</b>: en la Receta de Orixás cada imagen muestra la misma olla grande con los dos personajes (ya no jarros sueltos). En «Vista» ves las imágenes mientras se crean y tenés «Rehacer todas las imágenes».','🌍 <b>3.43</b>: en videos de Orixás las personas salen afrobrasileñas y africanas (nada asiático). La app respeta el límite gratis de 1 imagen cada 45 segundos y ya no deja el cartel amarillo «Free limit reached». En el celular, «Vista» trae los primeros pasos: personajes, fotos de referencia y generar imágenes.','📱 <b>3.42</b>: en el celular el editor ahora va por partes (Vista, Guion, Escena, Estilo y Línea) con botones abajo, sin tener que bajar tanto. Botones más grandes y nada se sale de la pantalla.','🍲 <b>3.41</b>: nueva <b>Receta de Orixás</b> (dos personajes echan ingredientes en la olla y el final se ilumina). Efectos nuevos: frasco que se vuelca, humo, estallido de luz y aura. Cartel con texto en cada escena. Ayuda para darle movimiento real (Wan, Kling, Hailuo) y grabar tu gesto con la cámara. Bajar y subir todas las voces juntas para Applio.','📲 <b>3.40</b>: pasá tus proyectos de la PC al celu con un código QR (sin WhatsApp). Modo Cine (todo el video o solo algunas escenas), color de acento, música que baja sola cuando habla la voz y la nueva sección <b>Video largo a clips</b>.','💾 <b>3.39</b>: el video exportado queda guardado en el proyecto. Al volver a abrirlo aparecen directo Descargar, YouTube, TikTok e Instagram, sin exportar de nuevo.','🎙️ <b>3.38 · Voces más naturales</b>: velocidad por personaje (por ejemplo Oxalá lento y pausado), botón «Subir mi voz» en cada escena (opcional) y la IA escribe los diálogos con pausas y emoción, sin narrador.','💾 <b>3.37</b>: las voces quedan guardadas en la compu. Si recargás la página no se pierden, y si falta alguna se hace sola antes de reproducir.','🥁 <b>3.36 · Sonidos sagrados</b>: atabaque con repique, adjá/sineta, agogô, chocalho, Terreiro, Encruzilhada, Mar de Iemanjá y Mata sagrada. Opción de transiciones con golpe de tambor y campanita.','🕯️ <b>3.35 · Religión afro</b>: sección nueva en Géneros y Estilos con Itán, Mensaje de la entidad, Conocé a la entidad, Oración del día, Ofrenda explicada, Mitos y verdades, Fechas especiales, Pontos cantados, Cuentos para chicos, Exus y Pombagiras, Umbanda y Orixás. Y 9 estilos sagrados: Arte afrobrasileño, Terreiro, Mata sagrada, Encruzilhada nocturna, Pintura sacra, Ícono dorado, Vitral, Escultura africana y Afrofuturismo.','🔧 <b>3.34</b>: en los diálogos, cada escena reconoce sola quién habla y usa su voz, y pone el sonido del lugar (selva, río, cascada, fuego, tambores…). «Armar escenas» ya no borra las imágenes que hiciste.','👥 <b>Modo Diálogo</b>: dos (o más) personajes hablan, cada uno con su voz. Lo elegís en «Nuevo video».',
   '🎨 <b>Subtítulos de colores</b>: cada personaje con su color y su nombre arriba, así se entiende quién habla aunque esté sin sonido.',
   '🖼️ <b>Máximo 6 imágenes</b>: el tiempo de cada una se calcula solo con las voces.',
   '💓 <b>La imagen late con la voz</b>: parece viva mientras el personaje habla.',
@@ -4978,6 +4979,7 @@ function recUI(){var r=recOf(R.sel);
     '<div class="lbl">Duración</div><div class="seg">'+[30,45,60,90].map(function(d){return '<button class="'+((R.dur||r.dur)===d?'on':'')+'" onclick="EV352.set(\'dur\','+d+')">'+d+' s</button>'}).join('')+'</div>'+
     '<div class="lbl">Formato</div><div class="seg">'+[['vertical','📱 Vertical'],['horizontal','🖥️ Horizontal'],['cuadrado','⬜ Cuadrado']].map(function(f){return '<button class="'+(R.fmt===f[0]?'on':'')+'" onclick="EV352.set(\'fmt\',\''+f[0]+'\')">'+f[1]+'</button>'}).join('')+'</div>'+
     '<div class="lbl">Estilo de las imágenes</div><select class="sel" onchange="EV352.R.style=this.value">'+STYLES.filter(function(x){return x.id!=='custom'}).map(function(x){return '<option value="'+x.id+'" '+(st===x.id?'selected':'')+'>'+esc(x.n)+'</option>'}).join('')+'</select>'+
+    (r.id==='solidario'?(function(){var nf=window.EV375?EV375.count():0,on=R.fotos===undefined?(nf>0||!!(window.EV375&&EV375.cloud())):!!R.fotos;return '<div class="card" style="padding:10px;margin-top:12px;border-color:#7c5cff88"><label class="row" style="gap:8px;align-items:flex-start;cursor:pointer"><input type="checkbox" '+(on?'checked':'')+' onchange="EV352.R.fotos=this.checked" style="margin-top:3px"><span>📸 <b>Usar fotos reales del comedor</b> en vez de imágenes hechas con IA, así sale Eva y el comedor de verdad. Tenés <b>'+nf+'</b> foto(s) guardada(s).</span></label><button class="btn sm" style="margin-top:8px;width:100%" onclick="EV375.open(\'rec\')">📸 Ver o subir fotos del comedor</button></div>'})():'')+
     '<label class="row" style="gap:8px;margin-top:12px;align-items:flex-start;cursor:pointer"><input type="checkbox" '+(R.clips?'checked':'')+' onchange="EV352.R.clips=this.checked" style="margin-top:3px"><span>🎞️ <b>Usar videos reales gratis</b> donde se pueda (ríos, fuego, selva, mar, tambores…). Salen de Wikimedia Commons, con movimiento de verdad. Las escenas que no tengan video quedan con imagen.</span></label>'+
     '<button class="btn grad" id="ev52go" style="width:100%;margin-top:14px" onclick="EV352.create()">'+ic('bolt')+'Crear video completo</button>'+
     '<div class="ev40-mini" style="margin-top:6px">La IA escribe el guion, arma las escenas, hace imágenes y voz, y exporta el video. Después podés cambiar cualquier escena.</div>'+
@@ -4994,6 +4996,8 @@ var msO=Pipe.makeScenes;Pipe.makeScenes=async function(){var P=S.P,r=P&&P.recipe
 async function create(){var r=recOf(R.sel);if(!r)return;var tema=String(R.tema||'').trim();
   if(!tema&&!r.ent){msg('ev52msg','Escribí de qué trata el video.',1);return}
   var P=buildP(r,tema,R.ent,R.dur,R.fmt,R.style,R.clips);
+  if(r.id==='solidario'&&window.EV375){var nf=EV375.count(),cl=EV375.cloud(),on=R.fotos===undefined?(nf>0||cl):!!R.fotos;
+    if(on&&!nf&&!cl){msg('ev52msg','Primero subí fotos del comedor (botón «Ver o subir fotos del comedor»), o destildá esa opción.',1);return}P.usePhotos=on}
   closeSheet();openProject(P);P=S.P;toast(r.e+' Receta «'+r.n+'» en marcha: la IA arma todo, podés dejarla trabajando');
   run(async function(){await Pipe.makeScenes(true);if(S.P!==P)return;try{if(window.EV353)await EV353.ai()}catch(e){}if(S.P!==P)return;if(P.useClips&&P.scenes.length)await autoClips(true);if(S.P!==P)return;await Pipe.auto()})}
 function buildP(r,tema,ent,dur,fmt,style,clips){tema=String(tema||'').trim();ent=ent||'Oxum';
@@ -5939,7 +5943,11 @@ window.EV360={CL:CL,
     act(async function(){for(var i=0;i<ids.length;i++)await download(ids[i]);try{render()}catch(e){}},'✅ '+ids.length+' proyecto(s) traídos de tu carpeta')},
   openLocal:function(id){var p=S.projects.find(function(x){return x.id===id});if(p){closeSheet();openProject(p)}},
   del:function(id){var it=CL.index.projects[id];if(!it||!confirm('¿Borrar «'+it.name+'» de tu carpeta? (si está en esta compu, acá no se borra)'))return;act(function(){return remove(id)},'Borrado de la carpeta')},
-  _login:login,_upload:upload,_download:download};
+  _login:login,_upload:upload,_download:download,
+  raw:{ready:function(){return !!CL.key},list:function(){return refreshList()},
+    put:async function(n,u8){await call('put',n,await enc(u8))},
+    get:async function(n){if(!CL.files||!CL.files[n])await refreshList();if(!CL.files[n])return null;return dec(await getFile(n))},
+    del:function(n){return call('del',n,'')}}};
 
 /* al abrir: si el PIN está recordado, entra sola */
 (function(){var pin=store.get('ev_cloudpin','');if(pin)setTimeout(function(){enter(pin,true,true).then(function(){try{render()}catch(e){}})},1200)})();
@@ -6532,5 +6540,206 @@ console.info('[Estudio Viral] v3.73: paisajes de sonido');
 })();
 </script>
 <!-- ===== FIN v3.73 ===== -->
+
+<!-- ===== ESTUDIO VIRAL · v3.75 · FOTOS REALES DEL COMEDOR =====
+     Guardás una vez las fotos de verdad del comedor (Eva, las ollas, la leña, la gente) con etiquetas.
+     La «Historia solidaria» y el botón «📸 Fotos del comedor» las ponen en las escenas en vez de imágenes con IA,
+     eligiendo la foto que mejor va con lo que dice cada escena. Se guardan en esta compu y, si entraste
+     con tu PIN, también en «☁️ Mi carpeta» (cifradas), así están en la compu y en el celu.
+     Agregado al final. Para quitarlo, borrá desde acá hasta "FIN v3.75". -->
+<style>
+.ev75-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;margin-top:10px}
+.ev75-ph{position:relative;border-radius:10px;overflow:hidden;background:#ffffff0d;aspect-ratio:1/1;border:2px solid transparent;cursor:pointer;padding:0;color:inherit}
+.ev75-ph img{width:100%;height:100%;object-fit:cover;display:block}
+.ev75-ph small{position:absolute;left:0;right:0;bottom:0;font-size:10.5px;padding:10px 5px 3px;background:linear-gradient(transparent,#000d);color:#fff;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev75-ph .ok{position:absolute;top:4px;right:4px;font-size:11px;background:#7c5cff;color:#fff;border-radius:6px;padding:1px 5px}
+.ev75-ph.best{border-color:#22c55e}
+.ev75-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.ev75-chip{border:1px solid #ffffff2a;background:#ffffff0d;color:inherit;border-radius:999px;padding:7px 11px;font-size:13px;cursor:pointer}
+.ev75-chip.on{background:#7c5cff55;border-color:#7c5cff}
+.ev75-big{width:100%;max-height:46vh;object-fit:contain;border-radius:12px;background:#000;display:block}
+.ev75-st{font-size:12px;opacity:.8;margin-top:8px}
+.ev75-b{white-space:nowrap}
+</style>
+<script id="ev375">
+(function(){'use strict';if(window.__ev375)return;window.__ev375=true;
+var TAGS=[
+ ['eva','👩‍🍳','Eva',/\beva\b|cociner[ao]|\bcook(s|ing)?\b|\bchef\b/i,3],
+ ['olla','🍲','Ollas / cocina',/\boll(a|as|ita)\b|cocin|kitchen|\bpots?\b|cauldron|guiso|\bstew\b|\bsopa\b|\bsoup\b|cuchar|ladle|revuelv|stirr/i,2],
+ ['fuego','🔥','Fuego / leña',/fuego|leña|\blena\b|\bfire\b|firewood|\bwood\b|bras(a|as)\b|llamas?\b|flames?|humo|smoke/i,2],
+ ['comida','🍛','Platos de comida',/comida|plat(o|os)\b|\bfood\b|\bmeals?\b|plates?\b|dish|bowls?\b|\bpan\b|bread|almuerzo|\bcena\b|merienda|lunch|dinner|viand|tupper|porci/i,2],
+ ['chicos','🧒','Chicos',/chic(o|a|os|as)\b|niñ|\bnin(o|a|os|as)\b|pibes?\b|\bkids?\b|child|\bboys?\b|\bgirls?\b|nenes?\b|nenas?\b|infanc/i,2],
+ ['gente','👨‍👩‍👧','Familias / vecinos',/\bgente\b|familia|vecin|comunidad|people|famil|crowd|\bfila\b|queue|abuel|madres?\b|mother|grandm|elderly|personas/i,2],
+ ['manos','🙌','Voluntarios',/voluntari|volunteer|\bmanos\b|\bhands\b|equipo|\bteam\b|ayudan|sirv|serving|repart/i,2],
+ ['lugar','🏠','El comedor por fuera',/comedor|barrio|\bcalle\b|street|fachada|facade|building|neighbo|merlo|\bcasa\b|\bhouse\b|cartel|\bsign\b/i,1],
+ ['donacion','📦','Donaciones',/donac|\bdon[aá]|colabor|donation|alimentos|mercader|bolsas?\b|cajas?\b|\bbox(es)?\b|aport|\bayud[aá]\b|ayudanos|seguinos|compart/i,2]];
+var KEY='ev_fotos',DELK='ev_fotos_del';
+var G={up:{},urls:{},det:'',target:-1,back:'',st:'',msg:''};
+function list(){var l=store.get(KEY,[]);return Array.isArray(l)?l:[]}
+function setList(l){store.set(KEY,l)}
+function tagOf(t){return TAGS.find(function(a){return a[0]===t})}
+function tagLabel(t){var x=tagOf(t);return x?x[2]:t}
+function tagsTxt(f){return (f.tags||[]).map(tagLabel).join(', ')||'Sin etiqueta'}
+function cloud(){try{return !!(window.EV360&&EV360.raw&&EV360.raw.ready())}catch(e){return false}}
+function ui$(){return document.querySelector('.ev75')}
+function sheet(html){$('#sheetin').innerHTML=html;$('#sheet').classList.add('open')}
+function head(t){return '<div class="between" style="margin-bottom:10px"><div class="h1" style="font-size:19px">'+t+'</div><button class="btn sm" onclick="EV375.close()">✕ Cerrar</button></div>'}
+
+/* ---------- achicar fotos ---------- */
+async function shrink(file,max,q){
+  var u=URL.createObjectURL(file);
+  try{var im=await new Promise(function(res,rej){var x=new Image();x.onload=function(){res(x)};x.onerror=function(){rej(new Error('No pude abrir una de las fotos (probá con JPG o PNG)'))};x.src=u});
+    var k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*k));c.height=Math.max(1,Math.round(im.height*k));
+    c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+    return await new Promise(function(r,rej){c.toBlob(function(b){b?r(b):rej(new Error('No pude guardar la foto'))},'image/jpeg',q)})}
+  finally{try{URL.revokeObjectURL(u)}catch(e){}}}
+async function thumbURL(id){if(G.urls[id])return G.urls[id];var b=await IDB.get('fotot:'+id);if(!b)b=await IDB.get('foto:'+id);if(!b)return '';return G.urls[id]=URL.createObjectURL(b)}
+async function bigURL(id){var k='big:'+id;if(G.urls[k])return G.urls[k];var b=await IDB.get('foto:'+id);if(!b)return '';return G.urls[k]=URL.createObjectURL(b)}
+function paintThumbs(){var m=ui$();if(!m)return;[].forEach.call(m.querySelectorAll('img[data-f]'),function(im){thumbURL(im.getAttribute('data-f')).then(function(u){if(u)im.src=u})})}
+
+/* ---------- nube (☁️ Mi carpeta, cifrada con el PIN) ---------- */
+var cq=Promise.resolve(),syncT=0;
+function queue(fn){cq=cq.then(fn).catch(function(e){console.warn('[v3.75] nube',e);G.st='err'});return cq}
+function soonSync(){clearTimeout(syncT);syncT=setTimeout(function(){queue(function(){return sync()})},1500)}
+async function sync(){if(!cloud())return false;G.st='busy';refreshSt();
+  var te=new TextEncoder(),td=new TextDecoder();
+  await EV360.raw.list();
+  var raw=await EV360.raw.get('fotos.bin'),rem=[];
+  if(raw){try{rem=JSON.parse(td.decode(raw)).fotos||[]}catch(e){rem=[]}}
+  var loc=list(),dels=store.get(DELK,[])||[],byL={},byR={},out=[],got=0;
+  loc.forEach(function(f){byL[f.id]=f});rem.forEach(function(f){byR[f.id]=f});
+  for(var i=0;i<rem.length;i++){var f=rem[i];if(dels.indexOf(f.id)>=0)continue;var l=byL[f.id];
+    if(!l){try{var b=await EV360.raw.get('foto-'+f.id+'.bin');if(!b)continue;var blob=new Blob([b],{type:'image/jpeg'});
+        await IDB.set('foto:'+f.id,blob);await IDB.set('fotot:'+f.id,await shrink(blob,360,.75));out.push({id:f.id,tags:f.tags||[],at:f.at||Date.now(),ed:f.ed||0,cloud:true});got++}catch(e){console.warn('[v3.75]',e)}}
+    else{if((l.ed||0)>=(f.ed||0)){l.cloud=true;out.push(l)}else out.push({id:f.id,tags:f.tags||[],at:f.at||l.at,ed:f.ed||0,cloud:true})}}
+  for(var j=0;j<loc.length;j++){var x=loc[j];if(byR[x.id])continue;
+    if(x.cloud){try{await IDB.set('foto:'+x.id,null);await IDB.set('fotot:'+x.id,null)}catch(e){}continue}
+    try{var bb=await IDB.get('foto:'+x.id);if(bb){await EV360.raw.put('foto-'+x.id+'.bin',new Uint8Array(await bb.arrayBuffer()));x.cloud=true;out.push(x)}}catch(e){out.push(x)}}
+  for(var d=0;d<dels.length;d++){try{await EV360.raw.del('foto-'+dels[d]+'.bin')}catch(e){}}
+  store.set(DELK,[]);
+  /* lo que se agregó mientras sincronizaba no se pierde */
+  list().forEach(function(f){if(!byL[f.id]&&!out.some(function(o){return o.id===f.id}))out.push(f)});
+  out.sort(function(a,b){return (a.at||0)-(b.at||0)});setList(out);
+  await EV360.raw.put('fotos.bin',te.encode(JSON.stringify({v:1,fotos:out.filter(function(f){return f.cloud}).map(function(f){return {id:f.id,tags:f.tags||[],at:f.at,ed:f.ed||0}})})));
+  G.st='ok';if(got&&ui$())draw();else refreshSt();return true}
+function stTxt(){if(!cloud())return '☁️ Estas fotos quedan en este aparato. Para tenerlas también en la compu y el celu, entrá a <b>☁️ Mi carpeta</b> con tu PIN.';
+  if(G.st==='busy')return '☁️ Sincronizando con tu carpeta…';if(G.st==='err')return '☁️ No pude sincronizar ahora con tu carpeta; quedan guardadas acá y lo intento de nuevo después.';
+  return '☁️ Guardadas en tu carpeta: las ves en la compu y en el celu.'}
+function refreshSt(){var e=document.getElementById('ev75st');if(e)e.innerHTML=stTxt()}
+
+/* ---------- elegir la foto que va con cada escena ---------- */
+function sceneText(s){return [s.text,s.prompt,s.atxt].filter(Boolean).join(' ')}
+function score(f,txt){var sc=0;(f.tags||[]).forEach(function(t){var x=tagOf(t);if(x){if(x[3].test(txt))sc+=x[4]}else if(t&&txt.toLowerCase().indexOf(String(t).toLowerCase())>=0)sc+=3});return sc}
+function plan(P,idxs){var fs=list();if(!fs.length)return [];var used={},prev='',out=[];
+  P.scenes.forEach(function(s){if(s.fromFoto)used[s.fromFoto]=(used[s.fromFoto]||0)+1});
+  idxs.forEach(function(i){var s=P.scenes[i],txt=sceneText(s),best=null,bv=-1e9;
+    var before=i>0?P.scenes[i-1].fromFoto:'';
+    fs.forEach(function(f,k){var v=score(f,txt)*2-(used[f.id]||0)*2.5-((f.id===before||f.id===prev)?6:0)+((k*7+i*3)%5)*0.01;if(v>bv){bv=v;best=f}});
+    if(best){used[best.id]=(used[best.id]||0)+1;prev=best.id;out.push([i,best])}});
+  return out}
+async function putPhoto(s,f){var blob=await IDB.get('foto:'+f.id);if(!blob)throw new Error('Esa foto ya no está en este aparato');
+  var key='local:'+uid();await IDB.set(key,blob);try{Pipe.pushVar(s)}catch(e){}
+  s.img=key;s.local=true;s.edited=false;s.hq=false;s.parallax=false;s.fromFoto=f.id;delete s.noFoto;try{delete RT.fg[s.id]}catch(e){}
+  await loadImg(key,9)}
+async function fill(P,quiet){if(!P||!P.scenes||!P.scenes.length)return 0;
+  if(!list().length&&cloud()){try{await queue(function(){return sync()})}catch(e){}}
+  if(!list().length)return 0;
+  var idxs=[];P.scenes.forEach(function(s,i){if(!s.local&&!s.noFoto)idxs.push(i)});if(!idxs.length)return 0;
+  var pl=plan(P,idxs),n=0;
+  for(var k=0;k<pl.length;k++){if(S.P!==P)break;try{Pipe.setBusy('Poniendo fotos reales del comedor ('+(k+1)+'/'+pl.length+')…')}catch(e){}
+    try{await putPhoto(P.scenes[pl[k][0]],pl[k][1]);n++}catch(e){console.warn('[v3.75]',e)}}
+  try{Pipe.setBusy('')}catch(e){}save(1);try{render()}catch(e){}
+  if(!quiet&&n)toast('📸 Puse '+n+' foto(s) reales del comedor ✅');return n}
+
+/* las imágenes de un proyecto «con fotos del comedor» salen de las fotos, no de la IA */
+var imO=Pipe.images;Pipe.images=async function(){var P=S.P;
+  try{if(P&&P.usePhotos&&P.scenes&&P.scenes.length){var n=await fill(P,true);if(n)toast('📸 Usé '+n+' foto(s) reales del comedor en las escenas')}}catch(e){console.warn('[v3.75]',e)}
+  return imO.apply(this,arguments)};
+
+/* ---------- pantallas ---------- */
+function chips(sel,fn){return '<div class="ev75-chips">'+TAGS.map(function(t){return '<button class="ev75-chip '+(sel[t[0]]?'on':'')+'" onclick="'+fn+'(\''+t[0]+'\')">'+t[1]+' '+esc(t[2])+'</button>'}).join('')+'</div>'}
+function draw(){var fs=list(),h;
+  if(G.det){var f=fs.find(function(x){return x.id===G.det});if(!f){G.det='';return draw()}
+    var on={};(f.tags||[]).forEach(function(t){on[t]=1});var extra=(f.tags||[]).filter(function(t){return !tagOf(t)});
+    h=head('📸 Foto del comedor')+'<img class="ev75-big" id="ev75big" alt="">'+
+      '<div class="lbl" style="margin-top:12px">¿Qué se ve en esta foto?</div>'+chips(on,'EV375.tog')+
+      (extra.length?'<div class="ev75-chips">'+extra.map(function(t){return '<button class="ev75-chip on" title="Quitar" onclick="EV375.tog(\''+esc(t).replace(/'/g,'')+'\')">🏷️ '+esc(t)+' ✕</button>'}).join('')+'</div>':'')+
+      '<div class="row" style="gap:6px;margin-top:8px"><input class="inp" id="ev75tag" placeholder="Otra etiqueta (ej: Navidad, día del niño)" onkeydown="if(event.key===\'Enter\')EV375.addTag()"><button class="btn sm" onclick="EV375.addTag()">Agregar</button></div>'+
+      '<div class="row" style="gap:8px;margin-top:14px"><button class="btn grad" style="flex:1" onclick="EV375.det(\'\')">✅ Listo</button><button class="btn" onclick="EV375.del(\''+f.id+'\')">'+ic('trash')+' Borrar</button></div>';
+    sheet('<div class="ev75">'+h+'</div>');bigURL(f.id).then(function(u){var e=document.getElementById('ev75big');if(e&&u)e.src=u});return}
+  var tgt=G.target>=0&&S.P&&S.P.scenes[G.target]?S.P.scenes[G.target]:null;
+  if(tgt){var txt=sceneText(tgt);fs=fs.slice().sort(function(a,b){return score(b,txt)-score(a,txt)})}
+  var bestS=tgt&&fs.length?score(fs[0],sceneText(tgt)):0;
+  h=head(tgt?'📸 Foto para la escena '+(G.target+1):'📸 Fotos del comedor')+
+    (tgt?'<div class="sub">Tocá la foto que querés en esta escena. Arriba (con borde verde) están las que mejor van con lo que dice.</div>'+
+      '<div class="hint" style="margin-top:4px">«'+esc(String(tgt.text||'').slice(0,140))+'»</div>'
+     :'<div class="sub">Subí fotos reales: Eva cocinando, las ollas, la leña, los platos, la gente. En la <b>Historia solidaria</b> se usan estas fotos en vez de imágenes hechas con IA, cada una en la escena que le corresponde y con movimiento suave.</div>')+
+    '<div class="card" style="padding:12px;margin-top:10px"><div class="lbl" style="margin-top:0">1. ¿Qué muestran las fotos que vas a subir? <span class="hint">(podés marcar varias, o ninguna)</span></div>'+chips(G.up,'EV375.upTog')+
+    '<label class="btn grad" style="width:100%;margin-top:10px;cursor:pointer;justify-content:center">➕ 2. Elegir fotos del celu o la compu<input type="file" accept="image/*" multiple hidden onchange="EV375.add(this.files);this.value=\'\'"></label>'+
+    '<div class="pmsg" id="ev75m">'+(G.msg||'')+'</div></div>'+
+    '<div class="ev75-st" id="ev75st">'+stTxt()+'</div>'+
+    (fs.length?'<div class="lbl" style="margin-top:12px">'+(tgt?'Tus fotos':'Tus fotos ('+fs.length+') · tocá una para cambiar sus etiquetas')+'</div><div class="ev75-grid">'+
+      fs.map(function(f,k){var b=tgt&&k<3&&bestS>0&&score(f,sceneText(tgt))===bestS;var cur=tgt&&tgt.fromFoto===f.id;
+        return '<button class="ev75-ph '+(b?'best':'')+'" onclick="'+(tgt?'EV375.use(\''+f.id+'\')':'EV375.det(\''+f.id+'\')')+'"><img data-f="'+f.id+'" alt="">'+(cur?'<span class="ok">en uso</span>':'')+'<small>'+esc(tagsTxt(f))+'</small></button>'}).join('')+'</div>'
+     :'<div class="hint" style="margin-top:12px">Todavía no hay fotos. Elegí arriba qué muestran y tocá «Elegir fotos».</div>')+
+    (tgt&&tgt.fromFoto?'<button class="btn" style="width:100%;margin-top:12px" onclick="EV375.toAI()">🎨 En esta escena prefiero una imagen hecha con IA</button>':'')+
+    (G.back==='rec'?'<button class="btn" style="width:100%;margin-top:12px" onclick="EV375.back()">← Volver a la Historia solidaria</button>':'')+
+    (!tgt&&S.view==='editor'&&S.P&&S.P.scenes&&S.P.scenes.length&&fs.length?'<button class="btn grad" style="width:100%;margin-top:12px" onclick="EV375.fillNow()">📸 Poner estas fotos en las escenas de este video</button>':'');
+  sheet('<div class="ev75">'+h+'</div>');paintThumbs()}
+function msgE(t,bad){G.msg=t?'<span style="color:'+(bad?'#ff6b6b':'#22c55e')+'">'+t+'</span>':'';var e=document.getElementById('ev75m');if(e)e.innerHTML=G.msg}
+
+async function add(files){files=[].slice.call(files||[]).filter(function(f){return /^image\//.test(f.type)||/\.(jpe?g|png|webp|gif|heic|heif)$/i.test(f.name||'')});
+  if(!files.length){msgE('No elegiste fotos.',1);return}
+  var tags=Object.keys(G.up).filter(function(k){return G.up[k]}),n=0,bad=0;
+  for(var i=0;i<files.length;i++){msgE('Guardando foto '+(i+1)+' de '+files.length+'…');
+    try{var big=await shrink(files[i],1600,.88),th=await shrink(files[i],360,.75),id=uid()+uid();
+      await IDB.set('foto:'+id,big);await IDB.set('fotot:'+id,th);var l=list();l.push({id:id,tags:tags.slice(),at:Date.now(),ed:Date.now()});setList(l);n++}
+    catch(e){bad++;console.warn('[v3.75]',e)}}
+  G.msg='';if(n)G.up={};if(ui$())draw();
+  msgE(n?('✅ '+n+' foto(s) guardada(s)'+(bad?' · '+bad+' no se pudieron abrir (probá con JPG o PNG)':'')+'.'):'No pude abrir esas fotos. Probá con JPG o PNG.',!n);
+  if(n){toast('📸 '+n+' foto(s) del comedor guardada(s)');if(cloud())soonSync()}}
+function edit(id,fn){var l=list(),f=l.find(function(x){return x.id===id});if(!f)return;fn(f);f.ed=Date.now();setList(l);if(cloud())soonSync()}
+
+window.EV375={
+  count:function(){return list().length},cloud:cloud,list:list,fill:fill,
+  open:function(back){G.det='';G.target=-1;G.back=back==='rec'?'rec':'';G.msg='';draw();if(cloud())queue(function(){return sync()})},
+  close:function(){G.det='';G.target=-1;G.back='';closeSheet()},
+  back:function(){G.back='';if(window.EV352&&EV352.open_rec)EV352.open_rec();else closeSheet()},
+  upTog:function(t){G.up[t]=!G.up[t];draw()},
+  add:function(fs){add(fs).catch(function(e){msgE(e.message||String(e),1)})},
+  det:function(id){G.det=id;draw()},
+  tog:function(t){edit(G.det,function(f){f.tags=f.tags||[];var i=f.tags.indexOf(t);if(i>=0)f.tags.splice(i,1);else f.tags.push(t)});draw()},
+  addTag:function(){var e=document.getElementById('ev75tag'),v=String(e&&e.value||'').trim().toLowerCase().replace(/['"<>\\]/g,'').slice(0,30);if(!v)return;edit(G.det,function(f){f.tags=f.tags||[];if(f.tags.indexOf(v)<0)f.tags.push(v)});draw()},
+  del:function(id){if(!confirm('¿Borrar esta foto de tus fotos del comedor? (los videos que ya la usan no cambian)'))return;
+    var l=list(),f=l.find(function(x){return x.id===id});setList(l.filter(function(x){return x.id!==id}));
+    if(f&&f.cloud){var d=store.get(DELK,[])||[];d.push(id);store.set(DELK,d)}
+    IDB.set('foto:'+id,null).catch(function(){});IDB.set('fotot:'+id,null).catch(function(){});
+    G.det='';draw();if(cloud())soonSync()},
+  pick:function(i){if(!S.P||!S.P.scenes[i])return;G.det='';G.target=i;G.back='';G.msg='';draw();if(cloud()&&!list().length)queue(function(){return sync()})},
+  use:function(id){var i=G.target,P=S.P,f=list().find(function(x){return x.id===id});if(!P||!P.scenes[i]||!f)return;
+    run(async function(){await putPhoto(P.scenes[i],f);P.usePhotos=true;save(1);G.target=-1;closeSheet();
+      try{renderSel();renderScenesOnly(1);renderTL();seekScene(i)}catch(e){try{render()}catch(_){}}toast('📸 Foto puesta en la escena '+(i+1)+' ✅')})},
+  toAI:function(){var i=G.target,P=S.P,s=P&&P.scenes[i];if(!s)return;s.local=false;s.img='';s.noFoto=true;delete s.fromFoto;save(1);G.target=-1;closeSheet();
+    run(function(){return Pipe.regen(i)})},
+  fillNow:function(){closeSheet();EV375.fillBtn(true)},
+  fillBtn:function(ok){var P=S.P;if(!P||!P.scenes.length)return;
+    if(!list().length&&!cloud()){toast('Primero subí fotos del comedor 📸');EV375.open();return}
+    var mine=P.scenes.filter(function(s){return s.local&&!s.fromFoto}).length;
+    if(!ok&&!confirm('¿Poner fotos reales del comedor en las escenas de este video?'+(mine?'\n(Las '+mine+' imagen(es) que subiste vos a mano quedan como están.)':'')))return;
+    P.usePhotos=true;P.scenes.forEach(function(s){if(s.fromFoto&&s.local){s.local=false;s.img='';delete s.fromFoto}delete s.noFoto});
+    run(async function(){var n=await fill(P,true);if(!n){toast('No encontré fotos del comedor en este aparato. Subilas en «📸 Fotos del comedor».',1);return}
+      toast('📸 Puse '+n+' foto(s) reales del comedor ✅ Tocá una escena y «📸 Foto del comedor» para cambiar alguna')})}};
+
+/* botón en «Mis proyectos» */
+try{var vpO=vProjects;vProjects=function(m){vpO.apply(this,arguments);try{
+  var rb=m.querySelector('.ev52-rb');if(rb&&!m.querySelector('.ev75-b')){var b=document.createElement('button');b.className='btn ev75-b';b.textContent='📸 Fotos del comedor';b.onclick=function(){EV375.open()};rb.parentNode.insertBefore(b,rb)}}catch(e){console.warn('[v3.75]',e)}};
+  try{if(S.view==='projects')render()}catch(e){}}catch(e){console.warn('[v3.75]',e)}
+
+/* al entrar con el PIN, trae las fotos que estén en la carpeta */
+setTimeout(function(){if(cloud())queue(function(){return sync()})},6000);
+console.info('[Estudio Viral] v3.75: fotos reales del comedor');
+})();
+</script>
+<!-- ===== FIN v3.75 ===== -->
 </body>
 </html>
