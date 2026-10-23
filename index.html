@@ -6572,6 +6572,7 @@ var TAGS=[
  ['gente','👨‍👩‍👧','Familias / vecinos',/\bgente\b|familia|vecin|comunidad|people|famil|crowd|\bfila\b|queue|abuel|madres?\b|mother|grandm|elderly|personas/i,2],
  ['manos','🙌','Voluntarios',/voluntari|volunteer|\bmanos\b|\bhands\b|equipo|\bteam\b|ayudan|sirv|serving|repart/i,2],
  ['lugar','🏠','El comedor por fuera',/comedor|barrio|\bcalle\b|street|fachada|facade|building|neighbo|merlo|\bcasa\b|\bhouse\b|cartel|\bsign\b/i,1],
+ ['cartel','🪧','Carteles / flyers',/cartel|flyer|afiche|poster|alias|mercado ?pago|cbu|seguinos|compart|ayudanos|ayúdanos|don[aá] (al|aqu|ac)|link/i,2],
  ['donacion','📦','Donaciones',/donac|\bdon[aá]|colabor|donation|alimentos|mercader|bolsas?\b|cajas?\b|\bbox(es)?\b|aport|\bayud[aá]\b|ayudanos|seguinos|compart/i,2]];
 var KEY='ev_fotos',DELK='ev_fotos_del';
 var G={up:{},urls:{},det:'',target:-1,back:'',st:'',msg:''};
@@ -6601,7 +6602,7 @@ function paintThumbs(){var m=ui$();if(!m)return;[].forEach.call(m.querySelectorA
 var cq=Promise.resolve(),syncT=0;
 function queue(fn){cq=cq.then(fn).catch(function(e){console.warn('[v3.75] nube',e);G.st='err'});return cq}
 function soonSync(){clearTimeout(syncT);syncT=setTimeout(function(){queue(function(){return sync()})},1500)}
-function cloudIdx(arr){return new TextEncoder().encode(JSON.stringify({v:1,fotos:arr.filter(function(f){return f.cloud}).map(function(f){return {id:f.id,tags:f.tags||[],at:f.at,ed:f.ed||0}})}))}
+function cloudIdx(arr){return new TextEncoder().encode(JSON.stringify({v:1,fotos:arr.filter(function(f){return f.cloud}).map(function(f){return {id:f.id,tags:f.tags||[],at:f.at,ed:f.ed||0,desc:f.desc||'',aiDone:f.aiDone||0}})}))}
 async function sync(){if(!cloud())return false;G.st='busy';refreshSt();
   var te=new TextEncoder(),td=new TextDecoder();
   await EV360.raw.list();
@@ -6611,8 +6612,8 @@ async function sync(){if(!cloud())return false;G.st='busy';refreshSt();
   loc.forEach(function(f){byL[f.id]=f});rem.forEach(function(f){byR[f.id]=f});var upN=0,toUp=loc.filter(function(f){return !byR[f.id]&&!f.cloud}).length;G.prog='';
   for(var i=0;i<rem.length;i++){var f=rem[i];if(dels.indexOf(f.id)>=0)continue;var l=byL[f.id];
     if(!l){try{var b=await EV360.raw.get('foto-'+f.id+'.bin');if(!b)continue;var blob=new Blob([b],{type:'image/jpeg'});
-        await IDB.set('foto:'+f.id,blob);await IDB.set('fotot:'+f.id,await shrink(blob,360,.75));out.push({id:f.id,tags:f.tags||[],at:f.at||Date.now(),ed:f.ed||0,cloud:true});got++}catch(e){console.warn('[v3.75]',e)}}
-    else{if((l.ed||0)>=(f.ed||0)){l.cloud=true;out.push(l)}else out.push({id:f.id,tags:f.tags||[],at:f.at||l.at,ed:f.ed||0,cloud:true})}}
+        await IDB.set('foto:'+f.id,blob);await IDB.set('fotot:'+f.id,await shrink(blob,360,.75));out.push({id:f.id,tags:f.tags||[],at:f.at||Date.now(),ed:f.ed||0,desc:f.desc||'',aiDone:f.aiDone||0,cloud:true});got++}catch(e){console.warn('[v3.75]',e)}}
+    else{if((l.ed||0)>=(f.ed||0)){l.cloud=true;out.push(l)}else out.push({id:f.id,tags:f.tags||[],at:f.at||l.at,ed:f.ed||0,desc:f.desc||'',aiDone:f.aiDone||0,cloud:true})}}
   for(var j=0;j<loc.length;j++){var x=loc[j];if(byR[x.id])continue;
     if(x.cloud){try{await IDB.set('foto:'+x.id,null);await IDB.set('fotot:'+x.id,null)}catch(e){}continue}
     try{var bb=await IDB.get('foto:'+x.id);if(bb){await EV360.raw.put('foto-'+x.id+'.bin',new Uint8Array(await bb.arrayBuffer()));x.cloud=true;out.push(x);upN++;
@@ -6635,7 +6636,8 @@ function refreshSt(){var e=document.getElementById('ev75st');if(e)e.innerHTML=st
 
 /* ---------- elegir la foto que va con cada escena ---------- */
 function sceneText(s){return [s.text,s.prompt,s.atxt].filter(Boolean).join(' ')}
-function score(f,txt){var sc=0;(f.tags||[]).forEach(function(t){var x=tagOf(t);if(x){if(x[3].test(txt))sc+=x[4]}else if(t&&txt.toLowerCase().indexOf(String(t).toLowerCase())>=0)sc+=3});return sc}
+function words(t){return String(t||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').split(/[^a-zñ]+/).filter(function(w){return w.length>4})}
+function score(f,txt){var sc=0;if(f.desc){var tw=words(txt),hit=0;words(f.desc).forEach(function(w){if(hit<3&&tw.indexOf(w)>=0)hit++});sc+=hit}(f.tags||[]).forEach(function(t){var x=tagOf(t);if(x){if(x[3].test(txt))sc+=x[4]}else if(t&&txt.toLowerCase().indexOf(String(t).toLowerCase())>=0)sc+=3});return sc}
 function plan(P,idxs){var fs=list();if(!fs.length)return [];var used={},prev='',out=[];
   P.scenes.forEach(function(s){if(s.fromFoto)used[s.fromFoto]=(used[s.fromFoto]||0)+1});
   idxs.forEach(function(i){var s=P.scenes[i],txt=sceneText(s),best=null,bv=-1e9;
@@ -6668,7 +6670,7 @@ function draw(){var fs=list(),h;
   if(G.det){var f=fs.find(function(x){return x.id===G.det});if(!f){G.det='';return draw()}
     var on={};(f.tags||[]).forEach(function(t){on[t]=1});var extra=(f.tags||[]).filter(function(t){return !tagOf(t)});
     h=head('📸 Foto del comedor')+'<img class="ev75-big" id="ev75big" alt="">'+
-      '<div class="lbl" style="margin-top:12px">¿Qué se ve en esta foto?</div>'+chips(on,'EV375.tog')+
+      (f.desc?'<div class="hint" style="margin-top:8px">✨ '+esc(f.desc)+'</div>':'')+'<div class="lbl" style="margin-top:12px">¿Qué se ve en esta foto?</div>'+chips(on,'EV375.tog')+
       (extra.length?'<div class="ev75-chips">'+extra.map(function(t){return '<button class="ev75-chip on" title="Quitar" onclick="EV375.tog(\''+esc(t).replace(/'/g,'')+'\')">🏷️ '+esc(t)+' ✕</button>'}).join('')+'</div>':'')+
       '<div class="row" style="gap:6px;margin-top:8px"><input class="inp" id="ev75tag" placeholder="Otra etiqueta (ej: Navidad, día del niño)" onkeydown="if(event.key===\'Enter\')EV375.addTag()"><button class="btn sm" onclick="EV375.addTag()">Agregar</button></div>'+
       '<div class="row" style="gap:8px;margin-top:14px"><button class="btn grad" style="flex:1" onclick="EV375.det(\'\')">✅ Listo</button><button class="btn" onclick="EV375.del(\''+f.id+'\')">'+ic('trash')+' Borrar</button></div>';
@@ -6684,6 +6686,7 @@ function draw(){var fs=list(),h;
     '<label class="btn grad" style="width:100%;margin-top:10px;cursor:pointer;justify-content:center">➕ 2. Elegir fotos del celu o la compu<input type="file" accept="image/*" multiple hidden onchange="EV375.add(this.files);this.value=\'\'"></label>'+
     '<div class="pmsg" id="ev75m">'+(G.msg||'')+'</div></div>'+
     '<div class="ev75-st" id="ev75st">'+stTxt()+'</div>'+
+    (!tgt&&fs.some(function(f){return !(f.tags||[]).length&&!f.aiDone})?'<button class="btn grad" style="width:100%;margin-top:10px" onclick="EV375.aiTag()">✨ La IA etiqueta las fotos sin etiqueta ('+fs.filter(function(f){return !(f.tags||[]).length&&!f.aiDone}).length+')</button>':'')+
     (fs.length?'<div class="lbl" style="margin-top:12px">'+(tgt?'Tus fotos':'Tus fotos ('+fs.length+') · tocá una para cambiar sus etiquetas')+'</div><div class="ev75-grid">'+
       fs.map(function(f,k){var b=tgt&&k<3&&bestS>0&&score(f,sceneText(tgt))===bestS;var cur=tgt&&tgt.fromFoto===f.id;
         return '<button class="ev75-ph '+(b?'best':'')+'" onclick="'+(tgt?'EV375.use(\''+f.id+'\')':'EV375.det(\''+f.id+'\')')+'"><img data-f="'+f.id+'" alt="">'+(cur?'<span class="ok">en uso</span>':'')+'<small>'+esc(tagsTxt(f))+'</small></button>'}).join('')+'</div>'
@@ -6704,11 +6707,33 @@ async function add(files){files=[].slice.call(files||[]).filter(function(f){retu
   G.msg='';if(n)G.up={};if(ui$())draw();
   msgE(n?('✅ '+n+' foto(s) guardada(s)'+(bad?' · '+bad+' no se pudieron abrir (probá con JPG o PNG)':'')+'.'):'No pude abrir esas fotos. Probá con JPG o PNG.',!n);
   if(n){toast('📸 '+n+' foto(s) del comedor guardada(s)');if(cloud())soonSync()}}
+function dataURL(b){return new Promise(function(r,j){var fr=new FileReader();fr.onload=function(){r(fr.result)};fr.onerror=function(){j(fr.error)};fr.readAsDataURL(b)})}
+var AIT={run:false,stop:false};
+async function aiTag(){if(AIT.run)return;var todo=list().filter(function(f){return !(f.tags||[]).length&&!f.aiDone});
+  if(!todo.length){msgE('Todas las fotos ya tienen etiqueta ✅');return}
+  AIT.run=true;AIT.stop=false;var ok=0,bad=0,ids=TAGS.map(function(t){return t[0]}).filter(function(t){return t!=='eva'});
+  try{for(var i=0;i<todo.length&&!AIT.stop;i+=8){var lote=todo.slice(i,i+8),parts=[{type:'text',text:
+      'Son '+lote.length+' fotos de un comedor comunitario de Argentina (el Comedor Ángel Guardián, en Merlo). Para cada foto, en orden, elegí las etiquetas que correspondan SOLO de esta lista: '+ids.join(', ')+
+      '. Significados: olla=ollas, cocina o alguien cocinando; fuego=fuego, leña, brasas o humo; comida=platos, viandas o comida servida; chicos=niños o niñas; gente=familias, vecinos, adultos, fila de gente; manos=voluntarios trabajando o sirviendo; lugar=el comedor por fuera, la calle o el barrio; cartel=flyer, afiche o imagen con mucho texto (pedidos de ayuda, alias, Mercado Pago); donacion=donaciones, bolsas, cajas, ropa, juguetes o alimentos juntados. '+
+      'Poné entre 1 y 3 etiquetas por foto y una descripción corta en español (máximo 12 palabras) de lo que se ve. Respondé SOLO JSON: {"fotos":[{"n":1,"tags":["olla"],"desc":"..."}]}'}];
+    msgE('✨ La IA está mirando las fotos: '+Math.min(i+lote.length,todo.length)+' de '+todo.length+'… (dejá esta pantalla abierta)');
+    for(var k=0;k<lote.length;k++){var b=await IDB.get('fotot:'+lote[k].id)||await IDB.get('foto:'+lote[k].id);if(b)parts.push({type:'text',text:'Foto '+(k+1)+':'},{type:'image_url',image_url:{url:await dataURL(b)}})}
+    try{var out=await AI.chat([{role:'system',content:'Clasificás fotos. Respondés SOLO JSON válido.'},{role:'user',content:parts}],{temp:.2});var d=AI.json(out);
+      var l=list();(d.fotos||[]).forEach(function(x){var f=lote[(+x.n||0)-1];if(!f)return;var g=l.find(function(y){return y.id===f.id});if(!g||(g.tags||[]).length)return;
+        var t=(Array.isArray(x.tags)?x.tags:[]).map(function(v){return String(v).toLowerCase().trim()}).filter(function(v,ix,a){return ids.indexOf(v)>=0&&a.indexOf(v)===ix}).slice(0,3);
+        g.tags=t;g.desc=String(x.desc||'').slice(0,90);g.aiDone=1;g.ed=Date.now();if(t.length)ok++});setList(l)}
+    catch(e){bad+=lote.length;console.warn('[v3.75] etiquetas',e);if(/cupo|LIMIT/i.test(e.message||'')){msgE('Se terminó el cupo gratis de la IA por ahora. Probá de nuevo más tarde: sigue desde donde quedó.',1);break}}
+    if(ui$()&&!G.det){var keep=G.msg;draw();G.msg=keep;msgE(keep)}}
+  }finally{AIT.run=false}
+  if(ui$()&&!G.det)draw();
+  msgE('✨ Listo: la IA etiquetó '+ok+' foto(s).'+(bad?' Algunas no se pudieron, tocá el botón de nuevo para seguir.':'')+' <b>A las de Eva marcalas vos</b> (tocá la foto → 👩‍🍳 Eva), porque la IA no sabe quién es.',bad>0&&!ok);
+  if(cloud())soonSync()}
 function edit(id,fn){var l=list(),f=l.find(function(x){return x.id===id});if(!f)return;fn(f);f.ed=Date.now();setList(l);if(cloud())soonSync()}
 
 window.EV375={
   count:function(){return list().length},cloud:cloud,list:list,fill:fill,
   open:function(back){G.det='';G.target=-1;G.back=back==='rec'?'rec':'';G.msg='';draw();if(cloud())queue(function(){return sync()})},
+  aiTag:function(){aiTag().catch(function(e){msgE(e.message||String(e),1)})},
   refresh:function(){if(!cloud())return;queue(function(){return sync()}).then(function(){if(ui$()&&!G.det)draw();toast('📸 Tenés '+list().length+' foto(s) del comedor')})},
   close:function(){G.det='';G.target=-1;G.back='';closeSheet()},
   back:function(){G.back='';if(window.EV352&&EV352.open_rec)EV352.open_rec();else closeSheet()},
