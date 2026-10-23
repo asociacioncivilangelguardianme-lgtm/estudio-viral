@@ -6601,29 +6601,33 @@ function paintThumbs(){var m=ui$();if(!m)return;[].forEach.call(m.querySelectorA
 var cq=Promise.resolve(),syncT=0;
 function queue(fn){cq=cq.then(fn).catch(function(e){console.warn('[v3.75] nube',e);G.st='err'});return cq}
 function soonSync(){clearTimeout(syncT);syncT=setTimeout(function(){queue(function(){return sync()})},1500)}
+function cloudIdx(arr){return new TextEncoder().encode(JSON.stringify({v:1,fotos:arr.filter(function(f){return f.cloud}).map(function(f){return {id:f.id,tags:f.tags||[],at:f.at,ed:f.ed||0}})}))}
 async function sync(){if(!cloud())return false;G.st='busy';refreshSt();
   var te=new TextEncoder(),td=new TextDecoder();
   await EV360.raw.list();
   var raw=await EV360.raw.get('fotos.bin'),rem=[];
   if(raw){try{rem=JSON.parse(td.decode(raw)).fotos||[]}catch(e){rem=[]}}
   var loc=list(),dels=store.get(DELK,[])||[],byL={},byR={},out=[],got=0;
-  loc.forEach(function(f){byL[f.id]=f});rem.forEach(function(f){byR[f.id]=f});
+  loc.forEach(function(f){byL[f.id]=f});rem.forEach(function(f){byR[f.id]=f});var upN=0,toUp=loc.filter(function(f){return !byR[f.id]&&!f.cloud}).length;G.prog='';
   for(var i=0;i<rem.length;i++){var f=rem[i];if(dels.indexOf(f.id)>=0)continue;var l=byL[f.id];
     if(!l){try{var b=await EV360.raw.get('foto-'+f.id+'.bin');if(!b)continue;var blob=new Blob([b],{type:'image/jpeg'});
         await IDB.set('foto:'+f.id,blob);await IDB.set('fotot:'+f.id,await shrink(blob,360,.75));out.push({id:f.id,tags:f.tags||[],at:f.at||Date.now(),ed:f.ed||0,cloud:true});got++}catch(e){console.warn('[v3.75]',e)}}
     else{if((l.ed||0)>=(f.ed||0)){l.cloud=true;out.push(l)}else out.push({id:f.id,tags:f.tags||[],at:f.at||l.at,ed:f.ed||0,cloud:true})}}
   for(var j=0;j<loc.length;j++){var x=loc[j];if(byR[x.id])continue;
     if(x.cloud){try{await IDB.set('foto:'+x.id,null);await IDB.set('fotot:'+x.id,null)}catch(e){}continue}
-    try{var bb=await IDB.get('foto:'+x.id);if(bb){await EV360.raw.put('foto-'+x.id+'.bin',new Uint8Array(await bb.arrayBuffer()));x.cloud=true;out.push(x)}}catch(e){out.push(x)}}
+    try{var bb=await IDB.get('foto:'+x.id);if(bb){await EV360.raw.put('foto-'+x.id+'.bin',new Uint8Array(await bb.arrayBuffer()));x.cloud=true;out.push(x);upN++;
+        G.prog='Subiendo fotos a tu carpeta: '+upN+' de '+toUp+'…';refreshSt();
+        if(upN%10===0){try{await EV360.raw.put('fotos.bin',cloudIdx(out.concat(rem.filter(function(r){return !out.some(function(o){return o.id===r.id})&&dels.indexOf(r.id)<0}).map(function(r){return Object.assign({},r,{cloud:true})}))))}catch(e){}
+          var sv=list();sv.forEach(function(f){if(f.id===x.id||out.some(function(o){return o.id===f.id&&o.cloud}))f.cloud=true});setList(sv)}}}catch(e){out.push(x)}}
   for(var d=0;d<dels.length;d++){try{await EV360.raw.del('foto-'+dels[d]+'.bin')}catch(e){}}
   store.set(DELK,[]);
   /* lo que se agregó mientras sincronizaba no se pierde */
   list().forEach(function(f){if(!byL[f.id]&&!out.some(function(o){return o.id===f.id}))out.push(f)});
   out.sort(function(a,b){return (a.at||0)-(b.at||0)});setList(out);
-  await EV360.raw.put('fotos.bin',te.encode(JSON.stringify({v:1,fotos:out.filter(function(f){return f.cloud}).map(function(f){return {id:f.id,tags:f.tags||[],at:f.at,ed:f.ed||0}})})));
-  G.st='ok';if(got&&ui$())draw();else refreshSt();return true}
+  await EV360.raw.put('fotos.bin',cloudIdx(out));
+  G.st='ok';G.prog='';if(got&&ui$())draw();else refreshSt();return true}
 function stTxt(){if(!cloud())return '☁️ Estas fotos quedan en este aparato. Para tenerlas también en la compu y el celu, entrá a <b>☁️ Mi carpeta</b> con tu PIN.';
-  if(G.st==='busy')return '☁️ Sincronizando con tu carpeta…';if(G.st==='err')return '☁️ No pude sincronizar ahora con tu carpeta; quedan guardadas acá y lo intento de nuevo después.';
+  if(G.st==='busy')return '☁️ '+(G.prog||'Sincronizando con tu carpeta…')+' <b>Dejá esta pantalla abierta hasta que termine.</b>';if(G.st==='err')return '☁️ No pude sincronizar ahora con tu carpeta; quedan guardadas acá y lo intento de nuevo después.';
   return '☁️ Guardadas en tu carpeta: las ves en la compu y en el celu.'}
 function refreshSt(){var e=document.getElementById('ev75st');if(e)e.innerHTML=stTxt()}
 
