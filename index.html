@@ -5404,16 +5404,19 @@ function entOpts(cur,none){var l=(E().ENT||['Oxum','Xangô','Iemanjá','Ogum','E
   return (none?'<option value="" '+(!cur?'selected':'')+'>'+none+'</option>':'')+l.map(function(n){return '<option '+(cur===n?'selected':'')+'>'+esc(n)+'</option>'}).join('')}
 
 /* ---------- arma un video entero y espera a que termine de grabar ---------- */
-async function produce(P){openProject(P);P=S.P;
+async function produce(P){openProject(P);P=S.P;if(!Pipe.__fcx){Pipe.__fcx=1;var vO=Pipe.voices;Pipe.voices=function(){if(RT.filaCancelP&&S.P&&S.P.id===RT.filaCancelP)return Promise.reject(new Error('Video cancelado'));return vO.apply(this,arguments)};
+    var rO=Player.run;Player.run=function(){if(RT.filaCancelP&&S.P&&S.P.id===RT.filaCancelP)return Promise.resolve();return rO.apply(this,arguments)}}
   try{if(!P.scenes.length)await Pipe.makeScenes(true)}catch(e){toast(e.message||String(e),1)}
   if(S.P!==P||!P.scenes.length)return false;
   try{if(window.EV353)await EV353.ai()}catch(e){}
-  if(S.P!==P)return false;
+  if(S.P!==P||F.cancel)return false;
   try{if(P.useClips&&E().autoClips)await E().autoClips(true)}catch(e){}
-  if(S.P!==P)return false;
+  if(S.P!==P||F.cancel)return false;
+  if(F.cancel)return false;
   await Pipe.auto();
   var t0=Date.now();await wait(1500);
-  while(Player.playing&&Date.now()-t0<30*60000){if(S.P!==P)return false;await wait(1500)}
+  while(Player.playing&&Date.now()-t0<30*60000){if(S.P!==P||F.cancel)return false;await wait(1500)}
+  if(F.cancel)return false;
   await wait(2500);return P.status==='done'}
 
 /* =====================================================================
@@ -5528,21 +5531,24 @@ function filaUI(){var a=F.add,r=rec(a.tipo),wait=F.list.filter(function(x){retur
    '<div class="lbl">¿De qué trata?</div><input class="inp" id="ev57ft" placeholder="'+esc(r?r.ph:'')+'" value="'+esc(a.tema)+'" oninput="EV357.F.add.tema=this.value" onkeydown="if(event.key===\'Enter\')EV357.filaAdd()">'+
    '<div class="lbl">Duración</div><div class="seg">'+[30,45,60,90].map(function(d){return '<button class="'+(a.dur===d?'on':'')+'" onclick="EV357.F.add.dur='+d+';EV357.fila()">'+d+' s</button>'}).join('')+'</div>'+
    '<button class="btn" style="width:100%;margin-top:10px" onclick="EV357.filaAdd()">'+ic('plus')+'Agregar</button></div>'+
-   (F.list.length?F.list.map(function(x,k){var rr=rec(x.tipo)||rec('itan');return '<div class="ev57-row"><span class="e">'+rr.e+'</span><div class="tx"><b>'+esc(x.tema||(x.ent?rr.n+' de '+x.ent:rr.n))+'</b><small>'+esc(rr.n)+(x.ent&&rr.ent?' · '+esc(x.ent):'')+' · '+(x.dur||rr.dur)+' s</small></div><div class="bt">'+stTxt(x)+
-     (x.st==='ok'&&x.pid?'<button class="btn sm" onclick="EV357.openP(\''+x.pid+'\')">Abrir</button>':'')+(x.st!=='run'?'<button class="btn sm" title="Sacar" onclick="EV357.filaDel('+k+')">'+ic('trash')+'</button>':'')+'</div></div>'}).join('')+
-     '<div class="row wrap" style="gap:6px;margin-top:12px">'+(F.run?'<button class="btn" onclick="EV357.filaStop()">⏹ Parar después de este</button>':(wait?'<button class="btn grad" onclick="EV357.filaGo()">▶ Empezar ('+wait+' video'+(wait>1?'s':'')+')</button>':''))+
-     (F.list.some(function(x){return x.st==='ok'})?'<button class="btn sm" onclick="EV357.filaClean()">Sacar los terminados</button>':'')+'</div>'
+   (F.list.length?(function(){function rowF(x){var k=F.list.indexOf(x),rr=rec(x.tipo)||rec('itan');return '<div class="ev57-row"><span class="e">'+rr.e+'</span><div class="tx"><b>'+esc(x.tema||(x.ent?rr.n+' de '+x.ent:rr.n))+'</b><small>'+esc(rr.n)+(x.ent&&rr.ent?' · '+esc(x.ent):'')+' · '+(x.dur||rr.dur)+' s</small></div><div class="bt">'+stTxt(x)+
+     (x.st==='ok'&&x.pid?'<button class="btn sm" onclick="EV357.openP(\''+x.pid+'\')">Abrir</button>':'')+(x.st==='run'?'<button class="btn sm" title="Cancelar este video" onclick="EV357.filaCancel()">✖ Cancelar</button>':'<button class="btn sm" title="Sacar" onclick="EV357.filaDel('+k+')">'+ic('trash')+'</button>')+'</div></div>'}
+     var pend=F.list.filter(function(x){return x.st!=='ok'}),fin=F.list.filter(function(x){return x.st==='ok'});
+     return (pend.length?'<div class="lbl" style="margin-top:12px">En la fila</div>'+pend.map(rowF).join(''):'<div class="ev40-mini" style="margin-top:10px">No hay videos esperando. Agregá uno arriba.</div>')+
+     '<div class="row wrap" style="gap:6px;margin-top:12px">'+(F.run?(F.stop?'<span class="ev40-mini">Se para cuando termine este video.</span>':'<button class="btn" onclick="EV357.filaStop()">⏹ Parar después de este</button>')+'<button class="btn" onclick="EV357.filaCancel()">✖ Cancelar ya</button>':(wait?'<button class="btn grad" onclick="EV357.filaGo()">▶ Empezar ('+wait+' video'+(wait>1?'s':'')+')</button>':''))+'</div>'+
+     (fin.length?'<details style="margin-top:12px"><summary class="hint" style="cursor:pointer">✅ Terminados ('+fin.length+')</summary>'+fin.map(rowF).join('')+'<button class="btn sm" style="margin-top:8px" onclick="EV357.filaClean()">Sacar los terminados</button></details>':'')})()
    :'<div class="ev40-mini" style="margin-top:10px">Todavía no hay videos en la fila. También podés sumarlos desde 💡 Ideas.</div>'))}
 function badge(){var b=$('#ev57fb');if(!F.run){if(b)b.remove();return}
   if(!b){b=document.createElement('div');b.id='ev57fb';b.className='ev57-fila';document.body.appendChild(b)}
   var tot=F.list.length,done=F.list.filter(function(x){return x.st==='ok'||x.st==='err'}).length;
   b.innerHTML='<span>🎞️ Fila: haciendo el video '+(done+1)+' de '+tot+'</span><button onclick="EV357.fila()">Ver</button>'+(F.stop?'<span>(para después de este)</span>':'<button onclick="EV357.filaStop()">Parar</button>')}
 async function filaGo(){if(F.run)return;if(!E().buildP)return toast('Falta la parte de Recetas',1);F.run=true;F.stop=false;closeSheet();badge();
-  try{for(var k=0;k<F.list.length;k++){var x=F.list[k];if(x.st==='ok')continue;if(F.stop)break;
+  try{F.list.forEach(function(y){if(y.st==='err')y.st='wait'});for(;;){var x=F.list.find(function(y){return y.st==='wait'});if(!x||F.stop)break;
       x.st='run';saveF();badge();var P,ok=false;
       try{P=x.idea?ideaToP(x):E().buildP(rec(x.tipo)||rec('itan'),x.tema,x.ent,x.dur,'vertical');ok=await produce(P)}catch(e){console.warn('[fila]',e)}
+      if(F.cancel){F.cancel=false;RT.filaCancelP=null;var ix=F.list.indexOf(x);if(ix>=0)F.list.splice(ix,1);saveF();badge();break}
       x.st=ok?'ok':'err';x.pid=P&&P.id;saveF();badge();if(!ok&&S.P!==P){F.stop=true}}
-  }finally{var n=F.list.filter(function(x){return x.st==='ok'}).length;F.run=false;badge();toast(F.stop&&F.list.some(function(x){return x.st==='wait'})?'Fila en pausa. Tocá «Empezar» para seguir.':'🎞️ ¡Fila terminada! '+n+' video(s) listos en Mis Proyectos.');try{render()}catch(e){}}}
+  }finally{var n=F.list.filter(function(x){return x.st==='ok'}).length;F.run=false;toast(F.stop&&F.list.some(function(x){return x.st==='wait'})?'Fila en pausa. Tocá «Empezar» para seguir.':'🎞️ ¡Fila terminada! '+n+' video(s) listos en Mis Proyectos.');F.stop=false;badge();try{if($('#sheet').classList.contains('open')&&$('#ev57ft'))filaUI()}catch(e){};try{render()}catch(e){}}}
 
 /* =====================================================================
    5) COPIA DE SEGURIDAD
@@ -5583,6 +5589,7 @@ window.EV357={RP:RP,ID:ID,F:F,produce:produce,
   filaAdd:function(){var a=F.add,r=rec(a.tipo);if(!String(a.tema).trim()&&!(r&&r.ent)){toast('Escribí de qué trata',1);return}F.list.push({tipo:a.tipo,ent:r&&r.ent?a.ent:'',tema:String(a.tema).trim(),dur:a.dur,st:'wait'});a.tema='';saveF();filaUI();setTimeout(function(){var i=$('#ev57ft');i&&i.focus()},50)},
   filaDel:function(k){F.list.splice(k,1);saveF();filaUI()},
   filaClean:function(){F.list=F.list.filter(function(x){return x.st!=='ok'});saveF();filaUI()},
+  filaCancel:function(){if(!F.run)return;if(!confirm('¿Cancelar el video que se está haciendo ahora? Se saca de la fila.'))return;F.stop=true;F.cancel=true;RT.filaCancelP=S.P&&S.P.id;RT.imgTok=(RT.imgTok||0)+1;S.busyImgs=false;try{Player.stop()}catch(e){}try{Pipe.setBusy('')}catch(e){}badge();toast('Cancelando…');if($('#sheet').classList.contains('open'))filaUI()},
   filaGo:function(){filaGo()},filaStop:function(){F.stop=true;badge();toast('La fila para cuando termine este video');if($('#sheet').classList.contains('open'))filaUI()},
   openP:function(id){var p=S.projects.find(function(x){return x.id===id});if(p){closeSheet();openProject(p)}else toast('Ese proyecto ya no está',1)},
   backup:backup,restore:restore,snooze:function(){store.set('ev_bksnooze',Date.now()+2*864e5);try{render()}catch(e){}},
