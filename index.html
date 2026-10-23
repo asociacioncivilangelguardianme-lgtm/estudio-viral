@@ -5944,7 +5944,7 @@ window.EV360={CL:CL,
   openLocal:function(id){var p=S.projects.find(function(x){return x.id===id});if(p){closeSheet();openProject(p)}},
   del:function(id){var it=CL.index.projects[id];if(!it||!confirm('¿Borrar «'+it.name+'» de tu carpeta? (si está en esta compu, acá no se borra)'))return;act(function(){return remove(id)},'Borrado de la carpeta')},
   _login:login,_upload:upload,_download:download,
-  raw:{ready:function(){return !!CL.key},list:function(){return refreshList()},
+  raw:{ready:function(){return !!CL.key},code:function(){return CL.h?CL.h.slice(0,4).toUpperCase():''},list:function(){return refreshList()},
     put:async function(n,u8){await call('put',n,await enc(u8))},
     get:async function(n){if(!CL.files||!CL.files[n])await refreshList();if(!CL.files[n])return null;return dec(await getFile(n))},
     del:function(n){return call('del',n,'')}}};
@@ -6628,7 +6628,9 @@ async function sync(){if(!cloud())return false;G.st='busy';refreshSt();
   G.st='ok';G.prog='';if(got&&ui$())draw();else refreshSt();return true}
 function stTxt(){if(!cloud())return '☁️ Estas fotos quedan en este aparato. Para tenerlas también en la compu y el celu, entrá a <b>☁️ Mi carpeta</b> con tu PIN.';
   if(G.st==='busy')return '☁️ '+(G.prog||'Sincronizando con tu carpeta…')+' <b>Dejá esta pantalla abierta hasta que termine.</b>';if(G.st==='err')return '☁️ No pude sincronizar ahora con tu carpeta; quedan guardadas acá y lo intento de nuevo después.';
-  return '☁️ Guardadas en tu carpeta: las ves en la compu y en el celu.'}
+  var c='';try{c=EV360.raw.code()}catch(e){}
+  return '☁️ Guardadas en tu carpeta: las ves en la compu y en el celu.'+(c?' · Código de tu carpeta: <b>'+c+'</b> (tiene que ser el mismo en el celu y en la compu)':'')+
+    '<br><button class="btn sm" style="margin-top:6px" onclick="EV375.refresh()">🔄 Buscar fotos nuevas en la carpeta</button>'}
 function refreshSt(){var e=document.getElementById('ev75st');if(e)e.innerHTML=stTxt()}
 
 /* ---------- elegir la foto que va con cada escena ---------- */
@@ -6707,6 +6709,7 @@ function edit(id,fn){var l=list(),f=l.find(function(x){return x.id===id});if(!f)
 window.EV375={
   count:function(){return list().length},cloud:cloud,list:list,fill:fill,
   open:function(back){G.det='';G.target=-1;G.back=back==='rec'?'rec':'';G.msg='';draw();if(cloud())queue(function(){return sync()})},
+  refresh:function(){if(!cloud())return;queue(function(){return sync()}).then(function(){if(ui$()&&!G.det)draw();toast('📸 Tenés '+list().length+' foto(s) del comedor')})},
   close:function(){G.det='';G.target=-1;G.back='';closeSheet()},
   back:function(){G.back='';if(window.EV352&&EV352.open_rec)EV352.open_rec();else closeSheet()},
   upTog:function(t){G.up[t]=!G.up[t];draw()},
