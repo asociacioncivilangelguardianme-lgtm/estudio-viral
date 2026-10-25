@@ -2320,7 +2320,7 @@ window.__ev32export=exportMp4;
 (function(){
 'use strict';
 if(window.__ev33)return;window.__ev33=true;
-var VERSION='3.80';
+var VERSION='3.81';
 var COLORS=['#7dd3fc','#ff9de2','#a7f3d0','#fdba74','#c4b5fd'];
 var MOVES=['zoomin','panr','tiltup','dolly','panl','zoomout','track','tiltdown'];
 
@@ -2641,7 +2641,7 @@ if('serviceWorker' in navigator&&/^https:$/.test(location.protocol)){window.addE
   reg.addEventListener('updatefound',function(){var w=reg.installing;if(!w)return;w.addEventListener('statechange',function(){if(w.state==='installed'&&navigator.serviceWorker.controller)toast('Hay una versión nueva de Estudio Viral: cerrá y volvé a abrir la app para verla ✨')})})}).catch(function(e){console.info('[v3.33] sin app instalable (falta sw.js en GitHub):',e&&e.message)})})}
 
 /* Novedades */
-var NEWS=['🎬 <b>3.80</b>: nuevo <b>Director IA (JSON)</b>: copiás el pedido, ChatGPT, Claude o Gemini te arma el guion completo (escenas, imágenes, cámara, sonido, personajes y estilo), lo pegás y Estudio hace el video de una. Si la respuesta tiene errores, la IA la arregla. Y en cada video: <b>📤 Exportar JSON</b> para mejorarlo afuera y <b>📥 Traer cambios</b>.','🖼️ <b>3.79</b>: <b>🔎 Revisar imágenes</b>: la IA mira cada imagen, te dice si muestra lo que dice la escena y rehace las que no coinciden con un pedido corregido. <b>📥 Subir todas las que hiciste afuera</b> (ChatGPT, Gemini, Flow) de una vez: cada una va a su escena por el número del nombre. <b>⏱️ Ritmo de cortes</b> (Rápido, Normal, Pausado o a mano) con caracteres, palabras, lectura estimada y cuántas escenas salen. Y <b>⭐ Calidad Ultra</b>.','🔁 <b>3.78</b>: <b>Final en loop</b> (el final empalma con el principio y TikTok lo repite), <b>➡️ Parte siguiente</b> desde Mis Proyectos, <b>📅 Mi semana</b> (qué video subir cada día, aviso «hoy toca» y recordatorios para la agenda del celu), <b>🎤 Habla a cámara</b> (tu personaje mira a la cámara y cuenta su historia) y <b>📊 Meta del comedor</b> (cartel con barra «Esta semana: 320 de 500 platos» al final). Mis personajes ahora son los mismos que en Historia con personaje.','🎭 <b>3.77</b>: <b>Mis personajes</b>: guardá a tus personajes (Oshun, Mayo Jun…) una vez y usalos en cualquier video con un toque, con su foto; se guardan en tu carpeta con PIN. <b>🪝 Elegí entre 3 ganchos</b>: la IA te propone 3 primeras frases distintas y elegís la que más te guste (con Deshacer). <b>📐 Otra versión</b>: copiá un video en horizontal para YouTube, cuadrado o vertical sin rehacer nada.','🏷️ <b>3.76</b>: <b>Marca de cada video</b>: 🤝 Comedor, ⛪ Camino de Fe o ninguna. Los videos del comedor ya <b>no llevan la firma religiosa</b>. Logo propio (Ajustes → Marca del comedor), firma y cartel de cierre se prenden y apagan en cada video. En la escena: <b>duplicar</b>, <b>✨ mejorar luz y color</b> y <b>🎥 grabar un testimonio</b> con su propia voz. Y <b>🔎 Revisión antes de publicar</b>: te avisa lo que conviene arreglar y lo arregla con un botón.','📸 <b>3.75</b>: <b>Fotos reales del comedor</b>: subís una vez las fotos de verdad (Eva cocinando, las ollas, la leña, la gente) y la <b>Historia solidaria</b> las usa en vez de imágenes con IA, cada una en la escena que le corresponde y con movimiento suave. También están en cada escena («📸 Foto del comedor») y se guardan en tu carpeta con PIN para tenerlas en la compu y el celu.','📺 <b>3.69</b>: <b>Ficha de la serie</b>: al tocar «Hacer la Parte…» podés decir cuántas partes tiene la serie y cómo termina (la última se cierra con «FIN»), sumar un <b>personaje nuevo</b> con su foto sin perder a los demás, y pedir algo que tenga que pasar. La IA ahora recuerda todas las partes anteriores.','☁️ <b>3.60</b>: nueva <b>Mi carpeta</b> (botón en Mis Proyectos): tus proyectos se guardan en tu propio Vercel, cifrados con tu PIN. En otra compu o celular escribís el PIN y aparecen para seguir donde los dejaste. Se guardan solos cada vez que salís de un proyecto.','🎧 <b>3.59</b>: <b>todos los sonidos son grabaciones reales</b>: lluvia, tormenta, mar, fuego, río, selva, ciudad, mercado, tren, reloj, latidos, forja, batalla y más, los sagrados (atabaque, chocalho, campanita, agogô) y las transiciones. Las mezclas (Terreiro, Mar de Iemanjá, Encruzilhada, Mata sagrada) también. Se repiten sin que se note el corte. En la pestaña Sonido: escuchar, 🔄 probar otra y «Bajar todos ahora».','🎧 <b>3.58</b>: <b>sonidos reales</b>. Las campanitas (adjá/sineta), cigarras, aves africanas, pájaros, grillos, ranas, lechuza, monos, sabana y selva ahora son grabaciones de verdad de Wikimedia Commons (antes se fabricaban y sonaban a timbre). En la pestaña Sonido podés escucharlas y tocar 🔄 para probar otra grabación. La campanita de las transiciones también es real.','🚀 <b>3.57</b>: en Mis Proyectos hay botones nuevos: <b>💬 Responder comentario</b> (el video empieza con el globito del comentario y la IA lo responde), <b>💡 Ideas</b> (7 ideas para la semana y fechas especiales que se acercan) y <b>🎞️ Varios videos</b> (una fila que la app hace sola, uno tras otro). En «Guion y storyboard» está <b>📺 Serie</b> para hacer la Parte 2, 3… con los mismos personajes. Y <b>💾 Copia de seguridad</b>: te avisa una vez por semana y la guarda con un toque (también en Ajustes).','🍲 <b>3.56</b>: en la Receta, las escenas de ingredientes piden primero la olla gigante y un frasquito de vidrio (antes decía «jarrito de barro» y a veces salían jarrones en vez de la olla).','⛪ <b>3.55</b>: el <b>Perfil del canal</b> (firma, hashtags fijos y cartel de cierre) se pone <b>solo en los videos de religión</b>. En «Guion y storyboard» cada video tiene un interruptor para ponerlo o sacarlo a mano.','⛪ <b>3.54</b>: nuevo <b>Perfil del canal</b> en Ajustes (ya viene cargado con Camino de Fe): la firma, los hashtags fijos #CaminoDeFe #Umbanda #Orixas y el cartel de cierre «Guardalo y dejá tu Axé» se ponen solos en cada video. Y nueva <b>🖼️ Portada</b> en «Guion y storyboard»: elegís una escena y la app arma la tapa con letras grandes y el nombre del canal, para TikTok o YouTube.','✨ <b>3.53</b>: nuevos <b>Textos animados</b>: en cada escena podés poner una frase corta que aparece moviéndose (rebote, suave, palabra por palabra, máquina de escribir, deslizando o con brillo) con estilo caja negra, letras grandes, dorado sagrado o neón. En «Guion y storyboard» está «Que la IA ponga los textos» y el <b>cartel de cierre</b> (ej: «Seguinos para más»). Las recetas ya los ponen solas.','⚡ <b>3.52</b>: nuevas <b>Recetas</b> (botón «⚡ Recetas» en Mis Proyectos): elegís Itán, Mensaje del día, Mini documental, Explicativo, Trailer, Top 5, Cuento o Historia solidaria, escribís el tema y la IA hace todo el video. Y nuevo <b>🎞️ Video real gratis</b> en cada escena: busca videos de verdad (ríos, fuego, selva, mar…) en Wikimedia Commons y Archive.org, o los pone solos en todas las escenas.','✅ <b>3.51</b>: nuevo botón «Arreglar guion y escenas (una sola vez)»: deja en «Tu guion» solo lo que dice el narrador y lo pone al lado de cada foto, sin tocar las fotos que subiste. Con «Deshacer» vuelve todo como estaba.','🧹 <b>3.50</b>: la escobita «Limpiar» reconoce más formas de instrucciones y, si no encuentra nada, se lo pasa sola a la IA. «Limpiar con IA» funciona de a 6 escenas.','🧹 <b>3.49</b>: «Limpiar con IA» ya no falla con «no devolvió datos válidos» (ahora limpia de a 6 escenas).','🧹 <b>3.48</b>: la app saca sola las instrucciones que vienen pegadas en los guiones («narración en español latino», «escena siguiendo exactamente…», «estilo…»), así la voz y los subtítulos dicen solo lo del narrador. Botones «Limpiar», «Limpiar con IA» y «Deshacer» en Guion y en Vista.','↩️ <b>3.47</b>: el botón «atrás» del celular ya no cierra la app: primero cierra lo que esté abierto, después vuelve a Vista y a Mis Proyectos. Para salir, tocás «atrás» dos veces.','🗣️ <b>3.46</b>: la voz ya no lee los emojis ni los hashtags del guion (antes decía «corazón», «estatua», «almohadilla»). Nuevo interruptor para hacer el video <b>sin voz</b> (solo subtítulos y música), en la pestaña Voz y en Vista.','🌍 <b>3.45</b>: arreglado lo de las imágenes orientales: el servicio gratis ignoraba los pedidos largos y devolvía cualquier imagen. Ahora cada pedido es corto y empieza por lo importante. En los videos de Orixás las personas salen afrobrasileñas. La Receta usa primeros planos de los personajes con la olla. Las miniaturas de «Vista» ahora se ven.','🍲 <b>3.44</b>: en la Receta de Orixás cada imagen muestra la misma olla grande con los dos personajes (ya no jarros sueltos). En «Vista» ves las imágenes mientras se crean y tenés «Rehacer todas las imágenes».','🌍 <b>3.43</b>: en videos de Orixás las personas salen afrobrasileñas y africanas (nada asiático). La app respeta el límite gratis de 1 imagen cada 45 segundos y ya no deja el cartel amarillo «Free limit reached». En el celular, «Vista» trae los primeros pasos: personajes, fotos de referencia y generar imágenes.','📱 <b>3.42</b>: en el celular el editor ahora va por partes (Vista, Guion, Escena, Estilo y Línea) con botones abajo, sin tener que bajar tanto. Botones más grandes y nada se sale de la pantalla.','🍲 <b>3.41</b>: nueva <b>Receta de Orixás</b> (dos personajes echan ingredientes en la olla y el final se ilumina). Efectos nuevos: frasco que se vuelca, humo, estallido de luz y aura. Cartel con texto en cada escena. Ayuda para darle movimiento real (Wan, Kling, Hailuo) y grabar tu gesto con la cámara. Bajar y subir todas las voces juntas para Applio.','📲 <b>3.40</b>: pasá tus proyectos de la PC al celu con un código QR (sin WhatsApp). Modo Cine (todo el video o solo algunas escenas), color de acento, música que baja sola cuando habla la voz y la nueva sección <b>Video largo a clips</b>.','💾 <b>3.39</b>: el video exportado queda guardado en el proyecto. Al volver a abrirlo aparecen directo Descargar, YouTube, TikTok e Instagram, sin exportar de nuevo.','🎙️ <b>3.38 · Voces más naturales</b>: velocidad por personaje (por ejemplo Oxalá lento y pausado), botón «Subir mi voz» en cada escena (opcional) y la IA escribe los diálogos con pausas y emoción, sin narrador.','💾 <b>3.37</b>: las voces quedan guardadas en la compu. Si recargás la página no se pierden, y si falta alguna se hace sola antes de reproducir.','🥁 <b>3.36 · Sonidos sagrados</b>: atabaque con repique, adjá/sineta, agogô, chocalho, Terreiro, Encruzilhada, Mar de Iemanjá y Mata sagrada. Opción de transiciones con golpe de tambor y campanita.','🕯️ <b>3.35 · Religión afro</b>: sección nueva en Géneros y Estilos con Itán, Mensaje de la entidad, Conocé a la entidad, Oración del día, Ofrenda explicada, Mitos y verdades, Fechas especiales, Pontos cantados, Cuentos para chicos, Exus y Pombagiras, Umbanda y Orixás. Y 9 estilos sagrados: Arte afrobrasileño, Terreiro, Mata sagrada, Encruzilhada nocturna, Pintura sacra, Ícono dorado, Vitral, Escultura africana y Afrofuturismo.','🔧 <b>3.34</b>: en los diálogos, cada escena reconoce sola quién habla y usa su voz, y pone el sonido del lugar (selva, río, cascada, fuego, tambores…). «Armar escenas» ya no borra las imágenes que hiciste.','👥 <b>Modo Diálogo</b>: dos (o más) personajes hablan, cada uno con su voz. Lo elegís en «Nuevo video».',
+var NEWS=['✨ <b>3.81</b>: nueva sección <b>Estudio IA</b> (como Open Generative AI, pero nuestro y gratis): <b>🖼️ Imagen</b> crea imágenes con estilos y personajes (o te arma el pedido para ChatGPT, Gemini o Flow), <b>🎞️ Video</b> le da movimiento a una foto con humo, chispas, lluvia o rayos de luz, <b>🗣️ Voz</b> hace que una foto hable con voz gratis o tu audio de Voicebox, y <b>🎬 Cine</b> arma planos de película con barras, look y título. Todo queda en <b>Mis creaciones</b> y se manda a un proyecto con un toque.','🎬 <b>3.80</b>: nuevo <b>Director IA (JSON)</b>: copiás el pedido, ChatGPT, Claude o Gemini te arma el guion completo (escenas, imágenes, cámara, sonido, personajes y estilo), lo pegás y Estudio hace el video de una. Si la respuesta tiene errores, la IA la arregla. Y en cada video: <b>📤 Exportar JSON</b> para mejorarlo afuera y <b>📥 Traer cambios</b>.','🖼️ <b>3.79</b>: <b>🔎 Revisar imágenes</b>: la IA mira cada imagen, te dice si muestra lo que dice la escena y rehace las que no coinciden con un pedido corregido. <b>📥 Subir todas las que hiciste afuera</b> (ChatGPT, Gemini, Flow) de una vez: cada una va a su escena por el número del nombre. <b>⏱️ Ritmo de cortes</b> (Rápido, Normal, Pausado o a mano) con caracteres, palabras, lectura estimada y cuántas escenas salen. Y <b>⭐ Calidad Ultra</b>.','🔁 <b>3.78</b>: <b>Final en loop</b> (el final empalma con el principio y TikTok lo repite), <b>➡️ Parte siguiente</b> desde Mis Proyectos, <b>📅 Mi semana</b> (qué video subir cada día, aviso «hoy toca» y recordatorios para la agenda del celu), <b>🎤 Habla a cámara</b> (tu personaje mira a la cámara y cuenta su historia) y <b>📊 Meta del comedor</b> (cartel con barra «Esta semana: 320 de 500 platos» al final). Mis personajes ahora son los mismos que en Historia con personaje.','🎭 <b>3.77</b>: <b>Mis personajes</b>: guardá a tus personajes (Oshun, Mayo Jun…) una vez y usalos en cualquier video con un toque, con su foto; se guardan en tu carpeta con PIN. <b>🪝 Elegí entre 3 ganchos</b>: la IA te propone 3 primeras frases distintas y elegís la que más te guste (con Deshacer). <b>📐 Otra versión</b>: copiá un video en horizontal para YouTube, cuadrado o vertical sin rehacer nada.','🏷️ <b>3.76</b>: <b>Marca de cada video</b>: 🤝 Comedor, ⛪ Camino de Fe o ninguna. Los videos del comedor ya <b>no llevan la firma religiosa</b>. Logo propio (Ajustes → Marca del comedor), firma y cartel de cierre se prenden y apagan en cada video. En la escena: <b>duplicar</b>, <b>✨ mejorar luz y color</b> y <b>🎥 grabar un testimonio</b> con su propia voz. Y <b>🔎 Revisión antes de publicar</b>: te avisa lo que conviene arreglar y lo arregla con un botón.','📸 <b>3.75</b>: <b>Fotos reales del comedor</b>: subís una vez las fotos de verdad (Eva cocinando, las ollas, la leña, la gente) y la <b>Historia solidaria</b> las usa en vez de imágenes con IA, cada una en la escena que le corresponde y con movimiento suave. También están en cada escena («📸 Foto del comedor») y se guardan en tu carpeta con PIN para tenerlas en la compu y el celu.','📺 <b>3.69</b>: <b>Ficha de la serie</b>: al tocar «Hacer la Parte…» podés decir cuántas partes tiene la serie y cómo termina (la última se cierra con «FIN»), sumar un <b>personaje nuevo</b> con su foto sin perder a los demás, y pedir algo que tenga que pasar. La IA ahora recuerda todas las partes anteriores.','☁️ <b>3.60</b>: nueva <b>Mi carpeta</b> (botón en Mis Proyectos): tus proyectos se guardan en tu propio Vercel, cifrados con tu PIN. En otra compu o celular escribís el PIN y aparecen para seguir donde los dejaste. Se guardan solos cada vez que salís de un proyecto.','🎧 <b>3.59</b>: <b>todos los sonidos son grabaciones reales</b>: lluvia, tormenta, mar, fuego, río, selva, ciudad, mercado, tren, reloj, latidos, forja, batalla y más, los sagrados (atabaque, chocalho, campanita, agogô) y las transiciones. Las mezclas (Terreiro, Mar de Iemanjá, Encruzilhada, Mata sagrada) también. Se repiten sin que se note el corte. En la pestaña Sonido: escuchar, 🔄 probar otra y «Bajar todos ahora».','🎧 <b>3.58</b>: <b>sonidos reales</b>. Las campanitas (adjá/sineta), cigarras, aves africanas, pájaros, grillos, ranas, lechuza, monos, sabana y selva ahora son grabaciones de verdad de Wikimedia Commons (antes se fabricaban y sonaban a timbre). En la pestaña Sonido podés escucharlas y tocar 🔄 para probar otra grabación. La campanita de las transiciones también es real.','🚀 <b>3.57</b>: en Mis Proyectos hay botones nuevos: <b>💬 Responder comentario</b> (el video empieza con el globito del comentario y la IA lo responde), <b>💡 Ideas</b> (7 ideas para la semana y fechas especiales que se acercan) y <b>🎞️ Varios videos</b> (una fila que la app hace sola, uno tras otro). En «Guion y storyboard» está <b>📺 Serie</b> para hacer la Parte 2, 3… con los mismos personajes. Y <b>💾 Copia de seguridad</b>: te avisa una vez por semana y la guarda con un toque (también en Ajustes).','🍲 <b>3.56</b>: en la Receta, las escenas de ingredientes piden primero la olla gigante y un frasquito de vidrio (antes decía «jarrito de barro» y a veces salían jarrones en vez de la olla).','⛪ <b>3.55</b>: el <b>Perfil del canal</b> (firma, hashtags fijos y cartel de cierre) se pone <b>solo en los videos de religión</b>. En «Guion y storyboard» cada video tiene un interruptor para ponerlo o sacarlo a mano.','⛪ <b>3.54</b>: nuevo <b>Perfil del canal</b> en Ajustes (ya viene cargado con Camino de Fe): la firma, los hashtags fijos #CaminoDeFe #Umbanda #Orixas y el cartel de cierre «Guardalo y dejá tu Axé» se ponen solos en cada video. Y nueva <b>🖼️ Portada</b> en «Guion y storyboard»: elegís una escena y la app arma la tapa con letras grandes y el nombre del canal, para TikTok o YouTube.','✨ <b>3.53</b>: nuevos <b>Textos animados</b>: en cada escena podés poner una frase corta que aparece moviéndose (rebote, suave, palabra por palabra, máquina de escribir, deslizando o con brillo) con estilo caja negra, letras grandes, dorado sagrado o neón. En «Guion y storyboard» está «Que la IA ponga los textos» y el <b>cartel de cierre</b> (ej: «Seguinos para más»). Las recetas ya los ponen solas.','⚡ <b>3.52</b>: nuevas <b>Recetas</b> (botón «⚡ Recetas» en Mis Proyectos): elegís Itán, Mensaje del día, Mini documental, Explicativo, Trailer, Top 5, Cuento o Historia solidaria, escribís el tema y la IA hace todo el video. Y nuevo <b>🎞️ Video real gratis</b> en cada escena: busca videos de verdad (ríos, fuego, selva, mar…) en Wikimedia Commons y Archive.org, o los pone solos en todas las escenas.','✅ <b>3.51</b>: nuevo botón «Arreglar guion y escenas (una sola vez)»: deja en «Tu guion» solo lo que dice el narrador y lo pone al lado de cada foto, sin tocar las fotos que subiste. Con «Deshacer» vuelve todo como estaba.','🧹 <b>3.50</b>: la escobita «Limpiar» reconoce más formas de instrucciones y, si no encuentra nada, se lo pasa sola a la IA. «Limpiar con IA» funciona de a 6 escenas.','🧹 <b>3.49</b>: «Limpiar con IA» ya no falla con «no devolvió datos válidos» (ahora limpia de a 6 escenas).','🧹 <b>3.48</b>: la app saca sola las instrucciones que vienen pegadas en los guiones («narración en español latino», «escena siguiendo exactamente…», «estilo…»), así la voz y los subtítulos dicen solo lo del narrador. Botones «Limpiar», «Limpiar con IA» y «Deshacer» en Guion y en Vista.','↩️ <b>3.47</b>: el botón «atrás» del celular ya no cierra la app: primero cierra lo que esté abierto, después vuelve a Vista y a Mis Proyectos. Para salir, tocás «atrás» dos veces.','🗣️ <b>3.46</b>: la voz ya no lee los emojis ni los hashtags del guion (antes decía «corazón», «estatua», «almohadilla»). Nuevo interruptor para hacer el video <b>sin voz</b> (solo subtítulos y música), en la pestaña Voz y en Vista.','🌍 <b>3.45</b>: arreglado lo de las imágenes orientales: el servicio gratis ignoraba los pedidos largos y devolvía cualquier imagen. Ahora cada pedido es corto y empieza por lo importante. En los videos de Orixás las personas salen afrobrasileñas. La Receta usa primeros planos de los personajes con la olla. Las miniaturas de «Vista» ahora se ven.','🍲 <b>3.44</b>: en la Receta de Orixás cada imagen muestra la misma olla grande con los dos personajes (ya no jarros sueltos). En «Vista» ves las imágenes mientras se crean y tenés «Rehacer todas las imágenes».','🌍 <b>3.43</b>: en videos de Orixás las personas salen afrobrasileñas y africanas (nada asiático). La app respeta el límite gratis de 1 imagen cada 45 segundos y ya no deja el cartel amarillo «Free limit reached». En el celular, «Vista» trae los primeros pasos: personajes, fotos de referencia y generar imágenes.','📱 <b>3.42</b>: en el celular el editor ahora va por partes (Vista, Guion, Escena, Estilo y Línea) con botones abajo, sin tener que bajar tanto. Botones más grandes y nada se sale de la pantalla.','🍲 <b>3.41</b>: nueva <b>Receta de Orixás</b> (dos personajes echan ingredientes en la olla y el final se ilumina). Efectos nuevos: frasco que se vuelca, humo, estallido de luz y aura. Cartel con texto en cada escena. Ayuda para darle movimiento real (Wan, Kling, Hailuo) y grabar tu gesto con la cámara. Bajar y subir todas las voces juntas para Applio.','📲 <b>3.40</b>: pasá tus proyectos de la PC al celu con un código QR (sin WhatsApp). Modo Cine (todo el video o solo algunas escenas), color de acento, música que baja sola cuando habla la voz y la nueva sección <b>Video largo a clips</b>.','💾 <b>3.39</b>: el video exportado queda guardado en el proyecto. Al volver a abrirlo aparecen directo Descargar, YouTube, TikTok e Instagram, sin exportar de nuevo.','🎙️ <b>3.38 · Voces más naturales</b>: velocidad por personaje (por ejemplo Oxalá lento y pausado), botón «Subir mi voz» en cada escena (opcional) y la IA escribe los diálogos con pausas y emoción, sin narrador.','💾 <b>3.37</b>: las voces quedan guardadas en la compu. Si recargás la página no se pierden, y si falta alguna se hace sola antes de reproducir.','🥁 <b>3.36 · Sonidos sagrados</b>: atabaque con repique, adjá/sineta, agogô, chocalho, Terreiro, Encruzilhada, Mar de Iemanjá y Mata sagrada. Opción de transiciones con golpe de tambor y campanita.','🕯️ <b>3.35 · Religión afro</b>: sección nueva en Géneros y Estilos con Itán, Mensaje de la entidad, Conocé a la entidad, Oración del día, Ofrenda explicada, Mitos y verdades, Fechas especiales, Pontos cantados, Cuentos para chicos, Exus y Pombagiras, Umbanda y Orixás. Y 9 estilos sagrados: Arte afrobrasileño, Terreiro, Mata sagrada, Encruzilhada nocturna, Pintura sacra, Ícono dorado, Vitral, Escultura africana y Afrofuturismo.','🔧 <b>3.34</b>: en los diálogos, cada escena reconoce sola quién habla y usa su voz, y pone el sonido del lugar (selva, río, cascada, fuego, tambores…). «Armar escenas» ya no borra las imágenes que hiciste.','👥 <b>Modo Diálogo</b>: dos (o más) personajes hablan, cada uno con su voz. Lo elegís en «Nuevo video».',
   '🎨 <b>Subtítulos de colores</b>: cada personaje con su color y su nombre arriba, así se entiende quién habla aunque esté sin sonido.',
   '🖼️ <b>Máximo 6 imágenes</b>: el tiempo de cada una se calcula solo con las voces.',
   '💓 <b>La imagen late con la voz</b>: parece viva mientras el personaje habla.',
@@ -6282,7 +6282,6 @@ console.info('[Estudio Viral] v3.63: subir a YouTube un video que ya tenés');
      El botón rojo baja el video (si hace falta), copia título + descripción + hashtags y abre la ventana
      de subir de YouTube Studio. La subida directa queda como opción (sale privada hasta que Google apruebe la app).
      Para quitarlo, borrá desde acá hasta "FIN v3.64". -->
-FIN v3.64". -->
 <script id="ev364">
 (function(){'use strict';if(window.__ev364)return;window.__ev364=true;
 var UP='https://www.youtube.com/upload';
@@ -7640,5 +7639,432 @@ console.info('[Estudio Viral] v3.80: Director IA (JSON)');
 })();
 </script>
 <!-- ===== FIN v3.80 ===== -->
+<!-- ===== ESTUDIO VIRAL · v3.81 · ESTUDIO IA (nuestro "Open Generative AI") =====
+     Sección nueva con 4 estudios, todo gratis y en el navegador:
+       🖼️ Imagen  · crea imágenes con la IA gratis (o te arma el pedido para ChatGPT / Gemini)
+       🎞️ Video   · le da movimiento a una foto (zoom, paneo, órbita, cámara en mano) con humo, chispas, lluvia…
+       🗣️ Voz     · una foto que habla: voz gratis de Microsoft o tu audio de Voicebox, con la boca que se mueve
+       🎬 Cine    · planos de película (general, primer plano, travelling, vértigo) con barras, look y título
+     Todo lo que hacés queda en «Mis creaciones» y se puede mandar a un proyecto como escena nueva.
+     Agregado al final. Para quitarlo, borrá desde acá hasta "FIN v3.81". -->
+<style>
+.ev81 .tabs{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0 14px}
+.ev81 .tabs button{flex:1;min-width:120px;border:1px solid var(--line2);background:var(--panel);border-radius:14px;padding:10px 8px;font-weight:700;font-size:14px;color:var(--mut)}
+.ev81 .tabs button.on{background:linear-gradient(135deg,#7c5cff33,#22d3ee22);border-color:var(--acc);color:var(--txt)}
+.ev81 .tabs small{display:block;font-weight:500;font-size:11px;opacity:.75;margin-top:2px}
+.ev81-hero{border:1px solid var(--line2);border-radius:16px;padding:14px 16px;background:linear-gradient(135deg,#7c5cff22,#22d3ee14 60%,#39ff8810);margin-top:6px}
+.ev81-hero b{color:var(--neo)}
+.ev81-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+@media(max-width:900px){.ev81-grid{grid-template-columns:1fr}}
+.ev81 .lbl{margin-top:10px}
+.ev81 textarea.inp{min-height:84px;line-height:1.4}
+.ev81-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.ev81-chips button{border:1px solid var(--line2);background:var(--panel2);border-radius:999px;padding:6px 11px;font-size:12.5px;color:var(--txt)}
+.ev81-chips button.on{background:var(--accbg);border-color:var(--acc);color:#fff;font-weight:700}
+.ev81-stage{position:relative;background:#000;border-radius:14px;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:220px;border:1px solid var(--line)}
+.ev81-stage canvas,.ev81-stage video,.ev81-stage img{max-width:100%;max-height:62vh;display:block}
+.ev81-stage .ph{color:var(--dim);text-align:center;padding:30px 16px;font-size:14px;line-height:1.5}
+.ev81-src{display:flex;gap:10px;align-items:center;border:1px dashed var(--line2);border-radius:12px;padding:10px;cursor:pointer;background:var(--panel)}
+.ev81-src img{width:64px;height:64px;object-fit:cover;border-radius:10px;background:#000}
+.ev81-src .e{font-size:28px;width:64px;text-align:center}
+.ev81-res{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:10px}
+.ev81-it{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel)}
+.ev81-it .th{aspect-ratio:1/1;background:#000;display:flex;align-items:center;justify-content:center;position:relative}
+.ev81-it .th img,.ev81-it .th video{width:100%;height:100%;object-fit:cover}
+.ev81-it .th .bd{position:absolute;top:6px;left:6px;background:#000a;border-radius:8px;padding:2px 7px;font-size:11px}
+.ev81-it .ac{display:flex;flex-wrap:wrap;gap:4px;padding:6px}
+.ev81-it .ac button{flex:1 1 30%;font-size:15px;padding:5px 0;border-radius:8px;background:var(--panel2);border:1px solid var(--line)}
+.ev81-it .ac button:hover{border-color:var(--acc)}
+.ev81-busy{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:12px;background:#22d3ee14;border:1px solid #22d3ee55;margin-top:10px;font-size:13px}
+.ev81-bar{height:6px;border-radius:9px;background:var(--line);overflow:hidden;margin-top:8px}
+.ev81-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--acc),var(--neo));transition:width .2s}
+.ev81-out{margin-top:10px;border:1px solid #39ff8855;background:#39ff880c;border-radius:12px;padding:10px}
+.ev81-out video,.ev81-out audio{width:100%;border-radius:10px;max-height:60vh;background:#000}
+.ev81-mini{font-size:12px;color:var(--mut);margin-top:6px;line-height:1.4}
+.ev81-ext{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.ev81-pick{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px;margin-top:8px}
+.ev81-pick button{aspect-ratio:1/1;border-radius:10px;overflow:hidden;border:2px solid transparent;background:#000;padding:0}
+.ev81-pick button:hover{border-color:var(--acc)}
+.ev81-pick img{width:100%;height:100%;object-fit:cover}
+.ev81-sec{font-weight:700;margin-top:14px;font-size:14px}
+.ev81 input[type=range]{width:100%}
+.ev81-mouth{cursor:crosshair}
+</style>
+<script id="ev381">
+(function(){'use strict';if(window.__ev381)return;window.__ev381=true;
+
+/* ======================================================================
+   datos
+   ====================================================================== */
+var FMTS={vertical:{n:'9:16 TikTok',r:[9,16]},horizontal:{n:'16:9 YouTube',r:[16,9]},cuadrado:{n:'1:1',r:[1,1]},retrato:{n:'4:5 Instagram',r:[4,5]}};
+var MOVES=[['zoomin','🔍 Acercar'],['zoomout','🔭 Alejar'],['panl','⬅️ Paneo'],['panr','➡️ Paneo'],['up','⬆️ Subir'],['down','⬇️ Bajar'],['kenburns','🎞️ Ken Burns'],['orbit','🌀 Órbita'],['hand','🤳 Cámara en mano'],['pulse','💓 Latido'],['vertigo','😵 Vértigo'],['still','⏸️ Quieta']];
+var FX=[['humo','💨 Humo'],['chispas','🔥 Chispas'],['lluvia','🌧️ Lluvia'],['polvo','✨ Polvo dorado'],['rayos','☀️ Rayos de luz'],['niebla','🌫️ Niebla'],['aura','😇 Aura'],['flash','⚡ Destello final']];
+var LOOKS=[['none','Natural',''],['calido','Cálido','saturate(1.15) sepia(.18) contrast(1.05)'],['frio','Frío','saturate(.9) hue-rotate(-10deg) contrast(1.06) brightness(.97)'],['teal','Película (teal & orange)','contrast(1.12) saturate(1.12)'],['dramatico','Dramático','contrast(1.35) saturate(.8) brightness(.92)'],['bn','Blanco y negro','grayscale(1) contrast(1.22)'],['vintage','Vintage','sepia(.45) contrast(.95) brightness(1.03) saturate(.9)'],['sagrado','Dorado sagrado','sepia(.22) saturate(1.3) brightness(1.05)']];
+var SHOTS=[
+ {id:'general',n:'🏞️ Plano general',d:'Se aleja despacio y muestra todo el lugar',move:'zoomout',k:.8,look:'teal',fx:['niebla'],lens:'24mm',en:'wide establishing shot, slow pull back revealing the whole place'},
+ {id:'primer',n:'👁️ Primer plano dramático',d:'Se acerca a la cara o al detalle',move:'zoomin',k:1.4,look:'dramatico',fx:[],lens:'85mm',en:'dramatic close-up, slow push in on the face, shallow depth of field'},
+ {id:'travelling',n:'🛤️ Travelling',d:'La cámara se desliza de costado',move:'panr',k:1.2,look:'teal',fx:['polvo'],lens:'35mm',en:'lateral tracking shot, smooth dolly move from left to right'},
+ {id:'vertigo',n:'😵 Efecto vértigo',d:'Zoom que se acelera, tensión',move:'vertigo',k:1,look:'dramatico',fx:[],lens:'50mm',en:'dolly zoom (vertigo effect), tense atmosphere'},
+ {id:'contra',n:'🦸 Contrapicado heroico',d:'Sube mirando desde abajo',move:'up',k:1.2,look:'calido',fx:['rayos'],lens:'24mm',en:'low angle heroic shot, camera tilting up, god rays'},
+ {id:'orbita',n:'🌀 Órbita',d:'Gira suave alrededor',move:'orbit',k:1.2,look:'teal',fx:['polvo'],lens:'35mm',en:'slow orbit around the subject, parallax'},
+ {id:'epico',n:'⚔️ Épico con fuego',d:'Cámara en mano con chispas',move:'hand',k:1.3,look:'calido',fx:['chispas','humo'],lens:'35mm',en:'handheld epic shot, embers and smoke in the air'},
+ {id:'sueno',n:'🌙 Sueño / recuerdo',d:'Lento, con niebla y aura',move:'kenburns',k:.7,look:'vintage',fx:['niebla','aura'],lens:'50mm',en:'dreamy memory shot, soft glow, slow drift, haze'}];
+var LENSES=['24mm','35mm','50mm','85mm'];
+var AFRO=/orix|oxum|oshun|xang|iemanj|yemay|ogum|ogun|oxal|obatal|exu|el[eé]gu|pomba|umbanda|candombl|terreiro|it[aã]n\b|ians[aã]|oy[aá]\b|omolu|nan[aã]|oxossi|ossain|ibeji|axé/i;
+var GKEY='ev81_gen',MAXG=80;
+
+var G={tab:'imagen',busy:'',prog:0,out:null,gf:'all',
+ img:{txt:'',en:'',style:'neo_anime',fmt:'vertical',n:1,hq:false,char:'',list:[]},
+ vid:{src:null,move:'zoomin',k:1,dur:6,fx:[],look:'none',fmt:'vertical',fade:true,desc:'',fx0:.5,fy0:.45},
+ voz:{src:null,txt:'',voice:'edge:es-AR-TomasNeural',speed:1,audio:null,audioName:'',audioBlob:null,mouth:{x:.5,y:.66,r:.07},subs:true,fmt:'vertical',move:'pulse',look:'none'},
+ cine:{src:null,shot:'primer',lens:'85mm',look:'dramatico',bars:true,dur:6,title:'',sub:'',fmt:'vertical',fx0:.5,fy0:.42,desc:''}};
+var URLS={};
+
+/* ======================================================================
+   utilidades
+   ====================================================================== */
+function sheet(h){$('#sheetin').innerHTML=h;$('#sheet').classList.add('open')}
+function copy(t,ok){try{navigator.clipboard.writeText(t).then(function(){toast(ok||'Copiado ✅')},function(){prompt('Copiá este texto:',t)})}catch(e){prompt('Copiá este texto:',t)}}
+function mb(n){return (n/1048576).toFixed(1)+' MB'}
+function idbDel(k){return IDB.open().then(function(db){return new Promise(function(res){var t=db.transaction('f','readwrite');t.objectStore('f').delete(k);t.oncomplete=res;t.onerror=res})})}
+function gl(){var l=store.get(GKEY,[]);return Array.isArray(l)?l:[]}
+function gset(l){store.set(GKEY,l)}
+function dims(fmt,hq){var r=(FMTS[fmt]||FMTS.vertical).r,sh=hq?1024:720,W,H;if(r[0]>=r[1]){H=sh;W=Math.round(sh*r[0]/r[1])}else{W=sh;H=Math.round(sh*r[1]/r[0])}return {W:r16(W),H:r16(H)}}
+function vdims(fmt){var r=(FMTS[fmt]||FMTS.vertical).r,W,H;if(r[0]>=r[1]){H=720;W=Math.round(720*r[0]/r[1])}else{W=720;H=Math.round(720*r[1]/r[0])}W+=W%2;H+=H%2;return {W:W,H:H}}
+function blobURL(key,b){if(URLS[key])return URLS[key];return URLS[key]=URL.createObjectURL(b)}
+async function urlOf(key){if(URLS[key])return URLS[key];if(/^(https?:|data:|blob:)/.test(key))return key;var b=await IDB.get(key);if(!b)throw new Error('No encontré ese archivo en este aparato');return blobURL(key,b)}
+function loadIm(u){return new Promise(function(res,rej){var i=new Image();i.crossOrigin='anonymous';i.onload=function(){res(i)};i.onerror=function(){rej(new Error('No pude abrir la imagen'))};i.src=u})}
+function canvasBlob(c,type,q){return new Promise(function(r){c.toBlob(r,type||'image/jpeg',q||.9)})}
+function fileBase(t){return (String(t||'estudio-ia').replace(/[^\wÀ-ÿ -]/g,'').trim().slice(0,40).replace(/\s+/g,'-')||'estudio-ia')}
+function setBusy(t,p){G.busy=t||'';if(p!=null)G.prog=p;var b=$('#ev81busy');if(b){b.style.display=G.busy?'flex':'none';var s=b.querySelector('span');if(s)s.textContent=G.busy}var bar=$('#ev81bar');if(bar)bar.style.width=Math.round((G.prog||0)*100)+'%';document.querySelectorAll('[data-e81b]').forEach(function(x){x.disabled=!!G.busy})}
+async function guard(fn){try{await fn()}catch(e){console.warn('[v3.81]',e);toast(e.message||String(e),1)}finally{setBusy('',0)}}
+function chars(){try{var A=(S.settings.lib||[]).filter(function(c){return c&&!c.del&&c.name});if(A.length)return A}catch(e){}try{return store.get('ev_personajes',[])||[]}catch(e){return []}}
+function charOf(n){return chars().find(function(c){return c.name===n})}
+
+/* guarda en «Mis creaciones» */
+async function keep(blob,meta){var id=uid(),key='gen:'+id;await IDB.set(key,blob);var l=gl();l.unshift(Object.assign({id:id,at:Date.now(),mime:blob.type||''},meta));
+  while(l.length>MAXG){var old=l.pop();idbDel('gen:'+old.id).catch(function(){})}gset(l);blobURL(key,blob);return id}
+
+/* ======================================================================
+   MOTOR DE ANIMACIÓN (canvas) · lo usan Video, Voz y Cine
+   ====================================================================== */
+var ENG={raf:0,cancel:null,grain:null,jaw:null};
+function nz(t){return Math.sin(t*1.7)*.6+Math.sin(t*3.1+1)*.3+Math.sin(t*5.3+2)*.1}
+function rnd(i){var x=Math.sin(i*127.1+311.7)*43758.5453;return x-Math.floor(x)}
+function cam(move,p,t,k){var e=ease(p);
+ switch(move){
+  case 'zoomin':return {s:1+.25*k*e,x:0,y:0,r:0};
+  case 'zoomout':return {s:1+.25*k*(1-e),x:0,y:0,r:0};
+  case 'panl':return {s:1.16+.05*k,x:(.5-e)*-.14*k,y:0,r:0};
+  case 'panr':return {s:1.16+.05*k,x:(.5-e)*.14*k,y:0,r:0};
+  case 'up':return {s:1.16+.05*k,x:0,y:(.5-e)*-.14*k,r:0};
+  case 'down':return {s:1.16+.05*k,x:0,y:(.5-e)*.14*k,r:0};
+  case 'kenburns':return {s:1.05+.2*k*e,x:(e-.5)*.07*k,y:(.5-e)*.05*k,r:0};
+  case 'orbit':return {s:1.14+.04*k,x:Math.sin(p*6.283)*.03*k,y:Math.cos(p*6.283)*.018*k,r:Math.sin(p*6.283)*.01*k};
+  case 'hand':return {s:1.1,x:nz(t)*.012*k,y:nz(t+9)*.012*k,r:nz(t+3)*.004*k};
+  case 'pulse':return {s:1.04+.025*k*(.5+.5*Math.sin(t*6.9)),x:0,y:0,r:0};
+  case 'vertigo':return {s:1+.45*k*p*p,x:0,y:0,r:0};
+  default:return {s:1.02,x:0,y:0,r:0}}}
+function grainTile(){if(ENG.grain)return ENG.grain;var c=document.createElement('canvas');c.width=c.height=192;var x=c.getContext('2d'),d=x.createImageData(192,192);for(var i=0;i<d.data.length;i+=4){var v=Math.random()*255;d.data[i]=d.data[i+1]=d.data[i+2]=v;d.data[i+3]=255}x.putImageData(d,0,0);return ENG.grain=c}
+function srcSize(im){var iw=im.naturalWidth||im.width,ih=(im.naturalHeight||im.height);return {iw:iw,ih:ih*(1-(im._crop||0))}}
+
+/* parche de mandíbula (la parte de abajo de la boca, con bordes suaves) */
+function jawPatch(im,m){var z=srcSize(im),r=m.r*z.iw,x0=Math.max(0,m.x*z.iw-1.7*r),y0=m.y*z.ih,w=Math.min(z.iw-x0,3.4*r),h=Math.min(z.ih-y0,2.3*r);
+ var key=[im.src.slice(-40),m.x,m.y,m.r].join('|');if(ENG.jaw&&ENG.jaw.key===key)return ENG.jaw;
+ if(w<4||h<4)return null;var c=document.createElement('canvas');c.width=Math.round(w);c.height=Math.round(h);var x=c.getContext('2d');x.drawImage(im,x0,y0,w,h,0,0,c.width,c.height);
+ var k=document.createElement('canvas');k.width=c.width;k.height=c.height;var kx=k.getContext('2d');kx.save();kx.scale(1,(2*c.height)/c.width);var g=kx.createRadialGradient(c.width/2,0,0,c.width/2,0,c.width/2);g.addColorStop(0,'#000');g.addColorStop(.62,'#000');g.addColorStop(1,'rgba(0,0,0,0)');kx.fillStyle=g;kx.fillRect(0,0,c.width,c.width);kx.restore();
+ x.globalCompositeOperation='destination-in';x.drawImage(k,0,0);return ENG.jaw={key:key,c:c,x0:x0,y0:y0,w:w,h:h,r:r}}
+
+function drawFx(x,W,H,st,t,p){var fx=st.fx||[],T=st.dur;
+ fx.forEach(function(f){x.save();
+  if(f==='humo'){x.globalCompositeOperation='screen';for(var i=0;i<16;i++){var sp=.05+rnd(i)*.06,ph=(t*sp+rnd(i+50))%1,cx=(rnd(i+9)+Math.sin(t*.4+i)*.05)*W,cy=H*(1.1-ph*1.3),rad=W*(.12+ph*.25);var g=x.createRadialGradient(cx,cy,0,cx,cy,rad);var a=.16*Math.sin(ph*Math.PI);g.addColorStop(0,'rgba(210,210,215,'+a+')');g.addColorStop(1,'rgba(210,210,215,0)');x.fillStyle=g;x.fillRect(cx-rad,cy-rad,rad*2,rad*2)}}
+  else if(f==='chispas'){x.globalCompositeOperation='lighter';for(var j=0;j<70;j++){var s2=.12+rnd(j)*.2,q=(t*s2+rnd(j+7))%1,ex=(rnd(j+3)+Math.sin(t*1.3+j)*.03)*W,ey=H*(1.05-q*1.15),fl=.5+.5*Math.sin(t*12+j*3),sz=Math.max(1,W*.004*(1-q)+1);x.fillStyle='rgba(255,'+(120+Math.round(rnd(j+1)*90))+',40,'+(.85*(1-q)*fl)+')';x.beginPath();x.arc(ex,ey,sz,0,6.283);x.fill()}}
+  else if(f==='lluvia'){x.strokeStyle='rgba(200,215,235,.38)';x.lineWidth=Math.max(1,W/600);x.beginPath();for(var k2=0;k2<150;k2++){var ry=((t*(1.4+rnd(k2)*.6)+rnd(k2+20))%1)*(H+60)-30,rx=rnd(k2+40)*W*1.2-W*.1+ry*.18;x.moveTo(rx,ry);x.lineTo(rx-W*.012,ry+H*.045)}x.stroke();x.fillStyle='rgba(30,40,60,.12)';x.fillRect(0,0,W,H)}
+  else if(f==='polvo'){x.globalCompositeOperation='lighter';for(var d=0;d<55;d++){var px=((rnd(d)+t*.012*(rnd(d+2)-.5))%1+1)%1*W,py=((rnd(d+5)-t*.02*(.3+rnd(d+8)))%1+1)%1*H,tw=.4+.6*Math.abs(Math.sin(t*2+d));x.fillStyle='rgba(255,215,120,'+(.55*tw)+')';x.beginPath();x.arc(px,py,Math.max(1,W*.0028),0,6.283);x.fill()}}
+  else if(f==='rayos'){x.globalCompositeOperation='screen';for(var b=0;b<4;b++){var ang=-.55+b*.18+Math.sin(t*.35+b)*.04,a2=.07+.04*Math.sin(t*.8+b*2);x.save();x.translate(W*.12,-H*.05);x.rotate(ang);var lg=x.createLinearGradient(0,0,0,H*1.4);lg.addColorStop(0,'rgba(255,240,200,'+a2+')');lg.addColorStop(1,'rgba(255,240,200,0)');x.fillStyle=lg;x.fillRect(-W*.05*(1+b*.4),0,W*.1*(1+b*.4),H*1.5);x.restore()}}
+  else if(f==='niebla'){x.globalCompositeOperation='screen';for(var n=0;n<5;n++){var ny=H*(.45+n*.12),off=((t*.03*(n%2?1:-1)+n*.2)%1)*W;var g2=x.createLinearGradient(0,ny-H*.12,0,ny+H*.12);g2.addColorStop(0,'rgba(220,225,235,0)');g2.addColorStop(.5,'rgba(220,225,235,.09)');g2.addColorStop(1,'rgba(220,225,235,0)');x.fillStyle=g2;x.fillRect(off-W,ny-H*.12,W*3,H*.24)}}
+  else if(f==='aura'){x.globalCompositeOperation='lighter';var cx2=(st.fx0!=null?st.fx0:.5)*W,cy2=(st.fy0!=null?st.fy0:.45)*H,R=Math.min(W,H)*(.42+.04*Math.sin(t*2.4));var g3=x.createRadialGradient(cx2,cy2,R*.2,cx2,cy2,R);g3.addColorStop(0,'rgba(255,220,140,.22)');g3.addColorStop(1,'rgba(255,220,140,0)');x.fillStyle=g3;x.fillRect(0,0,W,H)}
+  else if(f==='flash'){var fl2=clamp((t-(T-.6))/.25,0,1)*(1-clamp((t-(T-.25))/.25,0,1));if(fl2>0){x.fillStyle='rgba(255,250,235,'+(.9*fl2)+')';x.fillRect(0,0,W,H)}}
+  x.restore()})}
+
+function drawSubs(x,W,H,st,t){if(!st.subs||!st.subChunks||!st.subChunks.length)return;var c=st.subChunks.find(function(s){return t>=s.a&&t<s.b});if(!c)return;
+ var fs=Math.round(W*.055);x.save();x.font='800 '+fs+'px system-ui,Segoe UI,Arial';x.textAlign='center';x.textBaseline='middle';var words=c.t.split(' '),lines=[],ln='';
+ words.forEach(function(w){var tt=ln?ln+' '+w:w;if(x.measureText(tt).width>W*.82&&ln){lines.push(ln);ln=w}else ln=tt});if(ln)lines.push(ln);
+ var y0=H*(st.bars?.78:.82)-(lines.length-1)*fs*.6;lines.forEach(function(l,i){var y=y0+i*fs*1.2;x.lineWidth=fs*.18;x.strokeStyle='rgba(0,0,0,.85)';x.strokeText(l,W/2,y);x.fillStyle='#fff';x.fillText(l,W/2,y)});x.restore()}
+
+function drawTitle(x,W,H,st,t){if(!st.title)return;var T=st.dur,a=clamp((t-.5)/.8,0,1)*(1-clamp((t-(T-1.2))/.7,0,1));if(a<=0)return;
+ x.save();x.globalAlpha=a;x.textAlign='center';x.textBaseline='middle';var fs=Math.round(Math.min(W,H)*.095);x.font='700 '+fs+'px Georgia,Times New Roman,serif';x.shadowColor='rgba(0,0,0,.8)';x.shadowBlur=fs*.4;x.fillStyle='#f5ecd7';
+ var y=H*(st.bars?.5:.5);x.fillText(st.title.toUpperCase(),W/2,y);if(st.sub){x.font='500 '+Math.round(fs*.38)+'px Georgia,serif';x.fillStyle='#e6d9b8';x.fillText(st.sub,W/2,y+fs*.85)}x.restore()}
+
+function frame(x,W,H,st,t){var im=st.im,p=clamp(t/st.dur,0,1),amp=0;
+ if(st.env){var fi=Math.floor((t-(st.aDelay||0))*30);amp=fi>=0&&fi<st.env.length?st.env[fi]:0}
+ var c=cam(st.move,p,t,st.k||1);if(st.env)c.y+=amp*.004;
+ var z=srcSize(im),base=Math.max(W/z.iw,H/z.ih),sc=base*c.s,dw=z.iw*sc,dh=z.ih*sc;
+ var f=st.env?0:clamp((c.s-1)/.3,0,1),fx0=st.fx0!=null?st.fx0:.5,fy0=st.fy0!=null?st.fy0:.5;
+ var cxI=z.iw*(.5+(fx0-.5)*f),cyI=z.ih*(.5+(fy0-.5)*f);
+ var ox=clamp(-cxI*sc+c.x*W,W/2-dw,-W/2),oy=clamp(-cyI*sc+c.y*H,H/2-dh,-H/2);
+ x.save();x.fillStyle='#000';x.fillRect(0,0,W,H);
+ var L=LOOKS.find(function(l){return l[0]===st.look});x.filter=(L&&L[2])||'none';
+ x.translate(W/2,H/2);if(c.r)x.rotate(c.r);x.drawImage(im,0,0,z.iw,z.ih,ox,oy,dw,dh);
+ /* boca que habla */
+ if(st.env&&st.mouth){var jp=jawPatch(im,st.mouth);if(jp){var dy=amp*jp.r*.8;if(dy>.4){var mx=ox+st.mouth.x*z.iw*sc,my=oy+st.mouth.y*z.ih*sc;
+   x.fillStyle='#2a0b0b';x.beginPath();x.ellipse(mx,my+dy*sc*.45,jp.r*sc*.78,Math.max(1,dy*sc*.6),0,0,6.283);x.fill();
+   x.drawImage(jp.c,ox+jp.x0*sc,oy+(jp.y0+dy)*sc,jp.w*sc,jp.h*sc)}}}
+ x.restore();x.filter='none';
+ if(st.look==='teal'){x.save();x.globalCompositeOperation='soft-light';x.fillStyle='rgba(0,120,130,.35)';x.fillRect(0,0,W,H);x.globalCompositeOperation='overlay';x.fillStyle='rgba(255,140,40,.10)';x.fillRect(0,0,W,H);x.restore()}
+ if(st.look==='sagrado'){x.save();x.globalCompositeOperation='soft-light';x.fillStyle='rgba(255,190,60,.25)';x.fillRect(0,0,W,H);x.restore()}
+ drawFx(x,W,H,st,t,p);
+ /* viñeta */
+ if(st.vig){x.save();var g=x.createRadialGradient(W/2,H/2,Math.min(W,H)*.35,W/2,H/2,Math.max(W,H)*.75);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,'+st.vig+')');x.fillStyle=g;x.fillRect(0,0,W,H);x.restore()}
+ if(st.grain){x.save();x.globalAlpha=.07;x.globalCompositeOperation='overlay';var gt=grainTile(),gx=-Math.random()*192,gy=-Math.random()*192;for(var yy=gy;yy<H;yy+=192)for(var xx=gx;xx<W;xx+=192)x.drawImage(gt,xx,yy);x.restore()}
+ if(st.bars){var bh=W>H?Math.max(0,(H-W/2.39)/2):H*.09;x.fillStyle='#000';x.fillRect(0,0,W,bh);x.fillRect(0,H-bh,W,bh)}
+ drawTitle(x,W,H,st,t);drawSubs(x,W,H,st,t);
+ if(st.fade){var fa=1-clamp(t/.45,0,1),fb=clamp((t-(st.dur-.45))/.45,0,1),fo=Math.max(fa,(st.fx||[]).indexOf('flash')>=0?0:fb);if(fo>0){x.fillStyle='rgba(0,0,0,'+fo+')';x.fillRect(0,0,W,H)}}}
+
+function pickMime(){var L=['video/mp4;codecs=avc1.42E01E,mp4a.40.2','video/mp4;codecs=avc1','video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'];for(var i=0;i<L.length;i++){try{if(window.MediaRecorder&&MediaRecorder.isTypeSupported(L[i]))return L[i]}catch(e){}}return ''}
+function stopEng(){if(ENG.cancel){try{ENG.cancel()}catch(e){}}ENG.cancel=null;cancelAnimationFrame(ENG.raf)}
+
+/* reproduce (y si record=true, graba) el clip en el canvas */
+function runClip(cv,st,record,onProg){stopEng();var x=cv.getContext('2d'),W=cv.width,H=cv.height,ac=null,node=null,dest=null,rec=null,chunks=[],mime='',done=false;
+ return new Promise(async function(res,rej){
+  try{
+   if(st.audio){ac=getAC();if(ac.state==='suspended')await ac.resume();node=ac.createBufferSource();node.buffer=st.audio;var gn=ac.createGain();node.connect(gn);gn.connect(ac.destination);if(record){dest=ac.createMediaStreamDestination();gn.connect(dest)}}
+   if(record){if(!window.MediaRecorder||!cv.captureStream)throw new Error('Este navegador no puede grabar video. Probá con Chrome o Edge.');
+    var ms=cv.captureStream(30);if(dest)dest.stream.getAudioTracks().forEach(function(tr){ms.addTrack(tr)});
+    var L=['video/mp4;codecs=avc1.42E01E,mp4a.40.2','video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm',''];
+    for(var li=0;li<L.length&&!rec;li++){try{if(L[li]&&!MediaRecorder.isTypeSupported(L[li]))continue;rec=new MediaRecorder(ms,L[li]?{mimeType:L[li],videoBitsPerSecond:6000000}:{});rec.start(250);mime=L[li]||rec.mimeType||''}catch(e){rec=null}}
+    if(!rec)throw new Error('Este navegador no pudo empezar a grabar. Probá con Chrome o Edge actualizado.');
+    rec.ondataavailable=function(e){if(e.data&&e.data.size)chunks.push(e.data)}}
+  }catch(e){return rej(e)}
+  var t0=performance.now()+60;if(node)node.start(ac.currentTime+.06+(st.aDelay||0));
+  function finish(cancelled){if(done)return;done=true;cancelAnimationFrame(ENG.raf);ENG.cancel=null;try{node&&node.stop()}catch(e){}
+   if(rec){var mk=function(){if(cancelled)return res(null);var type=(mime||'video/webm').split(';')[0]||'video/webm';res(new Blob(chunks,{type:type}))};if(rec.state==='inactive')return setTimeout(mk,50);rec.onstop=mk;try{rec.stop()}catch(e){mk()}}else res(null)}
+  ENG.cancel=function(){finish(true)};
+  function tick(){var t=Math.max(0,(performance.now()-t0)/1000);frame(x,W,H,st,Math.min(t,st.dur));if(onProg)onProg(Math.min(1,t/st.dur));if(t<st.dur)ENG.raf=requestAnimationFrame(tick);else finish(false)}
+  tick()})}
+
+/* envolvente de volumen (30 por segundo) para mover la boca */
+function envelope(buf){var d=buf.getChannelData(0),sr=buf.sampleRate,hop=Math.round(sr/30),E=[];for(var i=0;i<d.length;i+=hop){var s=0,n=0;for(var j=i;j<Math.min(d.length,i+hop);j+=2){s+=d[j]*d[j];n++}E.push(Math.sqrt(s/Math.max(1,n)))}
+ var sorted=E.slice().sort(function(a,b){return a-b}),hi=sorted[Math.floor(sorted.length*.95)]||1e-3,out=[],v=0;
+ E.forEach(function(e){var tgt=clamp((e/hi-.12)/.88,0,1);v=tgt>v?v+(tgt-v)*.7:v+(tgt-v)*.35;out.push(v)});return out}
+function chunksOf(text,dur,delay){var w=String(text||'').replace(/\s+/g,' ').trim().split(' ').filter(Boolean);if(!w.length)return [];var groups=[];for(var i=0;i<w.length;i+=5)groups.push(w.slice(i,i+5).join(' '));
+ var tot=groups.reduce(function(a,g){return a+g.length},0),t=delay||0,span=Math.max(.5,dur-(delay||0)-.2);return groups.map(function(g){var a=t,b=t+span*g.length/tot;t=b;return {t:g,a:a,b:b}})}
+
+/* ======================================================================
+   imágenes: elegir de dónde sale la foto
+   ====================================================================== */
+async function setSrc(tab,key){setBusy('Abriendo la imagen…');try{var u=await urlOf(key),im=await loadIm(u);G[tab].src={key:key,url:u,im:im};ENG.jaw=null;G.out=null}finally{setBusy('')}view()}
+async function upFile(tab,f){if(!f)return;if(!/^image\//.test(f.type))return toast('Elegí una imagen (JPG o PNG)',1);
+ var im=await loadIm(URL.createObjectURL(f)),k=Math.min(1,1800/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+ var b=await canvasBlob(c,'image/jpeg',.9),id=await keep(b,{t:'img',p:f.name.replace(/\.[^.]+$/,''),src:'subida'});await setSrc(tab,'gen:'+id)}
+function pickSheet(tab){var imgs=gl().filter(function(g){return g.t==='img'}),fotos=[],cs=chars().filter(function(c){return c.ref});try{if(window.EV375&&EV375.list)fotos=EV375.list()}catch(e){}
+ sheet('<div class="ev81"><div class="between" style="margin-bottom:8px"><div class="h1" style="font-size:19px">🖼️ Elegí la imagen</div><button class="btn sm" onclick="closeSheet()">✕ Cerrar</button></div>'+
+  '<label class="btn grad" style="width:100%;justify-content:center">📤 Subir una foto de tu celu o compu<input type="file" accept="image/*" hidden onchange="closeSheet();EV381.up(\''+tab+'\',this.files[0])"></label>'+
+  (imgs.length?'<div class="ev81-sec">✨ Mis creaciones</div><div class="ev81-pick">'+imgs.map(function(g){return '<button onclick="closeSheet();EV381.src(\''+tab+'\',\'gen:'+g.id+'\')"><img data-k81="gen:'+g.id+'" alt=""></button>'}).join('')+'</div>':'')+
+  (fotos.length?'<div class="ev81-sec">📸 Fotos del comedor</div><div class="ev81-pick">'+fotos.map(function(f){return '<button onclick="closeSheet();EV381.src(\''+tab+'\',\'foto:'+f.id+'\')"><img data-k81="foto:'+f.id+'" alt=""></button>'}).join('')+'</div>':'')+
+  (cs.length?'<div class="ev81-sec">🎭 Mis personajes</div><div class="ev81-pick">'+cs.map(function(c){return '<button title="'+esc(c.name)+'" onclick="closeSheet();EV381.src(\''+tab+'\',\''+esc(c.ref)+'\')"><img data-k81="'+esc(c.ref)+'" alt=""></button>'}).join('')+'</div>':'')+
+  (!imgs.length&&!fotos.length&&!cs.length?'<div class="ev81-mini" style="margin-top:12px">Todavía no tenés imágenes guardadas. Subí una foto o creala en la pestaña 🖼️ Imagen.</div>':'')+'</div>');hydrate()}
+function hydrate(){document.querySelectorAll('[data-k81]').forEach(function(el){var k=el.getAttribute('data-k81');if(!k||el._h)return;el._h=1;urlOf(k).then(function(u){el.src=u}).catch(function(){})})}
+function srcBox(tab){var s=G[tab].src;return '<div class="ev81-src" onclick="EV381.pick(\''+tab+'\')">'+(s?'<img src="'+esc(s.url)+'" alt="">':'<div class="e">🖼️</div>')+'<div style="flex:1"><b>'+(s?'Imagen elegida':'Elegí una imagen')+'</b><div class="ev81-mini" style="margin-top:2px">'+(s?'Tocá para cambiarla':'Una de Mis creaciones, una foto del comedor, un personaje o una foto tuya')+'</div></div><span class="btn sm">'+(s?'Cambiar':'Elegir')+'</span></div>'}
+
+/* ======================================================================
+   🖼️ IMAGEN
+   ====================================================================== */
+async function toEnglish(txt,charDesc){var raw=String(txt||'').trim();if(!raw)throw new Error('Escribí qué imagen querés.');
+ try{var r=await AI.chat([{role:'system',content:'You write prompts for an AI image generator. Translate the user idea (usually Spanish) into ONE English prompt line, max 45 words, most important subject first, concrete visual details, lighting and camera. No quotes, no explanations.'+(AFRO.test(raw)?' The people are Afro-Brazilian / West African with dark skin, dressed in traditional Yoruba / Candomblé clothes.':'')},{role:'user',content:raw+(charDesc?'\nMain character looks like: '+charDesc:'')}],{temp:.6});
+  return String(r).replace(/^["'\s]+|["'\s]+$/g,'').split('\n')[0].slice(0,400)}catch(e){return raw+(charDesc?', '+charDesc:'')}}
+function fullPrompt(en){var I=G.img,st=styleOf(I.style);return [en,AFRO.test(I.txt)&&!/afro|african|dark skin/i.test(en)?'Afro-Brazilian and West African people with dark skin':'',st&&st.id!=='custom'?st.p:'',I.fmt==='vertical'?'vertical composition':I.fmt==='horizontal'?'wide composition':'centered composition','natural anatomy, everyone fully clothed, family friendly'].filter(Boolean).join(', ')}
+async function genImages(){var I=G.img,ch=charOf(I.char);
+ setBusy('Preparando el pedido…',.03);if(!I.en)I.en=await toEnglish(I.txt,ch&&(ch.desc||ch.look));
+ var d=dims(I.fmt,I.hq),made=0;
+ for(var i=0;i<I.n;i++){setBusy((S.settings.key?'Creando imagen ':'⏳ Creando imagen ')+(i+1)+' de '+I.n+(S.settings.key?'…':' (el servicio gratis da 1 cada 45 segundos)…'),.08+.9*i/I.n);
+  var sd=seed(),url=AI.imgURL(fullPrompt(I.en),d.W,d.H,sd,I.hq?'&enhance=true':''),im;
+  try{im=await loadImg(url,9)}catch(e){toast('Una imagen no salió ('+e.message+'). Sigo con la próxima.',1);continue}
+  var z=srcSize(im),c=document.createElement('canvas');c.width=z.iw;c.height=Math.round(z.ih);c.getContext('2d').drawImage(im,0,0,z.iw,z.ih,0,0,z.iw,z.ih);
+  var b=await canvasBlob(c,'image/jpeg',.92),id=await keep(b,{t:'img',p:I.txt,en:I.en,style:I.style,fmt:I.fmt});I.list.unshift(id);made++;view()}
+ if(made)toast('🖼️ '+made+' imagen(es) lista(s). Quedaron en Mis creaciones.');}
+function extPrompt(){var I=G.img,st=styleOf(I.style),ch=charOf(I.char);return 'Creá una imagen '+((FMTS[I.fmt]||{}).n||'vertical')+' de: '+String(I.txt||'').trim()+(ch?'. El personaje principal es '+ch.name+': '+(ch.desc||ch.look||''):'')+(st&&st.id!=='custom'?'. Estilo: '+st.n+' ('+st.d+')':'')+(AFRO.test(I.txt)?'. Las personas son afrobrasileñas / africanas de piel oscura, con ropa tradicional.':'')+'. Sin textos ni marcas de agua.'}
+function vImagen(){var I=G.img,cs=chars(),cats={};STYLES.forEach(function(s){if(s.id==='custom')return;(cats[s.c]=cats[s.c]||[]).push(s)});
+ var mine=I.list.filter(function(id){return gl().some(function(g){return g.id===id})});
+ return '<div class="ev81-grid"><div class="card box">'+
+  '<div class="lbl">¿Qué imagen querés? (escribilo en castellano)</div><textarea class="inp" id="e81txt" placeholder="Ej: Oxum sentada junto a una cascada dorada, al atardecer, con espejo en la mano" oninput="EV381.set(\'img\',\'txt\',this.value);EV381.G.img.en=\'\'">'+esc(I.txt)+'</textarea>'+
+  '<div class="row wrap" style="gap:6px;margin-top:6px"><button class="btn sm" data-e81b onclick="EV381.better()">✨ Mejorar el pedido con IA</button>'+(I.en?'<span class="ev81-mini" style="margin:0">✅ Pedido mejorado (en inglés, lo usa la IA)</span>':'')+'</div>'+
+  (I.en?'<details class="ev81-mini"><summary>Ver el pedido en inglés</summary><div style="margin-top:4px">'+esc(I.en)+'</div></details>':'')+
+  (cs.length?'<div class="lbl">Personaje (opcional)</div><select class="inp" onchange="EV381.set(\'img\',\'char\',this.value);EV381.G.img.en=\'\'"><option value="">— Ninguno —</option>'+cs.map(function(c){return '<option '+(I.char===c.name?'selected':'')+'>'+esc(c.name)+'</option>'}).join('')+'</select>':'')+
+  '<div class="lbl">Estilo</div><select class="inp" onchange="EV381.set(\'img\',\'style\',this.value)">'+Object.keys(cats).map(function(c){return '<optgroup label="'+esc(c.charAt(0).toUpperCase()+c.slice(1))+'">'+cats[c].map(function(s){return '<option value="'+s.id+'" '+(I.style===s.id?'selected':'')+'>'+esc(s.n)+' · '+esc(s.d)+'</option>'}).join('')+'</optgroup>'}).join('')+'</select>'+
+  '<div class="lbl">Formato</div><div class="ev81-chips">'+Object.keys(FMTS).map(function(k){return '<button class="'+(I.fmt===k?'on':'')+'" onclick="EV381.set(\'img\',\'fmt\',\''+k+'\',1)">'+FMTS[k].n+'</button>'}).join('')+'</div>'+
+  '<div class="lbl">Cuántas</div><div class="ev81-chips">'+[1,2,3,4].map(function(n){return '<button class="'+(I.n===n?'on':'')+'" onclick="EV381.set(\'img\',\'n\','+n+',1)">'+n+'</button>'}).join('')+'<button class="'+(I.hq?'on':'')+'" onclick="EV381.set(\'img\',\'hq\','+(!I.hq)+',1)">⭐ Alta calidad</button></div>'+
+  '<button class="btn grad" data-e81b style="width:100%;margin-top:14px;justify-content:center" onclick="EV381.gen()">🖼️ Crear imagen gratis</button>'+
+  (S.settings.key?'':'<div class="ev81-mini">⏳ Gratis: 1 imagen cada 45 segundos. Podés dejarlo trabajando.</div>')+
+  '<div class="ev81-sec">O hacela afuera (mejor calidad)</div><div class="ev81-mini">Copio el pedido y abro la página. Después la traés con «📥 Subir la que hiciste».</div>'+
+  '<div class="ev81-ext"><button class="btn sm" onclick="EV381.ext(\'chatgpt\')">💬 ChatGPT</button><button class="btn sm" onclick="EV381.ext(\'gemini\')">✦ Gemini</button><button class="btn sm" onclick="EV381.ext(\'flow\')">🎬 Google Flow</button><label class="btn sm">📥 Subir la que hiciste<input type="file" accept="image/*" multiple hidden onchange="EV381.upMany(this.files)"></label></div>'+
+ '</div><div class="card box"><h3>Tus imágenes nuevas</h3>'+(mine.length?'<div class="ev81-res">'+mine.map(itemHTML).join('')+'</div>':'<div class="ev81-stage" style="margin-top:10px"><div class="ph">Acá aparecen las imágenes que crees.<br>Después podés darles movimiento 🎞️, hacerlas hablar 🗣️ o llevarlas a Cine 🎬.</div></div>')+'</div></div>'}
+
+/* ======================================================================
+   🎞️ VIDEO (movimiento)
+   ====================================================================== */
+function vidState(){var V=G.vid;return {im:V.src.im,dur:V.dur,move:V.move,k:V.k,fx:V.fx,look:V.look,fade:V.fade,fx0:V.fx0,fy0:V.fy0,vig:V.look==='none'?0:.35,grain:V.look==='vintage'||V.look==='bn'}}
+function vVideo(){var V=G.vid;
+ return '<div class="ev81-grid"><div class="card box">'+srcBox('vid')+
+  '<div class="lbl">Movimiento de cámara</div><div class="ev81-chips">'+MOVES.map(function(m){return '<button class="'+(V.move===m[0]?'on':'')+'" onclick="EV381.set(\'vid\',\'move\',\''+m[0]+'\',2)">'+m[1]+'</button>'}).join('')+'</div>'+
+  '<div class="lbl">Fuerza: '+(V.k<.8?'suave':V.k>1.3?'fuerte':'normal')+'</div><input type="range" min=".4" max="2" step=".1" value="'+V.k+'" onchange="EV381.set(\'vid\',\'k\',+this.value,2)">'+
+  '<div class="lbl">Efectos (podés elegir varios)</div><div class="ev81-chips">'+FX.map(function(f){return '<button class="'+(V.fx.indexOf(f[0])>=0?'on':'')+'" onclick="EV381.tfx(\'vid\',\''+f[0]+'\')">'+f[1]+'</button>'}).join('')+'</div>'+
+  '<div class="lbl">Look</div><div class="ev81-chips">'+LOOKS.map(function(l){return '<button class="'+(V.look===l[0]?'on':'')+'" onclick="EV381.set(\'vid\',\'look\',\''+l[0]+'\',2)">'+l[1]+'</button>'}).join('')+'</div>'+
+  '<div class="lbl">Duración: '+V.dur+' segundos</div><input type="range" min="3" max="15" step="1" value="'+V.dur+'" onchange="EV381.set(\'vid\',\'dur\',+this.value,1)">'+
+  '<div class="lbl">Formato</div><div class="ev81-chips">'+Object.keys(FMTS).map(function(k){return '<button class="'+(V.fmt===k?'on':'')+'" onclick="EV381.set(\'vid\',\'fmt\',\''+k+'\',2)">'+FMTS[k].n+'</button>'}).join('')+'<button class="'+(V.fade?'on':'')+'" onclick="EV381.set(\'vid\',\'fade\','+(!V.fade)+',2)">🌗 Fundido</button></div>'+
+  '<div class="ev81-mini">🎯 Tocá la vista previa para elegir hacia dónde se acerca la cámara.</div>'+
+  '<div class="ev81-sec">Movimiento real con IA (afuera)</div><div class="lbl">¿Qué querés que se mueva?</div><input class="inp" value="'+esc(V.desc)+'" placeholder="Ej: el agua de la cascada cae y ella sonríe y mira a cámara" oninput="EV381.set(\'vid\',\'desc\',this.value)">'+
+  '<div class="ev81-ext"><button class="btn sm" data-e81b onclick="EV381.motion(\'flow\')">🎬 Pedido para Google Flow</button><button class="btn sm" data-e81b onclick="EV381.motion(\'copy\')">📋 Copiar pedido (Meta AI, Kling, Hailuo)</button></div>'+
+ '</div><div class="card box">'+stage('vid')+'</div></div>'}
+
+/* ======================================================================
+   🗣️ VOZ (foto que habla)
+   ====================================================================== */
+function vVoz(){var Z=G.voz,m=Z.mouth,vs=(typeof EDGE_VOICES!=='undefined'?EDGE_VOICES:[]);
+ return '<div class="ev81-grid"><div class="card box">'+srcBox('voz')+
+  '<div class="lbl">¿Qué dice?</div><textarea class="inp" placeholder="Ej: Hijos míos, hoy les cuento cómo nació el río…" oninput="EV381.set(\'voz\',\'txt\',this.value)">'+esc(Z.txt)+'</textarea>'+
+  '<div class="lbl">Voz</div><select class="inp" onchange="EV381.set(\'voz\',\'voice\',this.value)">'+vs.map(function(v){var id='edge:'+v[0];return '<option value="'+id+'" '+(Z.voice===id?'selected':'')+'>'+esc(v[1])+' · '+esc(v[2])+' ('+(v[3]==='F'?'mujer':'hombre')+')</option>'}).join('')+'</select>'+
+  '<div class="lbl">Velocidad: '+Z.speed.toFixed(2)+'×</div><input type="range" min=".7" max="1.3" step=".05" value="'+Z.speed+'" onchange="EV381.set(\'voz\',\'speed\',+this.value,1)">'+
+  '<div class="row wrap" style="gap:6px;margin-top:10px"><button class="btn pri sm" data-e81b onclick="EV381.say()">🎙️ Hacer la voz</button><label class="btn sm">🎧 Usar mi audio (Voicebox)<input type="file" accept="audio/*" hidden onchange="EV381.aud(this.files[0])"></label></div>'+
+  (Z.audio?'<div class="ev81-mini">✅ Audio listo: '+esc(Z.audioName)+' · '+Z.audio.duration.toFixed(1)+' s <a href="#" onclick="event.preventDefault();EV381.dlAudio()">⬇️ bajar el audio</a></div>':'')+
+  '<div class="lbl">Boca</div><div class="ev81-mini" style="margin-top:0">👄 Tocá la vista previa justo en el medio de la boca. Ajustá el tamaño hasta que el círculo cubra los labios.</div>'+
+  '<input type="range" min=".02" max=".18" step=".005" value="'+m.r+'" oninput="EV381.mouthR(+this.value)">'+
+  '<div class="lbl">Movimiento y look</div><div class="ev81-chips">'+[['pulse','💓 Respira'],['zoomin','🔍 Acercar'],['still','⏸️ Quieta'],['hand','🤳 En mano']].map(function(x){return '<button class="'+(Z.move===x[0]?'on':'')+'" onclick="EV381.set(\'voz\',\'move\',\''+x[0]+'\',2)">'+x[1]+'</button>'}).join('')+'<button class="'+(Z.subs?'on':'')+'" onclick="EV381.set(\'voz\',\'subs\','+(!Z.subs)+',2)">💬 Subtítulos</button></div>'+
+  '<div class="ev81-chips" style="margin-top:6px">'+LOOKS.slice(0,6).map(function(l){return '<button class="'+(Z.look===l[0]?'on':'')+'" onclick="EV381.set(\'voz\',\'look\',\''+l[0]+'\',2)">'+l[1]+'</button>'}).join('')+'</div>'+
+  '<div class="lbl">Formato</div><div class="ev81-chips">'+Object.keys(FMTS).map(function(k){return '<button class="'+(Z.fmt===k?'on':'')+'" onclick="EV381.set(\'voz\',\'fmt\',\''+k+'\',2)">'+FMTS[k].n+'</button>'}).join('')+'</div>'+
+  '<div class="ev81-mini">💡 Funciona mejor con una cara de frente y la boca cerrada. Para que cante o hable con gestos de verdad, usá Google Flow con el pedido de abajo.</div>'+
+  '<div class="ev81-ext"><button class="btn sm" onclick="EV381.flowTalk()">🎬 Pedido «que hable» para Google Flow</button></div>'+
+ '</div><div class="card box">'+stage('voz')+'</div></div>'}
+function vozState(){var Z=G.voz,dur=Z.audio?Z.audio.duration+.6:4;return {im:Z.src.im,dur:dur,move:Z.move,k:.8,fx:[],look:Z.look,fade:true,audio:Z.audio,aDelay:.25,env:Z.env||null,mouth:Z.mouth,subs:Z.subs&&!!Z.txt&&Z.audioFromTxt,subChunks:Z.audioFromTxt?chunksOf(Z.txt,dur,.25):null,vig:Z.look==='none'?0:.3}}
+
+/* ======================================================================
+   🎬 CINE
+   ====================================================================== */
+function shotOf(id){return SHOTS.find(function(s){return s.id===id})||SHOTS[1]}
+function cineState(){var C=G.cine,sh=shotOf(C.shot),lk={'24mm':.9,'35mm':1,'50mm':1.1,'85mm':1.3}[C.lens]||1;return {im:C.src.im,dur:C.dur,move:sh.move,k:sh.k*lk,fx:sh.fx,look:C.look,fade:true,bars:C.bars,title:C.title,sub:C.sub,fx0:C.fx0,fy0:C.fy0,vig:.45+(C.lens==='85mm'?.15:0),grain:true}}
+function vCine(){var C=G.cine;
+ return '<div class="ev81-grid"><div class="card box">'+srcBox('cine')+
+  '<div class="lbl">Tipo de plano</div><div class="ev81-res" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr));margin-top:6px">'+SHOTS.map(function(s){return '<button class="card" style="text-align:left;padding:10px;border:2px solid '+(C.shot===s.id?'var(--acc)':'var(--line)')+'" onclick="EV381.shot(\''+s.id+'\')"><b style="font-size:13.5px">'+s.n+'</b><div class="ev81-mini" style="margin-top:3px">'+s.d+'</div></button>'}).join('')+'</div>'+
+  '<div class="lbl">Lente</div><div class="ev81-chips">'+LENSES.map(function(l){return '<button class="'+(C.lens===l?'on':'')+'" onclick="EV381.set(\'cine\',\'lens\',\''+l+'\',2)">'+l+'</button>'}).join('')+'<button class="'+(C.bars?'on':'')+'" onclick="EV381.set(\'cine\',\'bars\','+(!C.bars)+',2)">🎞️ Barras de cine</button></div>'+
+  '<div class="lbl">Look</div><div class="ev81-chips">'+LOOKS.map(function(l){return '<button class="'+(C.look===l[0]?'on':'')+'" onclick="EV381.set(\'cine\',\'look\',\''+l[0]+'\',2)">'+l[1]+'</button>'}).join('')+'</div>'+
+  '<div class="lbl">Título de película (opcional)</div><input class="inp" value="'+esc(C.title)+'" placeholder="Ej: La leyenda de Oxum" oninput="EV381.set(\'cine\',\'title\',this.value)"><input class="inp" style="margin-top:6px" value="'+esc(C.sub)+'" placeholder="Subtítulo, ej: Capítulo 1" oninput="EV381.set(\'cine\',\'sub\',this.value)">'+
+  '<div class="lbl">Duración: '+C.dur+' segundos</div><input type="range" min="3" max="15" step="1" value="'+C.dur+'" onchange="EV381.set(\'cine\',\'dur\',+this.value,1)">'+
+  '<div class="lbl">Formato</div><div class="ev81-chips">'+Object.keys(FMTS).map(function(k){return '<button class="'+(C.fmt===k?'on':'')+'" onclick="EV381.set(\'cine\',\'fmt\',\''+k+'\',2)">'+FMTS[k].n+'</button>'}).join('')+'</div>'+
+  '<div class="ev81-sec">Plano de cine con IA real (afuera)</div><div class="lbl">¿Qué pasa en el plano?</div><input class="inp" value="'+esc(C.desc)+'" placeholder="Ej: el guerrero levanta la espada mientras cae la lluvia" oninput="EV381.set(\'cine\',\'desc\',this.value)">'+
+  '<div class="ev81-ext"><button class="btn sm" data-e81b onclick="EV381.cinePrompt()">🎬 Pedido de cine para Flow / Veo</button></div>'+
+ '</div><div class="card box">'+stage('cine')+'</div></div>'}
+
+/* ======================================================================
+   escenario común: vista previa + exportar
+   ====================================================================== */
+function stage(tab){var T=G[tab];if(!T.src)return '<h3>Vista previa</h3><div class="ev81-stage" style="margin-top:10px"><div class="ph">Primero elegí una imagen 👈</div></div>';
+ var d=vdims(T.fmt),o=G.out&&G.out.tab===tab?G.out:null;
+ return '<div class="between"><h3>Vista previa</h3><span class="ev81-mini" style="margin:0">'+d.W+'×'+d.H+'</span></div><div class="ev81-stage" style="margin-top:10px"><canvas id="e81cv" class="'+(tab==='voz'?'ev81-mouth':'')+'" width="'+d.W+'" height="'+d.H+'" onclick="EV381.tap(event,\''+tab+'\')"></canvas></div>'+
+  '<div class="row wrap" style="gap:6px;margin-top:10px"><button class="btn sm" data-e81b onclick="EV381.preview(\''+tab+'\')">▶️ Ver</button><button class="btn sm" onclick="EV381.stop()">⏹️ Parar</button><button class="btn grad sm" data-e81b onclick="EV381.exp(\''+tab+'\')">🎬 Hacer el video</button></div>'+
+  '<div class="ev81-mini">Mientras se graba el video no cambies de pestaña ni bloquees el celu (tarda lo mismo que dura).</div>'+
+  (o?outHTML(o):'')}
+function outHTML(o){var ext=/mp4/.test(o.blob.type)?'mp4':'webm';return '<div class="ev81-out"><b>✅ Video listo ('+mb(o.blob.size)+', '+ext.toUpperCase()+')</b><video src="'+o.url+'" controls playsinline style="margin-top:8px"></video>'+
+ '<div class="row wrap" style="gap:6px;margin-top:8px"><a class="btn grad sm" href="'+o.url+'" download="'+esc(fileBase(o.name))+'.'+ext+'">⬇️ Descargar</a>'+(navigator.canShare?'<button class="btn sm" onclick="EV381.share()">📤 Compartir</button>':'')+'<button class="btn sm" onclick="EV381.toProj(\''+o.id+'\')">📁 Mandar a un proyecto</button></div>'+
+ (ext==='webm'?'<div class="ev81-mini">Este navegador lo guardó en WEBM. Si TikTok no lo acepta, abrí Estudio Viral en Chrome actualizado (graba en MP4).</div>':'<div class="ev81-mini">Ya quedó guardado en Mis creaciones.</div>')+'</div>'}
+function curState(tab){if(tab==='vid')return vidState();if(tab==='voz')return vozState();return cineState()}
+function drawStill(){var tab=G.tab==='video'?'vid':G.tab,T=G[tab],cv=$('#e81cv');if(!T||!T.src||!cv)return;var st=curState(tab),x=cv.getContext('2d');
+ frame(x,cv.width,cv.height,st,Math.min(st.dur*.5,1.2));if(tab==='voz'){var z=srcSize(st.im),W=cv.width,H=cv.height,base=Math.max(W/z.iw,H/z.ih),c=cam(st.move,.5,1.2,st.k),sc=base*c.s,dw=z.iw*sc,dh=z.ih*sc,ox=clamp(-z.iw*.5*sc+c.x*W,W/2-dw,-W/2),oy=clamp(-z.ih*.5*sc+c.y*H,H/2-dh,-H/2);
+  var mx=W/2+ox+T.mouth.x*z.iw*sc,my=H/2+oy+T.mouth.y*z.ih*sc;x.save();x.strokeStyle='#39ff88';x.lineWidth=3;x.setLineDash([6,5]);x.beginPath();x.arc(mx,my,T.mouth.r*z.iw*sc,0,6.283);x.stroke();x.restore()}
+ if(tab!=='voz'&&(T.fx0!=null)){x.save();x.strokeStyle='rgba(57,255,136,.8)';x.lineWidth=2;var px=T.fx0*cv.width,py=T.fy0*cv.height;x.beginPath();x.moveTo(px-12,py);x.lineTo(px+12,py);x.moveTo(px,py-12);x.lineTo(px,py+12);x.stroke();x.restore()}}
+
+/* ======================================================================
+   «Mis creaciones»
+   ====================================================================== */
+function itemHTML(id){var g=gl().find(function(x){return x.id===id});if(!g)return '';var key='gen:'+g.id,vid=g.t==='vid';
+ return '<div class="ev81-it"><div class="th">'+(vid?'<video data-k81v="'+key+'" muted playsinline loop onmouseenter="this.play()" onmouseleave="this.pause()" onclick="this.paused?this.play():this.pause()"></video>':'<img data-k81="'+key+'" alt="" onclick="EV381.zoom(\''+g.id+'\')">')+'<span class="bd">'+(vid?'🎞️ '+(g.kind||'video'):'🖼️')+'</span></div>'+
+  '<div class="ac"><button title="Descargar" onclick="EV381.dl(\''+g.id+'\')">⬇️</button>'+(vid?'':'<button title="Darle movimiento" onclick="EV381.use(\'vid\',\''+g.id+'\')">🎞️</button><button title="Hacerla hablar" onclick="EV381.use(\'voz\',\''+g.id+'\')">🗣️</button><button title="Llevar a Cine" onclick="EV381.use(\'cine\',\''+g.id+'\')">🎬</button>')+'<button title="Mandar a un proyecto" onclick="EV381.toProj(\''+g.id+'\')">📁</button>'+(!vid&&g.en?'<button title="Otra igual" onclick="EV381.again(\''+g.id+'\')">🔁</button>':'')+'<button title="Borrar" onclick="EV381.del(\''+g.id+'\')">🗑️</button></div></div>'}
+function galHTML(){var l=gl(),f=G.gf,v=l.filter(function(g){return f==='all'||g.t===f});
+ return '<div class="card box" style="margin-top:14px"><div class="between"><h3>✨ Mis creaciones ('+l.length+')</h3><div class="ev81-chips" style="margin:0">'+[['all','Todo'],['img','🖼️ Imágenes'],['vid','🎞️ Videos']].map(function(x){return '<button class="'+(f===x[0]?'on':'')+'" onclick="EV381.G.gf=\''+x[0]+'\';EV381.view()">'+x[1]+'</button>'}).join('')+'</div></div>'+
+  (v.length?'<div class="ev81-res">'+v.map(function(g){return itemHTML(g.id)}).join('')+'</div>':'<div class="ev81-mini">Todavía no hay nada acá. Todo lo que crees en Estudio IA se guarda solo en este aparato (máximo '+MAXG+').</div>')+'</div>'}
+function hydrateV(){document.querySelectorAll('[data-k81v]').forEach(function(el){var k=el.getAttribute('data-k81v');if(el._h)return;el._h=1;urlOf(k).then(function(u){el.src=u}).catch(function(){})})}
+
+/* mandar a un proyecto como escena nueva */
+function projSheet(id){var g=gl().find(function(x){return x.id===id});if(!g)return;var ps=(S.projects||[]).slice().sort(function(a,b){return (b.updatedAt||0)-(a.updatedAt||0)});
+ sheet('<div class="ev81"><div class="between" style="margin-bottom:8px"><div class="h1" style="font-size:19px">📁 Mandar a un proyecto</div><button class="btn sm" onclick="closeSheet()">✕ Cerrar</button></div><div class="ev81-mini">Se agrega como <b>escena nueva al final</b> del proyecto que elijas.'+(g.t==='vid'?' El video queda puesto en esa escena.':'')+'</div>'+
+  (ps.length?ps.slice(0,40).map(function(p){return '<button class="card" style="display:block;width:100%;text-align:left;padding:10px 12px;margin-top:8px" onclick="EV381.addTo(\''+id+'\',\''+p.id+'\')"><b>'+esc(p.name||'Sin nombre')+'</b><div class="ev81-mini" style="margin-top:2px">'+((p.scenes||[]).length)+' escena(s) · '+timeAgo(p.updatedAt||Date.now())+'</div></button>'}).join(''):'<div class="ev81-mini" style="margin-top:10px">No tenés proyectos todavía. Creá uno con «Nuevo video».</div>')+'</div>')}
+async function addTo(id,pid){var g=gl().find(function(x){return x.id===id});if(!g)return;var P=(S.P&&S.P.id===pid)?S.P:(S.projects||[]).find(function(p){return p.id===pid});if(!P)return toast('No encontré ese proyecto',1);
+ var b=await IDB.get('gen:'+id);if(!b)return toast('Ese archivo ya no está en este aparato',1);var s={id:uid(),text:'',prompt:g.en||g.p||'',seed:seed(),cam:'auto',amb:'none'};
+ if(g.t==='vid'){var th=await thumbOf(b);var ik='local:'+uid();await IDB.set(ik,th);s.img=ik;s.local=true;var ck='clip:'+s.id;await IDB.set(ck,b);s.clip=ck}
+ else{var k='local:'+uid();await IDB.set(k,b);s.img=k;s.local=true}
+ P.scenes=P.scenes||[];P.scenes.push(s);P.updatedAt=Date.now();var i=S.projects.findIndex(function(p){return p.id===P.id});if(i>=0)S.projects[i]=P;save(1);closeSheet();toast('📁 Agregada como escena '+P.scenes.length+' en «'+(P.name||'proyecto')+'»')}
+function thumbOf(blob){return new Promise(function(res,rej){var v=document.createElement('video');v.muted=true;v.playsInline=true;v.src=URL.createObjectURL(blob);v.onloadeddata=function(){v.currentTime=Math.min(.8,(v.duration||1)/2)};v.onseeked=function(){var c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);c.toBlob(function(b){b?res(b):rej(new Error('miniatura'))},'image/jpeg',.88)};v.onerror=function(){rej(new Error('No pude leer el video'))}})}
+
+/* ======================================================================
+   vista principal
+   ====================================================================== */
+var TABS=[['imagen','🖼️ Imagen','Crear imágenes'],['video','🎞️ Video','Darle movimiento'],['voz','🗣️ Voz','Foto que habla'],['cine','🎬 Cine','Planos de película']];
+function vEIA(m){stopEng();var body=G.tab==='imagen'?vImagen():G.tab==='video'?vVideo():G.tab==='voz'?vVoz():vCine();
+ m.innerHTML='<div class="ev81"><div class="h1">✨ Estudio IA</div><div class="sub">Tu propio estudio de imágenes y video con IA, gratis y sin cuentas.</div>'+
+  '<div class="tabs">'+TABS.map(function(t){return '<button class="'+(G.tab===t[0]?'on':'')+'" onclick="EV381.tab(\''+t[0]+'\')">'+t[1]+'<small>'+t[2]+'</small></button>'}).join('')+'</div>'+
+  '<div class="ev81-busy" id="ev81busy" style="display:'+(G.busy?'flex':'none')+'"><span class="spin"></span><span>'+esc(G.busy)+'</span></div><div class="ev81-bar"><i id="ev81bar" style="width:'+Math.round((G.prog||0)*100)+'%"></i></div>'+
+  body+galHTML()+'</div>';
+ hydrate();hydrateV();drawStill();setBusy(G.busy)}
+function view(){if(S.view!=='estudioia')return;var m=$('#main');if(m)vEIA(m)}
+
+/* navegación */
+NAV.splice(1,0,['estudioia','spark','Estudio IA']);
+var rO=render;render=function(){if(S.view==='estudioia'){if(ENG.cancel&&document.querySelector('#e81cv'))return;renderShell();vEIA($('#main'));return}return rO.apply(this,arguments)};
+var rsO=renderShell;renderShell=function(){rsO.apply(this,arguments);try{var b=$('#bnav');if(b&&!b.querySelector('.ev81-nb')&&!b.classList.contains('ev42')){var x=document.createElement('button');x.className='ev81-nb'+(S.view==='estudioia'?' on':'');x.innerHTML=ic('spark')+'Estudio IA';x.onclick=function(){go('estudioia')};var kids=b.children;b.insertBefore(x,kids[2]||null)}}catch(e){}};
+var goO2=go;go=function(v){if(S.view==='estudioia'&&v!=='estudioia')stopEng();return goO2.apply(this,arguments)};
+var vpO=vProjects;vProjects=function(m){vpO.apply(this,arguments);try{if(!m.querySelector('.ev81-hero')){var d=document.createElement('div');d.className='ev81-hero';d.innerHTML='<div class="between" style="gap:10px;flex-wrap:wrap"><div><b>✨ NUEVO: Estudio IA</b> · creá imágenes, dales movimiento, hacé que una foto hable y armá planos de cine. Gratis.</div><button class="btn grad sm" onclick="go(\'estudioia\')">Abrir Estudio IA</button></div>';var h=m.querySelector('.sub')||m.firstElementChild;if(h&&h.parentNode)h.parentNode.insertBefore(d,h.nextSibling);else m.prepend(d)}}catch(e){}};
+
+/* ======================================================================
+   acciones
+   ====================================================================== */
+window.EV381={G:G,view:view,frame:frame,cam:cam,envelope:envelope,_runClip:runClip,
+ tab:function(t){G.tab=t;G.out=null;view();window.scrollTo(0,0)},
+ set:function(tab,k,v,re){G[tab][k]=v;if(re===2){if(G.out&&G.out.tab===tab)G.out=null;view()}else if(re)view()},
+ tfx:function(tab,f){var a=G[tab].fx,i=a.indexOf(f);if(i>=0)a.splice(i,1);else a.push(f);G.out=null;view()},
+ pick:pickSheet,src:function(tab,k){guard(function(){return setSrc(tab,k)})},up:function(tab,f){guard(function(){return upFile(tab,f)})},
+ upMany:function(fs){guard(async function(){var n=0;for(var i=0;i<fs.length;i++){var f=fs[i];if(!/^image\//.test(f.type))continue;var im=await loadIm(URL.createObjectURL(f)),k=Math.min(1,1800/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);var id=await keep(await canvasBlob(c,'image/jpeg',.9),{t:'img',p:G.img.txt||f.name,src:'afuera'});G.img.list.unshift(id);n++}toast('📥 '+n+' imagen(es) guardada(s) en Mis creaciones');view()})},
+ better:function(){guard(async function(){setBusy('La IA está mejorando tu pedido…',.3);var ch=charOf(G.img.char);G.img.en=await toEnglish(G.img.txt,ch&&(ch.desc||ch.look));view();toast('✨ Pedido mejorado')})},
+ gen:function(){if(!String(G.img.txt).trim())return toast('Escribí qué imagen querés',1);guard(genImages)},
+ ext:function(w){if(!String(G.img.txt).trim())return toast('Escribí qué imagen querés',1);var t=extPrompt(),u={chatgpt:'https://chatgpt.com/',gemini:'https://gemini.google.com/app',flow:'https://labs.google/fx/tools/flow'}[w];copy(t,'📋 Pedido copiado. Pegalo en la página que se abre y después subí la imagen acá.');setTimeout(function(){window.open(u,'_blank')},400)},
+ again:function(id){var g=gl().find(function(x){return x.id===id});if(!g)return;G.tab='imagen';G.img.txt=g.p||G.img.txt;G.img.en=g.en||'';if(g.style)G.img.style=g.style;if(g.fmt)G.img.fmt=g.fmt;G.img.n=1;view();guard(genImages)},
+ use:function(tab,id){G.tab=tab==='vid'?'video':tab;G.out=null;guard(function(){return setSrc(tab,'gen:'+id)});window.scrollTo(0,0)},
+ zoom:function(id){urlOf('gen:'+id).then(function(u){var g=gl().find(function(x){return x.id===id})||{};sheet('<div class="between" style="margin-bottom:8px"><div class="h1" style="font-size:17px">🖼️ '+esc(String(g.p||'Imagen').slice(0,60))+'</div><button class="btn sm" onclick="closeSheet()">✕</button></div><img src="'+u+'" style="width:100%;border-radius:12px">'+(g.en?'<div class="ev81-mini" style="margin-top:8px">Pedido: '+esc(g.en)+'</div>':''))})},
+ dl:function(id){var g=gl().find(function(x){return x.id===id});if(!g)return;urlOf('gen:'+id).then(function(u){var a=document.createElement('a');a.href=u;a.download=fileBase(g.p||g.kind)+'.'+(g.t==='vid'?(/mp4/.test(g.mime)?'mp4':'webm'):'jpg');document.body.appendChild(a);a.click();setTimeout(function(){a.remove()},400)})},
+ del:function(id){if(!confirm('¿Borrar esto de Mis creaciones?'))return;gset(gl().filter(function(g){return g.id!==id}));idbDel('gen:'+id);G.img.list=G.img.list.filter(function(x){return x!==id});view()},
+ toProj:projSheet,addTo:function(id,pid){guard(function(){return addTo(id,pid)})},
+ tap:function(ev,tab){var cv=ev.currentTarget,r=cv.getBoundingClientRect(),px=(ev.clientX-r.left)/r.width,py=(ev.clientY-r.top)/r.height,T=G[tab];if(!T.src)return;stopEng();
+  if(tab==='voz'){var W=cv.width,H=cv.height,z=srcSize(T.src.im),c=cam(T.move,.5,1.2,.8),base=Math.max(W/z.iw,H/z.ih),sc=base*c.s,dw=z.iw*sc,dh=z.ih*sc,ox=clamp(-z.iw*.5*sc+c.x*W,W/2-dw,-W/2),oy=clamp(-z.ih*.5*sc+c.y*H,H/2-dh,-H/2);
+   T.mouth.x=clamp((px*W-W/2-ox)/(z.iw*sc),0,1);T.mouth.y=clamp((py*H-H/2-oy)/(z.ih*sc),0,1);ENG.jaw=null}
+  else{T.fx0=px;T.fy0=py}G.out=null;drawStill()},
+ mouthR:function(v){G.voz.mouth.r=v;ENG.jaw=null;drawStill()},
+ preview:function(tab){var T=G[tab],cv=$('#e81cv');if(!T.src||!cv)return toast('Elegí una imagen primero',1);if(tab==='voz'&&!T.audio)return toast('Primero hacé la voz o subí tu audio',1);
+  runClip(cv,curState(tab),false).then(function(){drawStill()}).catch(function(e){toast(e.message,1)})},
+ stop:function(){stopEng();drawStill()},
+ exp:function(tab){var T=G[tab],cv=$('#e81cv');if(!T.src||!cv)return toast('Elegí una imagen primero',1);if(tab==='voz'&&!T.audio)return toast('Primero hacé la voz o subí tu audio',1);
+  guard(async function(){var st=curState(tab);setBusy('🎬 Grabando el video ('+Math.round(st.dur)+' s)… no cambies de pestaña',0);
+   var b=await runClip(cv,st,true,function(p){G.prog=p;var bar=$('#ev81bar');if(bar)bar.style.width=Math.round(p*100)+'%'});if(!b)return;if(b.size<2000)throw new Error('El video salió vacío. Probá de nuevo con la pestaña abierta.');
+   var kind=tab==='vid'?'movimiento':tab==='voz'?'habla':'cine',name=tab==='cine'?(T.title||'plano de cine'):tab==='voz'?String(T.txt||'foto que habla').slice(0,40):'video con movimiento';
+   var id=await keep(b,{t:'vid',kind:kind,p:name});G.out={tab:tab,id:id,blob:b,url:URLS['gen:'+id],name:name};view();toast('✅ Video listo')})},
+ share:function(){var o=G.out;if(!o)return;var ext=/mp4/.test(o.blob.type)?'mp4':'webm',f=new File([o.blob],fileBase(o.name)+'.'+ext,{type:o.blob.type});if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f],title:o.name}).catch(function(){});else toast('Tu navegador no deja compartir archivos. Usá Descargar.',1)},
+ /* voz */
+ say:function(){var Z=G.voz;if(!String(Z.txt).trim())return toast('Escribí qué dice',1);guard(async function(){setBusy('🎙️ Haciendo la voz…',.3);var r=await Voice.make(String(Z.txt).trim(),Z.voice,{speed:Z.speed});var b=r.blob;
+   Z.audio=await decode(b);if(!r.pre&&Z.speed!==1){}Z.audioBlob=b;Z.audioName=(voiceOf(Z.voice).n||'voz')+' (gratis)';Z.env=envelope(Z.audio);Z.audioFromTxt=true;G.out=null;view();toast('🎙️ Voz lista. Tocá ▶️ Ver.')})},
+ aud:function(f){if(!f)return;var Z=G.voz;guard(async function(){setBusy('Cargando tu audio…',.3);Z.audio=await decode(f);Z.audioBlob=f;Z.audioName=f.name;Z.env=envelope(Z.audio);Z.audioFromTxt=false;G.out=null;view();toast('🎧 Audio cargado ('+Z.audio.duration.toFixed(1)+' s)')})},
+ dlAudio:function(){var Z=G.voz;if(!Z.audioBlob)return;var a=document.createElement('a');a.href=URL.createObjectURL(Z.audioBlob);a.download=fileBase(Z.txt||'voz')+(/wav/.test(Z.audioBlob.type)?'.wav':'.mp3');document.body.appendChild(a);a.click();setTimeout(function(){a.remove()},400)},
+ flowTalk:function(){var Z=G.voz;if(!String(Z.txt).trim())return toast('Escribí qué dice',1);copy('Animate this image: the person looks at the camera and speaks naturally in Latin American Spanish, with natural lip sync, subtle head and hand gestures and blinking. Keep the face, clothes and background exactly as in the image. Dialogue (Spanish): "'+String(Z.txt).trim().slice(0,400)+'"','📋 Pedido copiado. En Flow subí la imagen como primer cuadro y pegá el pedido.');setTimeout(function(){window.open('https://labs.google/fx/tools/flow','_blank')},400)},
+ /* video afuera */
+ motion:function(w){var V=G.vid;guard(async function(){var d=String(V.desc||'').trim(),mv=(MOVES.find(function(m){return m[0]===V.move})||[])[1]||'';setBusy('Armando el pedido de movimiento…',.4);var en='';
+   try{en=await AI.chat([{role:'system',content:'You write image-to-video prompts (Google Veo / Flow, Kling, Hailuo, Meta AI). Return ONE English paragraph, max 70 words: subject motion, camera movement, atmosphere, keep the image identity. No quotes.'+(AFRO.test(d)?' People are Afro-Brazilian / West African, keep their dark skin.':'')},{role:'user',content:'What moves: '+(d||'natural subtle cinematic motion')+'. Camera: '+mv+'. Effects: '+V.fx.join(', ')}],{temp:.6})}catch(e){en='Natural cinematic motion: '+(d||'subtle movement of the scene')+'. Camera: '+mv+'. Keep the people, clothes and background exactly as in the image.'}
+   copy(String(en).trim(),'📋 Pedido de movimiento copiado. Subí la imagen como primer cuadro y pegalo.');if(w==='flow')setTimeout(function(){window.open('https://labs.google/fx/tools/flow','_blank')},400)})},
+ /* cine */
+ shot:function(id){var C=G.cine,s=shotOf(id);C.shot=id;C.lens=s.lens;C.look=s.look;G.out=null;view()},
+ cinePrompt:function(){var C=G.cine,s=shotOf(C.shot),d=String(C.desc||'').trim();guard(async function(){setBusy('Armando el pedido de cine…',.4);var en='';
+   try{en=await AI.chat([{role:'system',content:'You are a film director writing ONE prompt for Google Veo / Flow (image to video, 8 seconds). English, max 90 words: shot type, lens, camera movement, action, lighting, color grade, sound ambience. No quotes.'+(AFRO.test(d+' '+C.title)?' Characters are Afro-Brazilian / West African with dark skin.':'')},{role:'user',content:'Shot: '+s.en+'. Lens: '+C.lens+'. Look: '+((LOOKS.find(function(l){return l[0]===C.look})||[])[1]||'')+'. Action: '+(d||'subtle cinematic motion')+'. Aspect ratio: '+((FMTS[C.fmt]||{}).n||'9:16')}],{temp:.7})}catch(e){en=s.en+', '+C.lens+' lens, '+(d||'subtle cinematic motion')+', cinematic lighting, film grain.'}
+   copy(String(en).trim(),'📋 Pedido de cine copiado. En Flow subí la imagen y pegalo.');setTimeout(function(){window.open('https://labs.google/fx/tools/flow','_blank')},400)})}
+};
+console.info('[Estudio Viral] v3.81: Estudio IA (Imagen, Video, Voz, Cine)');
+})();
+</script>
+<!-- ===== FIN v3.81 ===== -->
+
 </body>
 </html>
