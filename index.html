@@ -8337,20 +8337,22 @@ var BASE=[
  ['Ewá','Euá'],['Erês','Erés'],['Erê','Eré'],['Pombagiras','Pomba Yiras'],['Pombagira','Pomba Yira'],['Pomba Gira','Pomba Yira'],
  ['Zé Pilintra','Sé Pilintra'],['Preto Velho','Preto Velio'],['Pretos Velhos','Pretos Velios'],['Exu Tranca Ruas','Eshú Tranca Ruas'],
  ['Atotô','Atotó'],['Laroyê','Laroyé'],['Laroiê','Laroyé'],['Okê Arô','Oké Aró'],['Okê','Oké'],['Kaô','Kaó'],['Kabecilê','Kabesilé'],['Kawó','Kaó'],
- ['Odoyá','Odoyá'],['Saluba','Salubá'],['Eparrei','Eparrey'],['Epahey','Epaey'],['Ora iê iê ô','Ora ié ié ó'],['Mojubá','Moyubá'],['Itã','Itán'],['Itãs','Itáns']];
+ ['Epa Babá','Épa, Babá'],['Epa Baba','Épa, Babá'],['Êpa Babá','Épa, Babá'],['Epà Bàbá','Épa, Babá'],['Epa','Épa'],['Odoyá','Odoyá'],['Saluba','Salubá'],['Eparrei','Eparrey'],['Epahey','Epaey'],['Ora iê iê ô','Ora ié ié ó'],['Mojubá','Moyubá'],['Itã','Itán'],['Itãs','Itáns']];
 function userList(){var t=String((S.settings&&S.settings.pron)||''),o=[];t.split(/\r?\n/).forEach(function(l){var m=l.split(/\s*[=→]\s*/);if(m.length>=2&&m[0].trim()&&m[1].trim())o.push([m[0].trim(),m[1].trim()])});return o}
 function rx(w){return new RegExp('(^|[^\\p{L}])'+w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(?=[^\\p{L}]|$)','giu')}
 function rules(){var all=userList().concat(BASE);all.sort(function(a,b){return b[0].length-a[0].length});return all.map(function(p){return [rx(p[0]),p[1]]})}
-function say(t){var x=String(t==null?'':t);if(!x)return x;rules().forEach(function(r){x=x.replace(r[0],function(m,pre){return pre+r[1]})});
+/* el sonido «sh»: la voz argentina o uruguaya lo hace con la Y (como en «yo»); las demás voces en castellano, con CH */
+function shOf(vid){var v=String(vid||(S.P&&S.P.voice)||'');try{var vo=voiceOf(vid||(S.P&&S.P.voice));v+=' '+(vo&&vo.v||'')}catch(e){}if(/es-(AR|UY)/i.test(v))return 'y';if(/Multilingual|en-|pt-|fr-/i.test(v))return 'sh';if(/es-/i.test(v))return 'ch';return 'y'}
+function say(t,vid){var x=String(t==null?'':t);if(!x)return x;var sh=shOf(vid);rules().forEach(function(r){x=x.replace(r[0],function(m,pre){return pre+(sh==='sh'?r[1]:r[1].replace(/sh/g,sh).replace(/Sh/g,sh==='y'?'Y':'Ch'))})});
  /* letras del portugués que la voz en castellano no sabe leer */
  return x.replace(/ã/g,'án').replace(/Ã/g,'Án').replace(/õ/g,'ón').replace(/ê/g,'é').replace(/Ê/g,'É').replace(/ô/g,'ó').replace(/Ô/g,'Ó').replace(/ç/g,'s')}
 function needs(t){var x=String(t||'');return say(x)!==x}
 /* toda voz automática pasa por acá: dice la palabra bien, el texto de la escena no se toca */
-var mkO=Voice.make.bind(Voice);Voice.make=function(text){var a=[].slice.call(arguments);a[0]=say(text);return mkO.apply(null,a)};
+var mkO=Voice.make.bind(Voice);Voice.make=function(text,vid){var a=[].slice.call(arguments);a[0]=say(text,vid);return mkO.apply(null,a)};
 /* las voces ya hechas con la pronunciación vieja se rehacen solas una vez */
 var vO=Pipe.voices;Pipe.voices=async function(){var P=S.P;try{if(P)P.scenes.forEach(function(s){var v=RT.voices[s.id];if(v&&!v.mine&&v._pron!==ver()&&needs(s.text))delete RT.voices[s.id]})}catch(e){}
  var r=await vO.apply(this,arguments);try{if(P)P.scenes.forEach(function(s){var v=RT.voices[s.id];if(v)v._pron=ver()})}catch(e){}return r};
-function ver(){return 'p'+String((S.settings&&S.settings.pron)||'').length+':'+BASE.length}
+function ver(){return 'p2'+shOf()+String((S.settings&&S.settings.pron)||'').length+':'+BASE.length}
 /* cuadro en la pestaña Voz */
 function setList(v){S.settings.pron=v;store.set('ev_settings',S.settings)}
 async function test(){var t=(document.getElementById('ev390t')||{}).value||'Axé, Oxalá. Saravá Xangô, Exu y Oxum.';
