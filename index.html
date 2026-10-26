@@ -9079,5 +9079,242 @@ console.info('[Estudio Viral] v3.99: mi música guardada, MP4 siempre, producci�
 </script>
 <!-- ===== FIN v3.99 ===== -->
 
+<!-- ===== ESTUDIO VIRAL · v4.00 · EDITOR CON ÁNGELA (estilo neón) =====
+     Sección nueva "Editor con Ángela": elegís un proyecto, ves sus escenas en un reproductor
+     y en una línea de tiempo (V1, A1, Subtítulos) y le pedís cambios a Ángela por chat.
+     Ángela responde con Gemini (si no está, contesta sola). Por ahora la línea de tiempo
+     muestra la edición de forma visual: los cambios todavía no se aplican al video final.
+     Agregado al final: no modifica el código de arriba. Para quitarlo, borrá desde acá hasta "FIN v4.00". -->
+<link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
+<style>
+.ev100{--g:#00ff00;--gd:#00aa00;--m:#ff00aa;
+  --gl:0 0 6px var(--g),0 0 14px var(--g),0 0 28px rgba(0,255,0,.45);
+  --gs:0 0 6px rgba(0,255,0,.6),0 0 18px rgba(0,255,0,.25);
+  --gm:0 0 6px var(--m),0 0 16px var(--m),0 0 30px rgba(255,0,170,.45);
+  background:#050505;
+  background-image:linear-gradient(rgba(0,255,0,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,0,.035) 1px,transparent 1px);
+  background-size:32px 32px;border-radius:16px;padding:16px;color:#e8ffe8}
+.ev100 h2{font-family:'Russo One',sans-serif;text-transform:uppercase;letter-spacing:1px;font-size:22px;color:var(--g);text-shadow:var(--gl);margin:0}
+.ev100 h2 small{color:var(--m);text-shadow:var(--gm);font-size:13px;margin-left:8px}
+.ev100 .top{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:14px}
+.ev100 .top .r{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ev100 select,.ev100 input{background:#000;color:#e8ffe8;border:1px solid #234023;border-radius:8px;padding:10px 12px;font-size:14px;outline:none}
+.ev100 select:focus,.ev100 input:focus{border-color:var(--g);box-shadow:var(--gs)}
+.ev100 .nb{background:#000;color:var(--g);border:2px solid var(--g);border-radius:10px;padding:9px 14px;font-weight:700;font-size:13px;box-shadow:var(--gs);cursor:pointer}
+.ev100 .nb:hover{background:var(--g);color:#000}
+.ev100 .note{font-size:12px;color:#8fa38f;margin:-6px 0 12px}
+.ev100 .grid{display:grid;grid-template-columns:minmax(0,1fr) 330px;grid-template-rows:auto auto;gap:14px}
+.ev100 .pn{background:#0d0d0d;border:1px solid var(--g);border-radius:10px;box-shadow:var(--gs),inset 0 0 20px rgba(0,255,0,.04);padding:12px}
+.ev100 .lb{font-family:'Russo One',sans-serif;font-size:12px;color:var(--g);letter-spacing:2px;margin-bottom:10px;text-transform:uppercase}
+.ev100 .scr{position:relative;aspect-ratio:16/9;max-height:52vh;border-radius:8px;overflow:hidden;background:radial-gradient(circle at 50% 40%,#0f1f0f 0%,#000 75%);border:1px solid #1a3a1a;display:flex;align-items:center;justify-content:center}
+.ev100 .scr.vert{aspect-ratio:9/16;max-height:56vh;margin:0 auto}
+.ev100 .scr img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ev100 .scr::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0 2px,transparent 2px 4px)}
+.ev100 .scrt{position:relative;z-index:1;font-family:'Russo One',sans-serif;font-size:clamp(18px,3.5vw,36px);color:var(--g);text-shadow:var(--gl);text-align:center;padding:10px}
+.ev100 .sub{position:absolute;z-index:2;bottom:14px;left:8%;right:8%;text-align:center;background:rgba(0,0,0,.72);padding:5px 10px;border-radius:6px;font-size:14px;border:1px solid var(--m);box-shadow:var(--gm);display:none}
+.ev100 .bar{height:5px;background:#1a1a1a;border-radius:4px;margin-top:12px;overflow:hidden;cursor:pointer}
+.ev100 .bar i{display:block;height:100%;width:0;background:var(--g);box-shadow:var(--gl)}
+.ev100 .ctl{display:flex;align-items:center;gap:10px;margin-top:10px}
+.ev100 .cb{width:42px;height:42px;border-radius:50%;background:#000;border:2px solid var(--g);color:var(--g);font-size:16px;box-shadow:var(--gs);cursor:pointer}
+.ev100 .cb:hover{box-shadow:var(--gl);background:rgba(0,255,0,.1)}
+.ev100 .etm{font-variant-numeric:tabular-nums;color:#8fa38f;font-size:13px}
+.ev100 .ach{grid-row:1/3;grid-column:2;display:flex;flex-direction:column;min-height:420px;max-height:80vh}
+.ev100 .hist{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding-right:4px}
+.ev100 .msg{max-width:90%;padding:10px 12px;border-radius:10px;font-size:14px;line-height:1.45;white-space:pre-wrap}
+.ev100 .msg.ai{background:#071407;border:1px solid var(--gd);align-self:flex-start}
+.ev100 .msg.ai b{color:var(--g)}
+.ev100 .msg.us{background:#1a0612;border:1px solid var(--m);align-self:flex-end;box-shadow:0 0 10px rgba(255,0,170,.25)}
+.ev100 .typ span{display:inline-block;width:6px;height:6px;margin:0 2px;border-radius:50%;background:var(--g);animation:ev100b 1s infinite}
+.ev100 .typ span:nth-child(2){animation-delay:.15s}.ev100 .typ span:nth-child(3){animation-delay:.3s}
+@keyframes ev100b{50%{transform:translateY(-5px);opacity:.4}}
+.ev100 .sug{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.ev100 .sug button{background:#000;border:1px solid #2a2a2a;color:#cfe;border-radius:999px;padding:5px 10px;font-size:12px;cursor:pointer}
+.ev100 .sug button:hover{border-color:var(--m);color:var(--m)}
+.ev100 form{display:flex;gap:8px;margin-top:10px}
+.ev100 form input{flex:1;min-width:0}
+.ev100 .snd{background:var(--g);color:#000;border:none;border-radius:8px;padding:0 16px;font-weight:700;font-size:18px;box-shadow:var(--gl);cursor:pointer}
+.ev100 .snd:disabled{opacity:.5;cursor:wait}
+.ev100 .tl{grid-column:1}
+.ev100 .trk{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.ev100 .tn{width:76px;flex-shrink:0;font-size:12px;font-weight:700;color:#8fa38f}
+.ev100 .ln{flex:1;height:34px;background:#050505;border:1px solid #1a1a1a;border-radius:6px;display:flex;gap:3px;padding:3px;overflow:hidden;position:relative}
+.ev100 .ln .ph{position:absolute;top:0;bottom:0;width:2px;background:#fff;box-shadow:0 0 8px #fff;left:0;z-index:3;pointer-events:none}
+.ev100 .clp{height:100%;min-width:6px;border-radius:4px;transition:flex-grow .8s ease,background .8s ease,box-shadow .8s ease;font-size:10px;font-weight:700;color:#000;display:flex;align-items:center;padding-left:5px;white-space:nowrap;overflow:hidden;cursor:pointer}
+.ev100 .clp.fl{animation:ev100f .9s ease}
+@keyframes ev100f{0%,100%{filter:none}40%{filter:brightness(2) drop-shadow(0 0 8px #fff)}}
+@media(max-width:900px){
+  .ev100{padding:12px;border-radius:12px}
+  .ev100 .grid{grid-template-columns:1fr}
+  .ev100 .ach{grid-row:auto;grid-column:auto;min-height:360px}
+  .ev100 .tl{grid-column:auto}
+  .ev100 .tn{width:52px;font-size:10px}
+}
+</style>
+<script id="ev400">
+(function(){'use strict';if(window.__ev400)return;window.__ev400=true;
+
+var E={pid:null,time:0,playing:false,timer:null,tracks:null,dur:30,busy:false,msgs:[]};
+var PALETTE=['#00ff00','#ff00aa','#00e5ff','#ffea00','#ff1744','#b388ff'];
+
+function proj(){return (S.projects||[]).find(function(p){return p.id===E.pid})||null}
+function fmt(s){s=Math.max(0,s);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(Math.floor(s%60)).padStart(2,'0')}
+
+/* arma las pistas desde las escenas del proyecto (o un ejemplo si no hay) */
+function build(){
+  var P=proj(),sc=P&&P.scenes&&P.scenes.length?P.scenes:null;
+  if(sc){
+    var per=Math.max(2,Math.min(8,(P.duration||sc.length*4)/sc.length));
+    E.dur=Math.round(per*sc.length);
+    E.tracks={
+      v:sc.map(function(s,i){return {n:String(i+1),g:Math.max(1,Math.min(6,Math.round(((s.text||'').length||40)/40))),c:i%2?'#00c853':'#00ff00',s:s}}),
+      a:[{n:'Voz',g:6,c:'#d500f9'},{n:'Música',g:4,c:'#ff00aa'}],
+      t:sc.map(function(s,i){return {n:(s.text||'').slice(0,18),g:Math.max(1,Math.min(6,Math.round(((s.text||'').length||40)/40))),c:(s.text||'').trim()?'#ffea00':'#222'}})
+    };
+  }else{
+    E.dur=30;
+    E.tracks={
+      v:[{n:'Intro',g:2,c:'#00ff00'},{n:'Escena 1',g:4,c:'#00c853'},{n:'Escena 2',g:3,c:'#00ff00'},{n:'Cierre',g:2,c:'#00c853'}],
+      a:[{n:'Música',g:7,c:'#ff00aa'},{n:'Voz',g:4,c:'#d500f9'}],
+      t:[{n:'Sub 1',g:2,c:'#ffea00'},{n:'',g:1,c:'#222'},{n:'Sub 2',g:3,c:'#ffea00'},{n:'',g:1,c:'#222'},{n:'Sub 3',g:2,c:'#ffea00'}]
+    };
+  }
+}
+
+function drawLane(id,clips){
+  var ln=document.getElementById(id);if(!ln)return;
+  ln.innerHTML='<div class="ph"></div>';
+  clips.forEach(function(cl,i){
+    var d=document.createElement('div');d.className='clp';
+    d.style.flexGrow=cl.g;d.style.background=cl.c;
+    d.style.boxShadow=cl.c==='#222'?'none':'0 0 8px '+cl.c;
+    d.textContent=cl.n;d.title=cl.s?(cl.s.text||''):cl.n;
+    if(id==='e1v')d.onclick=function(){seekScene(i)};
+    ln.appendChild(d);
+  });
+}
+function drawTL(){drawLane('e1v',E.tracks.v);drawLane('e1a',E.tracks.a);drawLane('e1t',E.tracks.t)}
+
+/* qué escena toca en el segundo actual (según el ancho de cada clip) */
+function sceneAt(t){
+  var v=E.tracks.v,tot=v.reduce(function(a,c){return a+c.g},0),acc=0,x=t/E.dur*tot;
+  for(var i=0;i<v.length;i++){acc+=v[i].g;if(x<acc)return i}return v.length-1;
+}
+function seekScene(i){var v=E.tracks.v,tot=v.reduce(function(a,c){return a+c.g},0),acc=0;for(var k=0;k<i;k++)acc+=v[k].g;E.time=acc/tot*E.dur+.01;paint()}
+
+var lastIdx=-1;
+function paint(){
+  var f=document.getElementById('e1f'),l=document.getElementById('e1tm');if(!f)return stopPlay();
+  f.style.width=(E.time/E.dur*100)+'%';l.textContent=fmt(E.time)+' / '+fmt(E.dur);
+  document.querySelectorAll('.ev100 .ph').forEach(function(p){p.style.left=(E.time/E.dur*100)+'%'});
+  var i=sceneAt(E.time),cl=E.tracks.v[i],img=document.getElementById('e1img'),sub=document.getElementById('e1sub'),txt=document.getElementById('e1txt');
+  if(cl&&cl.s){
+    if(i!==lastIdx){lastIdx=i;
+      if(cl.s.img){srcOf(cl.s.img).then(function(u){if(lastIdx===i&&img){img.src=u;img.style.display='block';txt.style.display='none'}}).catch(function(){img.style.display='none';txt.style.display='';txt.textContent='ESCENA '+(i+1)})}
+      else{img.style.display='none';txt.style.display='';txt.textContent='ESCENA '+(i+1)}
+      sub.textContent=cl.s.text||'';
+    }
+    sub.style.display=(E.playing||E.time>0)&&cl.s.text?'block':'none';
+  }
+}
+function play(){if(E.time>=E.dur)E.time=0;E.playing=true;$('#e1p').textContent='❚❚';
+  if(!proj())$('#e1txt').textContent='● REPRODUCIENDO';
+  E.timer=setInterval(function(){E.time+=.1;if(E.time>=E.dur){E.time=E.dur;stopPlay()}paint()},100)}
+function stopPlay(){E.playing=false;clearInterval(E.timer);var b=$('#e1p');if(b)b.textContent='▶'}
+
+/* animación de la edición en la línea de tiempo */
+function simulate(kind){
+  var pick=function(){return PALETTE[Math.floor(Math.random()*PALETTE.length)]};
+  var map={video:['v'],audio:['a'],subs:['t'],color:['v'],all:['v','a','t']},ids={v:'e1v',a:'e1a',t:'e1t'};
+  (map[kind]||map.all).forEach(function(k){
+    E.tracks[k].forEach(function(cl){if(cl.c==='#222')return;
+      if(kind!=='color')cl.g=Math.max(1,Math.round(cl.g*(.6+Math.random()*.8)));
+      if(kind==='color'||Math.random()>.5)cl.c=pick()});
+    var els=document.getElementById(ids[k]).querySelectorAll('.clp');
+    E.tracks[k].forEach(function(cl,i){var el=els[i];if(!el)return;
+      el.style.flexGrow=cl.g;el.style.background=cl.c;el.style.boxShadow=cl.c==='#222'?'none':'0 0 10px '+cl.c;
+      el.classList.remove('fl');void el.offsetWidth;el.classList.add('fl')});
+  });
+  if(kind==='subs'){var s=$('#e1sub');if(s&&!s.textContent)s.textContent='Subtítulos activados';if(s)s.style.display='block'}
+}
+
+function kindOf(t){t=t.toLowerCase();
+  if(/subt[ií]tul|texto|letra/.test(t))return 'subs';
+  if(/m[uú]sica|audio|sonido|volumen|voz/.test(t))return 'audio';
+  if(/color|brillo|filtro|ne[oó]n|look/.test(t))return 'color';
+  if(/cort|recort|acort|quit|elimin|silencio|escena|orden|r[aá]pid/.test(t))return 'video';
+  return 'all'}
+var CANNED={subs:'Listo ✅ Agregué <b>subtítulos</b> y los sincronicé con la voz.',audio:'Hecho ✅ Ajusté la <b>pista de audio</b>: música más baja y voz más clara.',color:'Perfecto ✅ Probé una <b>corrección de color</b> nueva en las escenas.',video:'Listo ✅ <b>Recorté las escenas</b> y saqué las partes muertas.',all:'Entendido ✅ Mirá cómo quedaría en la línea de tiempo.'};
+
+function addMsg(html,who){var h=$('#e1h');if(!h)return null;var m=document.createElement('div');m.className='msg '+who;m.innerHTML=html;h.appendChild(m);h.scrollTop=h.scrollHeight;return m}
+
+async function send(text){
+  text=(text||'').trim();if(!text||E.busy)return;E.busy=true;
+  var btn=$('#e1s');if(btn)btn.disabled=true;
+  E.msgs.push({who:'us',html:esc(text)});addMsg(esc(text),'us');
+  var ty=addMsg('<span class="typ"><span></span><span></span><span></span></span>','ai');
+  var kind=kindOf(text),P=proj(),reply='';
+  var ctx=P?('Proyecto: "'+vt(P)+'". Escenas:\n'+P.scenes.slice(0,30).map(function(s,i){return (i+1)+'. '+(s.text||'(sin texto)').slice(0,140)}).join('\n')):'No hay proyecto elegido (es un video de ejemplo).';
+  var t0=Date.now();
+  try{
+    reply=await AI.chat([
+      {role:'system',content:'Sos Ángela, asistente de edición de video de Estudio Viral. Hablás en español rioplatense, simple y cálido, sin palabras técnicas. Respondé en 1 a 3 oraciones cortas: confirmá qué edición vas a hacer y, si sirve, nombrá el número de escena. No uses markdown.'},
+      {role:'user',content:ctx+'\n\nPedido: '+text}
+    ],{temp:.6});
+  }catch(e){reply=''}
+  var wait=2000-(Date.now()-t0);if(wait>0)await new Promise(function(r){setTimeout(r,wait)});
+  var html=reply?esc(reply).slice(0,900):CANNED[kind];
+  if(ty)ty.innerHTML=html;E.msgs.push({who:'ai',html:html});
+  simulate(kind);
+  E.busy=false;if(btn)btn.disabled=false;var i=$('#e1i');if(i)i.focus();
+}
+
+function vAng(m){
+  if(E.pid&&!proj())E.pid=null;
+  if(E.pid===null&&!E._init){E._init=true;var ps=(S.projects||[]).filter(function(p){return p.scenes&&p.scenes.length});if(ps.length)E.pid=ps[0].id}
+  build();lastIdx=-1;
+  var P=proj(),vert=P&&P.format==='vertical';
+  var opts='<option value="">Video de ejemplo</option>'+(S.projects||[]).filter(function(p){return p.scenes&&p.scenes.length}).map(function(p){return '<option value="'+esc(p.id)+'"'+(p.id===E.pid?' selected':'')+'>'+esc(vt(p)||'Sin nombre')+' ('+p.scenes.length+' escenas)</option>'}).join('');
+  var hist=E.msgs.length?E.msgs.map(function(x){return '<div class="msg '+x.who+'">'+x.html+'</div>'}).join(''):'<div class="msg ai">Hola 👋 Soy <b>Ángela</b>. Elegí un proyecto arriba y decime qué querés cambiar: cortar, subtítulos, música, colores…</div>';
+  m.innerHTML='<div class="ev100">'+
+   '<div class="top"><h2>Editor con Ángela <small>// beta</small></h2>'+
+    '<div class="r"><select id="e1pj">'+opts+'</select>'+(P?'<button class="nb" id="e1op">Abrir en el editor</button>':'')+'</div></div>'+
+   '<div class="note">Por ahora Ángela te muestra la edición en la línea de tiempo; los cambios todavía no se guardan en el video.</div>'+
+   '<div class="grid">'+
+    '<div class="pn"><div class="lb">Vista previa</div>'+
+     '<div class="scr'+(vert?' vert':'')+'"><img id="e1img" alt="" style="display:none"><div class="scrt" id="e1txt">▶ ESTUDIO VIRAL</div><div class="sub" id="e1sub"></div></div>'+
+     '<div class="bar" id="e1b"><i id="e1f"></i></div>'+
+     '<div class="ctl"><button class="cb" id="e1p" title="Play / Pausa">▶</button><button class="cb" id="e1x" title="Detener">■</button><span class="etm" id="e1tm"></span></div></div>'+
+    '<div class="pn ach"><div class="lb">Ángela · asistente de edición</div><div class="hist" id="e1h">'+hist+'</div>'+
+     '<div class="sug">'+['Cortá los silencios','Agregá subtítulos','Bajá la música','Look neón'].map(function(s){return '<button data-s="'+s+'">'+s+'</button>'}).join('')+'</div>'+
+     '<form id="e1fm"><input id="e1i" placeholder="Describe tu edición..." autocomplete="off"><button class="snd" id="e1s" type="submit" title="Enviar">➤</button></form></div>'+
+    '<div class="pn tl"><div class="lb">Línea de tiempo</div>'+
+     '<div class="trk"><div class="tn">V1</div><div class="ln" id="e1v"></div></div>'+
+     '<div class="trk"><div class="tn">A1</div><div class="ln" id="e1a"></div></div>'+
+     '<div class="trk"><div class="tn">Subtítulos</div><div class="ln" id="e1t"></div></div></div>'+
+   '</div></div>';
+  drawTL();paint();
+  $('#e1pj').onchange=function(){stopPlay();E.pid=this.value||null;E.time=0;render()};
+  var op=$('#e1op');if(op)op.onclick=function(){var p=proj();if(p){stopPlay();openProject(p)}};
+  $('#e1p').onclick=function(){E.playing?stopPlay():play()};
+  $('#e1x').onclick=function(){stopPlay();E.time=0;lastIdx=-1;if(!proj()){$('#e1txt').textContent='▶ ESTUDIO VIRAL'}paint();$('#e1sub').style.display='none'};
+  $('#e1b').onclick=function(e){var r=this.getBoundingClientRect();E.time=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))*E.dur;paint()};
+  $('#e1fm').onsubmit=function(e){e.preventDefault();var i=$('#e1i'),t=i.value;i.value='';send(t)};
+  m.querySelectorAll('.sug button').forEach(function(b){b.onclick=function(){send(b.dataset.s)}});
+  var h=$('#e1h');h.scrollTop=h.scrollHeight;
+}
+
+/* vista nueva dentro de la app (en la compu va en el menú de la izquierda) */
+NAV.splice(Math.max(0,NAV.findIndex(function(n){return n[0]==='help'})),0,['angela','wand','Editor con Ángela']);
+var rO=render;render=function(){if(S.view==='angela'){renderShell();vAng($('#main'));return}return rO.apply(this,arguments)};
+var goO=go;go=function(v){if(S.view==='angela'&&v!=='angela')stopPlay();return goO.apply(this,arguments)};
+/* en el celular: botón en Mis Proyectos */
+var vpO=vProjects;vProjects=function(m){vpO.apply(this,arguments);try{if(!m.querySelector('.ev100-btn')){var b=document.createElement('button');b.className='btn ev100-btn';b.innerHTML='🎬 Editor con Ángela';b.onclick=function(){go('angela')};
+  var row=m.querySelector('.ev40-top');if(row)row.insertBefore(b,row.firstChild);else{var w=document.createElement('div');w.className='row wrap';w.style.cssText='gap:6px;justify-content:flex-end;margin:8px 0';w.appendChild(b);m.prepend(w)}}}catch(e){}};
+if(S.view==='projects'){try{render()}catch(e){}}
+console.info('[Estudio Viral] v4.00: Editor con Ángela');
+})();
+</script>
+<!-- ===== FIN v4.00 ===== -->
+
 </body>
 </html>
