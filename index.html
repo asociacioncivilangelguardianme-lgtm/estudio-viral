@@ -9082,8 +9082,9 @@ console.info('[Estudio Viral] v3.99: mi música guardada, MP4 siempre, producci�
 <!-- ===== ESTUDIO VIRAL · v4.00 · EDITOR CON ÁNGELA (estilo neón) =====
      Sección nueva "Editor con Ángela": elegís un proyecto, ves sus escenas en un reproductor
      y en una línea de tiempo (V1, A1, Subtítulos) y le pedís cambios a Ángela por chat.
-     Ángela responde con Gemini (si no está, contesta sola). Por ahora la línea de tiempo
-     muestra la edición de forma visual: los cambios todavía no se aplican al video final.
+     Ángela responde con Gemini (si no está, entiende lo básico sola).
+     v4.01: sus órdenes cambian el proyecto de verdad (borrar/mover/duplicar escenas, texto,
+     subtítulos, música, look y transición) y hay botón ↶ Deshacer.
      Agregado al final: no modifica el código de arriba. Para quitarlo, borrá desde acá hasta "FIN v4.00". -->
 <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
 <style>
@@ -9102,6 +9103,7 @@ console.info('[Estudio Viral] v3.99: mi música guardada, MP4 siempre, producci�
 .ev100 select:focus,.ev100 input:focus{border-color:var(--g);box-shadow:var(--gs)}
 .ev100 .nb{background:#000;color:var(--g);border:2px solid var(--g);border-radius:10px;padding:9px 14px;font-weight:700;font-size:13px;box-shadow:var(--gs);cursor:pointer}
 .ev100 .nb:hover{background:var(--g);color:#000}
+.ev100 .est{display:flex;flex-wrap:wrap;gap:6px;margin:-4px 0 12px}.ev100 .est span{border:1px solid #234023;background:#000;border-radius:999px;padding:3px 10px;font-size:12px;color:#bfe}
 .ev100 .note{font-size:12px;color:#8fa38f;margin:-6px 0 12px}
 .ev100 .grid{display:grid;grid-template-columns:minmax(0,1fr) 330px;grid-template-rows:auto auto;gap:14px}
 .ev100 .pn{background:#0d0d0d;border:1px solid var(--g);border-radius:10px;box-shadow:var(--gs),inset 0 0 20px rgba(0,255,0,.04);padding:12px}
@@ -9167,8 +9169,8 @@ function build(){
     E.dur=Math.round(per*sc.length);
     E.tracks={
       v:sc.map(function(s,i){return {n:String(i+1),g:Math.max(1,Math.min(6,Math.round(((s.text||'').length||40)/40))),c:i%2?'#00c853':'#00ff00',s:s}}),
-      a:[{n:'Voz',g:6,c:'#d500f9'},{n:'Música',g:4,c:'#ff00aa'}],
-      t:sc.map(function(s,i){return {n:(s.text||'').slice(0,18),g:Math.max(1,Math.min(6,Math.round(((s.text||'').length||40)/40))),c:(s.text||'').trim()?'#ffea00':'#222'}})
+      a:[{n:'Voz',g:6,c:'#d500f9'},P.music==='none'?{n:'Sin música',g:4,c:'#222'}:{n:'Música '+Math.round((P.musicVol||.18)*100)+'%',g:4,c:'#ff00aa'}],
+      t:sc.map(function(s,i){var off=P.subStyle==='ninguno';return {n:off?'':(s.text||'').slice(0,18),g:Math.max(1,Math.min(6,Math.round(((s.text||'').length||40)/40))),c:!off&&(s.text||'').trim()?'#ffea00':'#222'}})
     };
   }else{
     E.dur=30;
@@ -9213,7 +9215,7 @@ function paint(){
       else{img.style.display='none';txt.style.display='';txt.textContent='ESCENA '+(i+1)}
       sub.textContent=cl.s.text||'';
     }
-    sub.style.display=(E.playing||E.time>0)&&cl.s.text?'block':'none';
+    var Pp=proj();sub.style.display=(E.playing||E.time>0)&&cl.s.text&&!(Pp&&Pp.subStyle==='ninguno')?'block':'none';
   }
 }
 function play(){if(E.time>=E.dur)E.time=0;E.playing=true;$('#e1p').textContent='❚❚';
@@ -9247,25 +9249,126 @@ var CANNED={subs:'Listo ✅ Agregué <b>subtítulos</b> y los sincronicé con la
 
 function addMsg(html,who){var h=$('#e1h');if(!h)return null;var m=document.createElement('div');m.className='msg '+who;m.innerHTML=html;h.appendChild(m);h.scrollTop=h.scrollHeight;return m}
 
+/* ---------- v4.01: Ángela cambia el proyecto de verdad ---------- */
+var UNDO=[];
+var GN={};Object.keys(GRADES).forEach(function(k){GN[k]=GRADES[k].n});
+var TN={};Object.keys(TRANS).forEach(function(k){TN[k]=TRANS[k][1]});
+
+function persistP(P){
+  P.updatedAt=Date.now();
+  var k=S.projects.findIndex(function(p){return p.id===P.id});
+  if(k<0)S.projects.unshift(P);else S.projects[k]=P;
+  if(S.P&&S.P.id===P.id){S.P=P;try{save(1)}catch(e){store.set('ev_projects',S.projects)}}
+  else store.set('ev_projects',S.projects);
+}
+function num(n,P){n=parseInt(n,10);return (n>=1&&n<=P.scenes.length)?n-1:-1}
+
+/* aplica las órdenes al proyecto; devuelve qué se hizo */
+function applyOps(P,ops){
+  var done=[],kinds={};
+  var dels=[];
+  ops.forEach(function(o){if(!o||!o.op)return;var i;
+    switch(o.op){
+    case 'borrar':i=num(o.escena,P);if(i>=0&&dels.indexOf(i)<0)dels.push(i);break;
+    case 'mover':i=num(o.escena,P);var to=num(o.a,P);if(i>=0&&to>=0&&i!==to){var s=P.scenes.splice(i,1)[0];P.scenes.splice(to,0,s);done.push('Moví la escena '+(i+1)+' al lugar '+(to+1));kinds.video=1}break;
+    case 'texto':i=num(o.escena,P);if(i>=0&&typeof o.texto==='string'&&o.texto.trim()){P.scenes[i].text=o.texto.trim().slice(0,600);done.push('Cambié el texto de la escena '+(i+1));kinds.subs=1}break;
+    case 'duplicar':i=num(o.escena,P);if(i>=0){var c=JSON.parse(JSON.stringify(P.scenes[i]));c.id=uid();P.scenes.splice(i+1,0,c);done.push('Dupliqué la escena '+(i+1));kinds.video=1}break;
+    case 'subtitulos':
+      if(o.on===false){if(P.subStyle!=='ninguno')P._prevSub=P.subStyle;P.subStyle='ninguno';done.push('Saqué los subtítulos')}
+      else{P.subStyle=(P.subStyle&&P.subStyle!=='ninguno')?P.subStyle:(P._prevSub||'karaoke');done.push('Activé los subtítulos')}
+      kinds.subs=1;break;
+    case 'musica':var v=Number(o.volumen);if(isFinite(v)){v=Math.max(0,Math.min(100,v));P.musicVol=Math.round(v)/100;
+      if(v===0){P._prevMusic=P.music!=='none'?P.music:P._prevMusic;P.music='none';done.push('Saqué la música')}
+      else{if(P.music==='none')P.music=P._prevMusic||'epica';done.push('Puse la música al '+Math.round(v)+'%')}kinds.audio=1}break;
+    case 'color':if(GRADES[o.look]){P.grade=o.look;done.push('Puse el look «'+GN[o.look]+'»');kinds.color=1}break;
+    case 'transicion':if(TRANS[o.tipo]){P.transition=o.tipo;done.push('Cambié la transición a «'+TN[o.tipo]+'»');kinds.video=1}break;
+    }
+  });
+  if(dels.length){
+    dels.sort(function(a,b){return b-a});
+    if(dels.length>=P.scenes.length){done.push('No borré: el video quedaría sin escenas')}
+    else{dels.forEach(function(i){P.scenes.splice(i,1)});done.push((dels.length>1?'Borré las escenas ':'Borré la escena ')+dels.slice().reverse().map(function(i){return i+1}).join(', '));kinds.video=1}
+  }
+  return {done:done,kinds:Object.keys(kinds)};
+}
+
+/* si Gemini no responde, Ángela entiende lo básico sola */
+function localOps(t,P){
+  var s=t.toLowerCase(),ops=[],n=P?P.scenes.length:0;
+  var nums=(s.match(/\d+/g)||[]).map(Number);
+  if(/[uú]ltima/.test(s))nums.push(n);
+  if(/primera/.test(s))nums.push(1);
+  if(/(borr|sac|quit|elimin|cort)[a-záéíóú]*\s+(la\s+|las\s+)?(escena|[uú]ltima|primera)/.test(s)&&nums.length)nums.forEach(function(x){ops.push({op:'borrar',escena:x})});
+  else if(/mov[eé]|pas[aá]/.test(s)&&/escena/.test(s)&&nums.length>=2)ops.push({op:'mover',escena:nums[0],a:nums[1]});
+  else if(/duplic|copi/.test(s)&&nums.length)ops.push({op:'duplicar',escena:nums[0]});
+  if(/subt[ií]tul/.test(s))ops.push({op:'subtitulos',on:!/(sac|quit|desactiv|sin |borr|elimin|ocult)/.test(s)});
+  if(/m[uú]sica/.test(s)){var cur=Math.round(((P&&P.musicVol)||.18)*100);
+    var pct=s.match(/(\d+)\s*%/);
+    if(pct)ops.push({op:'musica',volumen:+pct[1]});
+    else if(/(sac|quit|sin m|apag|silenci)/.test(s))ops.push({op:'musica',volumen:0});
+    else if(/(baj|menos|suave)/.test(s))ops.push({op:'musica',volumen:Math.max(3,Math.round(cur/2))});
+    else if(/(sub|m[aá]s|fuerte)/.test(s))ops.push({op:'musica',volumen:Math.min(60,Math.round(cur*1.6)+2)});}
+  Object.keys(GRADES).forEach(function(k){var nm=GN[k].toLowerCase();if(k!=='none'&&(s.indexOf(k)>=0||s.indexOf(nm.split(' ')[0])>=0))ops.push({op:'color',look:k})});
+  if(/sin color|color original|sin filtro|sac[aá] el (look|filtro)/.test(s))ops.push({op:'color',look:'none'});
+  if(/transici/.test(s))Object.keys(TRANS).forEach(function(k){if(s.indexOf(TN[k].toLowerCase().split(' ')[0])>=0||s.indexOf(k)>=0)ops.push({op:'transicion',tipo:k})});
+  return ops;
+}
+
+function parseJSON(t){try{var a=t.indexOf('{'),b=t.lastIndexOf('}');if(a<0||b<a)return null;return JSON.parse(t.slice(a,b+1))}catch(e){return null}}
+
 async function send(text){
   text=(text||'').trim();if(!text||E.busy)return;E.busy=true;
   var btn=$('#e1s');if(btn)btn.disabled=true;
   E.msgs.push({who:'us',html:esc(text)});addMsg(esc(text),'us');
   var ty=addMsg('<span class="typ"><span></span><span></span><span></span></span>','ai');
-  var kind=kindOf(text),P=proj(),reply='';
-  var ctx=P?('Proyecto: "'+vt(P)+'". Escenas:\n'+P.scenes.slice(0,30).map(function(s,i){return (i+1)+'. '+(s.text||'(sin texto)').slice(0,140)}).join('\n')):'No hay proyecto elegido (es un video de ejemplo).';
-  var t0=Date.now();
-  try{
-    reply=await AI.chat([
-      {role:'system',content:'Sos Ángela, asistente de edición de video de Estudio Viral. Hablás en español rioplatense, simple y cálido, sin palabras técnicas. Respondé en 1 a 3 oraciones cortas: confirmá qué edición vas a hacer y, si sirve, nombrá el número de escena. No uses markdown.'},
-      {role:'user',content:ctx+'\n\nPedido: '+text}
-    ],{temp:.6});
-  }catch(e){reply=''}
-  var wait=2000-(Date.now()-t0);if(wait>0)await new Promise(function(r){setTimeout(r,wait)});
-  var html=reply?esc(reply).slice(0,900):CANNED[kind];
+  var P=proj(),t0=Date.now(),html='';
+  if(!P){
+    var wait=2000-(Date.now()-t0);await new Promise(function(r){setTimeout(r,Math.max(0,wait))});
+    var k=kindOf(text);html=CANNED[k]+'<br><br>Esto es el video de ejemplo: elegí uno de tus proyectos arriba para que lo cambie de verdad.';simulate(k);
+  }else{
+    var ctx='Proyecto "'+vt(P)+'". Subtítulos: '+(P.subStyle==='ninguno'?'apagados':'activados')+'. Música: '+(P.music==='none'?'sin música':Math.round((P.musicVol||.18)*100)+'%')+'. Look: '+(P.grade||'none')+'. Transición: '+(P.transition||'fade')+'.\nEscenas:\n'+
+      P.scenes.slice(0,60).map(function(s,i){return (i+1)+'. '+(s.text||'(sin texto)').slice(0,160)}).join('\n');
+    var sys='Sos Ángela, asistente de edición de Estudio Viral. Hablás en español rioplatense, simple y cálido.\n'+
+      'Respondé SOLO con un JSON así: {"respuesta":"1 a 2 oraciones cortas contando qué hiciste","ops":[...]}\n'+
+      'Órdenes posibles en "ops" (los números de escena empiezan en 1):\n'+
+      '{"op":"borrar","escena":N} · {"op":"mover","escena":N,"a":M} · {"op":"duplicar","escena":N} · {"op":"texto","escena":N,"texto":"nuevo texto"}\n'+
+      '{"op":"subtitulos","on":true|false} · {"op":"musica","volumen":0-100} (0 = sin música)\n'+
+      '{"op":"color","look":"'+Object.keys(GRADES).join('|')+'"} · {"op":"transicion","tipo":"'+Object.keys(TRANS).join('|')+'"}\n'+
+      '"Cortar una escena" significa borrarla. Si el pedido no se puede hacer con estas órdenes, dejá "ops" vacío y explicá en "respuesta" qué sí podés hacer. No inventes escenas que no existen.';
+    var ops=null,reply='',raw='';
+    try{raw=await AI.chat([{role:'system',content:sys},{role:'user',content:ctx+'\n\nPedido: '+text}],{temp:.2})}catch(e){raw=''}
+    var j=raw?parseJSON(raw):null;
+    if(j&&Array.isArray(j.ops)){ops=j.ops;reply=String(j.respuesta||'')}
+    else ops=localOps(text,P);
+    var before=JSON.stringify(P);
+    var r=applyOps(P,ops);
+    var wait2=1200-(Date.now()-t0);if(wait2>0)await new Promise(function(rs){setTimeout(rs,wait2)});
+    if(r.done.length){
+      UNDO.push({id:P.id,json:before});if(UNDO.length>20)UNDO.shift();
+      persistP(P);
+      html=(reply?esc(reply)+'<br>':'')+'<b>Cambios:</b><br>• '+r.done.map(esc).join('<br>• ');
+      E.msgs.push({who:'ai',html:html});E.busy=false;
+      render();               /* redibuja con el proyecto nuevo */
+      setTimeout(function(){r.kinds.forEach(function(k){flash(k)})},60);
+      return;
+    }
+    html=reply?esc(reply):'No entendí qué cambiar 🤔 Probá con algo como: «borrá la escena 3», «activá los subtítulos», «bajá la música», «look neón» o «transición flash».';
+  }
   if(ty)ty.innerHTML=html;E.msgs.push({who:'ai',html:html});
-  simulate(kind);
   E.busy=false;if(btn)btn.disabled=false;var i=$('#e1i');if(i)i.focus();
+}
+
+function flash(kind){var id={video:'e1v',color:'e1v',audio:'e1a',subs:'e1t'}[kind];var ln=id&&document.getElementById(id);if(!ln)return;
+  ln.querySelectorAll('.clp').forEach(function(el){el.classList.remove('fl');void el.offsetWidth;el.classList.add('fl')})}
+
+function undo(){
+  var P=proj();if(!P)return;
+  var k=-1;for(var i=UNDO.length-1;i>=0;i--)if(UNDO[i].id===P.id){k=i;break}
+  if(k<0){toast('No hay nada para deshacer');return}
+  var old=JSON.parse(UNDO.splice(k,1)[0].json);
+  persistP(old);
+  E.msgs.push({who:'ai',html:'↶ Listo, deshice el último cambio.'});
+  render();
 }
 
 function vAng(m){
@@ -9277,15 +9380,15 @@ function vAng(m){
   var hist=E.msgs.length?E.msgs.map(function(x){return '<div class="msg '+x.who+'">'+x.html+'</div>'}).join(''):'<div class="msg ai">Hola 👋 Soy <b>Ángela</b>. Elegí un proyecto arriba y decime qué querés cambiar: cortar, subtítulos, música, colores…</div>';
   m.innerHTML='<div class="ev100">'+
    '<div class="top"><h2>Editor con Ángela <small>// beta</small></h2>'+
-    '<div class="r"><select id="e1pj">'+opts+'</select>'+(P?'<button class="nb" id="e1op">Abrir en el editor</button>':'')+'</div></div>'+
-   '<div class="note">Por ahora Ángela te muestra la edición en la línea de tiempo; los cambios todavía no se guardan en el video.</div>'+
+    '<div class="r"><select id="e1pj">'+opts+'</select>'+(P?'<button class="nb" id="e1un" title="Deshacer el último cambio de Ángela">↶ Deshacer</button><button class="nb" id="e1op">Abrir en el editor</button>':'')+'</div></div>'+
+   (P?'<div class="note">Los cambios que hace Ángela se guardan en el proyecto. Si no te gusta alguno, tocá ↶ Deshacer.</div><div class="est">'+[P.scenes.length+' escenas','Subtítulos: '+(P.subStyle==='ninguno'?'no':'sí'),'Música: '+(P.music==='none'?'no':Math.round((P.musicVol||.18)*100)+'%'),'Look: '+(GN[P.grade||'none']||'Original'),'Transición: '+(TN[P.transition||'fade']||'Fundido')].map(function(x){return '<span>'+esc(x)+'</span>'}).join('')+'</div>':'<div class="note">Elegí un proyecto arriba para que Ángela lo cambie de verdad.</div>')+
    '<div class="grid">'+
     '<div class="pn"><div class="lb">Vista previa</div>'+
-     '<div class="scr'+(vert?' vert':'')+'"><img id="e1img" alt="" style="display:none"><div class="scrt" id="e1txt">▶ ESTUDIO VIRAL</div><div class="sub" id="e1sub"></div></div>'+
+     '<div class="scr'+(vert?' vert':'')+'"><img id="e1img" alt="" style="display:none'+(P&&GRADES[P.grade]&&P.grade!=='none'?';filter:'+GRADES[P.grade].f:'')+'"><div class="scrt" id="e1txt">▶ ESTUDIO VIRAL</div><div class="sub" id="e1sub"></div></div>'+
      '<div class="bar" id="e1b"><i id="e1f"></i></div>'+
      '<div class="ctl"><button class="cb" id="e1p" title="Play / Pausa">▶</button><button class="cb" id="e1x" title="Detener">■</button><span class="etm" id="e1tm"></span></div></div>'+
     '<div class="pn ach"><div class="lb">Ángela · asistente de edición</div><div class="hist" id="e1h">'+hist+'</div>'+
-     '<div class="sug">'+['Cortá los silencios','Agregá subtítulos','Bajá la música','Look neón'].map(function(s){return '<button data-s="'+s+'">'+s+'</button>'}).join('')+'</div>'+
+     '<div class="sug">'+['Borrá la última escena','Activá los subtítulos','Bajá la música','Look neón','Transición flash'].map(function(s){return '<button data-s="'+s+'">'+s+'</button>'}).join('')+'</div>'+
      '<form id="e1fm"><input id="e1i" placeholder="Describe tu edición..." autocomplete="off"><button class="snd" id="e1s" type="submit" title="Enviar">➤</button></form></div>'+
     '<div class="pn tl"><div class="lb">Línea de tiempo</div>'+
      '<div class="trk"><div class="tn">V1</div><div class="ln" id="e1v"></div></div>'+
@@ -9294,7 +9397,7 @@ function vAng(m){
    '</div></div>';
   drawTL();paint();
   $('#e1pj').onchange=function(){stopPlay();E.pid=this.value||null;E.time=0;render()};
-  var op=$('#e1op');if(op)op.onclick=function(){var p=proj();if(p){stopPlay();openProject(p)}};
+  var un=$('#e1un');if(un)un.onclick=undo;var op=$('#e1op');if(op)op.onclick=function(){var p=proj();if(p){stopPlay();openProject(p)}};
   $('#e1p').onclick=function(){E.playing?stopPlay():play()};
   $('#e1x').onclick=function(){stopPlay();E.time=0;lastIdx=-1;if(!proj()){$('#e1txt').textContent='▶ ESTUDIO VIRAL'}paint();$('#e1sub').style.display='none'};
   $('#e1b').onclick=function(e){var r=this.getBoundingClientRect();E.time=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))*E.dur;paint()};
@@ -9311,7 +9414,7 @@ var goO=go;go=function(v){if(S.view==='angela'&&v!=='angela')stopPlay();return g
 var vpO=vProjects;vProjects=function(m){vpO.apply(this,arguments);try{if(!m.querySelector('.ev100-btn')){var b=document.createElement('button');b.className='btn ev100-btn';b.innerHTML='🎬 Editor con Ángela';b.onclick=function(){go('angela')};
   var row=m.querySelector('.ev40-top');if(row)row.insertBefore(b,row.firstChild);else{var w=document.createElement('div');w.className='row wrap';w.style.cssText='gap:6px;justify-content:flex-end;margin:8px 0';w.appendChild(b);m.prepend(w)}}}catch(e){}};
 if(S.view==='projects'){try{render()}catch(e){}}
-console.info('[Estudio Viral] v4.00: Editor con Ángela');
+console.info('[Estudio Viral] v4.00/4.01: Editor con Ángela (cambia el proyecto de verdad)');
 })();
 </script>
 <!-- ===== FIN v4.00 ===== -->
