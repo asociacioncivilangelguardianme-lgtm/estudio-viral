@@ -948,7 +948,8 @@ Además "character": descripción física en inglés del personaje principal par
   try{if(location.protocol==='file:')throw new Error('Leer links funciona cuando la página está publicada en Vercel. Por ahora pegá el texto abajo.');
    let r;try{r=await fetch('/api/transcript?url='+encodeURIComponent(P.sourceUrl))}catch(e){throw new Error('No hay servidor. Publicá la app en Vercel o pegá el texto abajo.')}
    if(r.status===404)throw new Error('Falta el servidor (/api). Publicá en Vercel o pegá el texto abajo.');
-   const j=await r.json();if(!j.ok&&!j.text)throw new Error(j.error||'No se pudo leer el video.');
+   const raw=await r.text();let j;try{j=JSON.parse(raw)}catch(e){throw new Error(r.status===504||/timed? ?out|tiempo/i.test(raw)?'El video tardó demasiado en leerse. Probá de nuevo en un rato o pegá el texto a mano abajo.':'El servidor tuvo un problema leyendo el video (error '+r.status+'). Probá de nuevo o pegá el texto a mano abajo.')}
+   if(!j.ok&&!j.text)throw new Error(j.error||'No se pudo leer el video.');
    P.sourceText=j.text||'';if(j.title&&P.name.startsWith('Proyecto'))P.name=j.title.slice(0,60);save();toast(j.note||'Transcripción lista ✅');
   }finally{this.setBusy('')}render()},
  async paraphrase(){const P=S.P;if(!P.sourceText.trim())throw new Error('No hay texto original para reescribir.');

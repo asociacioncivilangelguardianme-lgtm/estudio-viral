@@ -5,6 +5,16 @@ const UA_DESK = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (K
 
 const { sameSite, tooMany } = require('./_guard');
 
+// Vercel corta todo a los 60 segundos: nosotros terminamos antes (52 s) para poder avisar bien.
+const LIMITE_MS = 52000;
+let fin = 0;
+const queda = () => fin - Date.now();
+// fetch con tiempo máximo: si YouTube o Gemini no contestan, seguimos con el plan siguiente.
+function tfetch(u, opts = {}, ms = 8000) {
+  const t = Math.max(1000, Math.min(ms, queda() - 1000));
+  return fetch(u, { ...opts, signal: AbortSignal.timeout(t) });
+}
+
 module.exports = async (req, res) => {
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
   const send = (code, obj) => { res.statusCode = code; res.end(JSON.stringify(obj)); };
@@ -13,6 +23,7 @@ module.exports = async (req, res) => {
   if (!url) return send(400, { ok: false, error: 'Falta la URL del video.' });
   if (!sameSite(req)) return send(403, { ok: false, error: 'Origen no permitido' });
   if (tooMany(req, 15)) return send(429, { ok: false, error: 'Demasiados pedidos seguidos. Esperá un minuto.' });
+  fin = Date.now() + LIMITE_MS;
   try {
     if (/tiktok\.com/i.test(url)) return send(200, await tiktok(url));
     const id = ytId(url);
@@ -63,11 +74,11 @@ async function youtube(id) {
   let tracks = null, title = '', description = '';
   // 1) API interna de la app de Android (suele funcionar mejor desde servidores)
   try {
-    const r = await fetch('https://www.youtube.com/youtubei/v1/player?prettyPrint=false', {
+    const r = await tfetch('https://www.youtube.com/youtubei/v1/player?prettyPrint=false', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'User-Agent': 'com.google.android.youtube/20.10.38 (Linux; U; Android 14) gzip' },
       body: JSON.stringify({ context: { client: { clientName: 'ANDROID', clientVersion: '20.10.38', androidSdkVersion: 34, hl: 'es' } }, videoId: id })
-    });
+    }, 7000);
     const j = await r.json();
     tracks = j?.captions?.playerCaptionsTracklistRenderer?.captionTracks || null;
     title = j?.videoDetails?.title || '';
@@ -76,7 +87,7 @@ async function youtube(id) {
   // 2) Página web del video
   if (!tracks || !tracks.length) {
     try {
-      const r = await fetch(`https://www.youtube.com/watch?v=${id}&hl=es`, { headers: { 'User-Agent': UA_DESK, 'Accept-Language': 'es-ES,es;q=0.9' } });
+      const r = await tfetch(`https://www.youtube.com/watch?v=${id}&hl=es`, { headers: { 'User-Agent': UA_DESK, 'Accept-Language': 'es-ES,es;q=0.9' } }, 7000);
       const html = await r.text();
       tracks = extractArray(html, '"captionTracks":') || tracks;
       if (!title) { const t = html.match(/<meta name="title" content="([^"]*)"/); title = t ? decodeEntities(t[1]) : ''; }
@@ -88,7 +99,7 @@ async function youtube(id) {
     let base = (t.baseUrl || '').replace(/\\u0026/g, '&').replace(/&fmt=[^&]*/, '');
     for (const fmt of ['', '&fmt=json3']) {
       try {
-        const r = await fetch(base + fmt, { headers: { 'User-Agent': UA_DESK } });
+        const r = await tfetch(base + fmt, { headers: { 'User-Agent': UA_DESK } }, 5000);
         const text = parseCaptions(await r.text());
         if (text.length > 20) return { ok: true, source: 'youtube', title, text, lang: t.languageCode };
       } catch (e) {}
@@ -108,12 +119,12 @@ async function youtube(id) {
                     : 'No pude leer lo que se dice en el video (' + (g.err || 'error') + '). Solo tengo el título: pegá el texto a mano o probá de nuevo en un rato.' };
   }
   return { ok: false, title, error: g.noKey ? 'YouTube no deja leer este video desde el servidor. Conectá Gemini en Ajustes (así la IA mira el video) o pegá el texto a mano.'
-                                            : 'No se pudo leer este video. Pegá el texto a mano en "Transcripción original".' };
+                                            : 'No se pudo leer este video' + (g.err ? ' (' + g.err + ')' : '') + '. Probá de nuevo en un rato o pegá el texto a mano en "Transcripción original".' };
 }
 
 async function ytTitle(id) {
   try {
-    const r = await fetch('https://www.youtube.com/oembed?format=json&url=' + encodeURIComponent('https://www.youtube.com/watch?v=' + id));
+    const r = await tfetch('https://www.youtube.com/oembed?format=json&url=' + encodeURIComponent('https://www.youtube.com/watch?v=' + id), {}, 4000);
     if (r.ok) { const j = await r.json(); return j.title || ''; }
   } catch (e) {}
   return '';
@@ -138,15 +149,16 @@ async function geminiWatch(id) {
     + 'Devolvé SOLO el texto, sin títulos, sin marcas de tiempo y sin comentarios.';
   let err = '';
   for (const model of ['gemini-2.5-flash', 'gemini-flash-latest', 'gemini-2.5-flash-lite']) {
+    if (queda() < 9000) { err = err || 'el video tardó demasiado en leerse'; break; }
     try {
-      const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent', {
+      const r = await tfetch('https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
         body: JSON.stringify({
           contents: [{ parts: [{ file_data: { file_uri: 'https://www.youtube.com/watch?v=' + id } }, { text: prompt }] }],
           generationConfig: { temperature: 0.2, mediaResolution: 'MEDIA_RESOLUTION_LOW' },
         }),
-      });
+      }, 45000);
       const j = await r.json().catch(() => ({}));
       if (!r.ok) {
         err = 'Gemini ' + r.status;
@@ -158,13 +170,16 @@ async function geminiWatch(id) {
         .map((p) => p.text || '').join(' ').replace(/\s+/g, ' ').trim();
       if (text.length > 20) return { text };
       err = 'Gemini no devolvió texto';
-    } catch (e) { err = e.message || String(e); }
+    } catch (e) {
+      err = (e && (e.name === 'TimeoutError' || e.name === 'AbortError')) ? 'Gemini tardó demasiado mirando el video' : (e.message || String(e));
+      if (queda() < 9000) break;
+    }
   }
   return { err };
 }
 
 async function tiktok(url) {
-  const r = await fetch('https://www.tiktok.com/oembed?url=' + encodeURIComponent(url), { headers: { 'User-Agent': UA_DESK } });
+  const r = await tfetch('https://www.tiktok.com/oembed?url=' + encodeURIComponent(url), { headers: { 'User-Agent': UA_DESK } }, 10000);
   if (!r.ok) return { ok: false, error: 'No se pudo leer el TikTok (¿es público?). Pegá el texto a mano.' };
   const j = await r.json();
   const text = (j.title || '').trim();
