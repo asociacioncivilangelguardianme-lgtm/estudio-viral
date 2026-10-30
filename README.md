@@ -9,6 +9,7 @@ La IA escribe el guion, genera las imágenes en el estilo que elijas, pone voz, 
 |---|---|
 | `index.html` | Toda la app (la página que ves) |
 | `api/transcript.js` | Lee los links de YouTube y TikTok |
+| `api/fetchpage.js` | Lee páginas públicas para el Constructor de apps |
 | `api/chat.js` | Texto con IA (guiones, storyboard, asistente) con Gemini de Google, gratis |
 | `api/tts.js` | Genera la voz del narrador (voces gratis de Microsoft) |
 | `api/voices.js` | Lista completa de voces |
@@ -58,6 +59,7 @@ Las imágenes (Pollinations) y la voz (Microsoft/Piper) no necesitan clave.
 - **Edición IA por escena**: nueva imagen, editar con una orden, mejorar calidad, expandir encuadre, rotoscopia 2.5D, cambiar fondo, animar (beta), variaciones con antes/después.
 - **Sonido**: música sin derechos, whooshes, impactos y ambientes (lluvia, viento, océano, fuego…).
 - **Voces gratis (v3)**: voces naturales de Microsoft (Tomás y Elena de Argentina, y cientos más) a través de tu Vercel. Si no responden, la app usa sola la voz **Piper**, que se genera en tu computadora. Las dos quedan grabadas dentro del video exportado.
+- **Constructor de apps (v4.10)**: describí, pegá un link o subí una captura y la IA arma una página o app propia en un solo archivo HTML. Plan, vista previa celu/compu, revisión automática, prueba de botones, «Arreglar con IA», cambios por chat, 30 versiones, editor de código, abrir un HTML propio y descargar.
 - **Próximamente**: Video a Video y Lip-sync (necesitan servidores pagos).
 
 ## 🧠 Cómo se usa

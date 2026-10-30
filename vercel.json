@@ -8,6 +8,9 @@
     },
     "api/cloud.js": {
       "maxDuration": 60
+    },
+    "api/fetchpage.js": {
+      "maxDuration": 30
     }
   },
   "headers": [
