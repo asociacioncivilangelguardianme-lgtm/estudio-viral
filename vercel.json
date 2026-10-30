@@ -4,7 +4,7 @@
       "maxDuration": 60
     },
     "api/chat.js": {
-      "maxDuration": 60
+      "maxDuration": 300
     },
     "api/cloud.js": {
       "maxDuration": 60

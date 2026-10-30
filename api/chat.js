@@ -1,6 +1,6 @@
 // Estudio Viral · conexión con Gemini (gratis). La clave queda escondida en Vercel (GEMINI_API_KEY).
 // Si un modelo deja de existir o se le acaba el cupo, prueba solo con el siguiente.
-export const config = { maxDuration: 60 };
+export const config = { maxDuration: 300 };
 
 const MODELS = [
   process.env.GEMINI_MODEL,          // opcional: para forzar uno desde Vercel
@@ -44,6 +44,8 @@ export default async function handler(req, res) {
 
   const payload = { contents, generationConfig: { temperature } };
   if (system) payload.systemInstruction = { parts: [{ text: system }] };
+  // Constructor de apps: investigar en internet con Google antes de armar el plan
+  if (body && body.search === true) payload.tools = [{ google_search: {} }];
 
   let lastStatus = 0, lastMsg = '', sawLimit = false, badKey = false;
   for (const model of MODELS) {
@@ -61,6 +63,7 @@ export default async function handler(req, res) {
         continue;
       }
       lastStatus = r.status; lastMsg = j.error?.message || ('HTTP ' + r.status);
+      if (r.status === 400 && payload.tools && !/api key|API_KEY/i.test(lastMsg)) { delete payload.tools; continue; } // si la búsqueda falla, sigue sin buscar
       if (r.status === 429) { sawLimit = true; continue; }               // cupo agotado: probar otro modelo
       if (r.status === 404) continue;                                      // modelo que ya no existe: probar otro
       if (r.status === 400 && /api key|API_KEY/i.test(lastMsg)) { badKey = true; break; }
