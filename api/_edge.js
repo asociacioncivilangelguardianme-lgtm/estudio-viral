@@ -10,23 +10,22 @@ const UA = `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
 
 let skew = 0; // diferencia de reloj con Microsoft, en segundos
 
+// Desde octubre 2026 Microsoft pide el token nuevo (v2). Sin esto, las voces no salen.
+const { gec2 } = require('./_gec2');
 function secMsGec() {
-  let s = Math.floor(Date.now() / 1000 + skew) + 11644473600; // segundos desde 1601 (hora de Windows)
-  s -= s % 300;                                                // redondeo a 5 minutos
-  const ticks = BigInt(s) * 10000000n;                          // en unidades de 100 nanosegundos
-  return crypto.createHash('sha256').update(ticks.toString() + TRUSTED_CLIENT_TOKEN, 'ascii').digest('hex').toUpperCase();
+  return gec2(Date.now() / 1000 + skew);
 }
 
 function newId() { return crypto.randomUUID().replace(/-/g, ''); }
 
 function wssUrl() {
   return `wss://${BASE}/edge/v1?TrustedClientToken=${TRUSTED_CLIENT_TOKEN}&ConnectionId=${newId()}` +
-    `&Sec-MS-GEC=${secMsGec()}&Sec-MS-GEC-Version=1-${CHROMIUM_FULL}`;
+    `&Sec-MS-GEC=${secMsGec()}&Sec-MS-GEC-Version=2-${CHROMIUM_FULL}`;
 }
 
 function voicesUrl() {
   return `https://${BASE}/voices/list?trustedclienttoken=${TRUSTED_CLIENT_TOKEN}` +
-    `&Sec-MS-GEC=${secMsGec()}&Sec-MS-GEC-Version=1-${CHROMIUM_FULL}`;
+    `&Sec-MS-GEC=${secMsGec()}&Sec-MS-GEC-Version=2-${CHROMIUM_FULL}`;
 }
 
 function edgeHeaders() {
